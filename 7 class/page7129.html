@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Давление в жидкостях и газах, закон Паскаля — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdfa;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #0891b2; /* Бирюзовый (вода/жидкость) */
+            --primary-hover: #0e7490;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #cffafe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #164e63;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .math-fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .math-numerator {
+            border-bottom: 2px solid var(--primary);
+            padding: 0 5px;
+        }
+        .math-denominator {
+            padding: 0 5px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(8, 145, 178, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(8, 145, 178, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(8, 145, 178, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(8, 145, 178, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Давление в жидкостях и газах, закон Паскаля — 7 класс</span>
+            <span class="lang-kz">Сұйықтар мен газдардағы қысым, Паскаль заңы — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Вы когда-нибудь задумывались, почему мыльный пузырь всегда круглый? Или как человек одним легким нажатием на педаль тормоза может остановить многотонный автомобиль? Все это объясняют законы давления в жидкостях и газах!</span>
+            <span class="lang-kz">Сабын көпіршігінің неліктен әрқашан дөңгелек болатыны туралы ойланып көрдіңіз бе? Немесе адам тежегіш педалін сәл ғана басу арқылы көп тонналық көлікті қалай тоқтата алады? Мұның бәрін сұйықтар мен газдардағы қысым заңдары түсіндіреді!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: ГАЗЫ И ЖИДКОСТИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Как создается давление?</span>
+            <span class="lang-kz">Қысым қалай пайда болады?</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>В газах:</strong> Молекулы газа непрерывно и беспорядочно движутся. Сталкиваясь со стенками сосуда, они создают силу давления. Чем больше молекул (или чем выше температура), тем сильнее и чаще они бьют по стенкам, и тем <strong>выше давление газа</strong>.</span>
+                <span class="lang-kz"><strong>Газдарда:</strong> Газ молекулалары үздіксіз және ретсіз қозғалады. Ыдыс қабырғаларымен соқтығыса отырып, олар қысым күшін тудырады. Молекулалар неғұрлым көп болса (немесе температура неғұрлым жоғары болса), олар қабырғаларға соғұрлым күшті және жиі соғылады, демек <strong>газ қысымы соғұрлым жоғары болады</strong>.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>В жидкостях:</strong> На жидкость действует сила тяжести Земли. Из-за этого верхние слои жидкости давят на средние, а средние — на нижние. Это давление называется <strong>гидростатическим</strong>. Чем глубже, тем давление больше!</span>
+                <span class="lang-kz"><strong>Сұйықтарда:</strong> Сұйықтыққа Жердің ауырлық күші әрекет етеді. Осының салдарынан сұйықтықтың жоғарғы қабаттары ортаңғы қабаттарға, ал ортаңғы қабаттар төменгі қабаттарға қысым түсіреді. Бұл қысым <strong>гидростатикалық қысым</strong> деп аталады. Тереңдеген сайын қысым арта түседі!</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ЗАКОН ПАСКАЛЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Закон Паскаля</span>
+            <span class="lang-kz">Паскаль заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В отличие от твердых тел, которые передают давление только в направлении действия силы, жидкости и газы ведут себя иначе благодаря подвижности своих молекул. Французский ученый Блез Паскаль открыл важнейший закон:</span>
+            <span class="lang-kz">Қысымды тек күштің әрекет ету бағытында ғана беретін қатты денелерге қарағанда, сұйықтар мен газдар молекулаларының қозғалғыштығының арқасында басқаша әрекет етеді. Француз ғалымы Блез Паскаль өте маңызды заңды ашты:</span>
+        </p>
+        <div class="observation" style="font-size: 1.15rem; font-weight: 600;">
+            <span class="lang-ru">Давление, производимое на жидкость или газ, передается в любую точку без изменений во всех направлениях.</span>
+            <span class="lang-kz">Сұйыққа немесе газға түсірілген қысым барлық бағытта өзгеріссіз беріледі.</span>
+        </div>
+        <p style="margin-top: 1rem;">
+            <span class="lang-ru"><strong>Пример:</strong> Если мы надуваем воздушный шарик, мы вдуваем воздух с одной стороны, но шарик раздувается равномерно во все стороны! Давление внутри передалось во все точки одинаково.</span>
+            <span class="lang-kz"><strong>Мысал:</strong> Егер біз әуе шарын үрлесек, ауаны бір жағынан үрлейміз, бірақ шар барлық жаққа бірдей үрленеді! Ішіндегі қысым барлық нүктелерге бірдей таралды.</span>
+        </p>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Формулы: Гидростатика и Гидравлический пресс</span>
+            <span class="lang-kz">Формулалар: Гидростатика және Гидравликалық пресс</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Закон Паскаля применяется в <strong>гидравлических машинах</strong>. Это устройства (например, домкраты, тормоза), где две трубки разной площади соединены жидкостью. Нажимая на малый поршень с небольшой силой, мы создаем давление, которое передается на большой поршень, создавая там <strong>огромную силу</strong>.</span>
+            <span class="lang-kz">Паскаль заңы <strong>гидравликалық машиналарда</strong> қолданылады. Бұл әртүрлі ауданы бар екі түтік сұйықтықпен жалғанған құрылғылар (мысалы, домкраттар, тежегіштер). Кіші поршеньді аздаған күшпен басу арқылы біз қысым жасаймыз, ол үлкен поршеньге беріліп, сол жерде <strong>үлкен күш</strong> тудырады.</span>
+        </p>
+        
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Правило гидравлического пресса:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Гидравликалық престің ережесі:</span>
+            <span class="math">
+                <div class="math-fraction">
+                    <div class="math-numerator">F<sub>2</sub></div>
+                    <div class="math-denominator">F<sub>1</sub></div>
+                </div>
+                =
+                <div class="math-fraction">
+                    <div class="math-numerator">S<sub>2</sub></div>
+                    <div class="math-denominator">S<sub>1</sub></div>
+                </div>
+            </span>
+            <p>
+                <span class="lang-ru">Во сколько раз площадь большого поршня (S₂) больше площади малого (S₁), во столько же раз мы получаем <strong>выигрыш в силе</strong>!</span>
+                <span class="lang-kz">Үлкен поршеньнің ауданы (S₂) кіші поршеньнің ауданынан (S₁) неше есе үлкен болса, біз күштен сонша есе <strong>ұтыс</strong> аламыз!</span>
+            </p>
+        </div>
+
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Давление столба жидкости (Гидростатическое):</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Сұйықтық бағанының қысымы (Гидростатикалық):</span>
+            <span class="math">p = &rho; &middot; g &middot; h</span>
+            <p>
+                <span class="lang-ru">Где <strong>&rho;</strong> — плотность жидкости (кг/м³), <strong>g</strong> ≈ 10 Н/кг, <strong>h</strong> — глубина или высота столба (м).</span>
+                <span class="lang-kz">Мұндағы <strong>&rho;</strong> — сұйықтықтың тығыздығы (кг/м³), <strong>g</strong> ≈ 10 Н/кг, <strong>h</strong> — тереңдік немесе бағанның биіктігі (м).</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Гидравлический пресс</span>
+            <span class="lang-kz">Симуляция: Гидравликалық пресс</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="f1Slider" style="color: var(--danger)">
+                        <span class="lang-ru">Ваша сила вниз (F₁):</span>
+                        <span class="lang-kz">Төмен бағытталған күшіңіз (F₁):</span>
+                        <span id="f1Val">50</span> Н
+                    </label>
+                    <input type="range" id="f1Slider" min="10" max="200" step="10" value="50">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="s1Slider">
+                        <span class="lang-ru">Площадь малого поршня (S₁):</span>
+                        <span class="lang-kz">Кіші поршеньнің ауданы (S₁):</span>
+                        <span id="s1Val">10</span> <span class="lang-ru">см²</span><span class="lang-kz">см²</span>
+                    </label>
+                    <input type="range" id="s1Slider" min="5" max="20" step="5" value="10">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="s2Slider">
+                        <span class="lang-ru">Площадь большого поршня (S₂):</span>
+                        <span class="lang-kz">Үлкен поршеньнің ауданы (S₂):</span>
+                        <span id="s2Val">100</span> <span class="lang-ru">см²</span><span class="lang-kz">см²</span>
+                    </label>
+                    <input type="range" id="s2Slider" min="50" max="400" step="50" value="100">
+                </div>
+                <div class="buttons">
+                    <button id="btnPush">
+                        <span class="lang-ru">Нажать!</span><span class="lang-kz">Басу!</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Отпустить</span><span class="lang-kz">Жіберу</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container" style="background-color: #f8fafc; height: 350px;">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Задайте силу и площади, затем нажмите «Нажать!». Посмотрите, во сколько раз увеличится сила на правом поршне (F₂). Хватит ли её, чтобы поднять тяжелый груз?</span>
+                <span class="lang-kz">Күш пен аудандарды орнатып, «Басу!» түймесін басыңыз. Оң жақ поршеньдегі күш (F₂) неше есе артатынын көріңіз. Бұл ауыр жүкті көтеруге жете ме?</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> Площадь малого поршня гидравлической машины 10 см², а большого — 500 см². На малый поршень действует сила 200 Н. Какая сила давления будет действовать на больший поршень?</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Гидравликалық машинаның кіші поршенінің ауданы 10 см², ал үлкенінікі — 500 см². Кіші поршеньге 200 Н күш әрекет етеді. Үлкен поршеньге қандай қысым күші әрекет етеді?</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>S₁ = 10 см²<br>S₂ = 500 см²<br>F₁ = 200 Н<br><strong>Найти:</strong> F₂ — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>S₁ = 10 см²<br>S₂ = 500 см²<br>F₁ = 200 Н<br><strong>Табу керек:</strong> F₂ — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Формула:</strong><br>По закону Паскаля давления под поршнями равны (p₁ = p₂).<br>Используем отношение: F₂ / F₁ = S₂ / S₁.<br>Отсюда: F₂ = F₁ · (S₂ / S₁).</span>
+                <span class="lang-kz"><strong>Формула:</strong><br>Паскаль заңы бойынша поршеньдер астындағы қысымдар тең (p₁ = p₂).<br>Қатынасты қолданамыз: F₂ / F₁ = S₂ / S₁.<br>Осыдан: F₂ = F₁ · (S₂ / S₁).</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>F₂ = 200 Н · (500 см² / 10 см²) = 200 · 50 = 10 000 Н.<br><em>(Переводить см² в м² не обязательно, так как единицы измерения сокращаются).</em></span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>F₂ = 200 Н · (500 см² / 10 см²) = 200 · 50 = 10 000 Н.<br><em>(см²-ді м²-ге айналдыру міндетті емес, өйткені өлшем бірліктері қысқарады).</em></span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Сила, действующая на большой поршень, равна 10 000 Н (10 кН). Мы получили выигрыш в силе в 50 раз!</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Үлкен поршеньге әрекет ететін күш 10 000 Н-ға (10 кН) тең. Біз күштен 50 есе ұтыс алдық!</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Если выстрелить из мелкокалиберной винтовки в вареное яйцо, пуля проделает в нем аккуратное отверстие. Но если выстрелить в сырое яйцо (внутри которого жидкость), оно разлетится на мелкие кусочки в разные стороны. Какой закон физики это объясняет?</span>
+                <span class="lang-kz">Егер ұсақ калибрлі мылтықтан пісірілген жұмыртқаға оқ атса, оқ онда ұқыпты тесік жасайды. Бірақ егер шикі жұмыртқаға (ішінде сұйықтық бар) атса, ол жан-жаққа ұсақ бөлшектерге бөлініп ұшып кетеді. Бұны физиканың қай заңы түсіндіреді?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="archimedes" data-ru="Закон Архимеда" data-kz="Архимед заңы">Закон Архимеда</option>
+                    <option value="pascal" data-ru="Закон Паскаля (давление передалось во все стороны)" data-kz="Паскаль заңы (қысым барлық жаққа берілді)">Закон Паскаля (давление передалось во все стороны)</option>
+                    <option value="friction" data-ru="Закон трения" data-kz="Үйкеліс заңы">Закон трения</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Ныряльщик опустился на дно бассейна глубиной 3 метра. Плотность воды 1000 кг/м³. Вычислите гидростатическое давление воды на ныряльщика. (g = 10 Н/кг). Введите ответ в Паскалях.</span>
+                <span class="lang-kz">Сүңгуір тереңдігі 3 метр бассейн түбіне түсті. Судың тығыздығы 1000 кг/м³. Судың сүңгуірге түсіретін гидростатикалық қысымын есептеңіз. (g = 10 Н/кг). Жауапты Паскальмен енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 15000" data-placeholder-kz="Мысалы: 15000" placeholder="Например: 15000">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В гидравлическом домкрате площадь малого поршня равна 2 см², а большого — 40 см². Какую силу нужно приложить к малому поршню, чтобы поднять груз весом 8000 Н (опирающийся на большой поршень)?</span>
+                <span class="lang-kz">Гидравликалық домкратта кіші поршеньнің ауданы 2 см², ал үлкенінікі — 40 см² тең. Салмағы 8000 Н (үлкен поршеньге тірелетін) жүкті көтеру үшін кіші поршеньге қандай күш түсіру керек?</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Введите силу F1 в Ньютонах" data-placeholder-kz="F1 күшін Ньютонмен енгізіңіз" placeholder="Введите силу F1 в Ньютонах">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео с экспериментами (например, шар Паскаля), которые доказывают, что давление в жидкости и газе передается во все стороны одинаково.</span>
+            <span class="lang-kz">Сұйықтықтар мен газдардағы қысым барлық бағыттарда бірдей берілетінін дәлелдейтін эксперименттер (мысалы, Паскаль шары) бейнесін қараңыз.</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D0%BF%D0%B0%D1%81%D0%BA%D0%B0%D0%BB%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Закон Паскаля» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Паскаль заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю формулировку закона Паскаля.</span>
+                <span class="lang-kz">Мен Паскаль заңының тұжырымдамасын білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понимаю принцип работы гидравлического пресса.</span>
+                <span class="lang-kz">Мен гидравликалық престің жұмыс істеу принципін түсінемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу рассчитать гидростатическое давление (p = &rho;gh).</span>
+                <span class="lang-kz">Мен гидростатикалық қысымды (p = &rho;gh) есептей аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Как передается давление, производимое на жидкость или газ?</span>
+                <span class="lang-kz">1. Сұйыққа немесе газға түсірілген қысым қалай беріледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Только в направлении действия силы</span><span class="lang-kz">Тек күштің әрекет ету бағытында</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Только вниз, на дно сосуда</span><span class="lang-kz">Тек төмен, ыдыс түбіне</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Без изменений в каждую точку жидкости или газа во всех направлениях</span><span class="lang-kz">Өзгеріссіз сұйықтықтың немесе газдың әрбір нүктесіне барлық бағытта</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Вверх оно не передается</span><span class="lang-kz">Ол жоғары қарай берілмейді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Что является причиной давления газа на стенки сосуда?</span>
+                <span class="lang-kz">2. Газдың ыдыс қабырғаларына түсіретін қысымының себебі неде?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Сила тяжести Земли</span><span class="lang-kz">Жердің ауырлық күші</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Удары движущихся молекул газа о стенки сосуда</span><span class="lang-kz">Қозғалыстағы газ молекулаларының ыдыс қабырғаларына соғылуы</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Трение молекул друг о друга</span><span class="lang-kz">Молекулалардың бір-біріне үйкелісі</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Действие атмосферного давления снаружи</span><span class="lang-kz">Сырттан атмосфералық қысымның әсері</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Как изменится давление газа в закрытом баллоне, если его нагреть?</span>
+                <span class="lang-kz">3. Жабық баллондағы газды қыздырса, оның қысымы қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Увеличится (молекулы станут биться быстрее)</span><span class="lang-kz">Артады (молекулалар жылдамырақ соғыла бастайды)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Уменьшится (газ расширится)</span><span class="lang-kz">Кемиді (газ ұлғаяды)</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Газ исчезнет</span><span class="lang-kz">Газ жоғалып кетеді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. От чего зависит гидростатическое давление жидкости на дно сосуда?</span>
+                <span class="lang-kz">4. Сұйықтықтың ыдыс түбіне түсіретін гидростатикалық қысымы неге тәуелді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Только от формы сосуда</span><span class="lang-kz">Тек ыдыстың пішініне</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Только от площади дна</span><span class="lang-kz">Тек түбінің ауданына</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">От массы всей налитой жидкости</span><span class="lang-kz">Барлық құйылған сұйықтықтың массасына</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">От плотности жидкости и высоты её столба</span><span class="lang-kz">Сұйықтықтың тығыздығына және оның бағанының биіктігіне</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Гидравлический пресс дает выигрыш в силе во столько раз, во сколько...</span>
+                <span class="lang-kz">5. Гидравликалық пресс күштен қанша есе ұтыс береді, сонша есе...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">...плотность масла больше плотности воды</span><span class="lang-kz">...майдың тығыздығы судың тығыздығынан үлкен</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">...площадь большего поршня больше площади малого</span><span class="lang-kz">...үлкен поршеньнің ауданы кіші поршеньнің ауданынан үлкен</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">...высота цилиндра больше его ширины</span><span class="lang-kz">...цилиндрдің биіктігі оның енінен үлкен</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">...давление на большой поршень больше, чем на малый</span><span class="lang-kz">...үлкен поршеньдегі қысым кіші поршеньдегіден үлкен</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            btn_play: '<span class="lang-ru">Нажать!</span><span class="lang-kz">Басу!</span>',
+            btn_reset: '<span class="lang-ru">Отпустить</span><span class="lang-kz">Жіберу</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Жидкое сырое яйцо передает давление пули во все стороны одинаково по закону Паскаля, разрывая скорлупу изнутри.",
+            fbA_inc: "Неверно. Вспомните, как жидкости передают давление (в отличие от твердых тел).",
+            fbB_corr: "Абсолютно верно! p = &rho; · g · h = 1000 · 10 · 3 = 30000 Па (или 30 кПа).",
+            fbB_inc: "Ошибка. Подсказка: умножьте плотность (1000) на g (10) и на глубину (3).",
+            fbC_corr: "Точно! Выигрыш в силе равен S₂ / S₁ = 40 / 2 = 20 раз. Значит, сила F₁ должна быть в 20 раз меньше: 8000 / 20 = 400 Н.",
+            fbC_inc: "Неверно. Найдите, во сколько раз большая площадь больше малой (40 / 2 = 20). Во столько же раз нужная сила F₁ будет МЕНЬШЕ, чем вес груза.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили закон Паскаля.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            obs_init: "Задайте силу и площади, затем нажмите «Нажать!». Посмотрите, во сколько раз увеличится сила на правом поршне (F₂).",
+            obs_placed: "Давление жидкости: p = {p} Па. <br>Сила на правом поршне: <strong>F₂ = {f2} Н</strong>. (Выигрыш в силе: в {ratio} раз).",
+            force_f1: "F₁ = {f} Н",
+            force_f2: "F₂ = {f} Н"
+        },
+        kz: {
+            btn_play: '<span class="lang-ru">Нажать!</span><span class="lang-kz">Басу!</span>',
+            btn_reset: '<span class="lang-ru">Отпустить</span><span class="lang-kz">Жіберу</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Паскаль заңы бойынша сұйық шикі жұмыртқа оқтың қысымын барлық жаққа бірдей беріп, қабығын ішінен жарып жібереді.",
+            fbA_inc: "Қате. Сұйықтықтардың қысымды қалай беретінін (қатты денелерге қарағанда) еске түсіріңіз.",
+            fbB_corr: "Мүлдем дұрыс! p = &rho; · g · h = 1000 · 10 · 3 = 30000 Па (немесе 30 кПа).",
+            fbB_inc: "Қате. Кеңес: тығыздықты (1000) g-ге (10) және тереңдікке (3) көбейтіңіз.",
+            fbC_corr: "Дұрыс! Күштен ұтыс S₂ / S₁ = 40 / 2 = 20 есеге тең. Демек, F₁ күші 20 есе аз болуы керек: 8000 / 20 = 400 Н.",
+            fbC_inc: "Қате. Үлкен ауданның кіші ауданнан неше есе үлкен екенін табыңыз (40 / 2 = 20). Қажетті F₁ күші жүктің салмағынан сонша есе АЗ болады.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз Паскаль заңын өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            obs_init: "Күш пен аудандарды орнатып, «Басу!» түймесін басыңыз. Оң жақ поршеньдегі күш (F₂) неше есе артатынын көріңіз.",
+            obs_placed: "Сұйықтық қысымы: p = {p} Па. <br>Оң жақ поршеньдегі күш: <strong>F₂ = {f2} Н</strong>. (Күштен ұтыс: {ratio} есе).",
+            force_f1: "F₁ = {f} Н",
+            force_f2: "F₂ = {f} Н"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        updateSimText();
+        drawScene(); // Redraw canvas for language changes
+    }
+
+    // --- СИМУЛЯЦИЯ ГИДРАВЛИЧЕСКОГО ПРЕССА ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const f1Slider = document.getElementById('f1Slider');
+    const s1Slider = document.getElementById('s1Slider');
+    const s2Slider = document.getElementById('s2Slider');
+    
+    const f1Val = document.getElementById('f1Val');
+    const s1Val = document.getElementById('s1Val');
+    const s2Val = document.getElementById('s2Val');
+    const obsText = document.getElementById('obsText');
+    
+    const btnPush = document.getElementById('btnPush');
+    const btnReset = document.getElementById('btnReset');
+
+    let isPushed = false;
+    let animFrame;
+    let progress = 0; // от 0 до 1 (0 = отпущено, 1 = полностью нажато)
+    
+    function updateSimText() {
+        if (!isPushed && progress === 0) {
+            obsText.innerHTML = t('obs_init');
+        } else {
+            const f1 = parseFloat(f1Slider.value);
+            const s1 = parseFloat(s1Slider.value); // cm2
+            const s2 = parseFloat(s2Slider.value); // cm2
+            
+            // p = F1 / S1 (в Ньютонах на см2, для урока Паскали = Н/м2, переведем)
+            // 1 см2 = 0.0001 м2
+            const p = Math.round(f1 / (s1 * 0.0001)); 
+            const f2 = Math.round(f1 * (s2 / s1));
+            const ratio = (s2 / s1).toFixed(1);
+            
+            obsText.innerHTML = t('obs_placed', {p: p, f2: f2, ratio: ratio});
+        }
+    }
+
+    function handleInput() {
+        f1Val.textContent = f1Slider.value;
+        s1Val.textContent = s1Slider.value;
+        s2Val.textContent = s2Slider.value;
+        
+        // Если меняем ползунки во время нажатия, обновляем текст
+        if (isPushed || progress > 0) {
+            updateSimText();
+        }
+        drawScene();
+    }
+
+    f1Slider.addEventListener('input', handleInput);
+    s1Slider.addEventListener('input', handleInput);
+    s2Slider.addEventListener('input', handleInput);
+
+    btnPush.addEventListener('click', () => {
+        isPushed = true;
+        updateSimText();
+        if(!animFrame) animate();
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPushed = false;
+        if(!animFrame) animate();
+    });
+
+    function animate() {
+        const speed = 0.05;
+        if (isPushed && progress < 1) {
+            progress += speed;
+            if (progress > 1) progress = 1;
+        } else if (!isPushed && progress > 0) {
+            progress -= speed;
+            if (progress < 0) {
+                progress = 0;
+                updateSimText(); // Вернуть стартовый текст
+            }
+        }
+        
+        drawScene();
+        
+        if ((isPushed && progress < 1) || (!isPushed && progress > 0)) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Чтение параметров
+        const s1 = parseFloat(s1Slider.value); // 5 - 20
+        const s2 = parseFloat(s2Slider.value); // 50 - 400
+        const f1 = parseFloat(f1Slider.value); // 10 - 200
+        const f2 = Math.round(f1 * (s2 / s1));
+        
+        // Визуальные размеры (масштабирование)
+        const w1 = 20 + (s1 - 5) * 2; // от 20 до 50
+        const w2 = 60 + (s2 - 50) * 0.4; // от 60 до 200
+        
+        const tubeBottom = 300;
+        const tubeTop = 150;
+        
+        const x1 = 100 - w1/2; // Центр левой трубы X=100
+        const x2 = 350 - w2/2; // Центр правой трубы X=350
+        
+        // Смещение поршней
+        // Объем перекачанной жидкости сохраняется: V = S1*h1 = S2*h2
+        // Максимальное смещение левого h1_max = 50 пикселей.
+        const h1_max = 50; 
+        const h1 = progress * h1_max;
+        const h2 = h1 * (w1 / w2); // Визуальная зависимость от ширин труб
+        
+        // Рисуем трубы (сосуды) - Серый контур
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        // Левая труба (внешний край)
+        ctx.moveTo(x1, tubeTop);
+        ctx.lineTo(x1, tubeBottom);
+        ctx.lineTo(x2 + w2, tubeBottom); // Дно до правого края
+        ctx.lineTo(x2 + w2, tubeTop);
+        // Внутренний край U-образной трубы
+        ctx.moveTo(x1 + w1, tubeTop);
+        ctx.lineTo(x1 + w1, tubeBottom - 30);
+        ctx.lineTo(x2, tubeBottom - 30);
+        ctx.lineTo(x2, tubeTop);
+        ctx.stroke();
+
+        // Рисуем жидкость (голубая)
+        ctx.fillStyle = '#06b6d4'; // Cyan
+        ctx.beginPath();
+        // Уровень жидкости слева и справа зависит от h1 и h2
+        const l_level = tubeTop + 20 + h1; // Левый опускается
+        const r_level = tubeTop + 20 - h2; // Правый поднимается
+        
+        ctx.moveTo(x1 + 2, l_level);
+        ctx.lineTo(x1 + 2, tubeBottom - 2);
+        ctx.lineTo(x2 + w2 - 2, tubeBottom - 2);
+        ctx.lineTo(x2 + w2 - 2, r_level);
+        ctx.lineTo(x2 + 2, r_level);
+        ctx.lineTo(x2 + 2, tubeBottom - 32);
+        ctx.lineTo(x1 + w1 - 2, tubeBottom - 32);
+        ctx.lineTo(x1 + w1 - 2, l_level);
+        ctx.fill();
+
+        // Левый поршень
+        const p1_y = l_level - 15;
+        ctx.fillStyle = '#64748b'; // Серый
+        ctx.fillRect(x1 + 2, p1_y, w1 - 4, 15);
+        ctx.fillStyle = '#94a3b8'; // Стержень
+        ctx.fillRect(x1 + w1/2 - 3, tubeTop - 20, 6, p1_y - (tubeTop - 20));
+        
+        // Правый поршень
+        const p2_y = r_level - 20;
+        ctx.fillStyle = '#64748b'; // Серый
+        ctx.fillRect(x2 + 2, p2_y, w2 - 4, 20);
+        
+        // Груз (машина или ящик) на правом поршне
+        // Просто рисуем тяжелый ящик с надписью
+        ctx.fillStyle = '#eab308'; // Желтый груз
+        const boxH = 40;
+        ctx.fillRect(x2 + w2/2 - 30, p2_y - boxH, 60, boxH);
+        ctx.strokeStyle = '#a16207';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x2 + w2/2 - 30, p2_y - boxH, 60, boxH);
+        
+        // Рисуем стрелки и подписи, если происходит нажатие
+        if (progress > 0) {
+            // Сила F1 (вниз на стержень)
+            drawArrow(x1 + w1/2, tubeTop - 50, x1 + w1/2, tubeTop - 25, '#ef4444', t('force_f1', {f: f1}));
+            
+            // Сила F2 (вверх на груз)
+            drawArrow(x2 + w2/2 + 40, p2_y - boxH/2 + 20, x2 + w2/2 + 40, p2_y - boxH/2 - 20, '#10b981', t('force_f2', {f: f2}));
+        }
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, label) {
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            // Смещение текста в зависимости от направления стрелки
+            let textY = dy > 0 ? fromY - 10 : toY - 10;
+            ctx.fillText(label, fromX, textY);
+        }
+    }
+
+    // Инициализация холста
+    handleInput();
+    drawScene();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === 'pascal') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseFloat(document.getElementById('taskB').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 30000) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 400) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

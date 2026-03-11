@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сообщающиеся сосуды — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdf4; /* Светло-зеленый (вода/природа) */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #0ea5e9; /* Синий (Вода) */
+            --primary-hover: #0284c7;
+            --secondary: #10b981;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+            
+            --water-color: #38bdf8;
+            --oil-color: #fde047;
+            --honey-color: #d97706;
+            --kero-color: #a7f3d0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0c4a6e;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .math-fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .math-numerator {
+            border-bottom: 2px solid var(--primary);
+            padding: 0 5px;
+        }
+        .math-denominator {
+            padding: 0 5px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(14, 165, 233, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(14, 165, 233, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Сообщающиеся сосуды — 7 класс</span>
+            <span class="lang-kz">Қатынас ыдыстар — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Вы когда-нибудь задумывались, почему вода из чайника не выливается через носик, пока вы его не наклоните? Или как вода без насосов поднимается на верхние этажи из водонапорной башни? Секрет кроется в сообщающихся сосудах!</span>
+            <span class="lang-kz">Сіз шәйнектегі су неліктен оны еңкейткенге дейін шүмегінен төгілмейтіні туралы ойланып көрдіңіз бе? Немесе су сорғысыз су айдау мұнарасынан жоғарғы қабаттарға қалай көтеріледі? Мұның құпиясы қатынас ыдыстарда жатыр!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Что такое сообщающиеся сосуды?</span>
+            <span class="lang-kz">Қатынас ыдыстар дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Сообщающиеся сосуды</strong> — это сосуды, соединенные между собой ниже поверхности жидкости, так что жидкость может свободно перетекать из одного сосуда в другой.</span>
+            <span class="lang-kz"><strong>Қатынас ыдыстар</strong> — сұйықтық бір ыдыстан екіншісіне еркін аға алатындай етіп, сұйықтық бетінен төмен бір-бірімен жалғанған ыдыстар.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Свойство 1 (Однородная жидкость):</strong> В сообщающихся сосудах любой формы и сечения поверхности <strong>однородной жидкости</strong> устанавливаются <strong>на одном уровне</strong>. Это происходит потому, что давление на дно в обоих сосудах должно быть одинаковым (p<sub>1</sub> = p<sub>2</sub>).</span>
+                <span class="lang-kz"><strong>1-қасиет (Біртекті сұйықтық):</strong> Кез келген пішінді және қималы қатынас ыдыстарда <strong>біртекті сұйықтық</strong> беттері <strong>бір деңгейде</strong> орналасады. Бұл екі ыдыстағы түбіне түсетін қысым бірдей болуы керек болғандықтан орын алады (p<sub>1</sub> = p<sub>2</sub>).</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Свойство 2 (Разные жидкости):</strong> Если в сосуды налиты несмешивающиеся жидкости с разной плотностью (например, вода и масло), то их уровни будут <strong>разными</strong>. Высота столба жидкости с <strong>меньшей плотностью</strong> будет <strong>больше</strong>.</span>
+                <span class="lang-kz"><strong>2-қасиет (Әртүрлі сұйықтықтар):</strong> Егер ыдыстарға тығыздығы әртүрлі араласпайтын сұйықтықтар (мысалы, су мен май) құйылса, олардың деңгейлері <strong>әртүрлі</strong> болады. <strong>Тығыздығы аз</strong> сұйықтық бағанының биіктігі <strong>үлкенірек</strong> болады.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Где это применяется?</span>
+            <span class="lang-kz">Бұл қайда қолданылады?</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Чайник или лейка:</strong> Носик и сам корпус образуют сообщающиеся сосуды. Вода в них находится на одном уровне.</span>
+                <span class="lang-kz"><strong>Шәйнек немесе құмыра (лейка):</strong> Шүмек пен корпустың өзі қатынас ыдыстарды құрайды. Олардағы су бір деңгейде болады.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Водонапорная башня:</strong> Большой бак с водой поднимают высоко над землей. Трубы в домах соединены с баком. Вода стремится подняться в трубах до уровня воды в башне, обеспечивая напор на этажах.</span>
+                <span class="lang-kz"><strong>Су айдау мұнарасы:</strong> Суы бар үлкен бак жерден биікке көтеріледі. Үйлердегі құбырлар бакпен жалғанған. Су мұнарадағы су деңгейіне дейін құбырларда көтерілуге тырысады, бұл қабаттарда қысымды қамтамасыз етеді.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Шлюзы на каналах:</strong> Позволяют кораблям переходить из водоема с низким уровнем воды в водоем с высоким (и наоборот) путем перетекания воды и выравнивания уровней.</span>
+                <span class="lang-kz"><strong>Каналдардағы шлюздер:</strong> Кемелерге су деңгейі төмен суқоймадан су деңгейі жоғары суқоймаға (және керісінше) судың ағуы және деңгейлердің теңесуі арқылы өтуге мүмкіндік береді.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Водомерное стекло:</strong> В котлах прозрачная трубка снаружи показывает уровень непрозрачной или горячей жидкости внутри котла.</span>
+                <span class="lang-kz"><strong>Су өлшейтін шыны:</strong> Қазандардағы сыртқы мөлдір түтік қазанның ішіндегі мөлдір емес немесе ыстық сұйықтықтың деңгейін көрсетеді.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Закон сообщающихся сосудов для разных жидкостей</span>
+            <span class="lang-kz">Әртүрлі сұйықтықтар үшін қатынас ыдыстар заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Так как жидкость в покое, давление в обеих ветвях сосуда на уровне раздела жидкостей одинаково: p<sub>1</sub> = p<sub>2</sub>.<br>Запишем гидростатическое давление для каждой ветви: &rho;<sub>1</sub>gh<sub>1</sub> = &rho;<sub>2</sub>gh<sub>2</sub>. Сократив g, получаем формулу:</span>
+            <span class="lang-kz">Сұйықтық тыныштықта болғандықтан, сұйықтықтардың бөліну деңгейінде ыдыстың екі тармағындағы қысым бірдей: p<sub>1</sub> = p<sub>2</sub>.<br>Әр тармақ үшін гидростатикалық қысымды жазайық: &rho;<sub>1</sub>gh<sub>1</sub> = &rho;<sub>2</sub>gh<sub>2</sub>. g-ны қысқартып, формуланы аламыз:</span>
+        </p>
+        
+        <div class="formula-box">
+            <span class="math">
+                <div class="math-fraction">
+                    <div class="math-numerator">h<sub>1</sub></div>
+                    <div class="math-denominator">h<sub>2</sub></div>
+                </div>
+                =
+                <div class="math-fraction">
+                    <div class="math-numerator">&rho;<sub>2</sub></div>
+                    <div class="math-denominator">&rho;<sub>1</sub></div>
+                </div>
+            </span>
+            <p>
+                <span class="lang-ru"><strong>Вывод:</strong> Высоты столбов разнородных жидкостей обратно пропорциональны их плотностям.</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Әртекті сұйықтықтар бағандарының биіктіктері олардың тығыздықтарына кері пропорционал.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Добавим другую жидкость</span>
+            <span class="lang-kz">Симуляция: Басқа сұйықтық қосамыз</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="liquidSelect" style="color: var(--primary)">
+                        <span class="lang-ru">Жидкость в правой трубке:</span>
+                        <span class="lang-kz">Оң жақ түтіктегі сұйықтық:</span>
+                    </label>
+                    <select id="liquidSelect">
+                        <option value="water" data-ru="Вода (1000 кг/м³)" data-kz="Су (1000 кг/м³)">Вода (1000 кг/м³)</option>
+                        <option value="oil" data-ru="Масло подсолнечное (800 кг/м³)" data-kz="Күнбағыс майы (800 кг/м³)" selected>Масло подсолнечное (800 кг/м³)</option>
+                        <option value="kero" data-ru="Керосин (800 кг/м³)" data-kz="Керосин (800 кг/м³)">Керосин (800 кг/м³)</option>
+                        <option value="honey" data-ru="Мёд (1420 кг/м³)" data-kz="Бал (1420 кг/м³)">Мёд (1420 кг/м³)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="heightSlider">
+                        <span class="lang-ru">Высота налитой жидкости (h₂):</span>
+                        <span class="lang-kz">Құйылған сұйықтық биіктігі (h₂):</span>
+                        <span id="heightVal">10</span> <span class="lang-ru">см</span><span class="lang-kz">см</span>
+                    </label>
+                    <input type="range" id="heightSlider" min="0" max="20" step="1" value="10">
+                </div>
+            </div>
+            <div class="canvas-container" style="background-color: #f8fafc; height: 350px;">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Изначально в U-образной трубке налита вода (голубая). Выберите вторую жидкость и изменяйте её количество (h₂). Обратите внимание: уровень легкого масла будет выше уровня воды, а тяжелый мёд опустится ниже!</span>
+                <span class="lang-kz">Бастапқыда U-тәрізді түтікке су құйылған (көгілдір). Екінші сұйықтықты таңдап, оның мөлшерін (h₂) өзгертіңіз. Назар аударыңыз: жеңіл майдың деңгейі су деңгейінен жоғары болады, ал ауыр бал төмен түседі!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> В U-образную трубку налита вода. В правое колено трубки долили слой машинного масла высотой 15 см. На сколько сантиметров уровень масла будет выше уровня воды в левом колене? Плотность воды 1000 кг/м³, плотность масла 800 кг/м³.</span>
+            <span class="lang-kz"><strong>Есеп:</strong> U-тәрізді түтікке су құйылған. Түтіктің оң жақ тармағына биіктігі 15 см машина майы қабаты құйылды. Май деңгейі сол жақ тармақтағы су деңгейінен қанша сантиметрге жоғары болады? Судың тығыздығы 1000 кг/м³, майдың тығыздығы 800 кг/м³.</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>h₂ (масло) = 15 см<br>&rho;₁ (вода) = 1000 кг/м³<br>&rho;₂ (масло) = 800 кг/м³<br><strong>Найти:</strong> &Delta;h = h₂ - h₁ — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>h₂ (май) = 15 см<br>&rho;₁ (су) = 1000 кг/м³<br>&rho;₂ (май) = 800 кг/м³<br><strong>Табу керек:</strong> &Delta;h = h₂ - h₁ — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Формула:</strong><br>Из формулы сообщающихся сосудов найдем высоту столба воды (h₁), который уравновешивает масло:<br>h₁ = h₂ · (&rho;₂ / &rho;₁).<br>Затем найдем разность уровней: &Delta;h = h₂ - h₁.</span>
+                <span class="lang-kz"><strong>Формула:</strong><br>Қатынас ыдыстар формуласынан майды теңестіретін су бағанының биіктігін (h₁) табамыз:<br>h₁ = h₂ · (&rho;₂ / &rho;₁).<br>Содан кейін деңгейлер айырмасын табамыз: &Delta;h = h₂ - h₁.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>h₁ = 15 см · (800 / 1000) = 15 · 0.8 = 12 см.<br>&Delta;h = 15 см - 12 см = 3 см.</span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>h₁ = 15 см · (800 / 1000) = 15 · 0.8 = 12 см.<br>&Delta;h = 15 см - 12 см = 3 см.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Уровень масла будет на 3 см выше уровня воды.</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Май деңгейі су деңгейінен 3 см жоғары болады.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В два стеклянных сосуда, соединенных резиновой трубкой, налили воду. Затем первый сосуд подняли выше второго. Что произойдет с уровнем воды?</span>
+                <span class="lang-kz">Резеңке түтікпен жалғанған екі шыны ыдысқа су құйды. Содан кейін бірінші ыдысты екіншісінен жоғары көтерді. Су деңгейімен не болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вода останется в каждом сосуде на своей изначальной отметке." data-kz="Су әр ыдыста өзінің бастапқы белгісінде қалады.">Вода останется в каждом сосуде на своей изначальной отметке.</option>
+                    <option value="2" data-ru="Уровень воды установится на одной горизонтальной линии в обоих сосудах." data-kz="Екі ыдыста да су деңгейі бір көлденең сызықта орналасады.">Уровень воды установится на одной горизонтальной линии в обоих сосудах.</option>
+                    <option value="3" data-ru="Вся вода перетечет в нижний сосуд." data-kz="Барлық су төменгі ыдысқа ағып кетеді.">Вся вода перетечет в нижний сосуд.</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В левом колене U-образной трубки находится вода, а в правом — неизвестная жидкость. При этом высота столба воды (от уровня раздела) h₁ = 10 см, а высота столба неизвестной жидкости h₂ = 12,5 см. Чему равна плотность неизвестной жидкости? (&rho; воды = 1000 кг/м³). Введите число в кг/м³.</span>
+                <span class="lang-kz">U-тәрізді түтіктің сол жақ тармағында су, ал оң жағында — белгісіз сұйықтық бар. Бұл ретте су бағанының биіктігі (бөліну деңгейінен) h₁ = 10 см, ал белгісіз сұйықтық бағанының биіктігі h₂ = 12,5 см. Белгісіз сұйықтықтың тығыздығы неге тең? (&rho; су = 1000 кг/м³). Санды кг/м³-мен енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 800" data-placeholder-kz="Мысалы: 800" placeholder="Например: 800">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В сообщающихся сосудах поверх воды налили слой керосина (&rho; = 800 кг/м³). Разница уровней (расстояние от верхнего уровня воды до верхнего уровня керосина) составила 5 см. Какова высота столба керосина? (h₂)</span>
+                <span class="lang-kz">Қатынас ыдыстарда судың үстіне керосин қабаты (&rho; = 800 кг/м³) құйылды. Деңгейлер айырмасы (жоғарғы су деңгейінен жоғарғы керосин деңгейіне дейінгі қашықтық) 5 см құрады. Керосин бағанының биіктігі қандай? (h₂)</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в см" data-placeholder-kz="Жауап см-мен" placeholder="Ответ в см">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Подсказка: Обозначьте высоту воды как h<sub>1</sub>, керосина как h<sub>2</sub>. Мы знаем, что h<sub>2</sub> - h<sub>1</sub> = 5 см. Используйте формулу плотностей: h<sub>1</sub> / h<sub>2</sub> = 800 / 1000.</span>
+                <span class="lang-kz">Кеңес: Судың биіктігін h<sub>1</sub>, керосиндікін h<sub>2</sub> деп белгілеңіз. Біз h<sub>2</sub> - h<sub>1</sub> = 5 см екенін білеміз. Тығыздықтар формуласын қолданыңыз: h<sub>1</sub> / h<sub>2</sub> = 800 / 1000.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите короткое видео с экспериментами, показывающими свойства сообщающихся сосудов в действии!</span>
+            <span class="lang-kz">Қатынас ыдыстардың қасиеттерін іс жүзінде көрсететін эксперименттері бар қысқа бейнені қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B0%D1%8E%D1%89%D0%B8%D0%B5%D1%81%D1%8F+%D1%81%D0%BE%D1%81%D1%83%D0%B4%D1%8B+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Сообщающиеся сосуды» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Қатынас ыдыстар» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, что такое сообщающиеся сосуды и как в них распределяется однородная жидкость.</span>
+                <span class="lang-kz">Мен қатынас ыдыстар деген не екенін және оларда біртекті сұйықтық қалай таралатынын білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу привести примеры применения сообщающихся сосудов в быту и технике.</span>
+                <span class="lang-kz">Мен қатынас ыдыстардың тұрмыста және техникада қолданылуына мысалдар келтіре аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею решать задачи на равновесие жидкостей разной плотности.</span>
+                <span class="lang-kz">Мен әртүрлі тығыздықтағы сұйықтықтардың тепе-теңдігіне есептер шығара аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Какие сосуды называются сообщающимися?</span>
+                <span class="lang-kz">1. Қандай ыдыстар қатынас ыдыстар деп аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Сосуды одинаковой формы и объема</span><span class="lang-kz">Пішіні мен көлемі бірдей ыдыстар</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Сосуды, в которые налита одинаковая жидкость</span><span class="lang-kz">Бірдей сұйықтық құйылған ыдыстар</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Сосуды, соединенные между собой в нижней части</span><span class="lang-kz">Төменгі бөлігінде бір-бірімен жалғанған ыдыстар</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Любые открытые сверху сосуды</span><span class="lang-kz">Жоғарыдан ашық кез келген ыдыстар</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Как располагаются поверхности однородной жидкости в сообщающихся сосудах?</span>
+                <span class="lang-kz">2. Қатынас ыдыстарда біртекті сұйықтық беттері қалай орналасады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">В более широком сосуде уровень жидкости выше</span><span class="lang-kz">Кеңірек ыдыста сұйықтық деңгейі жоғарырақ</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">На одном уровне</span><span class="lang-kz">Бір деңгейде</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">В более узком сосуде уровень жидкости выше</span><span class="lang-kz">Тар ыдыста сұйықтық деңгейі жоғарырақ</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Зависит от массы налитой жидкости в каждое колено</span><span class="lang-kz">Әр тармаққа құйылған сұйықтықтың массасына байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. В U-образную трубку налили воду и растительное масло. Уровень какой жидкости будет выше? (Плотность масла меньше плотности воды).</span>
+                <span class="lang-kz">3. U-тәрізді түтікке су және өсімдік майы құйылды. Қай сұйықтықтың деңгейі жоғары болады? (Майдың тығыздығы судың тығыздығынан аз).</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Уровень масла будет выше</span><span class="lang-kz">Май деңгейі жоғары болады</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Уровень воды будет выше</span><span class="lang-kz">Су деңгейі жоғары болады</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Уровни будут одинаковыми</span><span class="lang-kz">Деңгейлер бірдей болады</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Определить невозможно</span><span class="lang-kz">Анықтау мүмкін емес</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Какое из устройств НЕ работает по принципу сообщающихся сосудов?</span>
+                <span class="lang-kz">4. Қай құрылғы қатынас ыдыстар принципі бойынша ЖҰМЫС ІСТЕМЕЙДІ?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Чайник</span><span class="lang-kz">Шәйнек</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Водонапорная башня</span><span class="lang-kz">Су айдау мұнарасы</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Шлюз на реке</span><span class="lang-kz">Өзендегі шлюз</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Медицинский шприц</span><span class="lang-kz">Медициналық шприц</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Почему при наклоне чайника вода начинает выливаться из носика?</span>
+                <span class="lang-kz">5. Неліктен шәйнекті еңкейткен кезде су шүмектен аға бастайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Вода стекает вниз по стенкам</span><span class="lang-kz">Су қабырғалар бойымен төмен қарай ағады</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Жидкость стремится сохранить единый горизонтальный уровень, поэтому перетекает в опущенный носик</span><span class="lang-kz">Сұйықтық бірыңғай көлденең деңгейді сақтауға тырысады, сондықтан ол төмен түсірілген шүмекке ағады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">В носике создается вакуум, который засасывает воду</span><span class="lang-kz">Шүмекте суды соратын вакуум пайда болады</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Из-за повышения атмосферного давления</span><span class="lang-kz">Атмосфералық қысымның жоғарылауына байланысты</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Это однородная жидкость. Жидкость всегда стремится занять один и тот же горизонтальный уровень во всех соединенных открытых сосудах.",
+            fbA_inc: "Неверно. Вспомните первое свойство сообщающихся сосудов: жидкость выравнивается относительно горизонта.",
+            fbB_corr: "Абсолютно верно! Плотности обратно пропорциональны высотам: &rho;₂ = &rho;₁ · (h₁ / h₂) = 1000 · (10 / 12,5) = 800 кг/м³.",
+            fbB_inc: "Ошибка. Подсказка: умножьте плотность воды на высоту воды и разделите на высоту неизвестной жидкости.",
+            fbC_corr: "Точно! Керосин высотой 25 см уравновешивается 20 см воды (так как 25*800 = 20*1000). Разница уровней: 25 - 20 = 5 см. Следовательно, высота керосина 25 см.",
+            fbC_inc: "Неверно. Составьте систему уравнений: h₂ - h₁ = 5 и h₁ / h₂ = 0.8. Отсюда h₁ = 0.8 * h₂. Подставляем: h₂ - 0.8 * h₂ = 5 => 0.2 * h₂ = 5 => h₂ = 25.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            sim_water: "Вода",
+            sim_added: "{n}"
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Бұл біртекті сұйықтық. Сұйықтық барлық жалғанған ашық ыдыстарда әрқашан бірдей көлденең деңгейді алуға тырысады.",
+            fbA_inc: "Қате. Қатынас ыдыстардың бірінші қасиетін еске түсіріңіз: сұйықтық көкжиекке қатысты теңеседі.",
+            fbB_corr: "Мүлдем дұрыс! Тығыздықтар биіктіктерге кері пропорционал: &rho;₂ = &rho;₁ · (h₁ / h₂) = 1000 · (10 / 12,5) = 800 кг/м³.",
+            fbB_inc: "Қате. Кеңес: судың тығыздығын судың биіктігіне көбейтіп, белгісіз сұйықтықтың биіктігіне бөліңіз.",
+            fbC_corr: "Дұрыс! 25 см керосин 20 см сумен теңестіріледі (өйткені 25*800 = 20*1000). Деңгейлер айырмасы: 25 - 20 = 5 см. Демек, керосин биіктігі 25 см.",
+            fbC_inc: "Қате. Теңдеулер жүйесін құрыңыз: h₂ - h₁ = 5 және h₁ / h₂ = 0.8. Бұдан h₁ = 0.8 * h₂. Орнына қоямыз: h₂ - 0.8 * h₂ = 5 => 0.2 * h₂ = 5 => h₂ = 25.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            sim_water: "Су",
+            sim_added: "{n}"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        drawScene(); // Redraw canvas for language changes
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const liquidSelect = document.getElementById('liquidSelect');
+    const heightSlider = document.getElementById('heightSlider');
+    const heightVal = document.getElementById('heightVal');
+
+    // Плотности жидкостей
+    const densities = {
+        water: { name: {ru: 'Вода', kz: 'Су'}, rho: 1000, color: 'rgba(56, 189, 248, 0.7)' },
+        oil: { name: {ru: 'Масло', kz: 'Май'}, rho: 800, color: 'rgba(253, 224, 71, 0.8)' },
+        kero: { name: {ru: 'Керосин', kz: 'Керосин'}, rho: 800, color: 'rgba(167, 243, 208, 0.6)' },
+        honey: { name: {ru: 'Мёд', kz: 'Бал'}, rho: 1420, color: 'rgba(217, 119, 6, 0.9)' }
+    };
+
+    function handleInput() {
+        heightVal.textContent = heightSlider.value;
+        drawScene();
+    }
+
+    liquidSelect.addEventListener('change', handleInput);
+    heightSlider.addEventListener('input', handleInput);
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const h2_cm = parseFloat(heightSlider.value); // от 0 до 20 см
+        const selLiq = liquidSelect.value;
+        const rho1 = densities['water'].rho;
+        const rho2 = densities[selLiq].rho;
+        
+        // Масштабирование: 1 см = 5 пикселей
+        const scale = 6; 
+        
+        // Геометрия трубки
+        const baseLevel = 280; // уровень дна
+        const tubeW = 40; // ширина ветви
+        const tubeGap = 80;
+        const x1 = canvas.width / 2 - tubeGap / 2 - tubeW; // Левая ветвь
+        const x2 = canvas.width / 2 + tubeGap / 2; // Правая ветвь
+        const initialWaterLevel = baseLevel - 150; // Базовый уровень воды (когда h2 = 0)
+        
+        // Физика:
+        // Полная "длина" воды постоянна. Пусть общая высота воды H_total.
+        // Изначально h_left = 150, h_right = 150 -> H_total = 300.
+        // При добавлении жидкости:
+        // p_interface = rho2 * g * h2
+        // Слева: p_left = rho1 * g * (h_left_new - interface_y)
+        // h_left_new + interface_y (отсчет от дна) = H_total
+        // Чтобы упростить: 
+        // Разница уровней воды = h2 * (rho2 / rho1)
+        // Уровень раздела жидкости (правая ветвь) опускается на половину этой разницы, 
+        // уровень воды слева поднимается на половину этой разницы.
+        
+        const h2_px = h2_cm * scale;
+        const waterDiff_px = h2_px * (rho2 / rho1);
+        
+        const waterL_h = 150 + waterDiff_px / 2; // Высота воды слева от дна
+        const waterR_h = 150 - waterDiff_px / 2; // Высота воды справа от дна (граница раздела)
+        
+        const interfaceY = baseLevel - waterR_h;
+        const waterLY = baseLevel - waterL_h;
+        const rightTopY = interfaceY - h2_px;
+
+        // --- Рисуем воду ---
+        ctx.fillStyle = densities['water'].color;
+        
+        // Левый столб
+        ctx.fillRect(x1, waterLY, tubeW, baseLevel - waterLY);
+        // Правый столб (до границы раздела)
+        ctx.fillRect(x2, interfaceY, tubeW, baseLevel - interfaceY);
+        // Соединительная часть
+        ctx.fillRect(x1, baseLevel - tubeW, tubeW * 2 + tubeGap, tubeW);
+        
+        // --- Рисуем вторую жидкость ---
+        if (h2_px > 0) {
+            ctx.fillStyle = densities[selLiq].color;
+            ctx.fillRect(x2, rightTopY, tubeW, h2_px);
+        }
+
+        // --- Рисуем саму трубку (стекло) ---
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        // Левый внешний
+        ctx.moveTo(x1, 50);
+        ctx.lineTo(x1, baseLevel);
+        // Дно
+        ctx.lineTo(x2 + tubeW, baseLevel);
+        // Правый внешний
+        ctx.lineTo(x2 + tubeW, 50);
+        
+        // Левый внутренний
+        ctx.moveTo(x1 + tubeW, 50);
+        ctx.lineTo(x1 + tubeW, baseLevel - tubeW);
+        // Дно внутреннее
+        ctx.lineTo(x2, baseLevel - tubeW);
+        // Правый внутренний
+        ctx.lineTo(x2, 50);
+        ctx.stroke();
+
+        // --- Линии и подписи ---
+        ctx.lineWidth = 1;
+        ctx.font = '14px sans-serif';
+        
+        // Линия границы раздела
+        if (h2_px > 0) {
+            ctx.strokeStyle = '#94a3b8';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(x1 - 20, interfaceY);
+            ctx.lineTo(x2 + tubeW + 20, interfaceY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Высота h2
+            drawArrow(x2 + tubeW + 15, rightTopY, x2 + tubeW + 15, interfaceY, '#64748b');
+            ctx.fillStyle = '#475569';
+            ctx.textAlign = 'left';
+            ctx.fillText(`h₂ = ${h2_cm} см`, x2 + tubeW + 20, interfaceY - h2_px/2 + 5);
+            
+            // Высота h1 (воды выше границы раздела)
+            drawArrow(x1 - 15, waterLY, x1 - 15, interfaceY, '#64748b');
+            ctx.textAlign = 'right';
+            const h1_cm = (waterDiff_px / scale).toFixed(1);
+            ctx.fillText(`h₁ = ${h1_cm} см`, x1 - 20, interfaceY - waterDiff_px/2 + 5);
+        }
+
+        // Названия жидкостей
+        ctx.fillStyle = '#0284c7';
+        ctx.textAlign = 'center';
+        ctx.fillText(t('sim_water'), x1 + tubeW/2, waterLY - 10);
+        
+        if (h2_px > 0) {
+            ctx.fillStyle = '#b45309';
+            const liqName = t('sim_added', {n: densities[selLiq].name[currentLang]});
+            ctx.fillText(liqName, x2 + tubeW/2, rightTopY - 10);
+        }
+    }
+
+    // Двусторонняя стрелка для размера
+    function drawArrow(x1, y1, x2, y2, color) {
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        
+        const size = 5;
+        // Верхний треугольник
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1-size, y1+size); ctx.lineTo(x1+size, y1+size); ctx.fill();
+        // Нижний треугольник
+        ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2-size, y2-size); ctx.lineTo(x2+size, y2-size); ctx.fill();
+    }
+
+    // Инициализация
+    handleInput();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseFloat(document.getElementById('taskB').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 800) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 25) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

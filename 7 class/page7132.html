@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Манометры, насосы. Выталкивающая сила — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #4f46e5; /* Индиго (наука) */
+            --primary-hover: #4338ca;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #e0e7ff;
+            
+            --water-color: rgba(56, 189, 248, 0.5);
+            --oil-color: rgba(253, 224, 71, 0.6);
+            --honey-color: rgba(217, 119, 6, 0.7);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #312e81;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(79, 70, 229, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(79, 70, 229, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Манометры, насосы. Выталкивающая сила — 7 класс</span>
+            <span class="lang-kz">Манометрлер, сорғылар. Ығыстырушы күш — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как измерить давление внутри шины велосипеда? За счет чего вода поднимается вверх за поршнем насоса? И почему тяжелые многотонные стальные корабли не тонут в океане? Давайте разберемся!</span>
+            <span class="lang-kz">Велосипед шинасының ішіндегі қысымды қалай өлшеуге болады? Неліктен су сорғының поршенімен бірге жоғары көтеріледі? Және неге ауыр көп тонналық болат кемелер мұхитта батпайды? Осыны анықтайық!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: МАНОМЕТРЫ И НАСОСЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Манометры и насосы</span>
+            <span class="lang-kz">Манометрлер және сорғылар</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Барометры измеряют атмосферное давление. А как измерить давление газа или жидкости внутри закрытого сосуда (например, в баллоне или трубе)? Для этого служат <strong>манометры</strong> (от греч. «манос» — редкий, неплотный).</span>
+            <span class="lang-kz">Барометрлер атмосфералық қысымды өлшейді. Ал жабық ыдыстың (мысалы, баллонда немесе құбырда) ішіндегі газ немесе сұйықтық қысымын қалай өлшеуге болады? Бұл үшін <strong>манометрлер</strong> (грек тілінен аударғанда «манос» — сирек, тығыз емес) қолданылады.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Жидкостный манометр:</strong> Представляет собой U-образную трубку, заполненную жидкостью (водой). Одно колено соединяют с сосудом, другое открыто в атмосферу. Разность уровней жидкости показывает, насколько давление в сосуде отличается от атмосферного.</span>
+                <span class="lang-kz"><strong>Сұйықтықты манометр:</strong> Сұйықтықпен (сумен) толтырылған U-тәрізді түтік. Бір тармағы ыдыспен жалғанады, екіншісі атмосфераға ашық. Сұйықтық деңгейлерінің айырмасы ыдыстағы қысымның атмосфералық қысымнан қаншалықты ерекшеленетінін көрсетеді.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Металлический манометр:</strong> Состоит из согнутой в дугу упругой металлической трубки. При увеличении давления внутри трубки она начинает распрямляться и тянет за собой стрелку по шкале.</span>
+                <span class="lang-kz"><strong>Металл манометр:</strong> Доға тәрізді иілген серпімді металл түтіктен тұрады. Түтік ішіндегі қысым артқан кезде ол түзеле бастап, шкала бойынша көрсеткішті (стрелканы) өзімен бірге тартады.</span>
+            </li>
+        </ul>
+        <br>
+        <p>
+            <span class="lang-ru"><strong>Поршневой жидкостный насос:</strong> Действие простого водяного насоса основано на атмосферном давлении! Когда поршень идет вверх, между ним и водой образуется безвоздушное пространство. Наружное атмосферное давление давит на воду в колодце и загоняет её вверх в насос. <em>Интересный факт: такой насос не может поднять воду выше 10 метров, так как атмосферное давление способно удержать водяной столб высотой не более 10.3 м!</em></span>
+            <span class="lang-kz"><strong>Поршеньді сұйықтық сорғысы:</strong> Қарапайым су сорғысының әрекеті атмосфералық қысымға негізделген! Поршень жоғары көтерілгенде, оның және судың арасында ауасыз кеңістік пайда болады. Сыртқы атмосфералық қысым құдықтағы суға қысым жасап, оны сорғының ішіне жоғары қарай айдайды. <em>Қызықты факт: мұндай сорғы суды 10 метрден биікке көтере алмайды, өйткені атмосфералық қысым биіктігі 10.3 метрден аспайтын су бағанын ғана ұстап тұра алады!</em></span>
+        </p>
+    </section>
+
+    <!-- 3. ВЫТАЛКИВАЮЩАЯ СИЛА -->
+    <section>
+        <h2>
+            <span class="lang-ru">Выталкивающая сила (Сила Архимеда)</span>
+            <span class="lang-kz">Ығыстырушы күш (Архимед күші)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Почему в воде легко поднять тяжелый камень, который на суше сдвинуть трудно? Потому что со стороны жидкости на любое погруженное тело действует сила, выталкивающая его вверх.</span>
+            <span class="lang-kz">Құрлықта жылжыту қиын болатын ауыр тасты суда көтеру неліктен оңай? Өйткені сұйықтық тарапынан кез келген батырылған денеге оны жоғары қарай ығыстыратын күш әрекет етеді.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Причина возникновения:</strong> Давление в жидкости растет с глубиной. Значит, на нижнюю часть тела жидкость давит снизу вверх <strong>сильнее</strong>, чем на верхнюю часть сверху вниз. Разница этих сил и образует выталкивающую силу!</span>
+                <span class="lang-kz"><strong>Пайда болу себебі:</strong> Сұйықтықтағы қысым тереңдікке байланысты артады. Демек, дененің төменгі бөлігіне сұйықтық төменнен жоғары қарай жоғарғы бөлігіне қарағанда <strong>күштірек</strong> қысым жасайды. Осы күштердің айырмасы ығыстырушы күшті құрайды!</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Закон Архимеда:</strong> Выталкивающая сила равна весу жидкости в объеме погруженной части тела.</span>
+                <span class="lang-kz"><strong>Архимед заңы:</strong> Ығыстырушы күш дененің батқан бөлігінің көлеміндегі сұйықтықтың салмағына тең.</span>
+            </li>
+        </ul>
+        
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Формула Силы Архимеда:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Архимед күшінің формуласы:</span>
+            <span class="math">F<sub>А</sub> = &rho;<sub>ж</sub> &middot; g &middot; V<sub>т</sub></span>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">Где:<br>
+                <strong>F<sub>А</sub></strong> — выталкивающая сила (Н Ньютоны).<br>
+                <strong>&rho;<sub>ж</sub></strong> — плотность жидкости (кг/м³). <em>Зависит от жидкости! В соленой воде сила больше.</em><br>
+                <strong>g</strong> &asymp; 10 Н/кг.<br>
+                <strong>V<sub>т</sub></strong> — объем ПОГРУЖЕННОЙ части тела (м³).
+                </span>
+                <span class="lang-kz">Мұндағы:<br>
+                <strong>F<sub>А</sub></strong> — ығыстырушы күш (Н Ньютон).<br>
+                <strong>&rho;<sub>ж</sub></strong> — сұйықтықтың тығыздығы (кг/м³). <em>Сұйықтыққа байланысты! Тұзды суда бұл күш көбірек.</em><br>
+                <strong>g</strong> &asymp; 10 Н/кг.<br>
+                <strong>V<sub>т</sub></strong> — дененің БАТҚАН бөлігінің көлемі (м³).
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 4. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Плавать или тонуть?</span>
+            <span class="lang-kz">Симуляция: Жүзу ме әлде бату ма?</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="liquidSelect" style="color: var(--secondary)">
+                        <span class="lang-ru">Жидкость в резервуаре:</span>
+                        <span class="lang-kz">Резервуардағы сұйықтық:</span>
+                    </label>
+                    <select id="liquidSelect">
+                        <option value="water" data-ru="Вода (&rho; = 1000 кг/м³)" data-kz="Су (&rho; = 1000 кг/м³)">Вода (&rho; = 1000 кг/м³)</option>
+                        <option value="oil" data-ru="Масло (&rho; = 800 кг/м³)" data-kz="Май (&rho; = 800 кг/м³)">Масло (&rho; = 800 кг/м³)</option>
+                        <option value="honey" data-ru="Мёд (&rho; = 1420 кг/м³)" data-kz="Бал (&rho; = 1420 кг/м³)">Мёд (&rho; = 1420 кг/м³)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="massSlider">
+                        <span class="lang-ru">Масса тела (m):</span>
+                        <span class="lang-kz">Дене массасы (m):</span>
+                        <span id="massVal">5</span> <span class="lang-ru">кг</span><span class="lang-kz">кг</span>
+                    </label>
+                    <input type="range" id="massSlider" min="1" max="15" step="1" value="5">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="volSlider">
+                        <span class="lang-ru">Объем тела (V):</span>
+                        <span class="lang-kz">Дене көлемі (V):</span>
+                        <span id="volVal">10</span> <span class="lang-ru">литров (0.01 м³)</span><span class="lang-kz">литр (0.01 м³)</span>
+                    </label>
+                    <input type="range" id="volSlider" min="2" max="15" step="1" value="10">
+                </div>
+            </div>
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Анализ сил:</span>
+                <span class="lang-kz">Күштерді талдау:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">...</span>
+                <span class="lang-kz">...</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 5. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> Железная деталь объемом 0.002 м³ полностью погружена в воду. Какая выталкивающая сила действует на нее? Плотность воды 1000 кг/м³. (g = 10 Н/кг).</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Көлемі 0.002 м³ темір бөлшек суға толығымен батырылған. Оған қандай ығыстырушы күш әрекет етеді? Судың тығыздығы 1000 кг/м³. (g = 10 Н/кг).</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>V<sub>т</sub> = 0.002 м³<br>&rho;<sub>ж</sub> = 1000 кг/м³<br><strong>Найти:</strong> F<sub>А</sub> — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>V<sub>т</sub> = 0.002 м³<br>&rho;<sub>ж</sub> = 1000 кг/м³<br><strong>Табу керек:</strong> F<sub>А</sub> — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>Воспользуемся формулой силы Архимеда:<br>F<sub>А</sub> = &rho;<sub>ж</sub> &middot; g &middot; V<sub>т</sub><br>F<sub>А</sub> = 1000 кг/м³ &middot; 10 Н/кг &middot; 0.002 м³ = 20 Н.</span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>Архимед күшінің формуласын қолданамыз:<br>F<sub>А</sub> = &rho;<sub>ж</sub> &middot; g &middot; V<sub>т</sub><br>F<sub>А</sub> = 1000 кг/м³ &middot; 10 Н/кг &middot; 0.002 м³ = 20 Н.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Выталкивающая сила равна 20 Ньютонов. <em>Заметьте: плотность самого железа нам не понадобилась, важен только объем детали и плотность жидкости!</em></span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Ығыстырушы күш 20 Ньютонға тең. <em>Назар аударыңыз: темірдің өз тығыздығы бізге қажет болмады, тек бөлшектің көлемі мен сұйықтықтың тығыздығы маңызды!</em></span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Алюминиевый и медный сплошные кубики <strong>одинакового объема</strong> опустили в аквариум с водой. Медь тяжелее алюминия. На какой из кубиков действует бóльшая выталкивающая сила?</span>
+                <span class="lang-kz"><strong>Көлемдері бірдей</strong> алюминий және мыс тұтас текшелерді суы бар аквариумға батырды. Мыс алюминийден ауыр. Қай текшеге үлкенірек ығыстырушы күш әрекет етеді?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="На медный, так как он тяжелее" data-kz="Мысқа, өйткені ол ауыр">На медный, так как он тяжелее</option>
+                    <option value="2" data-ru="На алюминиевый, так как он легче" data-kz="Алюминийге, өйткені ол жеңіл">На алюминиевый, так как он легче</option>
+                    <option value="3" data-ru="Выталкивающие силы одинаковы" data-kz="Ығыстырушы күштер бірдей">Выталкивающие силы одинаковы</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Камень объемом 0.05 м³ целиком погружен в воду (&rho; = 1000 кг/м³). Вычислите силу Архимеда, действующую на камень. (g = 10 Н/кг). Введите только число в Ньютонах.</span>
+                <span class="lang-kz">Көлемі 0.05 м³ тас суға толығымен батырылған (&rho; = 1000 кг/м³). Тасқа әрекет ететін Архимед күшін есептеңіз. (g = 10 Н/кг). Тек Ньютонмен санды енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 100" data-placeholder-kz="Мысалы: 100" placeholder="Например: 100">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Тело плавает на поверхности воды, при этом под водой находится ровно половина его объема. Плотность воды 1000 кг/м³. Чему равна плотность самого тела?</span>
+                <span class="lang-kz">Дене су бетінде жүзіп жүр, бұл ретте оның көлемінің дәл жартысы су астында. Судың тығыздығы 1000 кг/м³. Дененің өз тығыздығы неге тең?</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в кг/м³" data-placeholder-kz="Жауап кг/м³-мен" placeholder="Ответ в кг/м³">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Подсказка: Если тело плавает, сила тяжести равна силе Архимеда. Если в воде половина объема, значит плотность тела в 2 раза меньше плотности воды.</span>
+                <span class="lang-kz">Кеңес: Егер дене жүзіп жүрсе, ауырлық күші Архимед күшіне тең. Егер суда көлемнің жартысы болса, онда дененің тығыздығы судың тығыздығынан 2 есе аз.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видеоуроки о том, как работает сила Архимеда и почему железные корабли не тонут!</span>
+            <span class="lang-kz">Архимед күші қалай жұмыс істейтіні және темір кемелер неге батпайтыны туралы бейнесабақтарды қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%81%D0%B8%D0%BB%D0%B0+%D0%B0%D1%80%D1%85%D0%B8%D0%BC%D0%B5%D0%B4%D0%B0+%D0%B2%D1%8B%D1%82%D0%B0%D0%BB%D0%BA%D0%B8%D0%B2%D0%B0%D1%8E%D1%89%D0%B0%D1%8F+%D1%81%D0%B8%D0%BB%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Сила Архимеда» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Архимед күші» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 8. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, что измеряет манометр.</span>
+                <span class="lang-kz">Мен манометр нені өлшейтінін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понимаю причину возникновения выталкивающей силы.</span>
+                <span class="lang-kz">Мен ығыстырушы күштің пайда болу себебін түсінемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею рассчитывать силу Архимеда по формуле.</span>
+                <span class="lang-kz">Мен Архимед күшін формула бойынша есептей аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 9. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Какой прибор используют для измерения давления газа в закрытом баллоне?</span>
+                <span class="lang-kz">1. Жабық баллондағы газ қысымын өлшеу үшін қандай құрал қолданылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Барометр</span><span class="lang-kz">Барометр</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Манометр</span><span class="lang-kz">Манометр</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Динамометр</span><span class="lang-kz">Динамометр</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Термометр</span><span class="lang-kz">Термометр</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Что является причиной возникновения выталкивающей силы, действующей на тело в жидкости?</span>
+                <span class="lang-kz">2. Сұйықтықтағы денеге әрекет ететін ығыстырушы күштің пайда болу себебі неде?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Сила трения жидкости о поверхность тела</span><span class="lang-kz">Сұйықтықтың дене бетіне үйкеліс күші</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Атмосферное давление, давящее на поверхность жидкости</span><span class="lang-kz">Сұйықтық бетіне түсетін атмосфералық қысым</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Разность давлений жидкости на нижнюю и верхнюю части тела</span><span class="lang-kz">Сұйықтықтың дененің төменгі және жоғарғы бөліктеріне түсіретін қысымдарының айырмасы</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Плотность самого тела</span><span class="lang-kz">Дененің өз тығыздығы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. От чего зависит выталкивающая сила (сила Архимеда)?</span>
+                <span class="lang-kz">3. Ығыстырушы күш (Архимед күші) неге тәуелді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">От плотности жидкости и объема погруженной части тела</span><span class="lang-kz">Сұйықтықтың тығыздығына және дененің батқан бөлігінің көлеміне</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">От плотности самого тела и глубины погружения</span><span class="lang-kz">Дененің өз тығыздығына және бату тереңдігіне</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">От формы тела и массы жидкости</span><span class="lang-kz">Дененің пішініне және сұйықтықтың массасына</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Только от объема сосуда</span><span class="lang-kz">Тек ыдыстың көлеміне</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Металлический шарик целиком погрузили сначала в чистую воду, а затем в соленую воду. Изменится ли сила Архимеда? (Плотность соленой воды больше).</span>
+                <span class="lang-kz">4. Металл шарикті алдымен таза суға, содан кейін тұзды суға толығымен батырды. Архимед күші өзгере ме? (Тұзды судың тығыздығы үлкен).</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Нет, не изменится, объем шарика тот же</span><span class="lang-kz">Жоқ, өзгермейді, шариктің көлемі бірдей</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Увеличится в соленой воде, так как ее плотность больше</span><span class="lang-kz">Тұзды суда артады, өйткені оның тығыздығы үлкенірек</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Уменьшится в соленой воде</span><span class="lang-kz">Тұзды суда кемиді</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Сила Архимеда пропадет</span><span class="lang-kz">Архимед күші жойылады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">5. Благодаря какому физическому явлению вода поднимается вслед за поршнем в жидкостном насосе?</span>
+                <span class="lang-kz">5. Қандай физикалық құбылыстың арқасында сұйықтық сорғысында су поршеньмен бірге жоғары көтеріледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Сила трения</span><span class="lang-kz">Үйкеліс күші</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Сила Архимеда</span><span class="lang-kz">Архимед күші</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Магнитное притяжение</span><span class="lang-kz">Магниттік тартылыс</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Атмосферное давление</span><span class="lang-kz">Атмосфералық қысым</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Сила Архимеда зависит ТОЛЬКО от объема тела и плотности жидкости. Раз объемы кубиков одинаковы, выталкивающие силы равны (хотя медный кубик и будет сильнее тянуть на дно из-за бóльшей силы тяжести).",
+            fbA_inc: "Неверно. Вспомните формулу силы Архимеда. Есть ли там плотность или масса САМОГО тела?",
+            fbB_corr: "Абсолютно верно! F_A = 1000 * 10 * 0.05 = 500 Н.",
+            fbB_inc: "Ошибка. Подсказка: перемножьте плотность жидкости, g (10) и объем.",
+            fbC_corr: "Точно! Плотность тела равна 500 кг/м³.",
+            fbC_inc: "Неверно. Прочитайте подсказку внимательно: раз погружена половина, плотность тела составляет половину от 1000.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            obs_float: "Тело плавает! Сила тяжести (F<sub>тяж</sub> = {fg} Н) уравновешена силой Архимеда (F<sub>А</sub> = {fa} Н). Погружено {perc}% объема.",
+            obs_sink: "Тело утонуло! Максимальная сила Архимеда (F<sub>А</sub> = {fa} Н) меньше силы тяжести (F<sub>тяж</sub> = {fg} Н).",
+            obs_hover: "Тело зависло в жидкости! Плотности равны. F<sub>тяж</sub> = F<sub>А</sub> = {fg} Н."
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Архимед күші ТЕК дененің көлеміне және сұйықтықтың тығыздығына тәуелді. Текшелердің көлемдері бірдей болғандықтан, ығыстырушы күштер тең (дегенмен мыс текше ауырлық күшінің арқасында түбіне қаттырақ тартады).",
+            fbA_inc: "Қате. Архимед күшінің формуласын еске түсіріңіз. Онда ДЕНЕНІҢ ӨЗ тығыздығы немесе массасы бар ма?",
+            fbB_corr: "Мүлдем дұрыс! F_A = 1000 * 10 * 0.05 = 500 Н.",
+            fbB_inc: "Қате. Кеңес: сұйықтық тығыздығын, g (10) және көлемді көбейтіңіз.",
+            fbC_corr: "Дұрыс! Дененің тығыздығы 500 кг/м³-ге тең.",
+            fbC_inc: "Қате. Кеңесті мұқият оқыңыз: жартысы батырылғандықтан, дененің тығыздығы 1000-ның жартысын құрайды.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            obs_float: "Дене жүзіп жүр! Ауырлық күші (F<sub>ауыр</sub> = {fg} Н) Архимед күшімен (F<sub>А</sub> = {fa} Н) теңестірілген. Көлемнің {perc}% батты.",
+            obs_sink: "Дене батты! Максималды Архимед күші (F<sub>А</sub> = {fa} Н) ауырлық күшінен (F<sub>ауыр</sub> = {fg} Н) аз.",
+            obs_hover: "Дене сұйықтықта ілініп тұр! Тығыздықтар тең. F<sub>ауыр</sub> = F<sub>А</sub> = {fg} Н."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        updateSimulation(); // Redraw canvas for language changes
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const liquidSelect = document.getElementById('liquidSelect');
+    const massSlider = document.getElementById('massSlider');
+    const volSlider = document.getElementById('volSlider');
+    const massVal = document.getElementById('massVal');
+    const volVal = document.getElementById('volVal');
+    const obsText = document.getElementById('obsText');
+
+    let animFrame;
+    let blockY = 50; // Стартовая высота блока (в воздухе)
+
+    const liquids = {
+        water: { rho: 1000, color: 'rgba(56, 189, 248, 0.5)' },
+        oil: { rho: 800, color: 'rgba(253, 224, 71, 0.6)' },
+        honey: { rho: 1420, color: 'rgba(217, 119, 6, 0.7)' }
+    };
+
+    function updateSimulation() {
+        const mass = parseFloat(massSlider.value); // кг
+        const volLiters = parseFloat(volSlider.value); // литры
+        const volM3 = volLiters / 1000; // м³
+        
+        massVal.textContent = mass;
+        volVal.textContent = volLiters;
+
+        const rho_liq = liquids[liquidSelect.value].rho;
+        
+        // Силы
+        const Fg = mass * 10; // Н
+        const Fa_max = rho_liq * 10 * volM3; // Максимальная сила Архимеда, если погрузить полностью
+        
+        let targetY;
+        const waterLevel = 150; // Y координата поверхности воды
+        const tankBottom = 330;
+        
+        // Визуальный размер блока (пусть будет фиксированным для простоты, или слегка зависеть от объема)
+        // Для наглядности сделаем размер блока пропорциональным квадратному корню объема
+        const blockSize = 40 + volLiters * 2; 
+
+        if (Fg > Fa_max) {
+            // Тонет
+            targetY = tankBottom - blockSize;
+            obsText.innerHTML = t('obs_sink', {fa: Math.round(Fa_max), fg: Fg});
+        } else if (Fg === Fa_max) {
+            // Висит (крайне редкий случай на ползунках, но обработаем)
+            targetY = waterLevel + 50; // где-то посередине
+            obsText.innerHTML = t('obs_hover', {fg: Fg});
+        } else {
+            // Плавает
+            // Какой объем погружен? V_sub = Fg / (rho_liq * g)
+            const V_sub = Fg / (rho_liq * 10);
+            const subFraction = V_sub / volM3; // Доля от 0 до 1
+            
+            // Центр блока должен быть так, чтобы под водой была доля subFraction
+            // Y блока = waterLevel - blockSize * (1 - subFraction)
+            targetY = waterLevel - blockSize * (1 - subFraction);
+            const perc = Math.round(subFraction * 100);
+            obsText.innerHTML = t('obs_float', {fg: Fg, fa: Fg, perc: perc}); // Если плавает, Fa = Fg
+        }
+
+        animateBlock(targetY, blockSize, Fg, Fa_max, waterLevel);
+    }
+
+    liquidSelect.addEventListener('change', updateSimulation);
+    massSlider.addEventListener('input', updateSimulation);
+    volSlider.addEventListener('input', updateSimulation);
+
+    function animateBlock(targetY, blockSize, Fg, Fa_max, waterLevel) {
+        if (animFrame) cancelAnimationFrame(animFrame);
+
+        function draw() {
+            // Плавное движение
+            blockY += (targetY - blockY) * 0.1;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Рисуем резервуар
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fillRect(100, waterLevel - 20, 300, 200); // задняя стенка
+
+            // Жидкость
+            const liqColor = liquids[liquidSelect.value].color;
+            ctx.fillStyle = liqColor;
+            ctx.fillRect(100, waterLevel, 300, 180);
+
+            // Контур резервуара
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(100, waterLevel - 20);
+            ctx.lineTo(100, 330);
+            ctx.lineTo(400, 330);
+            ctx.lineTo(400, waterLevel - 20);
+            ctx.stroke();
+
+            // Рисуем блок
+            const blockX = 250 - blockSize / 2;
+            
+            ctx.fillStyle = '#64748b'; // Серый куб
+            ctx.fillRect(blockX, blockY, blockSize, blockSize);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(blockX, blockY, blockSize, blockSize);
+
+            // Текст на блоке (Масса)
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(massSlider.value + ' kg', 250, blockY + blockSize / 2 + 5);
+
+            // --- СТРЕЛКИ СИЛ ---
+            // Если блок касается воды, рисуем стрелку F_A
+            if (blockY + blockSize > waterLevel) {
+                // Вычисляем текущую F_A для визуализации (зависит от глубины погружения)
+                let currentSubFraction = (blockY + blockSize - waterLevel) / blockSize;
+                if (currentSubFraction > 1) currentSubFraction = 1;
+                
+                const currentFa = Fa_max * currentSubFraction;
+                const arrowLenA = 20 + currentFa * 0.5; // Масштаб для стрелки
+                
+                // Сила Архимеда вверх (зеленая)
+                drawArrow(220, blockY + blockSize/2, 220, blockY + blockSize/2 - arrowLenA, '#10b981', 'F_A');
+            }
+
+            // Сила тяжести вниз (красная)
+            const arrowLenG = 20 + Fg * 0.5;
+            drawArrow(280, blockY + blockSize/2, 280, blockY + blockSize/2 + arrowLenG, '#ef4444', 'F_тяж');
+
+            if (Math.abs(targetY - blockY) > 0.5) {
+                animFrame = requestAnimationFrame(draw);
+            } else {
+                animFrame = null;
+            }
+        }
+        draw();
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, label) {
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            // Смещение текста
+            let textY = dy > 0 ? toY + 15 : toY - 10;
+            ctx.fillText(label, toX, textY);
+        }
+    }
+
+    // Инициализация
+    updateSimulation();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseInt(document.getElementById('taskB').value.replace(/\s+/g, ''));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 500) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 500) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

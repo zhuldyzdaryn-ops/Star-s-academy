@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Коэффициент полезного действия (КПД) — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f5f3ff; /* Светло-фиолетовый фон */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #8b5cf6; /* Фиолетовый (Эффективность) */
+            --primary-hover: #7c3aed;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #ede9fe;
+            
+            --wood-color: #b45309;
+            --block-color: #475569;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #2e1065;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .math-fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+            margin: 0 5px;
+        }
+        .math-numerator {
+            border-bottom: 2px solid var(--primary);
+            padding: 0 5px;
+        }
+        .math-denominator {
+            padding: 0 5px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(139, 92, 246, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        /* Gauge styles */
+        .gauge-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 4px solid var(--border);
+        }
+        .gauge-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        .gauge-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+        .hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Коэффициент полезного действия (КПД) — 7 класс</span>
+            <span class="lang-kz">Пайдалы әсер коэффициенті (ПӘК) — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Идеальных механизмов не существует! При использовании любого устройства мы всегда тратим больше работы, чем получаем взамен. Куда же исчезает энергия и как оценить выгоду от использования механизма?</span>
+            <span class="lang-kz">Мінсіз механизмдер болмайды! Кез келген құрылғыны пайдаланған кезде біз әрқашан алғаннан гөрі көбірек жұмыс жұмсаймыз. Энергия қайда жоғалады және механизмді пайдаланудың пайдасын қалай бағалауға болады?</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: ВИДЫ РАБОТЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Полезная и затраченная работа</span>
+            <span class="lang-kz">Пайдалы және жұмсалған жұмыс</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В реальной жизни при подъеме груза с помощью блока, рычага или наклонной плоскости нам приходится преодолевать не только силу тяжести груза, но и <strong>силу трения</strong>, а также поднимать вес самих частей механизма (веревки, подвижного блока).</span>
+            <span class="lang-kz">Нақты өмірде жүкті блок, иінтірек немесе көлбеу жазықтық арқылы көтергенде бізге жүктің ауырлық күшін ғана емес, сонымен қатар <strong>үйкеліс күшін</strong> жеңуге, сондай-ақ механизм бөлшектерінің (арқанның, жылжымалы блоктың) салмағын көтеруге тура келеді.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Полезная работа (A<sub>пол</sub>)</strong> — это та работа, ради которой мы используем механизм. Например, поднятие только самого ящика на крышу: A<sub>пол</sub> = m &middot; g &middot; h.</span>
+                <span class="lang-kz"><strong>Пайдалы жұмыс (A<sub>пол</sub>)</strong> — бұл біз механизмді пайдаланатын мақсаттағы жұмыс. Мысалы, шатырға тек жәшіктің өзін ғана көтеру: A<sub>пол</sub> = m &middot; g &middot; h.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Затраченная (полная) работа (A<sub>затр</sub>)</strong> — это работа, которую мы реально совершаем, прикладывая силу (F) на всем пути (s). Она <em>всегда больше</em> полезной! A<sub>затр</sub> = F &middot; s.</span>
+                <span class="lang-kz"><strong>Жұмсалған (толық) жұмыс (A<sub>затр</sub>)</strong> — бұл біз бүкіл жол (s) бойына күш (F) түсіру арқылы нақты жасайтын жұмыс. Ол <em>әрқашан пайдалы жұмыстан үлкен</em>! A<sub>затр</sub> = F &middot; s.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ТЕОРИЯ: ФОРМУЛА КПД -->
+    <section>
+        <h2>
+            <span class="lang-ru">Формула КПД</span>
+            <span class="lang-kz">ПӘК формуласы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Чтобы оценить, насколько эффективно работает механизм, физики ввели понятие <strong>Коэффициента полезного действия (КПД)</strong>. КПД показывает, какую долю от всей затраченной работы составляет полезная. Обозначается греческой буквой <strong>&eta;</strong> (эта).</span>
+            <span class="lang-kz">Механизмнің қаншалықты тиімді жұмыс істейтінін бағалау үшін физиктер <strong>Пайдалы әсер коэффициенті (ПӘК)</strong> ұғымын енгізді. ПӘК барлық жұмсалған жұмыстың қандай бөлігін пайдалы жұмыс құрайтынын көрсетеді. Гректің <strong>&eta;</strong> (эта) әрпімен белгіленеді.</span>
+        </p>
+
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Формула КПД:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">ПӘК формуласы:</span>
+            
+            <span class="math">
+                &eta; = 
+                <div class="math-fraction">
+                    <div class="math-numerator">A<sub>пол</sub></div>
+                    <div class="math-denominator">A<sub>затр</sub></div>
+                </div>
+                &middot; 100%
+            </span>
+            
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">
+                Так как затраченная работа всегда больше полезной (из-за трения), то <strong>КПД любого реального механизма всегда меньше 100%</strong> (или меньше 1). Недостающая часть энергии уходит на нагревание деталей из-за трения.
+                </span>
+                <span class="lang-kz">
+                Жұмсалған жұмыс үйкеліске байланысты әрқашан пайдалы жұмыстан үлкен болғандықтан, <strong>кез келген нақты механизмнің ПӘК-і әрқашан 100%-дан (немесе 1-ден) аз болады</strong>. Энергияның жетіспейтін бөлігі үйкелістің салдарынан бөлшектерді қыздыруға кетеді.
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 4. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Наклонная плоскость</span>
+            <span class="lang-kz">Симуляция: Көлбеу жазықтық</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="massSlider" style="color: var(--primary)">
+                        <span class="lang-ru">Масса груза (m):</span>
+                        <span class="lang-kz">Жүк массасы (m):</span>
+                        <span id="massVal">10</span> кг
+                    </label>
+                    <input type="range" id="massSlider" min="5" max="50" step="5" value="10">
+                </div>
+                <div class="control-group" style="margin-top: 5px;">
+                    <label for="heightSlider" style="color: #0ea5e9">
+                        <span class="lang-ru">Высота плоскости (h):</span>
+                        <span class="lang-kz">Жазықтықтың биіктігі (h):</span>
+                        <span id="heightVal">2</span> м
+                    </label>
+                    <input type="range" id="heightSlider" min="1" max="4" step="1" value="2">
+                </div>
+                <div class="control-group" style="margin-top: 5px;">
+                    <label for="lengthSlider" style="color: #10b981">
+                        <span class="lang-ru">Длина плоскости (l):</span>
+                        <span class="lang-kz">Жазықтықтың ұзындығы (l):</span>
+                        <span id="lengthVal">5</span> м
+                    </label>
+                    <input type="range" id="lengthSlider" min="4" max="10" step="1" value="5">
+                </div>
+                <div class="control-group" style="margin-top: 5px;">
+                    <label for="fricSlider" style="color: #ef4444">
+                        <span class="lang-ru">Шероховатость (Трение):</span>
+                        <span class="lang-kz">Кедір-бұдырлық (Үйкеліс):</span>
+                        <span id="fricVal">0.2</span> &mu;
+                    </label>
+                    <input type="range" id="fricSlider" min="0" max="0.5" step="0.1" value="0.2">
+                </div>
+                
+                <div class="buttons" style="margin-top: 15px;">
+                    <button id="btnPlay">
+                        <span class="lang-ru">Тянуть груз</span><span class="lang-kz">Жүкті тарту</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Сброс</span><span class="lang-kz">Қалпына келтіру</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container" id="canvasBox">
+                <!-- HUD: Real-time values -->
+                <div class="hud">
+                    <div style="color: #0ea5e9">A<sub>пол</sub> = <span id="hudApol">0</span> Дж</div>
+                    <div style="color: #ef4444">A<sub>затр</sub> = <span id="hudAzatr">0</span> Дж</div>
+                    <div style="color: #64748b"><span class="lang-ru">Потеряно (нагрев):</span><span class="lang-kz">Жоғалды (қызу):</span> <span id="hudAloss">0</span> Дж</div>
+                </div>
+                <!-- Circular Gauge for КПД -->
+                <div class="gauge-container">
+                    <div class="gauge-label">
+                        <span class="lang-ru">КПД (&eta;)</span><span class="lang-kz">ПӘК (&eta;)</span>
+                    </div>
+                    <div class="gauge-value" id="hudKpd">100%</div>
+                </div>
+                <canvas id="simCanvas" width="600" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru">Настройте параметры. Чем больше <strong>длина плоскости</strong> по сравнению с высотой, тем легче тянуть груз, но при наличии <strong>трения</strong> затраченная работа на длинном пути сильно возрастает! Обратите внимание, как падает КПД при увеличении шероховатости доски.</span>
+                <span class="lang-kz">Параметрлерді реттеңіз. Биіктікке қарағанда <strong>жазықтықтың ұзындығы</strong> неғұрлым үлкен болса, жүкті тарту соғұрлым оңай болады, бірақ <strong>үйкеліс</strong> болған кезде ұзақ жолда жұмсалған жұмыс қатты артады! Тақтаның кедір-бұдырлығы артқан кезде ПӘК-тің қалай төмендейтініне назар аударыңыз.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 5. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> По наклонной плоскости длиной 5 м и высотой 1,5 м равномерно втаскивают ящик массой 40 кг. Для этого прикладывают силу тяги 160 Н, направленную параллельно плоскости. Вычислите КПД этой наклонной плоскости (g = 10 Н/кг).</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Ұзындығы 5 м және биіктігі 1,5 м көлбеу жазықтық бойымен массасы 40 кг жәшікті бірқалыпты тартады. Бұл үшін жазықтыққа параллель бағытталған 160 Н тарту күшін жұмсайды. Осы көлбеу жазықтықтың ПӘК-ін есептеңіз (g = 10 Н/кг).</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>l = 5 м<br>h = 1,5 м<br>m = 40 кг<br>F = 160 Н<br><strong>Найти:</strong> &eta; — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>l = 5 м<br>h = 1,5 м<br>m = 40 кг<br>F = 160 Н<br><strong>Табу керек:</strong> &eta; — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>
+                1. Найдем полезную работу (работа по поднятию груза на высоту):<br>
+                A<sub>пол</sub> = m &middot; g &middot; h = 40 кг &middot; 10 Н/кг &middot; 1,5 м = 600 Дж.<br><br>
+                2. Найдем затраченную работу (реальная работа силы тяги на всем пути):<br>
+                A<sub>затр</sub> = F &middot; l = 160 Н &middot; 5 м = 800 Дж.<br><br>
+                3. Рассчитаем КПД:<br>
+                &eta; = (A<sub>пол</sub> / A<sub>затр</sub>) &middot; 100% = (600 / 800) &middot; 100% = 0,75 &middot; 100% = 75%.
+                </span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>
+                1. Пайдалы жұмысты табамыз (жүкті биіктікке көтеру жұмысы):<br>
+                A<sub>пол</sub> = m &middot; g &middot; h = 40 кг &middot; 10 Н/кг &middot; 1,5 м = 600 Дж.<br><br>
+                2. Жұмсалған жұмысты табамыз (бүкіл жолдағы тарту күшінің нақты жұмысы):<br>
+                A<sub>затр</sub> = F &middot; l = 160 Н &middot; 5 м = 800 Дж.<br><br>
+                3. ПӘК-ті есептейміз:<br>
+                &eta; = (A<sub>пол</sub> / A<sub>затр</sub>) &middot; 100% = (600 / 800) &middot; 100% = 0,75 &middot; 100% = 75%.
+                </span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> КПД механизма равен 75%. (25% энергии ушло на преодоление силы трения).</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Механизмнің ПӘК-і 75%-ға тең. (Энергияның 25% үйкеліс күшін жеңуге жұмсалды).</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Может ли КПД реального двигателя быть равным 100%? Почему?</span>
+                <span class="lang-kz">Нақты қозғалтқыштың ПӘК-і 100%-ға тең болуы мүмкін бе? Неліктен?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Да, если механизм новый" data-kz="Иә, егер механизм жаңа болса">Да, если механизм новый</option>
+                    <option value="2" data-ru="Да, если использовать смазку" data-kz="Иә, егер жағармай қолданса">Да, если использовать смазку</option>
+                    <option value="3" data-ru="Нет, всегда есть потери на трение и нагрев" data-kz="Жоқ, әрқашан үйкеліс пен қызуға шығындар болады">Нет, всегда есть потери на трение и нагрев</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Подъемный кран совершил полезную работу по поднятию плит 40 000 Дж. Двигатель крана при этом совершил затраченную работу 50 000 Дж. Чему равен КПД крана? Введите ответ в <strong>процентах (%)</strong> без знака процента.</span>
+                <span class="lang-kz">Көтергіш кран плиталарды көтеру бойынша 40 000 Дж пайдалы жұмыс жасады. Бұл ретте кранның қозғалтқышы 50 000 Дж жұмсалған жұмыс жасады. Кранның ПӘК-і неге тең? Жауапты <strong>пайызбен (%)</strong> пайыз белгісінсіз енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 75" data-placeholder-kz="Мысалы: 75" placeholder="Например: 75">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">КПД простого механизма составляет 80%. Какую затраченную работу нужно совершить с его помощью, чтобы полезная работа составила 240 Дж? Введите ответ в <strong>Джоулях</strong>.</span>
+                <span class="lang-kz">Қарапайым механизмнің ПӘК-і 80% құрайды. Оның көмегімен пайдалы жұмыс 240 Дж болуы үшін қандай жұмсалған жұмыс жасау керек? Жауапты <strong>Джоульмен</strong> енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в Дж" data-placeholder-kz="Жауап Дж-мен" placeholder="Ответ в Дж">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Подсказка: Из формулы &eta; = (A<sub>пол</sub> / A<sub>затр</sub>) &middot; 100% выразите A<sub>затр</sub>. Не забудьте перевести проценты в десятичную дробь (80% = 0.8).</span>
+                <span class="lang-kz">Кеңес: &eta; = (A<sub>пол</sub> / A<sub>затр</sub>) &middot; 100% формуласынан A<sub>затр</sub> өрнектеңіз. Пайыздарды ондық бөлшекке айналдыруды ұмытпаңыз (80% = 0.8).</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Узнайте больше о КПД различных машин в нашей жизни (например, почему у бензинового двигателя КПД всего около 30%, а у электродвигателя — более 90%)!</span>
+            <span class="lang-kz">Өміріміздегі әртүрлі машиналардың ПӘК-і туралы көбірек біліңіз (мысалы, неге бензин қозғалтқышының ПӘК-і шамамен 30%, ал электр қозғалтқышында — 90%-дан асатынын)!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BA%D0%BE%D1%8D%D1%84%D1%84%D0%B8%D1%86%D0%B8%D0%B5%D0%BD%D1%82+%D0%BF%D0%BE%D0%BB%D0%B5%D0%B7%D0%BD%D0%BE%D0%B3%D0%BE+%D0%B4%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%B8%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «КПД механизмов» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Механизмдердің ПӘК-і» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 8. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, в чем разница между полезной и затраченной работой.</span>
+                <span class="lang-kz">Мен пайдалы және жұмсалған жұмыстың айырмашылығын білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу объяснить, почему КПД всегда меньше 100%.</span>
+                <span class="lang-kz">Мен ПӘК-тің неліктен әрқашан 100%-дан кем болатынын түсіндіре аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею рассчитывать КПД по формуле.</span>
+                <span class="lang-kz">Мен ПӘК-ті формула бойынша есептей аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 9. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что показывает коэффициент полезного действия?</span>
+                <span class="lang-kz">1. Пайдалы әсер коэффициенті нені көрсетеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Во сколько раз выигрываем в силе</span><span class="lang-kz">Күштен қанша есе ұтатынымызды</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Какую долю затраченной работы составляет полезная</span><span class="lang-kz">Жұмсалған жұмыстың қандай бөлігін пайдалы жұмыс құрайтынын</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Сколько энергии исчезло</span><span class="lang-kz">Қанша энергияның жоғалғанын</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Мощность двигателя</span><span class="lang-kz">Қозғалтқыштың қуатын</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Какое из утверждений верно для любого реального простого механизма?</span>
+                <span class="lang-kz">2. Кез келген нақты қарапайым механизм үшін қай тұжырым дұрыс?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">A<sub>пол</sub> > A<sub>затр</sub></span><span class="lang-kz">A<sub>пол</sub> > A<sub>затр</sub></span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">A<sub>пол</sub> = A<sub>затр</sub></span><span class="lang-kz">A<sub>пол</sub> = A<sub>затр</sub></span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">A<sub>пол</sub> < A<sub>затр</sub></span><span class="lang-kz">A<sub>пол</sub> < A<sub>затр</sub></span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Они не связаны между собой</span><span class="lang-kz">Олар бір-бірімен байланысты емес</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. В чем измеряется КПД?</span>
+                <span class="lang-kz">3. ПӘК немен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">В процентах (или долях единицы)</span><span class="lang-kz">Пайызбен (немесе бірліктің үлесімен)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">В Джоулях</span><span class="lang-kz">Джоульмен</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">В Ваттах</span><span class="lang-kz">Ваттпен</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">В Ньютонах</span><span class="lang-kz">Ньютонмен</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Полезная работа равна 20 Дж, а затраченная работа равна 50 Дж. Чему равен КПД?</span>
+                <span class="lang-kz">4. Пайдалы жұмыс 20 Дж, ал жұмсалған жұмыс 50 Дж тең. ПӘК неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">25%</span><span class="lang-kz">25%</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">30%</span><span class="lang-kz">30%</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">70%</span><span class="lang-kz">70%</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">40%</span><span class="lang-kz">40%</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Куда девается часть энергии (работы), которая не переходит в полезную?</span>
+                <span class="lang-kz">5. Пайдалы жұмысқа өтпейтін энергияның (жұмыстың) бір бөлігі қайда кетеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Идет на преодоление трения и нагревание деталей</span><span class="lang-kz">Үйкелісті жеңуге және бөлшектерді қыздыруға кетеді</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Исчезает в никуда</span><span class="lang-kz">Ешқайда жоғалады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Превращается в потенциальную энергию</span><span class="lang-kz">Потенциалдық энергияға айналады</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Увеличивает скорость света</span><span class="lang-kz">Жарық жылдамдығын арттырады</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Идеальных механизмов не существует. В реальной жизни всегда присутствует сила трения.",
+            fbA_inc: "Неверно. Подумайте о силе трения. Можно ли от нее избавиться на 100%?",
+            fbB_corr: "Абсолютно верно! (40000 / 50000) * 100% = 0.8 * 100% = 80%.",
+            fbB_inc: "Ошибка. Разделите полезную работу на затраченную и умножьте на 100.",
+            fbC_corr: "Точно! Если КПД 80% (или 0.8), то A_затр = A_пол / 0.8 = 240 / 0.8 = 300 Дж.",
+            fbC_inc: "Неверно. A_затр = A_пол / &eta; (в долях). Разделите 240 на 0.8.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            sim_impossible: "Невозможно: длина (l) не может быть меньше высоты (h)!"
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Мінсіз механизмдер болмайды. Нақты өмірде әрқашан үйкеліс күші болады.",
+            fbA_inc: "Қате. Үйкеліс күші туралы ойланыңыз. Одан 100% құтылу мүмкін бе?",
+            fbB_corr: "Мүлдем дұрыс! (40000 / 50000) * 100% = 0.8 * 100% = 80%.",
+            fbB_inc: "Қате. Пайдалы жұмысты жұмсалған жұмысқа бөліп, 100-ге көбейтіңіз.",
+            fbC_corr: "Дұрыс! Егер ПӘК 80% (немесе 0.8) болса, онда A_затр = A_пол / 0.8 = 240 / 0.8 = 300 Дж.",
+            fbC_inc: "Қате. A_затр = A_пол / &eta; (үлеспен). 240-ты 0.8-ге бөліңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            sim_impossible: "Мүмкін емес: ұзындығы (l) биіктігінен (h) кем бола алмайды!"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        if(!isPlaying) drawSimFrame(); // Redraw canvas text for language changes
+    }
+
+    // --- СИМУЛЯЦИЯ: НАКЛОННАЯ ПЛОСКОСТЬ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const massSlider = document.getElementById('massSlider');
+    const heightSlider = document.getElementById('heightSlider');
+    const lengthSlider = document.getElementById('lengthSlider');
+    const fricSlider = document.getElementById('fricSlider');
+    
+    const massVal = document.getElementById('massVal');
+    const heightVal = document.getElementById('heightVal');
+    const lengthVal = document.getElementById('lengthVal');
+    const fricVal = document.getElementById('fricVal');
+    
+    const hudApol = document.getElementById('hudApol');
+    const hudAzatr = document.getElementById('hudAzatr');
+    const hudAloss = document.getElementById('hudAloss');
+    const hudKpd = document.getElementById('hudKpd');
+    
+    const btnPlay = document.getElementById('btnPlay');
+    const btnReset = document.getElementById('btnReset');
+
+    let animFrame;
+    let isPlaying = false;
+    let blockProgress = 0; // 0 to 1
+    
+    // Физика
+    const g = 10;
+    let m = 10, h = 2, l = 5, mu = 0.2;
+    let A_pol = 0, A_zatr = 0, kpd = 0;
+
+    function calcPhysics() {
+        m = parseInt(massSlider.value);
+        h = parseInt(heightSlider.value);
+        l = parseInt(lengthSlider.value);
+        mu = parseFloat(fricSlider.value);
+        
+        massVal.textContent = m;
+        heightVal.textContent = h;
+        lengthVal.textContent = l;
+        fricVal.textContent = mu;
+        
+        // Защита от "дурака": длина не может быть меньше высоты (гипотенуза > катета)
+        if (l < h) {
+            lengthSlider.value = h + 1;
+            l = h + 1;
+            lengthVal.textContent = l;
+        }
+
+        // Вычисления
+        A_pol = m * g * h;
+        
+        // F_тяги = mg * sin(a) + mu * mg * cos(a)
+        // sin(a) = h / l
+        // cos(a) = sqrt(l^2 - h^2) / l
+        let base = Math.sqrt(l*l - h*h);
+        let F_tyagi = m * g * (h / l) + mu * m * g * (base / l);
+        A_zatr = F_tyagi * l;
+        
+        // Для отображения округлим
+        A_zatr = Math.round(A_zatr);
+        
+        kpd = Math.round((A_pol / A_zatr) * 100);
+        if(kpd > 100) kpd = 100; // на всякий случай
+        
+        hudApol.textContent = A_pol;
+        hudAzatr.textContent = A_zatr;
+        hudAloss.textContent = A_zatr - A_pol;
+        
+        // Цвет КПД индикатора
+        if(kpd > 80) hudKpd.style.color = 'var(--success)';
+        else if (kpd > 50) hudKpd.style.color = 'var(--warning)';
+        else hudKpd.style.color = 'var(--danger)';
+        
+        hudKpd.textContent = kpd + '%';
+        
+        // Бордюр для датчика КПД
+        let gaugeContainer = document.querySelector('.gauge-container');
+        gaugeContainer.style.borderColor = hudKpd.style.color;
+    }
+
+    function updateSimulation() {
+        calcPhysics();
+        if(!isPlaying) {
+            blockProgress = 0;
+            drawSimFrame();
+        }
+    }
+
+    massSlider.addEventListener('input', updateSimulation);
+    heightSlider.addEventListener('input', updateSimulation);
+    lengthSlider.addEventListener('input', updateSimulation);
+    fricSlider.addEventListener('input', updateSimulation);
+
+    btnPlay.addEventListener('click', () => {
+        if(isPlaying) return;
+        isPlaying = true;
+        blockProgress = 0;
+        
+        massSlider.disabled = true;
+        heightSlider.disabled = true;
+        lengthSlider.disabled = true;
+        fricSlider.disabled = true;
+        
+        requestAnimationFrame(animateScene);
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        if(animFrame) cancelAnimationFrame(animFrame);
+        blockProgress = 0;
+        
+        massSlider.disabled = false;
+        heightSlider.disabled = false;
+        lengthSlider.disabled = false;
+        fricSlider.disabled = false;
+        
+        updateSimulation();
+    });
+
+    function drawSimFrame() {
+        if(!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Настройки сцены
+        const pxPerMeter = 45; // Масштаб 1м = 45px (увеличен)
+        const groundY = 260; // Немного опустили землю для баланса
+        const startX = 50; // Левый нижний угол плоскости (вершина прямого угла будет справа)
+        
+        // Вычисляем координаты
+        let baseL = Math.sqrt(l*l - h*h);
+        
+        const ptA = {x: startX, y: groundY}; // Начало подъема
+        const ptC = {x: startX + baseL * pxPerMeter, y: groundY}; // Прямой угол
+        const ptB = {x: ptC.x, y: groundY - h * pxPerMeter}; // Вершина
+        
+        // Рисуем землю
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, groundY); ctx.lineTo(canvas.width, groundY); ctx.stroke();
+        
+        // Рисуем наклонную плоскость (треугольник)
+        ctx.fillStyle = '#e2e8f0'; // светло серый
+        ctx.beginPath();
+        ctx.moveTo(ptA.x, ptA.y);
+        ctx.lineTo(ptB.x, ptB.y);
+        ctx.lineTo(ptC.x, ptC.y);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Если есть трение, рисуем "шероховатость" на гипотенузе
+        if(mu > 0) {
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            let segments = 20;
+            for(let i=0; i<segments; i++) {
+                let px = ptA.x + (ptB.x - ptA.x) * (i/segments);
+                let py = ptA.y + (ptB.y - ptA.y) * (i/segments);
+                // Нормаль к вектору
+                let nx = -(ptB.y - ptA.y) / (l*pxPerMeter);
+                let ny = (ptB.x - ptA.x) / (l*pxPerMeter);
+                let bump = mu * 20; // Высота зазубрины зависит от трения (сделали больше)
+                ctx.moveTo(px, py);
+                ctx.lineTo(px + nx*bump, py + ny*bump);
+            }
+            ctx.stroke();
+        }
+
+        // Рисуем груз
+        // blockProgress идет от 0 (ptA) до 1 (ptB)
+        let bx = ptA.x + (ptB.x - ptA.x) * blockProgress;
+        let by = ptA.y + (ptB.y - ptA.y) * blockProgress;
+        
+        // Угол наклона
+        let angle = Math.atan2(ptB.y - ptA.y, ptB.x - ptA.x); // отрицательный
+        
+        // Размер груза зависит от массы
+        let boxSize = 20 + m * 0.5;
+        
+        ctx.save();
+        ctx.translate(bx, by);
+        ctx.rotate(angle);
+        
+        // Центр блока на линии, сдвигаем вверх
+        ctx.fillStyle = '#b45309'; // Коричневый деревянный ящик
+        ctx.fillRect(-boxSize/2, -boxSize, boxSize, boxSize);
+        ctx.strokeStyle = '#7c2d12';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-boxSize/2, -boxSize, boxSize, boxSize);
+        
+        // Сила тяги (вектор)
+        if(blockProgress > 0 && blockProgress < 1) {
+            ctx.strokeStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(boxSize/2, -boxSize/2);
+            ctx.lineTo(boxSize/2 + 50, -boxSize/2);
+            // Стрелочка
+            ctx.lineTo(boxSize/2 + 40, -boxSize/2 - 5);
+            ctx.moveTo(boxSize/2 + 50, -boxSize/2);
+            ctx.lineTo(boxSize/2 + 40, -boxSize/2 + 5);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#ef4444';
+            ctx.font = '14px sans-serif';
+            ctx.fillText('F', boxSize/2 + 20, -boxSize/2 - 10);
+        }
+        
+        ctx.restore();
+        
+        // Размеры h и l
+        ctx.fillStyle = '#0ea5e9';
+        ctx.font = '14px sans-serif';
+        ctx.fillText('h = ' + h + ' м', ptC.x + 10, ptB.y + (ptC.y - ptB.y)/2);
+        
+        ctx.fillStyle = '#10b981';
+        ctx.save();
+        ctx.translate(ptA.x + (ptB.x - ptA.x)/2, ptA.y + (ptB.y - ptA.y)/2);
+        ctx.rotate(angle);
+        ctx.fillText('l = ' + l + ' м', -20, -10);
+        ctx.restore();
+    }
+
+    function animateScene(timestamp) {
+        if (!isPlaying) return;
+        
+        blockProgress += 0.01; // Скорость анимации
+        if(blockProgress > 1) blockProgress = 1;
+        
+        drawSimFrame();
+        
+        if (blockProgress < 1) {
+            animFrame = requestAnimationFrame(animateScene);
+        } else {
+            isPlaying = false;
+            // Разблокируем
+            massSlider.disabled = false;
+            heightSlider.disabled = false;
+            lengthSlider.disabled = false;
+            fricSlider.disabled = false;
+            
+            // Надпись "Завершено"
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(canvas.width/2 - 60, canvas.height/2 - 20, 120, 40);
+            ctx.fillStyle = '#10b981';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(currentLang === 'ru' ? 'Выполнено!' : 'Орындалды!', canvas.width/2, canvas.height/2 + 5);
+        }
+    }
+
+    // Инициализация
+    updateSimulation();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseInt(document.getElementById('taskB').value.replace(/\s+/g, ''));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 80) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 300) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

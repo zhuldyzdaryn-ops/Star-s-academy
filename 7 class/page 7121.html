@@ -1,0 +1,1072 @@
+<html lang="ru"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6ImJlMDcyNWEwZmIxZWZmN2I5N2MyNDEwY2U0Nzc1YmM5MGY1MWFiYTUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNzIzMjQxNjU5ODc4Mzc2MTExNCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzRiYmY3Nzk4YmM4NDljZWNfZGVuc2l0eV83Lmh0bWwtMzcwIn0sImV4cCI6MTc3MjMwMTQ4NywiaWF0IjoxNzcyMjk3ODg3LCJhbGciOiJSUzI1NiJ9.iyUuEL8l8o9RDBIaFP38sjWNAJ67d6HoRD6LKOELHYtUeCiQLh3F_027i6uPT93FtoMZW1ewXtZmw0r2gPPga44_dhld6HH1saDAMoQiDW2c8efSc_eTJtfuTA30zw5D2HSaj2YW6a2lWmUruyLDan1kjxkI_rwEAVltWveuaM6VetvJJaisGGt-Vga93xluoUVJiGn3zCRBI2M0NEwFat4jNGsOOkPuC7oh8yLXMH7eV1Fw_MN15QSaT0p9gxlt5SOUf6NANY4PWY7zD3sCo6vtj_bIJAU5YIC1FRASXNHf69vw6jqiWguwJc5ip3DRQwWP6S807EV5MoZU5yRuIg","c_4bbf7798bc849cec_density_7.html-370")</script><script>(function(){'use strict';var h=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,d){if(a==Array.prototype||a==Object.prototype)return a;a[b]=d.value;return a};function l(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var d=a[b];if(d&&d.Math==Math)return d}throw Error("Cannot find global object");}var n=l(this);
+function p(a,b){if(b)a:{var d=n;a=a.split(".");for(var c=0;c<a.length-1;c++){var e=a[c];if(!(e in d))break a;d=d[e]}a=a[a.length-1];c=d[a];b=b(c);b!=c&&b!=null&&h(d,a,{configurable:!0,writable:!0,value:b})}}function r(a){function b(c){return a.next(c)}function d(c){return a.throw(c)}return new Promise(function(c,e){function f(g){g.done?c(g.value):Promise.resolve(g.value).then(b,d).then(f,e)}f(a.next())})}function t(a){return r(a())}
+p("Object.values",function(a){return a?a:function(b){var d=[],c;for(c in b)Object.prototype.hasOwnProperty.call(b,c)&&d.push(b[c]);return d}});p("Array.prototype.includes",function(a){return a?a:function(b,d){var c=this;c instanceof String&&(c=String(c));var e=c.length;d=d||0;for(d<0&&(d=Math.max(d+e,0));d<e;d++){var f=c[d];if(f===b||Object.is(f,b))return!0}return!1}});/*
+
+ MIT License
+
+ Copyright (c) 2017-2023 W.Y.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+*/
+function u(a,b){const d=a.style;b.backgroundColor&&(d.backgroundColor=b.backgroundColor);b.width&&(d.width=`${b.width}px`);b.height&&(d.height=`${b.height}px`);const c=b.style;c!=null&&Object.keys(c).forEach(e=>{d[e]=c[e]})};var v=(()=>{let a=0;return()=>{a+=1;return`u${`0000${(Math.random()*1679616<<0).toString(36)}`.slice(-4)}${a}`}})();function w(a){const b=[];for(let d=0,c=a.length;d<c;d++)b.push(a[d]);return b}let x=null;function y(a={}){return x?x:a.l?x=a.l:x=w(window.getComputedStyle(document.documentElement))}function z(a,b){return(a=(a.ownerDocument.defaultView||window).getComputedStyle(a).getPropertyValue(b))?parseFloat(a.replace("px","")):0}
+function A(a,b={}){var d;if(!(d=b.width)){d=z(a,"border-left-width");var c=z(a,"border-right-width");d=a.clientWidth+d+c}(b=b.height)||(b=z(a,"border-top-width"),c=z(a,"border-bottom-width"),b=a.clientHeight+b+c);return{width:d,height:b}}function B(a){return new Promise((b,d)=>{const c=new Image;c.onload=()=>{c.decode().then(()=>{requestAnimationFrame(()=>b(c))})};c.onerror=d;c.crossOrigin="anonymous";c.decoding="async";c.src=a})}
+function C(a){return t(function*(){return Promise.resolve().then(()=>(new XMLSerializer).serializeToString(a)).then(encodeURIComponent).then(b=>`data:image/svg+xml;charset=utf-8,${b}`)})}
+function D(a,b,d){return t(function*(){const c=document.createElementNS("http://www.w3.org/2000/svg","svg"),e=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");c.setAttribute("width",`${b}`);c.setAttribute("height",`${d}`);c.setAttribute("viewBox",`0 0 ${b} ${d}`);e.setAttribute("width","100%");e.setAttribute("height","100%");e.setAttribute("x","0");e.setAttribute("y","0");e.setAttribute("externalResourcesRequired","true");c.appendChild(e);e.appendChild(a);return C(c)})}
+var E=(a,b)=>{if(a instanceof b)return!0;a=Object.getPrototypeOf(a);return a===null?!1:a.constructor.name===b.name||E(a,b)};function F(a,b){return y(b).map(d=>{const c=a.getPropertyValue(d),e=a.getPropertyPriority(d);return`${d}: ${c}${e?" !important":""};`}).join(" ")}
+function G(a,b,d,c){a=window.getComputedStyle(a,d);var e=a.getPropertyValue("content");if(e!==""&&e!=="none"){var f=v();try{b.className=`${b.className} ${f}`}catch(k){return}e=document.createElement("style");var g=e.appendChild;d=`.${f}:${d}`;a.cssText?(c=a.getPropertyValue("content"),c=`${a.cssText} content: '${c.replace(/'|"/g,"")}';`):c=F(a,c);g.call(e,document.createTextNode(`${d}{${c}}`));b.appendChild(e)}};function H(a){return a.search(/^(data:)/)!==-1}function I(a,b,d){return t(function*(){const c=yield fetch(a,b);if(c.status===404)throw Error(`Resource "${c.url}" not found`);const e=yield c.blob();return new Promise((f,g)=>{const k=new FileReader;k.onerror=g;k.onloadend=()=>{try{f(d({o:c,result:k.result}))}catch(m){g(m)}};k.readAsDataURL(e)})})}const J={};function K(a,b,d){let c=a.replace(/\?.*/,"");d&&(c=a);/ttf|otf|eot|woff2?/i.test(c)&&(c=c.replace(/.*\//,""));return b?`[${b}]${c}`:c}
+function L(a,b,d){return t(function*(){const c=K(a,b,d.C);if(J[c]!=null)return J[c];d.u&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());let e;try{const f=yield I(a,d.i,({o:g,result:k})=>{b||(b=g.headers.get("Content-Type")||"");return k.split(/,/)[1]});e=`data:${b};base64,${f}`}catch(f){e=d.B||""}return J[c]=e})};const M={P:"application/font-woff",R:"application/font-woff",N:"application/font-truetype",v:"application/vnd.ms-fontobject",H:"image/png",F:"image/jpeg",D:"image/jpeg",A:"image/gif",M:"image/tiff",L:"image/svg+xml",O:"image/webp"};function N(a){return(a=/\.([^./]*?)$/g.exec(a))?a[1]:""};function O(a){return t(function*(){const b=a.toDataURL();return b==="data:,"?a.cloneNode(!1):B(b)})}function aa(a,b){return t(function*(){if(a.currentSrc){var d=document.createElement("canvas");const c=d.getContext("2d");d.width=a.clientWidth;d.height=a.clientHeight;c==null||c.drawImage(a,0,0,d.width,d.height);d=d.toDataURL();return B(d)}d=a.poster;d=yield L(d,M[N(d).toLowerCase()]||"",b);return B(d)})}
+function ba(a,b){return t(function*(){try{let d;if(a==null?0:(d=a.contentDocument)==null?0:d.body)return yield P(a.contentDocument.body,b,!0)}catch(d){}return a.cloneNode(!1)})}function ca(a,b){return t(function*(){return E(a,HTMLCanvasElement)?O(a):E(a,HTMLVideoElement)?aa(a,b):E(a,HTMLIFrameElement)?ba(a,b):a.cloneNode(a.tagName!=null&&a.tagName.toUpperCase()==="SVG")})}
+function da(a,b,d){return t(function*(){if(b.tagName!=null&&b.tagName.toUpperCase()==="SVG")return b;let c=[];if(a.tagName!=null&&a.tagName.toUpperCase()==="SLOT"&&a.assignedNodes)c=w(a.assignedNodes());else{let e;if(E(a,HTMLIFrameElement)&&((e=a.contentDocument)==null?0:e.body))c=w(a.contentDocument.body.childNodes);else{let f;c=w(((f=a.shadowRoot)!=null?f:a).childNodes)}}if(c.length===0||E(a,HTMLVideoElement))return b;yield c.reduce((e,f)=>e.then(()=>P(f,d)).then(g=>{g&&b.appendChild(g)}),Promise.resolve());
+return b})}function ea(a,b,d){const c=b.style;if(c){var e=window.getComputedStyle(a);e.cssText?(c.cssText=e.cssText,c.transformOrigin=e.transformOrigin):y(d).forEach(f=>{let g=e.getPropertyValue(f);f==="font-size"&&g.endsWith("px")&&(g=`${Math.floor(parseFloat(g.substring(0,g.length-2)))-.1}px`);E(a,HTMLIFrameElement)&&f==="display"&&g==="inline"&&(g="block");f==="d"&&b.getAttribute("d")&&(g=`path(${b.getAttribute("d")})`);c.setProperty(f,g,e.getPropertyPriority(f))})}}
+function fa(a,b){E(a,HTMLSelectElement)&&(b=Array.from(b.children).find(d=>a.value===d.getAttribute("value")))&&b.setAttribute("selected","")}
+function ha(a,b){return t(function*(){var d=a.querySelectorAll?a.querySelectorAll("use"):[];if(d.length===0)return a;var c={};for(var e=0;e<d.length;e++){var f=d[e].getAttribute("xlink:href");if(f){const g=document.querySelector(f);a.querySelector(f)||!g||c[f]||(c[f]=yield P(g,b,!0))}}d=Object.values(c);if(d.length){c=document.createElementNS("http://www.w3.org/1999/xhtml","svg");c.setAttribute("xmlns","http://www.w3.org/1999/xhtml");c.style.position="absolute";c.style.width="0";c.style.height="0";
+c.style.overflow="hidden";c.style.display="none";e=document.createElementNS("http://www.w3.org/1999/xhtml","defs");c.appendChild(e);for(f=0;f<d.length;f++)e.appendChild(d[f]);a.appendChild(c)}return a})}
+function P(a,b,d){return t(function*(){return d||!b.filter||b.filter(a)?Promise.resolve(a).then(c=>ca(c,b)).then(c=>da(a,c,b)).then(c=>{E(c,Element)&&(ea(a,c,b),G(a,c,":before",b),G(a,c,":after",b),E(a,HTMLTextAreaElement)&&(c.textContent=a.value),E(a,HTMLInputElement)&&c.setAttribute("value",a.value),fa(a,c));return c}).then(c=>ha(c,b)):null})};const Q=/url\((['"]?)([^'"]+?)\1\)/g,ia=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,ja=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ka(a){const b=[];a.replace(Q,(d,c,e)=>{b.push(e);return d});return b.filter(d=>!H(d))}
+function la(a,b,d,c){return t(function*(){try{const e=d?(new URL(b,d||void 0)).toString():b;let f;f=yield L(e,M[N(b).toLowerCase()]||"",c);return a.replace(new RegExp(`(url\\(['"]?)(${b.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1")})(['"]?\\))`,"g"),`$1${f}$3`)}catch(e){}return a})}function ma(a,{I:b}){return b?a.replace(ja,d=>{for(;;){const [c,,e]=ia.exec(d)||[],f=c,g=e;if(!g)return"";if(g===b)return`src: ${f};`}}):a}
+function R(a,b,d){return t(function*(){if(a.search(Q)===-1)return a;const c=ma(a,d);return ka(c).reduce((e,f)=>e.then(g=>la(g,f,b,d)),Promise.resolve(c))})};function S(a,b,d){return t(function*(){var c;const e=(c=b.style)==null?void 0:c.getPropertyValue(a);return e?(c=yield R(e,null,d),b.style.setProperty(a,c,b.style.getPropertyPriority(a)),!0):!1})}function na(a,b){return t(function*(){(yield S("background",a,b))||(yield S("background-image",a,b));(yield S("mask",a,b))||(yield S("-webkit-mask",a,b))||(yield S("mask-image",a,b))||(yield S("-webkit-mask-image",a,b))})}
+function oa(a,b){return t(function*(){const d=E(a,HTMLImageElement);if(d&&!H(a.src)||E(a,SVGImageElement)&&!H(a.href.baseVal)){var c=d?a.src:a.href.baseVal,e=yield L(c,M[N(c).toLowerCase()]||"",b);yield new Promise((f,g)=>{a.onload=f;a.onerror=b.m?(...k)=>{try{f(b.m(...k))}catch(m){g(m)}}:g;a.decode&&(a.decode=f);a.loading==="lazy"&&(a.loading="eager");d?(a.srcset="",a.src=e):a.href.baseVal=e})}})}
+function pa(a,b){return t(function*(){const d=w(a.childNodes).map(c=>T(c,b));yield Promise.all(d).then(()=>a)})}function T(a,b){return t(function*(){E(a,Element)&&(yield na(a,b),yield oa(a,b),yield pa(a,b))})};const U={};function V(a){return t(function*(){var b=U[a];if(b!=null)return b;b=yield(yield fetch(a)).text();b={url:a,cssText:b};return U[a]=b})}function W(a,b){return t(function*(){let d=a.cssText;const c=/url\(["']?([^"')]+)["']?\)/g,e=(d.match(/url\([^)]+\)/g)||[]).map(f=>t(function*(){let g=f.replace(c,"$1");g.startsWith("https://")||(g=(new URL(g,a.url)).href);return I(g,b.i,({result:k})=>{d=d.replace(f,`url(${k})`);return[f,k]})}));return Promise.all(e).then(()=>d)})}
+function X(a){if(a==null)return[];const b=[];a=a.replace(/(\/\*[\s\S]*?\*\/)/gi,"");for(var d=RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){var c=d.exec(a);if(c===null)break;b.push(c[0])}a=a.replace(d,"");d=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi;for(c=RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){let e=d.exec(a);if(e===null)if(e=c.exec(a),e===null)break;else d.lastIndex=c.lastIndex;else c.lastIndex=
+d.lastIndex;b.push(e[0])}return b}
+function qa(a,b){return t(function*(){const d=[],c=[];a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach((f,g)=>{if(f.type===CSSRule.IMPORT_RULE){let k=g+1;f=V(f.href).then(m=>W(m,b)).then(m=>X(m).forEach(q=>{try{e.insertRule(q,q.startsWith("@import")?k+=1:e.cssRules.length)}catch(Da){}})).catch(()=>{});c.push(f)}})}catch(f){const g=a.find(k=>k.href==null)||document.styleSheets[0];e.href!=null&&c.push(V(e.href).then(k=>W(k,b)).then(k=>X(k).forEach(m=>{g.insertRule(m,g.cssRules.length)})).catch(()=>
+{}))}});return Promise.all(c).then(()=>{a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach(f=>{d.push(f)})}catch(f){}});return d})})}function ra(a){return a.filter(b=>b.type===CSSRule.FONT_FACE_RULE).filter(b=>b.style.getPropertyValue("src").search(Q)!==-1)}function sa(a,b){return t(function*(){if(a.ownerDocument==null)throw Error("Provided element is not within a Document");var d=w(a.ownerDocument.styleSheets);d=yield qa(d,b);return ra(d)})}
+function ta(a){function b(c){(c.style.fontFamily||getComputedStyle(c).fontFamily).split(",").forEach(e=>{d.add(e.trim().replace(/["']/g,""))});Array.from(c.children).forEach(e=>{e instanceof HTMLElement&&b(e)})}const d=new Set;b(a);return d}function ua(a,b){return t(function*(){const d=yield sa(a,b),c=ta(a);return(yield Promise.all(d.filter(e=>c.has(e.style.fontFamily.trim().replace(/["']/g,""))).map(e=>R(e.cssText,e.parentStyleSheet?e.parentStyleSheet.href:null,b)))).join("\n")})}
+function va(a,b){return t(function*(){const d=b.j!=null?b.j:b.K?null:yield ua(a,b);if(d){const c=document.createElement("style");c.appendChild(document.createTextNode(d));a.firstChild?a.insertBefore(c,a.firstChild):a.appendChild(c)}})};function wa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b),e=yield P(a,b,!0);yield va(e,b);yield T(e,b);u(e,b);return yield D(e,d,c)})}
+function xa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b);var e=yield wa(a,b);e=yield B(e);const f=document.createElement("canvas"),g=f.getContext("2d"),k=b.G||window.devicePixelRatio||1,m=b.h||d,q=b.g||c;f.width=m*k;f.height=q*k;!b.J&&(f.width>16384||f.height>16384)&&(f.width>16384&&f.height>16384?f.width>f.height?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384):f.width>16384?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=
+16384));f.style.width=`${m}`;f.style.height=`${q}`;b.backgroundColor&&(g.fillStyle=b.backgroundColor,g.fillRect(0,0,f.width,f.height));g.drawImage(e,0,0,f.width,f.height);return f})}function ya(a,b={}){return t(function*(){return(yield xa(a,b)).toDataURL()})};const za=["gemini.google.com","corp.google.com","proxy.googlers.com"];function Y(){return document.body.querySelectorAll('[class*="animate"]').length>0}function Z(a){return t(function*(){try{return yield ya(a,{h:a.offsetWidth,g:a.offsetHeight})}catch(d){var b=a.offsetHeight;const c=document.createElement("canvas");c.width=a.offsetWidth;c.height=b;return c.toDataURL("image/png")}})}
+function Aa(){return t(function*(){const a=document.body.offsetWidth,b=document.body.offsetHeight,d=document.body.cloneNode(!0);d.querySelectorAll('[class*="animate"]').forEach(c=>{c.classList.remove(...Array.from(c.classList).filter(e=>e.startsWith("animate")))});d.style.width=`${a}px`;d.style.height=`${b}px`;return d})}
+function Ba(a){return t(function*(){let b=document.body;if(Y()){var d=yield Aa();b=d;document.body.appendChild(d)}d=yield Z(b);Y()&&document.body.removeChild(b);window.parent.postMessage({type:"SEND_SCREENSHOT",image:d,topOffset:document.documentElement.scrollTop},a.origin)})}function Ca(a){return t(function*(){const b={type:"SEND_SCREENSHOT_FOR_DATA_VISUALIZATION",image:yield Z(document.body),topOffset:0};window.parent.postMessage(b,a.origin)})}
+window.addEventListener("message",a=>t(function*(){if(za.some(d=>a.origin.includes(d))){var b=a.data;b&&(b.type==="MAKE_SCREENSHOT"&&(yield Ba(a)),b.type==="MAKE_SCREENSHOT_FOR_DATA_VISUALIZATION"&&(yield Ca(a)))}}));
+})();</script><script>(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script>
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script>((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-2.5-flash","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-2.5-flash-image-preview","imageTransformModelName":"gemini-3-pro-image-preview-11-2025","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"]})</script><script>(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script>(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Плотность вещества — 7 класс</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --card-bg: #1e293b;
+                --text: #f1f5f9;
+                --text-light: #94a3b8;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; transition: background 0.3s, color 0.3s; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+        /* Шапка */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { opacity: 0.9; max-width: 600px; margin: 15px auto 0; font-style: italic; }
+
+        .download-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .download-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+        h2 { border-left: 5px solid var(--primary); padding-left: 15px; margin-top: 0; color: var(--primary); }
+
+        /* Теория */
+        .theory-list { padding-left: 20px; }
+        .theory-list li { margin-bottom: 12px; }
+
+        /* Формулы */
+        .formula-card {
+            background: rgba(79, 70, 229, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 20px 0;
+            font-family: 'Cambria', serif;
+            border: 1px dashed var(--primary);
+        }
+        .formula-desc { font-size: 1rem; color: var(--text-light); text-align: center; }
+
+        /* Симуляция */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) { .sim-grid { grid-template-columns: 1fr; } }
+        
+        .controls { display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: var(--bg); padding: 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .control-group label { display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; }
+        
+        .visual-area {
+            background: #f1f5f9;
+            border-radius: 15px;
+            position: relative;
+            min-height: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--border);
+        }
+        canvas { max-width: 100%; height: auto; }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+
+        /* Практика */
+        .task-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+        .task-input-group { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        input[type="number"], select { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+
+        /* Тест */
+        .test-q { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .options-list { display: grid; gap: 10px; margin-top: 12px; }
+        .opt-btn {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text);
+        }
+        .opt-btn.active { border-color: var(--primary); background: rgba(79, 70, 229, 0.1); font-weight: 600; }
+
+        .hidden { display: none; }
+        .alert { margin-top: 15px; padding: 15px; border-radius: 10px; font-weight: bold; }
+        .alert-success { background: rgba(16, 185, 129, 0.15); color: var(--accent); }
+        .alert-error { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .youtube-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: #ff0000;
+            font-weight: bold;
+            border: 2px solid #ff0000;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="download-btn" onclick="exportHTML()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Скачать урок
+        </button>
+        <h1>Плотность вещества</h1>
+        <p>Что тяжелее: килограмм ваты или килограмм свинца? Физика дает ответ: они весят одинаково, но занимают разный объем. И за это отвечает плотность!</p>
+    </header>
+
+    <div class="container">
+        <!-- ТЕОРИЯ -->
+        <section class="card">
+            <h2>Теория: Что нужно знать</h2>
+            <ul class="theory-list">
+                <li><strong>Определение:</strong> Плотность — это физическая величина, которая показывает, какая масса вещества содержится в единице объёма.</li>
+                <li><strong>Суть:</strong> Плотность зависит от того, насколько плотно "упакованы" молекулы вещества и какова масса самих молекул.</li>
+                <li><strong>Зависимость:</strong> При нагревании большинство тел расширяется (объем растет), поэтому их плотность уменьшается.</li>
+                <li><strong>Таблицы:</strong> Плотность — это характеристика конкретного вещества. У золота она всегда выше, чем у алюминия.</li>
+            </ul>
+        </section>
+
+        <!-- ПРИМЕРЫ -->
+        <section class="card">
+            <h2>Плотность в нашей жизни</h2>
+            <ul>
+                <li><strong>Почему корабли не тонут?</strong> Огромные стальные корабли имеют внутри много воздуха, поэтому их средняя плотность меньше плотности воды.</li>
+                <li><strong>Воздушные шары:</strong> Гелий легче воздуха (его плотность меньше), поэтому шарик стремится вверх.</li>
+                <li><strong>Слоеное масло:</strong> Если смешать воду и масло, масло окажется сверху, так как его плотность ниже.</li>
+            </ul>
+        </section>
+
+        <!-- ФОРМУЛЫ -->
+        <section class="card">
+            <h2>Формула и единицы измерения</h2>
+            <div class="formula-card">
+                ρ = m / V
+            </div>
+            <div class="formula-desc">
+                ρ (ро) — плотность [кг/м<sup>3</sup> или г/см<sup>3</sup>]<br>
+                m — масса тела [кг или г]<br>
+                V — объем тела [м<sup>3</sup> или см<sup>3</sup>]
+            </div>
+            <p style="text-align: center; margin-top: 15px;">
+                <strong>Важно:</strong> 1000 кг/м<sup>3</sup> = 1 г/см<sup>3</sup> (это плотность чистой воды).
+            </p>
+        </section>
+
+        <!-- СИМУЛЯЦИЯ -->
+        <section class="card">
+            <h2>Интерактивная модель: Плотность и объем</h2>
+            <div class="sim-grid">
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Вещество (плотность ρ):</label>
+                        <select id="material-select" style="width: 100%;">
+                            <option value="2700">Алюминий (2700 кг/м³)</option>
+                            <option value="7800">Сталь (7800 кг/м³)</option>
+                            <option value="19300">Золото (19300 кг/м³)</option>
+                            <option value="900">Лед (900 кг/м³)</option>
+                            <option value="600">Дерево (600 кг/м³)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Масса тела (m): <span id="m-label">18</span> кг</label>
+                        <input type="range" id="mass-input" min="1" max="20" value="5" step="1">
+                    </div>
+                    <div class="control-group">
+                        <label>Нач. объем воды (V<sub>1</sub>): <span id="v1-label">44</span> л</label>
+                        <input type="range" id="v1-input" min="20" max="80" value="50">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" id="drop-btn">Погрузить</button>
+                        <button class="btn btn-outline" id="reset-btn">Сброс</button>
+                    </div>
+                    <div id="sim-data" class="alert alert-success">V<sub>тела</sub> = 2.31 л<br>V<sub>2</sub> = 46.31 л</div>
+                </div>
+                <div class="visual-area">
+                    <canvas id="simCanvas" width="350" height="450"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ПРИМЕР РЕШЕНИЯ -->
+        <section class="card">
+            <h2>Пример решения задачи</h2>
+            <p><strong>Условие:</strong> Кусок металла массой 450 г имеет объем 50 см<sup>3</sup>. Определите плотность этого металла.</p>
+            <button class="btn btn-outline" style="padding: 5px 15px;" onclick="document.getElementById('sol').classList.toggle('hidden')">Показать решение</button>
+            <div id="sol" class="hidden" style="margin-top: 15px; background: rgba(0,0,0,0.03); padding: 15px; border-radius: 12px;">
+                <p><strong>Дано:</strong> m = 450 г, V = 50 см<sup>3</sup>.</p>
+                <p><strong>Формула:</strong> ρ = m / V</p>
+                <p><strong>Решение:</strong> ρ = 450 / 50 = 9 г/см<sup>3</sup>.</p>
+                <p>Переведем в СИ: 9 г/см<sup>3</sup> · 1000 = 9000 кг/м<sup>3</sup> (это медь).</p>
+                <p><strong>Ответ:</strong> 9 г/см<sup>3</sup>.</p>
+            </div>
+        </section>
+
+        <!-- ЗАДАЧИ -->
+        <section class="card">
+            <h2>Практические задачи</h2>
+            
+            <div class="task-item">
+                <p><strong>Уровень A:</strong> Найдите плотность вещества, если тело массой 200 кг занимает объем 0.5 м<sup>3</sup>.</p>
+                <div class="task-input-group">
+                    <input type="number" id="ansA" placeholder="Ответ [кг/м3]">
+                    <button class="btn btn-primary" onclick="checkA()">Проверить</button>
+                </div>
+                <div id="fbA" class="alert hidden"></div>
+                <p><small>Дескрипторы: находит плотность по прямой формуле.</small></p>
+            </div>
+
+            <div class="task-item">
+                <p><strong>Уровень B:</strong> Какой объем займет 2.7 кг алюминия? (Плотность алюминия 2700 кг/м<sup>3</sup>).</p>
+                <div class="task-input-group">
+                    <input type="number" id="ansB" step="0.001" placeholder="Ответ [м3]">
+                    <button class="btn btn-primary" onclick="checkB()">Проверить</button>
+                </div>
+                <div id="fbB" class="alert hidden"></div>
+                <p><small>Дескрипторы: выражает объем из формулы плотности V = m / ρ.</small></p>
+            </div>
+
+            <div class="task-item">
+                <p><strong>Уровень C:</strong> Брусок из пробки массой 48 г имеет объем 200 см<sup>3</sup>. Будет ли он плавать в воде? (Плотность воды 1000 кг/м<sup>3</sup> или 1 г/см<sup>3</sup>).</p>
+                <div class="task-input-group">
+                    <select id="ansC">
+                        <option value="0">Выберите вариант</option>
+                        <option value="1">Да, плотность пробки меньше</option>
+                        <option value="2">Нет, плотность пробки больше</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="checkC()">Проверить</button>
+                </div>
+                <div id="fbC" class="alert hidden"></div>
+                <p><small>Дескрипторы: анализирует условие плавания тел на основе сравнения плотностей.</small></p>
+            </div>
+        </section>
+
+        <!-- ВИДЕО -->
+        <section class="card">
+            <h2>Видео по теме</h2>
+            <a href="https://www.youtube.com/results?search_query=плотность+вещества+7+класс+физика" target="_blank" class="youtube-box">
+                <svg width="32" height="32" fill="currentColor" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.05-.081 1.987l-.008.104-.02.26-.01.104c-.045.507-.114 1.012-.22 1.404a2.016 2.016 0 0 1-1.415 1.419c-1.123.303-5.288.333-6.11.335h-.097c-.822-.003-4.987-.033-6.11-.335a2.012 2.012 0 0 1-1.415-1.419c-.101-.38-.172-.882-.22-1.403l-.01-.104-.022-.261-.008-.104c-.065-.913-.073-1.77-.074-1.957v-.075c.001-.194.01-1.05.081-1.987l.008-.104.02-.26.01-.104c.045-.507.114-1.012.22-1.404A2.015 2.015 0 0 1 2.404 2.334c1.123-.303 5.288-.333 6.11-.335h.089zM6.5 5.205v5.59L11 8 6.5 5.205z"></path></svg>
+                Смотреть уроки по плотности на YouTube
+            </a>
+            <p style="margin-top: 10px;">Рекомендуем канал "Физика 7 класс" для закрепления темы.</p>
+        </section>
+
+        <!-- РЕФЛЕКСИЯ -->
+        <section class="card">
+            <h2>Рефлексия</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label><input type="checkbox"> Я понимаю разницу между массой и плотностью.</label>
+                <label><input type="checkbox"> Я могу перевести г/см<sup>3</sup> в кг/м<sup>3</sup>.</label>
+                <label><input type="checkbox"> Я знаю, как плотность влияет на плавание тел.</label>
+            </div>
+        </section>
+
+        <!-- ТЕСТ -->
+        <section class="card">
+            <h2>Итоговый тест</h2>
+            <div id="quiz-container"><div class="test-q"><p><strong>1. В каких единицах измеряется плотность в системе СИ?</strong></p>
+                    <div class="options-list">
+                        <button class="opt-btn" id="q0o0" onclick="selectTestOpt(0, 0)">кг/м3</button><button class="opt-btn" id="q0o1" onclick="selectTestOpt(0, 1)">г/см3</button><button class="opt-btn" id="q0o2" onclick="selectTestOpt(0, 2)">кг</button><button class="opt-btn" id="q0o3" onclick="selectTestOpt(0, 3)">м3/кг</button>
+                    </div></div><div class="test-q"><p><strong>2. Как изменится плотность бруска, если его разрезать пополам?</strong></p>
+                    <div class="options-list">
+                        <button class="opt-btn" id="q1o0" onclick="selectTestOpt(1, 0)">Увеличится в 2 раза</button><button class="opt-btn" id="q1o1" onclick="selectTestOpt(1, 1)">Уменьшится в 2 раза</button><button class="opt-btn" id="q1o2" onclick="selectTestOpt(1, 2)">Не изменится</button><button class="opt-btn" id="q1o3" onclick="selectTestOpt(1, 3)">Станет равна нулю</button>
+                    </div></div><div class="test-q"><p><strong>3. Плотность воды равна 1000 кг/м3. Сколько это в г/см3?</strong></p>
+                    <div class="options-list">
+                        <button class="opt-btn" id="q2o0" onclick="selectTestOpt(2, 0)">100</button><button class="opt-btn" id="q2o1" onclick="selectTestOpt(2, 1)">10</button><button class="opt-btn" id="q2o2" onclick="selectTestOpt(2, 2)">1</button><button class="opt-btn" id="q2o3" onclick="selectTestOpt(2, 3)">0.1</button>
+                    </div></div><div class="test-q"><p><strong>4. Тело массой 500 г имеет объем 100 см3. Какова его плотность?</strong></p>
+                    <div class="options-list">
+                        <button class="opt-btn" id="q3o0" onclick="selectTestOpt(3, 0)">5 г/см3</button><button class="opt-btn" id="q3o1" onclick="selectTestOpt(3, 1)">0.2 г/см3</button><button class="opt-btn" id="q3o2" onclick="selectTestOpt(3, 2)">5000 кг/м3</button><button class="opt-btn" id="q3o3" onclick="selectTestOpt(3, 3)">Верны ответы 1 и 3</button>
+                    </div></div><div class="test-q"><p><strong>5. Из двух тел одинакового объема тяжелее то, у которого:</strong></p>
+                    <div class="options-list">
+                        <button class="opt-btn" id="q4o0" onclick="selectTestOpt(4, 0)">Больше площадь</button><button class="opt-btn" id="q4o1" onclick="selectTestOpt(4, 1)">Меньше плотность</button><button class="opt-btn" id="q4o2" onclick="selectTestOpt(4, 2)">Больше плотность</button><button class="opt-btn" id="q4o3" onclick="selectTestOpt(4, 3)">Больше температура</button>
+                    </div></div></div>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="checkTest()">Проверить тест</button>
+            <div id="test-fb" class="alert hidden"></div>
+        </section>
+    </div>
+
+    <script>
+        // Функция скачивания
+        function exportHTML() {
+            const html = document.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'density_lesson_7.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // --- СИМУЛЯЦИЯ ---
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const massInput = document.getElementById('mass-input');
+        const v1Input = document.getElementById('v1-input');
+        const matSelect = document.getElementById('material-select');
+        const dropBtn = document.getElementById('drop-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let isDropped = false;
+
+        function updateLabels() {
+            document.getElementById('m-label').innerText = massInput.value;
+            document.getElementById('v1-label').innerText = v1Input.value;
+            const density = parseInt(matSelect.value);
+            const mass = parseFloat(massInput.value);
+            const bodyVol = (mass / density) * 1000; // в литрах для визуализации
+
+            if (isDropped) {
+                const info = document.getElementById('sim-data');
+                info.classList.remove('hidden');
+                info.innerHTML = `V<sub>тела</sub> = ${bodyVol.toFixed(2)} л<br>V<sub>2</sub> = ${(parseFloat(v1Input.value) + bodyVol).toFixed(2)} л`;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const x = 100, y = 50, w = 150, h = 350;
+            const v1 = parseFloat(v1Input.value);
+            const density = parseInt(matSelect.value);
+            const mass = parseFloat(massInput.value);
+            const bodyVol = (mass / density) * 1000;
+            
+            const currentTotalV = isDropped ? (v1 + bodyVol) : v1;
+
+            // Вода
+            const waterHeight = (currentTotalV / 120) * h; // Сосуд на 120 литров
+            ctx.fillStyle = 'rgba(79, 70, 229, 0.4)';
+            ctx.fillRect(x + 2, y + h - waterHeight, w - 4, waterHeight);
+
+            // Тело
+            if (isDropped) {
+                // Если плотность меньше плотности воды (1000), тело плавает на поверхности
+                const floats = density < 1000;
+                ctx.fillStyle = '#64748b';
+                const size = Math.pow(bodyVol, 1/3) * 15;
+                
+                let bodyY;
+                if (floats) {
+                    const submergedPart = density / 1000;
+                    bodyY = y + h - waterHeight - size * (1 - submergedPart);
+                } else {
+                    bodyY = y + h - size - 5;
+                }
+                
+                ctx.fillRect(x + w/2 - size/2, bodyY, size, size);
+                ctx.strokeStyle = '#1e293b';
+                ctx.strokeRect(x + w/2 - size/2, bodyY, size, size);
+            }
+
+            // Мензурка
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x, y, w, h);
+
+            // Шкала
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px Arial';
+            for (let i = 0; i <= 120; i += 20) {
+                const sy = y + h - (i / 120) * h;
+                ctx.beginPath(); ctx.moveTo(x + w, sy); ctx.lineTo(x + w - 15, sy); ctx.stroke();
+                ctx.fillText(i + ' л', x + w + 5, sy + 5);
+            }
+        }
+
+        [massInput, v1Input, matSelect].forEach(el => {
+            el.oninput = () => { updateLabels(); draw(); };
+        });
+
+        dropBtn.onclick = () => { isDropped = true; updateLabels(); draw(); };
+        resetBtn.onclick = () => { isDropped = false; document.getElementById('sim-data').classList.add('hidden'); draw(); };
+
+        draw();
+
+        // --- ЗАДАЧИ ---
+        function checkA() {
+            const val = document.getElementById('ansA').value;
+            const fb = document.getElementById('fbA');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            if(val == 400) { fb.innerText = "Верно! 200 / 0.5 = 400 кг/м3."; fb.classList.add('alert-success'); }
+            else { fb.innerText = "Ошибка. Используй формулу m / V."; fb.classList.add('alert-error'); }
+        }
+        function checkB() {
+            const val = document.getElementById('ansB').value;
+            const fb = document.getElementById('fbB');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            if(val == 0.001) { fb.innerText = "Правильно! 2.7 / 2700 = 0.001 м3."; fb.classList.add('alert-success'); }
+            else { fb.innerText = "Не совсем. Ответ: 0.001."; fb.classList.add('alert-error'); }
+        }
+        function checkC() {
+            const val = document.getElementById('ansC').value;
+            const fb = document.getElementById('fbC');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            if(val == "1") { fb.innerText = "Верно! Плотность пробки 48/200 = 0.24 г/см3. Это меньше 1 г/см3 (воды)."; fb.classList.add('alert-success'); }
+            else { fb.innerText = "Неверно. Пробка очень легкая и плавает."; fb.classList.add('alert-error'); }
+        }
+
+        // --- ТЕСТ ---
+        const testData = [
+            { q: "В каких единицах измеряется плотность в системе СИ?", a: ["кг/м3", "г/см3", "кг", "м3/кг"], c: 0 },
+            { q: "Как изменится плотность бруска, если его разрезать пополам?", a: ["Увеличится в 2 раза", "Уменьшится в 2 раза", "Не изменится", "Станет равна нулю"], c: 2 },
+            { q: "Плотность воды равна 1000 кг/м3. Сколько это в г/см3?", a: ["100", "10", "1", "0.1"], c: 2 },
+            { q: "Тело массой 500 г имеет объем 100 см3. Какова его плотность?", a: ["5 г/см3", "0.2 г/см3", "5000 кг/м3", "Верны ответы 1 и 3"], c: 3 },
+            { q: "Из двух тел одинакового объема тяжелее то, у которого:", a: ["Больше площадь", "Меньше плотность", "Больше плотность", "Больше температура"], c: 2 }
+        ];
+
+        let userTestAnswers = Array(5).fill(null);
+
+        function initTest() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            testData.forEach((item, i) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'test-q';
+                qDiv.innerHTML = `<p><strong>${i+1}. ${item.q}</strong></p>
+                    <div class="options-list">
+                        ${item.a.map((opt, oi) => `<button class="opt-btn" id="q${i}o${oi}" onclick="selectTestOpt(${i}, ${oi})">${opt}</button>`).join('')}
+                    </div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        window.selectTestOpt = (qi, oi) => {
+            userTestAnswers[qi] = oi;
+            document.querySelectorAll(`[id^="q${qi}o"]`).forEach(b => b.classList.remove('active'));
+            document.getElementById(`q${qi}o${oi}`).classList.add('active');
+        };
+
+        function checkTest() {
+            let score = 0;
+            testData.forEach((d, i) => { if(userTestAnswers[i] === d.c) score++; });
+            const fb = document.getElementById('test-fb');
+            fb.classList.remove('hidden');
+            fb.innerHTML = `Ваш результат: ${score} из 5. <br><small>Правильные ответы: 1-А, 2-В, 3-В, 4-Г, 5-В</small>`;
+            fb.className = score > 3 ? 'alert alert-success' : 'alert alert-error';
+        }
+
+        window.onload = initTest;
+    </script>
+
+</body></html>

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сложение сил, действующих на тело вдоль одной прямой — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --secondary: #0ea5e9;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #ca8a04;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #e0e7ff;
+            --vector-f1: #ea580c; /* Оранжевый */
+            --vector-f2: #0284c7; /* Синий */
+            --vector-r: #16a34a;  /* Зеленый */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e3a8a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px; /* Отступ для переключателя языков */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(79, 70, 229, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Логика отображения языков */
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Сложение сил, действующих на тело вдоль одной прямой — 7 класс</span>
+            <span class="lang-kz">Бір түзу бойымен денеге әрекет ететін күштерді қосу — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Тянули ли вы когда-нибудь репку вместе с друзьями или перетягивали канат? Чтобы понять, куда и как быстро начнет двигаться предмет, нужно уметь складывать все силы, которые на него действуют!</span>
+            <span class="lang-kz">Достарыңызбен бірге шалқан тарттыңыз ба немесе арқан тартыстыңыз ба? Заттың қайда және қаншалықты жылдам қозғала бастайтынын түсіну үшін оған әрекет ететін барлық күштерді қоса білу керек!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Что такое равнодействующая сила?</span>
+            <span class="lang-kz">Теңәрекетті күш дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В реальной жизни на тело редко действует только одна сила. Обычно их несколько: сила тяжести, сила упругости, сила трения, сила тяги двигателей и так далее. Как же понять, что произойдет с телом?</span>
+            <span class="lang-kz">Нақты өмірде денеге тек бір күш сирек әрекет етеді. Әдетте олар бірнешеу: ауырлық күші, серпімділік күші, үйкеліс күші, қозғалтқыштардың тарту күші және т.б. Денемен не болатынын қалай түсінуге болады?</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><span class="highlight">Равнодействующая сила (R)</span> — это сила, которая производит на тело <strong>такое же действие</strong>, как несколько одновременно действующих на него сил. Она "заменяет" их все.</span>
+                <span class="lang-kz"><span class="highlight">Теңәрекетті күш (R)</span> — бұл денеге бір мезгілде әрекет ететін бірнеше күштер сияқты <strong>бірдей әрекет</strong> ететін күш. Ол барлығын "алмастырады".</span>
+            </li>
+            <li>
+                <span class="lang-ru">Если две силы направлены <strong>в одну сторону</strong>, их равнодействующая направлена туда же, а её модуль равен <strong>сумме</strong> этих сил. Они помогают друг другу.</span>
+                <span class="lang-kz">Егер екі күш <strong>бір бағытта</strong> бағытталған болса, олардың теңәрекетті күші де сол жаққа бағытталады, ал оның модулі осы күштердің <strong>қосындысына</strong> тең. Олар бір-біріне көмектеседі.</span>
+            </li>
+            <li>
+                <span class="lang-ru">Если две силы направлены <strong>в противоположные стороны</strong>, их равнодействующая направлена в сторону <strong>бóльшей</strong> силы, а её модуль равен <strong>разности</strong> бóльшей и меньшей силы. Они мешают друг другу.</span>
+                <span class="lang-kz">Егер екі күш <strong>қарама-қарсы бағытта</strong> бағытталған болса, олардың теңәрекетті күші <strong>үлкен</strong> күш жағына бағытталады, ал оның модулі үлкен және кіші күштің <strong>айырмасына</strong> тең. Олар бір-біріне кедергі жасайды.</span>
+            </li>
+            <li>
+                <span class="lang-ru">Если две <strong>равные</strong> силы направлены в противоположные стороны, их равнодействующая <strong>равна нулю</strong> (R = 0). В этом случае тело находится в покое или движется равномерно и прямолинейно.</span>
+                <span class="lang-kz">Егер <strong>екі тең</strong> күш қарама-қарсы бағытта бағытталған болса, олардың теңәрекетті күші <strong>нөлге тең</strong> (R = 0). Бұл жағдайда дене тыныштықта болады немесе бірқалыпты және түзу сызықты қозғалады.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Примеры сложения сил</span>
+            <span class="lang-kz">Күштерді қосу мысалдары</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Перетягивание каната:</strong> Две команды тянут канат в разные стороны. Канат сдвинется в сторону той команды, которая прикладывает бóльшую силу. Равнодействующая равна разности их усилий.</span>
+                <span class="lang-kz"><strong>Арқан тартыс:</strong> Екі команда арқанды екі жаққа тартады. Арқан үлкен күш жұмсайтын команда жағына жылжиды. Теңәрекетті күш олардың күштерінің айырмасына тең.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Бурлаки на Волге:</strong> Несколько человек тянут тяжелую баржу в одном направлении. Их небольшие усилия складываются (плюсуются) в одну огромную равнодействующую силу, способную сдвинуть судно.</span>
+                <span class="lang-kz"><strong>Волгадағы бурлактар:</strong> Бірнеше адам ауыр баржаны бір бағытта тартады. Олардың шағын күштері кемені жылжыта алатын бір үлкен теңәрекетті күшке жинақталады (қосылады).</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Падение парашютиста:</strong> Сила тяжести тянет его вниз, а сила сопротивления воздуха (и купола) — вверх. Когда эти силы становятся равными, их равнодействующая становится равной нулю, и парашютист начинает спускаться с постоянной безопасной скоростью.</span>
+                <span class="lang-kz"><strong>Парашютшінің құлауы:</strong> Ауырлық күші оны төмен тартады, ал ауаның (және күмбездің) кедергі күші жоғары тартады. Бұл күштер теңескен кезде, олардың теңәрекетті күші нөлге тең болады және парашютші тұрақты қауіпсіз жылдамдықпен төмен түсе бастайды.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Формулы и обозначения</span>
+            <span class="lang-kz">Формулалар мен белгілеулер</span>
+        </h2>
+        <div class="formula-box">
+            <p>
+                <span class="lang-ru">1. Если силы <strong>F<sub>1</sub></strong> и <strong>F<sub>2</sub></strong> направлены <strong>в одну сторону</strong>:</span>
+                <span class="lang-kz">1. Егер <strong>F<sub>1</sub></strong> және <strong>F<sub>2</sub></strong> күштері <strong>бір бағытта</strong> бағытталған болса:</span>
+            </p>
+            <span class="math">R = F<sub>1</sub> + F<sub>2</sub></span>
+            
+            <p style="margin-top: 1rem;">
+                <span class="lang-ru">2. Если силы <strong>F<sub>1</sub></strong> и <strong>F<sub>2</sub></strong> направлены <strong>в противоположные стороны</strong> (и F<sub>1</sub> > F<sub>2</sub>):</span>
+                <span class="lang-kz">2. Егер <strong>F<sub>1</sub></strong> және <strong>F<sub>2</sub></strong> күштері <strong>қарама-қарсы бағытта</strong> бағытталған болса (және F<sub>1</sub> > F<sub>2</sub>):</span>
+            </p>
+            <span class="math">R = F<sub>1</sub> - F<sub>2</sub></span>
+            
+            <p style="margin-top: 1rem;">
+                <span class="lang-ru">Где:</span>
+                <span class="lang-kz">Мұндағы:</span>
+            </p>
+            <ul>
+                <li>
+                    <span class="lang-ru"><strong>R</strong> (иногда обозначают <strong>F<sub>равн</sub></strong>) — равнодействующая сила. Измеряется в <strong>Ньютонах (Н)</strong>.</span>
+                    <span class="lang-kz"><strong>R</strong> (кейде <strong>F<sub>тең</sub></strong> деп белгілейді) — теңәрекетті күш. <strong>Ньютонмен (Н)</strong> өлшенеді.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>F<sub>1</sub></strong>, <strong>F<sub>2</sub></strong> — складываемые силы. Измеряются в <strong>Ньютонах (Н)</strong>.</span>
+                    <span class="lang-kz"><strong>F<sub>1</sub></strong>, <strong>F<sub>2</sub></strong> — қосылатын күштер. <strong>Ньютонмен (Н)</strong> өлшенеді.</span>
+                </li>
+            </ul>
+        </div>
+        <p><em>
+            <span class="lang-ru">Обратите внимание: силы нельзя складывать просто как числа, если они направлены под углом друг к другу! Формулы выше работают только для сил, действующих вдоль <strong>одной прямой</strong>.</span>
+            <span class="lang-kz">Назар аударыңыз: егер күштер бір-біріне бұрыш жасай бағытталған болса, оларды жай сандар сияқты қосуға болмайды! Жоғарыдағы формулалар тек <strong>бір түзу бойымен</strong> әрекет ететін күштер үшін жұмыс істейді.</span>
+        </em></p>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Влияние сил на движение</span>
+            <span class="lang-kz">Симуляция: Күштердің қозғалысқа әсері</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="f1Slider" style="color: var(--vector-f1)">
+                        <span class="lang-ru">Сила 1 (F<sub>1</sub>):</span>
+                        <span class="lang-kz">1-ші күш (F<sub>1</sub>):</span>
+                        <span id="f1Val">50</span> Н
+                    </label>
+                    <input type="range" id="f1Slider" min="0" max="100" step="5" value="50">
+                    <select id="f1Dir">
+                        <option value="1" data-ru="Вправо (→)" data-kz="Оңға (→)" selected>Вправо (→)</option>
+                        <option value="-1" data-ru="Влево (←)" data-kz="Солға (←)">Влево (←)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="f2Slider" style="color: var(--vector-f2)">
+                        <span class="lang-ru">Сила 2 (F<sub>2</sub>):</span>
+                        <span class="lang-kz">2-ші күш (F<sub>2</sub>):</span>
+                        <span id="f2Val">30</span> Н
+                    </label>
+                    <input type="range" id="f2Slider" min="0" max="100" step="5" value="30">
+                    <select id="f2Dir">
+                        <option value="1" data-ru="Вправо (→)" data-kz="Оңға (→)">Вправо (→)</option>
+                        <option value="-1" data-ru="Влево (←)" data-kz="Солға (←)" selected>Влево (←)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="massSlider">
+                        <span class="lang-ru">Масса тележки (m):</span>
+                        <span class="lang-kz">Арбаның массасы (m):</span>
+                        <span id="massVal">10</span> <span class="lang-ru">кг</span><span class="lang-kz">кг</span>
+                    </label>
+                    <input type="range" id="massSlider" min="1" max="20" step="1" value="10">
+                </div>
+                <div class="buttons">
+                    <button id="btnPlayPause">
+                        <span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Сброс</span><span class="lang-kz">Қалпына келтіру</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="600" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Настройте силы и нажмите «Старт». Зеленая стрелка покажет равнодействующую силу (R). Посмотрим, куда поедет тележка!</span>
+                <span class="lang-kz">Күштерді реттеп, «Бастау» түймесін басыңыз. Жасыл көрсеткі теңәрекетті күшті (R) көрсетеді. Арбаның қайда баратынын көрейік!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> Дед тянет репку с силой 50 Н, бабка — с силой 30 Н, а внучка — с силой 20 Н. Все они тянут в одну сторону вдоль одной прямой. Вычислите равнодействующую силу, с которой они пытаются вытащить репку.</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Атасы шалқанды 50 Н күшпен, әжесі 30 Н, ал немересі 20 Н күшпен тартады. Олардың барлығы бір түзу бойымен бір бағытта тартады. Шалқанды жұлып алуға тырысатын теңәрекетті күшті есептеңіз.</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>F<sub>1</sub> (дед) = 50 Н<br>F<sub>2</sub> (бабка) = 30 Н<br>F<sub>3</sub> (внучка) = 20 Н<br><strong>Найти:</strong> R — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>F<sub>1</sub> (атасы) = 50 Н<br>F<sub>2</sub> (әжесі) = 30 Н<br>F<sub>3</sub> (немересі) = 20 Н<br><strong>Табу керек:</strong> R — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Формула:</strong><br>Так как все силы направлены вдоль одной прямой в одну сторону, их равнодействующая равна сумме этих сил:<br>R = F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub></span>
+                <span class="lang-kz"><strong>Формула:</strong><br>Барлық күштер бір түзу бойымен бір бағытта бағытталғандықтан, олардың теңәрекетті күші осы күштердің қосындысына тең:<br>R = F<sub>1</sub> + F<sub>2</sub> + F<sub>3</sub></span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>R = 50 Н + 30 Н + 20 Н = 100 Н.</span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>R = 50 Н + 30 Н + 20 Н = 100 Н.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Равнодействующая сила равна 100 Н.</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Теңәрекетті күш 100 Н-ға тең.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">На коробку действуют две силы: мальчик толкает её вправо с силой 15 Н, а девочка тянет её тоже вправо с силой 10 Н. Чему равна равнодействующая этих сил? (Введите число в Ньютонах).</span>
+                <span class="lang-kz">Қорапқа екі күш әрекет етеді: ұл бала оны оңға қарай 15 Н күшпен итереді, ал қыз бала оны оңға қарай 10 Н күшпен тартады. Осы күштердің теңәрекетті күші неге тең? (Ньютонмен санды енгізіңіз).</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Например: 25" data-placeholder-kz="Мысалы: 25" placeholder="Например: 25">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Определяет направление сил (в одну сторону).<br>- Применяет формулу сложения сил R = F₁ + F₂.<br>- Вычисляет правильный ответ.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Күштердің бағытын анықтайды (бір бағытта).<br>- R = F₁ + F₂ күштерді қосу формуласын қолданады.<br>- Дұрыс жауапты есептейді.</span>
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Двигатель автомобиля тянет его вперед с силой 3000 Н, а сила сопротивления (трение и воздух) направлена назад и равна 1000 Н. Как будет двигаться автомобиль?</span>
+                <span class="lang-kz">Автокөліктің қозғалтқышы оны алға қарай 3000 Н күшпен тартады, ал кедергі күші (үйкеліс және ауа) артқа бағытталған және 1000 Н-ға тең. Автокөлік қалай қозғалады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Будет двигаться вперед под действием равнодействующей 4000 Н" data-kz="4000 Н теңәрекетті күштің әсерінен алға қозғалады">Будет двигаться вперед под действием равнодействующей 4000 Н</option>
+                    <option value="2" data-ru="Будет двигаться вперед под действием равнодействующей 2000 Н" data-kz="2000 Н теңәрекетті күштің әсерінен алға қозғалады">Будет двигаться вперед под действием равнодействующей 2000 Н</option>
+                    <option value="3" data-ru="Остановится, так как силы мешают друг другу" data-kz="Тоқтайды, өйткені күштер бір-біріне кедергі жасайды">Остановится, так как силы мешают друг другу</option>
+                    <option value="4" data-ru="Будет двигаться назад под действием силы 1000 Н" data-kz="1000 Н күштің әсерінен артқа қозғалады">Будет двигаться назад под действием силы 1000 Н</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Анализирует противоположно направленные силы.<br>- Применяет формулу вычитания сил R = F₁ - F₂.<br>- Делает вывод о направлении движения (в сторону большей силы).</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Қарама-қарсы бағытталған күштерді талдайды.<br>- R = F₁ - F₂ күштерді азайту формуласын қолданады.<br>- Қозғалыс бағыты туралы қорытынды жасайды (үлкен күш жағына).</span>
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">На тело, лежащее на столе, действуют три силы вдоль одной прямой: F₁ = 10 Н влево, F₂ = 25 Н вправо, F₃ = 15 Н влево. Чему равна равнодействующая сила и что происходит с телом?</span>
+                <span class="lang-kz">Үстелде жатқан денеге бір түзу бойымен үш күш әрекет етеді: F₁ = 10 Н солға, F₂ = 25 Н оңға, F₃ = 15 Н солға. Теңәрекетті күш неге тең және денемен не болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="R = 50 Н, движется вправо" data-kz="R = 50 Н, оңға қозғалады">R = 50 Н, движется вправо</option>
+                    <option value="2" data-ru="R = 0 Н, тело покоится" data-kz="R = 0 Н, дене тыныштықта">R = 0 Н, тело покоится</option>
+                    <option value="3" data-ru="R = 10 Н, движется влево" data-kz="R = 10 Н, солға қозғалады">R = 10 Н, движется влево</option>
+                </select>
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Находит сумму сил, направленных влево.<br>- Находит сумму сил, направленных вправо.<br>- Сравнивает суммы и вычисляет итоговую равнодействующую.<br>- Делает вывод о состоянии тела (R=0 => покой).</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Солға бағытталған күштердің қосындысын табады.<br>- Оңға бағытталған күштердің қосындысын табады.<br>- Қосындыларды салыстырады және қорытынды теңәрекетті күшті есептейді.<br>- Дененің күйі туралы қорытынды жасайды (R=0 => тыныштық).</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео с примерами сложения сил и демонстрацией того, как силы компенсируют друг друга.</span>
+            <span class="lang-kz">Күштерді қосу мысалдары және күштердің бір-бірін қалай теңестіретінін көрсететін бейнені қараңыз.</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%81%D0%BB%D0%BE%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5+%D1%81%D0%B8%D0%BB+%D1%80%D0%B0%D0%B2%D0%BD%D0%BE%D0%B4%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D1%83%D1%8E%D1%89%D0%B0%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Сложение сил (7 класс)» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Күштерді қосу (7 сынып)» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, что такое равнодействующая сила.</span>
+                <span class="lang-kz">Мен теңәрекетті күштің не екенін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею складывать силы, направленные в одну сторону.</span>
+                <span class="lang-kz">Мен бір бағытта бағытталған күштерді қоса аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею находить равнодействующую сил, направленных в разные стороны.</span>
+                <span class="lang-kz">Мен әртүрлі бағытта бағытталған күштердің теңәрекетті күшін таба аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что называют равнодействующей силой?</span>
+                <span class="lang-kz">1. Теңәрекетті күш деп нені атайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Самую большую из всех действующих сил</span><span class="lang-kz">Барлық әрекет етуші күштердің ішіндегі ең үлкенін</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Силу, которая равна сумме всех сил, независимо от их направления</span><span class="lang-kz">Бағытына қарамастан, барлық күштердің қосындысына тең күшті</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Силу, которая производит на тело такое же действие, как несколько одновременно действующих сил</span><span class="lang-kz">Денеге бір мезгілде әрекет ететін бірнеше күштер сияқты әрекет ететін күшті</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Силу трения, возникающую при движении</span><span class="lang-kz">Қозғалыс кезінде пайда болатын үйкеліс күшін</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Две силы, 5 Н и 7 Н, действуют на тело в одном направлении вдоль одной прямой. Чему равна их равнодействующая?</span>
+                <span class="lang-kz">2. 5 Н және 7 Н екі күш бір түзу бойымен бір бағытта денеге әрекет етеді. Олардың теңәрекетті күші неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">12 Н</span><span class="lang-kz">12 Н</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">2 Н</span><span class="lang-kz">2 Н</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">35 Н</span><span class="lang-kz">35 Н</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">0 Н</span><span class="lang-kz">0 Н</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">3. На тело влево действует сила 10 Н, а вправо — сила 4 Н. Куда направлена равнодействующая и чему она равна?</span>
+                <span class="lang-kz">3. Денеге солға қарай 10 Н күш, ал оңға қарай 4 Н күш әрекет етеді. Теңәрекетті күш қайда бағытталған және ол неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Вправо, 14 Н</span><span class="lang-kz">Оңға, 14 Н</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Влево, 14 Н</span><span class="lang-kz">Солға, 14 Н</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Вправо, 6 Н</span><span class="lang-kz">Оңға, 6 Н</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Влево, 6 Н</span><span class="lang-kz">Солға, 6 Н</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. В каком случае равнодействующая двух сил равна нулю?</span>
+                <span class="lang-kz">4. Қандай жағдайда екі күштің теңәрекетті күші нөлге тең болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Когда силы направлены в одну сторону</span><span class="lang-kz">Күштер бір бағытта бағытталған кезде</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Когда две равные по модулю силы направлены в противоположные стороны</span><span class="lang-kz">Модульдері тең екі күш қарама-қарсы бағытта бағытталған кезде</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Когда на тело действует только одна сила</span><span class="lang-kz">Денеге тек бір күш әрекет еткен кезде</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Когда тело движется с ускорением</span><span class="lang-kz">Дене үдеумен қозғалған кезде</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Ребята перетягивают канат. Первая команда тянет вправо с силой 150 Н и 200 Н, а вторая команда тянет влево с силой 180 Н и 190 Н. Какая команда победит и с какой равнодействующей силой?</span>
+                <span class="lang-kz">5. Балалар арқан тартысып жатыр. Бірінші команда оңға қарай 150 Н және 200 Н күшпен, ал екінші команда солға қарай 180 Н және 190 Н күшпен тартады. Қай команда жеңеді және қандай теңәрекетті күшпен?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Победит первая (вправо), R = 20 Н</span><span class="lang-kz">Біріншісі жеңеді (оңға), R = 20 Н</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Ничья, R = 0 Н</span><span class="lang-kz">Тең, R = 0 Н</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Победит вторая (влево), R = 20 Н</span><span class="lang-kz">Екіншісі жеңеді (солға), R = 20 Н</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Победит вторая (влево), R = 370 Н</span><span class="lang-kz">Екіншісі жеңеді (солға), R = 370 Н</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sim_wait: "Настройте силы и нажмите «Старт». Зеленая стрелка покажет равнодействующую силу (R). Посмотрим, куда поедет тележка!",
+            sim_right: "Сумма сил: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Равнодействующая R = {r} Н (вправо)</strong>. Тележка ускоряется вправо.",
+            sim_left: "Сумма сил: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Равнодействующая R = {r} Н (влево)</strong>. Тележка ускоряется влево.",
+            sim_zero: "Сумма сил: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Равнодействующая R = 0</strong>. Силы скомпенсированы (ускорения нет).",
+            btn_play: '<span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>',
+            btn_pause: '<span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Отлично! Так как силы направлены в одну сторону (вправо), мы их складываем: R = 15 Н + 10 Н = 25 Н.",
+            fbA_inc: "Ошибка. Подсказка: если силы действуют в одном направлении, они плюсуются друг с другом.",
+            fbB_corr: "Верно! Силы направлены противоположно. R = 3000 - 1000 = 2000 Н. Направление совпадает с большей силой (вперед).",
+            fbB_inc: "Неверно. Вспомните: если силы направлены в противоположные стороны, из большей нужно вычесть меньшую.",
+            fbC_corr: "Абсолютно правильно! Влево тянут силы 10 Н + 15 Н = 25 Н. Вправо тянет сила 25 Н. 25 Н - 25 Н = 0. Равнодействующая равна нулю, тело покоится.",
+            fbC_inc: "Неверно. Сначала сложите все силы, направленные влево. Затем сравните полученный результат с силой, направленной вправо.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили сложение сил.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            kg: "кг",
+            right: "вправо",
+            left: "влево"
+        },
+        kz: {
+            sim_wait: "Күштерді реттеп, «Бастау» түймесін басыңыз. Жасыл көрсеткі теңәрекетті күшті (R) көрсетеді. Арбаның қайда баратынын көрейік!",
+            sim_right: "Күштер қосындысы: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Теңәрекетті күш R = {r} Н (оңға)</strong>. Арба оңға қарай үдейді.",
+            sim_left: "Күштер қосындысы: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Теңәрекетті күш R = {r} Н (солға)</strong>. Арба солға қарай үдейді.",
+            sim_zero: "Күштер қосындысы: F<sub>1</sub> ({s1}{f1} Н) + F<sub>2</sub> ({s2}{f2} Н). <br><strong>Теңәрекетті күш R = 0</strong>. Күштер теңестірілді (үдеу жоқ).",
+            btn_play: '<span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>',
+            btn_pause: '<span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Тамаша! Күштер бір бағытта (оңға) бағытталғандықтан, біз оларды қосамыз: R = 15 Н + 10 Н = 25 Н.",
+            fbA_inc: "Қате. Кеңес: егер күштер бір бағытта әрекет етсе, олар бір-біріне қосылады.",
+            fbB_corr: "Дұрыс! Күштер қарама-қарсы бағытталған. R = 3000 - 1000 = 2000 Н. Бағыт үлкен күшпен сәйкес келеді (алға).",
+            fbB_inc: "Қате. Есіңізде болсын: егер күштер қарама-қарсы бағытта болса, үлкенінен кішісін алу керек.",
+            fbC_corr: "Мүлдем дұрыс! Солға 10 Н + 15 Н = 25 Н күш тартады. Оңға 25 Н күш тартады. 25 Н - 25 Н = 0. Теңәрекетті күш нөлге тең, дене тыныштықта.",
+            fbC_inc: "Қате. Алдымен солға бағытталған барлық күштерді қосыңыз. Содан кейін алынған нәтижені оңға бағытталған күшпен салыстырыңыз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз күштерді қосуды өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            kg: "кг",
+            right: "оңға",
+            left: "солға"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        // Update select options dynamically
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        // Update placeholders
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        // Hide feedback sections to prevent state desync in translation
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        // Update dynamic texts
+        document.getElementById('btnPlayPause').innerHTML = isPlaying ? t('btn_pause') : t('btn_play');
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        // Force UI update for physics/canvas texts
+        updatePhysics(false);
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const f1Slider = document.getElementById('f1Slider');
+    const f1Dir = document.getElementById('f1Dir');
+    const f2Slider = document.getElementById('f2Slider');
+    const f2Dir = document.getElementById('f2Dir');
+    const massSlider = document.getElementById('massSlider');
+    
+    const f1Val = document.getElementById('f1Val');
+    const f2Val = document.getElementById('f2Val');
+    const massVal = document.getElementById('massVal');
+    const obsText = document.getElementById('obsText');
+    
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnReset = document.getElementById('btnReset');
+
+    let isPlaying = false;
+    let animFrame;
+    
+    // Animation state
+    let state = {
+        x: canvas.width / 2, // Начинаем с центра
+        v: 0,
+        a: 0
+    };
+
+    // Слушатели для UI
+    function handleInput() {
+        f1Val.textContent = f1Slider.value;
+        f2Val.textContent = f2Slider.value;
+        massVal.textContent = massSlider.value;
+        updatePhysics(false);
+        drawScene();
+    }
+
+    f1Slider.addEventListener('input', handleInput);
+    f1Dir.addEventListener('change', handleInput);
+    f2Slider.addEventListener('input', handleInput);
+    f2Dir.addEventListener('change', handleInput);
+    massSlider.addEventListener('input', handleInput);
+
+    // Кнопки
+    btnPlayPause.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        btnPlayPause.innerHTML = isPlaying ? t('btn_pause') : t('btn_play');
+        btnPlayPause.style.backgroundColor = isPlaying ? 'var(--secondary)' : 'var(--primary)';
+        if (isPlaying) {
+            animate();
+        } else {
+            cancelAnimationFrame(animFrame);
+        }
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        btnPlayPause.innerHTML = t('btn_play');
+        btnPlayPause.style.backgroundColor = 'var(--primary)';
+        cancelAnimationFrame(animFrame);
+        
+        state.x = canvas.width / 2;
+        state.v = 0;
+        state.a = 0;
+        
+        f1Slider.value = 50;
+        f1Dir.value = "1";
+        f2Slider.value = 30;
+        f2Dir.value = "-1";
+        massSlider.value = 10;
+        
+        handleInput();
+        obsText.innerHTML = t('sim_wait');
+    });
+
+    function updatePhysics(isLoop = true) {
+        const f1 = parseFloat(f1Slider.value);
+        const dir1 = parseFloat(f1Dir.value);
+        const f2 = parseFloat(f2Slider.value);
+        const dir2 = parseFloat(f2Dir.value);
+        const mass = parseFloat(massSlider.value);
+        
+        // Векторная сумма: вправо +, влево -
+        const f1_vec = f1 * dir1;
+        const f2_vec = f2 * dir2;
+        const R_vec = f1_vec + f2_vec;
+        
+        state.a = R_vec / mass;
+
+        // Текст наблюдения
+        const params = {
+            s1: f1_vec > 0 ? '+' : '', f1: f1_vec,
+            s2: f2_vec > 0 ? '+' : '', f2: f2_vec,
+            r: Math.abs(R_vec)
+        };
+        
+        if (isPlaying || (!isPlaying && state.v === 0 && (f1 > 0 || f2 > 0))) {
+             if (R_vec > 0) {
+                 obsText.innerHTML = t('sim_right', params);
+             } else if (R_vec < 0) {
+                 obsText.innerHTML = t('sim_left', params);
+             } else {
+                 obsText.innerHTML = t('sim_zero', params);
+             }
+        }
+
+        // Обновление физики в цикле
+        if (isLoop && isPlaying) {
+            // Чтобы анимация не была слишком быстрой, вводим коэффициент масштаба времени
+            const dt = 0.05; 
+            state.v += state.a * dt;
+            
+            // Немного трения, чтобы не разгонялся бесконечно до световых скоростей
+            state.v *= 0.99; 
+            
+            state.x += state.v;
+            
+            // Зацикливание экрана
+            if (state.x > canvas.width + 50) state.x = -50;
+            if (state.x < -50) state.x = canvas.width + 50;
+        }
+
+        return { f1_vec, f2_vec, R_vec };
+    }
+
+    // Цикл анимации
+    function animate() {
+        updatePhysics(true);
+        drawScene();
+        if (isPlaying) {
+            animFrame = requestAnimationFrame(animate);
+        }
+    }
+
+    function drawScene() {
+        const { f1_vec, f2_vec, R_vec } = updatePhysics(false);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const groundY = 250;
+        const boxW = 80;
+        const boxH = 50;
+        const boxX = state.x - boxW/2;
+        const boxY = groundY - boxH - 10; // 10px для колес
+
+        // Дорога
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(canvas.width, groundY);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Рисуем тележку
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(boxX, boxY, boxW, boxH);
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(boxX, boxY, boxW, boxH);
+        
+        // Колеса
+        ctx.fillStyle = '#334155';
+        ctx.beginPath(); ctx.arc(boxX + 15, groundY - 10, 10, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(boxX + boxW - 15, groundY - 10, 10, 0, Math.PI*2); ctx.fill();
+
+        // Масса на тележке
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(massSlider.value + ' ' + t('kg'), state.x, boxY + boxH/2 + 5);
+
+        // --- ВЕКТОРЫ СИЛ ---
+        const cx = state.x;
+        const cy = boxY;
+
+        // F1 (Оранжевая)
+        if (f1_vec !== 0) {
+            drawArrow(cx, cy - 20, cx + f1_vec, cy - 20, 'var(--vector-f1)', 'F₁');
+        }
+
+        // F2 (Синяя)
+        if (f2_vec !== 0) {
+            drawArrow(cx, cy - 40, cx + f2_vec, cy - 40, 'var(--vector-f2)', 'F₂');
+        }
+
+        // Равнодействующая R (Зеленая толстая)
+        if (R_vec !== 0) {
+            drawArrow(cx, cy + boxH/2, cx + R_vec, cy + boxH/2, 'var(--vector-r)', 'R', 4);
+        }
+        
+        // Отрисовка линий скорости, если движется
+        if (Math.abs(state.v) > 0.5) {
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            let dir = state.v > 0 ? -1 : 1; // Линии сзади
+            let lx = state.x + dir * (boxW/2 + 10);
+            ctx.moveTo(lx, boxY + 10); ctx.lineTo(lx + dir*20, boxY + 10);
+            ctx.moveTo(lx, boxY + 30); ctx.lineTo(lx + dir*30, boxY + 30);
+            ctx.stroke();
+        }
+    }
+
+    // Функция рисования стрелки
+    function drawArrow(fromX, fromY, toX, toY, color, label, thickness = 2) {
+        if (fromX === toX && fromY === toY) return;
+        const headlen = 10 + thickness; 
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = thickness;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = dx > 0 ? 'left' : 'right';
+            // Смещаем текст
+            let textX = toX + (dx > 0 ? 5 : -5);
+            let textY = toY - 5;
+            ctx.fillText(label, textX, textY);
+        }
+    }
+
+    // Инициализация
+    handleInput();
+    obsText.innerHTML = t('sim_wait');
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 25) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(22, 163, 74, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(220, 38, 38, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

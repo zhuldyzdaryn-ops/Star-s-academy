@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простые механизмы — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdfa; /* Светло-бирюзовый */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #0d9488; /* Бирюзовый (механика) */
+            --primary-hover: #0f766e;
+            --secondary: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #ccfbf1;
+            --text-muted: #64748b;
+            --formula-bg: #ccfbf1;
+            
+            --wood-color: #b45309;
+            --fulcrum-color: #475569;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #134e4a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(13, 148, 136, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(13, 148, 136, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(13, 148, 136, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Простые механизмы — 7 класс</span>
+            <span class="lang-kz">Қарапайым механизмдер — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как древние египтяне поднимали многотонные каменные блоки для строительства пирамид, не имея подъемных кранов? Они использовали устройства, которые преобразуют силу — простые механизмы!</span>
+            <span class="lang-kz">Ежелгі мысырлықтар көтергіш крандары болмаса да, пирамидаларды салу үшін көп тонналық тас блоктарды қалай көтерген? Олар күшті түрлендіретін құрылғыларды — қарапайым механизмдерді пайдаланған!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: ВИДЫ И РЫЧАГ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Что такое простые механизмы?</span>
+            <span class="lang-kz">Қарапайым механизмдер дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Простые механизмы</strong> — это приспособления, служащие для преобразования силы. Они позволяют получить выигрыш в силе (поднять тяжелый груз малой силой) или изменить направление действия силы. К ним относятся: рычаг, блок, наклонная плоскость, клин и винт.</span>
+            <span class="lang-kz"><strong>Қарапайым механизмдер</strong> — бұл күшті түрлендіруге арналған құрылғылар. Олар күштен ұтуға (ауыр жүкті аз күшпен көтеруге) немесе күштің әрекет ету бағытын өзгертуге мүмкіндік береді. Оларға: иінтірек, блок, көлбеу жазықтық, сына және бұранда жатады.</span>
+        </p>
+        <br>
+        <h3>
+            <span class="lang-ru">Рычаг и правило моментов</span>
+            <span class="lang-kz">Иінтірек және моменттер ережесі</span>
+        </h3>
+        <p>
+            <span class="lang-ru"><strong>Рычаг</strong> — это твердое тело, которое может вращаться вокруг неподвижной опоры (например, качели-балансир или лом). Расстояние от точки опоры до линии действия силы называется <strong>плечом силы</strong> (обозначается буквой <strong>l</strong>).</span>
+            <span class="lang-kz"><strong>Иінтірек</strong> — қозғалмайтын тіреудің айналасында айнала алатын қатты дене (мысалы, теңгергіш-әткеншек немесе лом). Тіреу нүктесінен күштің әрекет ету сызығына дейінгі қашықтық <strong>күш иіні</strong> деп аталады (<strong>l</strong> әрпімен белгіленеді).</span>
+        </p>
+
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Условие равновесия рычага:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Иінтіректің тепе-теңдік шарты:</span>
+            <span class="math">F<sub>1</sub> &middot; l<sub>1</sub> = F<sub>2</sub> &middot; l<sub>2</sub></span>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">
+                Рычаг находится в равновесии, если силы обратно пропорциональны плечам. <br>
+                Произведение силы на ее плечо называется <strong>Моментом силы (M = F &middot; l)</strong>. То есть рычаг в равновесии, когда момент силы, вращающей его по часовой стрелке, равен моменту силы, вращающей против часовой: <strong>M<sub>1</sub> = M<sub>2</sub></strong>.
+                </span>
+                <span class="lang-kz">
+                Егер күштер иіндеріне кері пропорционал болса, иінтірек тепе-теңдікте болады. <br>
+                Күштің оның иініне көбейтіндісі <strong>Күш моменті (M = F &middot; l)</strong> деп аталады. Яғни, оны сағат тілімен айналдыратын күш моменті сағат тіліне қарсы айналдыратын күш моментіне тең болғанда иінтірек тепе-теңдікте болады: <strong>M<sub>1</sub> = M<sub>2</sub></strong>.
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 3. ТЕОРИЯ: БЛОКИ И ЗОЛОТОЕ ПРАВИЛО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Блоки и Золотое правило механики</span>
+            <span class="lang-kz">Блоктар және Механиканың алтын ережесі</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Неподвижный блок</strong>: Ось блока закреплена. Он <em>не дает выигрыша в силе</em>, но позволяет удобно изменить направление тяги (например, тянуть веревку вниз, чтобы поднять груз вверх).</span>
+                <span class="lang-kz"><strong>Жылжымайтын блок</strong>: Блоктың осі бекітілген. Ол <em>күштен ұтыс бермейді</em>, бірақ тарту бағытын ыңғайлы өзгертуге мүмкіндік береді (мысалы, жүкті жоғары көтеру үшін арқанды төмен тарту).</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Подвижный блок</strong>: Ось опускается и поднимается вместе с грузом. Он дает <em>выигрыш в силе ровно в 2 раза</em>!</span>
+                <span class="lang-kz"><strong>Жылжымалы блок</strong>: Ось жүкпен бірге төмен түсіп, жоғары көтеріледі. Ол <em>күштен дәл 2 есе ұтыс береді</em>!</span>
+            </li>
+        </ul>
+        <br>
+        <div class="observation" style="background-color: rgba(245, 158, 11, 0.1); border-left-color: var(--warning);">
+            <span class="lang-ru"><strong>Золотое правило механики:</strong> Ни один из простых механизмов не дает выигрыша в работе! <em>Во сколько раз мы выигрываем в силе, во столько же раз мы проигрываем в расстоянии.</em> Выиграли в силе в 2 раза с подвижным блоком? Значит, веревку придется вытянуть на расстояние в 2 раза большее!</span>
+            <span class="lang-kz"><strong>Механиканың алтын ережесі:</strong> Қарапайым механизмдердің ешқайсысы жұмыстан ұтыс бермейді! <em>Күштен қанша есе ұтсақ, қашықтықтан сонша есе ұтыламыз.</em> Жылжымалы блокпен күштен 2 есе ұттыңыз ба? Демек, арқанды 2 есе ұзын қашықтыққа тартуға тура келеді!</span>
+        </div>
+    </section>
+
+    <!-- 4. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Равновесие рычага</span>
+            <span class="lang-kz">Симуляция: Иінтіректің тепе-теңдігі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div style="padding: 10px; background: rgba(0,0,0,0.05); border-radius: 6px; margin-bottom: 10px;">
+                    <span class="lang-ru"><strong>Слева (зафиксировано):</strong><br>Масса m<sub>1</sub> = 40 кг<br>Плечо l<sub>1</sub> = 2 м</span>
+                    <span class="lang-kz"><strong>Сол жақта (бекітілген):</strong><br>Масса m<sub>1</sub> = 40 кг<br>Иін l<sub>1</sub> = 2 м</span>
+                </div>
+                
+                <div class="control-group">
+                    <label for="massSlider" style="color: var(--primary)">
+                        <span class="lang-ru">Масса справа (m<sub>2</sub>):</span>
+                        <span class="lang-kz">Оң жақтағы масса (m<sub>2</sub>):</span>
+                        <span id="massVal">10</span> кг
+                    </label>
+                    <input type="range" id="massSlider" min="10" max="80" step="10" value="10">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="distSlider" style="color: var(--secondary)">
+                        <span class="lang-ru">Плечо справа (l<sub>2</sub>):</span>
+                        <span class="lang-kz">Оң жақтағы иін (l<sub>2</sub>):</span>
+                        <span id="distVal">4</span> м
+                    </label>
+                    <input type="range" id="distSlider" min="1" max="4" step="1" value="4">
+                </div>
+                <div id="simFeedback" style="margin-top: 15px; font-weight: bold; text-align: center; padding: 10px; border-radius: 6px; background-color: var(--formula-bg); color: var(--primary);">
+                    ...
+                </div>
+            </div>
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="600" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru">Подсказка: Чтобы качели уравновесились, момент слева (40 кг &middot; 2 м = 80) должен равняться моменту справа (m<sub>2</sub> &middot; l<sub>2</sub>). Попробуйте найти комбинации, дающие в произведении 80!</span>
+                <span class="lang-kz">Кеңес: Әткеншек тепе-теңдікке келуі үшін сол жақтағы момент (40 кг &middot; 2 м = 80) оң жақтағы моментке (m<sub>2</sub> &middot; l<sub>2</sub>) тең болуы керек. Көбейтіндісі 80 беретін комбинацияларды табуға тырысыңыз!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 5. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> С помощью лома поднимают тяжелый камень. К длинному плечу рычага (l<sub>2</sub> = 1,2 м) приложили силу F<sub>2</sub> = 200 Н. Какова сила, действующая на камень со стороны короткого плеча (l<sub>1</sub> = 0,3 м)?</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Ломның көмегімен ауыр тасты көтереді. Иінтіректің ұзын иініне (l<sub>2</sub> = 1,2 м) F<sub>2</sub> = 200 Н күш түсірілді. Қысқа иін тарапынан (l<sub>1</sub> = 0,3 м) тасқа әрекет ететін күш қандай?</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>l<sub>1</sub> = 0,3 м<br>l<sub>2</sub> = 1,2 м<br>F<sub>2</sub> = 200 Н<br><strong>Найти:</strong> F<sub>1</sub> — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>l<sub>1</sub> = 0,3 м<br>l<sub>2</sub> = 1,2 м<br>F<sub>2</sub> = 200 Н<br><strong>Табу керек:</strong> F<sub>1</sub> — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>
+                По условию равновесия рычага:<br>
+                F<sub>1</sub> &middot; l<sub>1</sub> = F<sub>2</sub> &middot; l<sub>2</sub><br>
+                Отсюда выражаем неизвестную силу F<sub>1</sub>:<br>
+                F<sub>1</sub> = (F<sub>2</sub> &middot; l<sub>2</sub>) / l<sub>1</sub><br>
+                F<sub>1</sub> = (200 Н &middot; 1,2 м) / 0,3 м = 240 / 0,3 = 800 Н.
+                </span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>
+                Иінтіректің тепе-теңдік шарты бойынша:<br>
+                F<sub>1</sub> &middot; l<sub>1</sub> = F<sub>2</sub> &middot; l<sub>2</sub><br>
+                Осыдан белгісіз F<sub>1</sub> күшін өрнектейміз:<br>
+                F<sub>1</sub> = (F<sub>2</sub> &middot; l<sub>2</sub>) / l<sub>1</sub><br>
+                F<sub>1</sub> = (200 Н &middot; 1,2 м) / 0,3 м = 240 / 0,3 = 800 Н.
+                </span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> F<sub>1</sub> = 800 Н. <em>(Приложив силу всего 200 Н, мы смогли воздействовать на камень с силой 800 Н. Выигрыш в силе в 4 раза!)</em></span>
+                <span class="lang-kz"><strong>Жауабы:</strong> F<sub>1</sub> = 800 Н. <em>(Бар болғаны 200 Н күш түсіріп, біз тасқа 800 Н күшпен әсер ете алдық. Күштен 4 есе ұттық!)</em></span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Строитель тянет веревку неподвижного блока вниз с силой 300 Н, чтобы поднять ведро с цементом. Каков вес поднимаемого ведра (без учета трения)?</span>
+                <span class="lang-kz">Құрылысшы цементі бар шелекті көтеру үшін жылжымайтын блоктың арқанын 300 Н күшпен төмен тартады. Көтерілетін шелектің салмағы қандай (үйкелісті есепке алмағанда)?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="150 Н" data-kz="150 Н">150 Н</option>
+                    <option value="2" data-ru="300 Н" data-kz="300 Н">300 Н</option>
+                    <option value="3" data-ru="600 Н" data-kz="600 Н">600 Н</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">С помощью простого механизма мы получили выигрыш в силе в 3 раза. Что можно сказать о расстоянии, на которое переместится точка приложения силы, согласно «золотому правилу механики»?</span>
+                <span class="lang-kz">Қарапайым механизмнің көмегімен біз күштен 3 есе ұттық. «Механиканың алтын ережесіне» сәйкес күш түсірілген нүктенің орын ауыстыратын қашықтығы туралы не айтуға болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Выиграем в расстоянии в 3 раза" data-kz="Қашықтықтан 3 есе ұтамыз">Выиграем в расстоянии в 3 раза</option>
+                    <option value="2" data-ru="Расстояние не изменится" data-kz="Қашықтық өзгермейді">Расстояние не изменится</option>
+                    <option value="3" data-ru="Проиграем в расстоянии в 3 раза" data-kz="Қашықтықтан 3 есе ұтыламыз">Проиграем в расстоянии в 3 раза</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">На левое плечо рычага длиной 10 см действует сила 50 Н. Какую силу нужно приложить к правому плечу длиной 25 см, чтобы рычаг находился в равновесии? Введите число в <strong>Ньютонах</strong>.</span>
+                <span class="lang-kz">Иінтіректің ұзындығы 10 см сол жақ иініне 50 Н күш әрекет етеді. Иінтірек тепе-теңдікте болуы үшін ұзындығы 25 см оң жақ иінге қандай күш түсіру керек? Санды <strong>Ньютонмен</strong> енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в Н" data-placeholder-kz="Жауап Н-мен" placeholder="Ответ в Н">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 7. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересные эксперименты с рычагами и блоками, наглядно демонстрирующие золотое правило механики!</span>
+            <span class="lang-kz">Механиканың алтын ережесін көрнекі түрде көрсететін иінтіректер мен блоктармен жасалған қызықты эксперименттерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%8B%D0%B5+%D0%BC%D0%B5%D1%85%D0%B0%D0%BD%D0%B8%D0%B7%D0%BC%D1%8B+%D1%80%D1%8B%D1%87%D0%B0%D0%B3+%D0%B1%D0%BB%D0%BE%D0%BA+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Простые механизмы» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Қарапайым механизмдер» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 8. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю виды простых механизмов.</span>
+                <span class="lang-kz">Мен қарапайым механизмдердің түрлерін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу сформулировать «золотое правило механики».</span>
+                <span class="lang-kz">Мен «механиканың алтын ережесін» тұжырымдай аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею решать задачи на правило моментов рычага.</span>
+                <span class="lang-kz">Мен иінтіректің моменттер ережесіне есептер шығара аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 9. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Какой простой механизм представляет собой твердое тело, вращающееся вокруг неподвижной опоры?</span>
+                <span class="lang-kz">1. Қандай қарапайым механизм қозғалмайтын тіреудің айналасында айналатын қатты дене болып табылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Наклонная плоскость</span><span class="lang-kz">Көлбеу жазықтық</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Рычаг</span><span class="lang-kz">Иінтірек</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Подвижный блок</span><span class="lang-kz">Жылжымалы блок</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Винт</span><span class="lang-kz">Бұранда</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Дает ли выигрыш в работе подвижный блок?</span>
+                <span class="lang-kz">2. Жылжымалы блок жұмыстан ұтыс бере ме?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Да, в 2 раза</span><span class="lang-kz">Иә, 2 есе</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Да, в 4 раза</span><span class="lang-kz">Иә, 4 есе</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Нет, не дает</span><span class="lang-kz">Жоқ, бермейді</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Зависит от массы груза</span><span class="lang-kz">Жүктің массасына байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Что такое плечо силы?</span>
+                <span class="lang-kz">3. Күш иіні дегеніміз не?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Кратчайшее расстояние от точки опоры до линии действия силы</span><span class="lang-kz">Тіреу нүктесінен күштің әрекет ету сызығына дейінгі ең қысқа қашықтық</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Длина всего рычага</span><span class="lang-kz">Бүкіл иінтіректің ұзындығы</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Расстояние между точками приложения двух сил</span><span class="lang-kz">Екі күш түсірілген нүктелер арасындағы қашықтық</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Произведение силы на расстояние</span><span class="lang-kz">Күшті қашықтыққа көбейтіндісі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Рычаг в равновесии. Слева сила 100 Н на плече 1 м. Справа плечо 2 м. Какая сила приложена справа?</span>
+                <span class="lang-kz">4. Иінтірек тепе-теңдікте. Сол жақта 1 м иінде 100 Н күш. Оң жақтағы иін 2 м. Оң жақта қандай күш түсірілген?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">100 Н</span><span class="lang-kz">100 Н</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">200 Н</span><span class="lang-kz">200 Н</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">25 Н</span><span class="lang-kz">25 Н</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">50 Н</span><span class="lang-kz">50 Н</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Для чего нужен неподвижный блок?</span>
+                <span class="lang-kz">5. Жылжымайтын блок не үшін қажет?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Для выигрыша в силе</span><span class="lang-kz">Күштен ұту үшін</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Для изменения направления действия силы</span><span class="lang-kz">Күштің әрекет ету бағытын өзгерту үшін</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Для выигрыша в работе</span><span class="lang-kz">Жұмыстан ұту үшін</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Для уменьшения трения</span><span class="lang-kz">Үйкелісті азайту үшін</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Неподвижный блок не дает выигрыша в силе. Если тянем с силой 300 Н, значит вес ведра тоже 300 Н.",
+            fbA_inc: "Неверно. Вспомните, дает ли неподвижный блок выигрыш в силе?",
+            fbB_corr: "Абсолютно верно! По золотому правилу механики: во сколько раз выиграли в силе (в 3 раза), во столько же раз проиграли в расстоянии.",
+            fbB_inc: "Ошибка. Вспомните формулировку Золотого правила механики.",
+            fbC_corr: "Точно! Условие: F1*l1 = F2*l2. Подставляем: 50 * 10 = F2 * 25. Отсюда 500 = F2 * 25. Значит F2 = 20 Н.",
+            fbC_inc: "Неверно. Используйте формулу: F1 &middot; l1 = F2 &middot; l2. Перемножьте 50 на 10 и разделите на 25.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            sim_left: "Перевешивает левая сторона!",
+            sim_right: "Перевешивает правая сторона!",
+            sim_bal: "Идеальное равновесие!"
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Жылжымайтын блок күштен ұтыс бермейді. Егер 300 Н күшпен тартсақ, демек шелектің салмағы да 300 Н.",
+            fbA_inc: "Қате. Есіңізге түсіріңіз, жылжымайтын блок күштен ұтыс бере ме?",
+            fbB_corr: "Мүлдем дұрыс! Механиканың алтын ережесі бойынша: күштен қанша есе ұтсақ (3 есе), қашықтықтан сонша есе ұтыламыз.",
+            fbB_inc: "Қате. Механиканың алтын ережесінің тұжырымдамасын еске түсіріңіз.",
+            fbC_corr: "Дұрыс! Шарт: F1*l1 = F2*l2. Орнына қоямыз: 50 * 10 = F2 * 25. Бұдан 500 = F2 * 25. Демек F2 = 20 Н.",
+            fbC_inc: "Қате. Формуланы қолданыңыз: F1 &middot; l1 = F2 &middot; l2. 50-ді 10-ға көбейтіп, 25-ке бөліңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            sim_left: "Сол жақ басып кетті!",
+            sim_right: "Оң жақ басып кетті!",
+            sim_bal: "Мінсіз тепе-теңдік!"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        updateSimulation(); // to update the dynamic feedback text
+    }
+
+    // --- СИМУЛЯЦИЯ: РЫЧАГ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const massSlider = document.getElementById('massSlider');
+    const distSlider = document.getElementById('distSlider');
+    const massVal = document.getElementById('massVal');
+    const distVal = document.getElementById('distVal');
+    const simFeedback = document.getElementById('simFeedback');
+
+    let currentAngle = 0;
+    let targetAngle = 0;
+    let animFrame;
+
+    // Константы левого груза (жестко заданы)
+    const m1 = 40; // кг
+    const l1 = 2;  // метры
+
+    function updateSimulation() {
+        const m2 = parseInt(massSlider.value);
+        const l2 = parseInt(distSlider.value);
+        
+        massVal.textContent = m2;
+        distVal.textContent = l2;
+        
+        // Моменты
+        const M1 = m1 * l1; // 80
+        const M2 = m2 * l2;
+        
+        // Целевой угол (макс +- 20 градусов = ~0.35 рад)
+        // Простая физическая интерполяция для красивого эффекта:
+        const diff = M2 - M1;
+        const sum = M1 + M2;
+        targetAngle = (diff / sum) * 0.4; // радианы
+        
+        // Ограничение угла, чтобы доска не провалилась под землю
+        if (targetAngle > 0.35) targetAngle = 0.35;
+        if (targetAngle < -0.35) targetAngle = -0.35;
+
+        // Обновляем текст
+        if (M1 === M2) {
+            simFeedback.textContent = t('sim_bal');
+            simFeedback.style.color = 'var(--success)';
+            simFeedback.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+        } else if (M1 > M2) {
+            simFeedback.textContent = t('sim_left');
+            simFeedback.style.color = 'var(--danger)';
+            simFeedback.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+        } else {
+            simFeedback.textContent = t('sim_right');
+            simFeedback.style.color = 'var(--primary)';
+            simFeedback.style.backgroundColor = 'var(--formula-bg)';
+        }
+
+        if (!animFrame) {
+            animateLever();
+        }
+    }
+
+    massSlider.addEventListener('input', updateSimulation);
+    distSlider.addEventListener('input', updateSimulation);
+
+    function animateLever() {
+        // Плавное движение (Lerp)
+        currentAngle += (targetAngle - currentAngle) * 0.1;
+        
+        drawLever(currentAngle);
+
+        if (Math.abs(targetAngle - currentAngle) > 0.001) {
+            animFrame = requestAnimationFrame(animateLever);
+        } else {
+            currentAngle = targetAngle;
+            drawLever(currentAngle);
+            animFrame = null;
+        }
+    }
+
+    function drawLever(angle) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const centerX = canvas.width / 2;
+        const centerY = 200; // Позиция точки опоры (ось вращения)
+        const pxPerMeter = 50;
+        
+        // 1. Опора (треугольник)
+        ctx.fillStyle = '#475569';
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX - 20, centerY + 50);
+        ctx.lineTo(centerX + 20, centerY + 50);
+        ctx.fill();
+
+        // Земля
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(50, centerY + 50);
+        ctx.lineTo(canvas.width - 50, centerY + 50);
+        ctx.stroke();
+
+        // 2. Доска (с учетом вращения)
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(angle);
+
+        // Рисуем доску
+        const plankW = 500; // От -250 до +250
+        const plankH = 10;
+        ctx.fillStyle = '#b45309'; // дерево
+        ctx.fillRect(-plankW/2, -plankH/2, plankW, plankH);
+        
+        // Разметка метров на доске
+        ctx.fillStyle = '#fef3c7';
+        for(let i = -4; i <= 4; i++) {
+            if(i === 0) continue;
+            ctx.fillRect(i * pxPerMeter - 2, -plankH/2, 4, plankH);
+        }
+
+        // 3. Рисуем груз 1 (Левый, постоянный)
+        const m2 = parseInt(massSlider.value);
+        const l2 = parseInt(distSlider.value);
+        
+        const box1Size = 40; // Размер пропорционален массе для красоты (40кг -> 40px)
+        ctx.fillStyle = '#3b82f6';
+        ctx.fillRect(-l1 * pxPerMeter - box1Size/2, -plankH/2 - box1Size, box1Size, box1Size);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('40 kg', -l1 * pxPerMeter, -plankH/2 - box1Size/2 + 4);
+
+        // 4. Рисуем груз 2 (Правый, управляемый)
+        // Сделаем размер в зависимости от массы, от 25 до 60 px
+        const box2Size = 20 + m2 * 0.5; 
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(l2 * pxPerMeter - box2Size/2, -plankH/2 - box2Size, box2Size, box2Size);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(m2 + ' kg', l2 * pxPerMeter, -plankH/2 - box2Size/2 + 4);
+
+        ctx.restore();
+    }
+
+    // Инициализация
+    updateSimulation();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 20) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

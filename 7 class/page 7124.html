@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сила упругости, закон Гука — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #10b981;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #eff6ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e3a8a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .control-group select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>Сила упругости. Закон Гука — 7 класс</h1>
+        <p class="hook">Почему батут подкидывает нас вверх, а стрела вылетает из лука с огромной скоростью? Всё дело в невидимой силе, которая «не любит», когда форму предметов меняют, и всегда стремится вернуть всё как было!</p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>Что такое сила упругости?</h2>
+        <p>Когда мы растягиваем, сжимаем или изгибаем тело (то есть деформируем его), внутри него возникает сила, которая сопротивляется нашему действию. Эта сила называется <strong>силой упругости</strong>.</p>
+        <br>
+        <ul>
+            <li><span class="highlight">Причина возникновения:</span> Сила упругости имеет электромагнитную природу. Она возникает из-за взаимодействия молекул и атомов. При растяжении тела молекулы притягиваются друг к другу, а при сжатии — отталкиваются.</li>
+            <li><span class="highlight">Направление:</span> Сила упругости всегда направлена <strong>в сторону, противоположную деформации</strong> (растянули вправо — сила тянет влево).</li>
+            <li><span class="highlight">Упругие деформации:</span> Это такие изменения формы, которые полностью исчезают, когда мы перестаём действовать на тело (как резиновая лента).</li>
+            <li><span class="highlight">Предел упругости:</span> Если тело растянуть слишком сильно, оно может порваться или навсегда изменить свою форму. В таком случае говорят, что предел упругости превышен.</li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>Где это встречается?</h2>
+        <ul>
+            <li><strong>Амортизаторы и рессоры автомобилей:</strong> Пружины сжимаются на неровностях дороги. Возникающая сила упругости плавно возвращает кузов на место, делая поездку комфортной.</li>
+            <li><strong>Стрельба из лука:</strong> Лучник натягивает тетиву, изгибая древко лука. Возникает огромная сила упругости, которая при отпускании передаёт свою энергию стреле.</li>
+            <li><strong>Прыжки с тарзанкой (Bungee Jumping):</strong> Специальный эластичный трос растягивается под весом человека, замедляя падение за счёт плавно нарастающей силы упругости.</li>
+            <li><strong>Весы-безмен:</strong> Чем тяжелее груз, тем сильнее растягивается пружина внутри весов.</li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>Формулы и обозначения (Закон Гука)</h2>
+        <p>Английский физик Роберт Гук в 1660 году выяснил: <em>при малых упругих деформациях сила упругости прямо пропорциональна изменению длины тела.</em></p>
+        <div class="formula-box">
+            <span class="math">F<sub>упр</sub> = k &middot; |&Delta;l|</span>
+            <p>Где:</p>
+            <ul>
+                <li><strong>F<sub>упр</sub></strong> — сила упругости. Единица измерения: <strong>Ньютон (Н)</strong>.</li>
+                <li><strong>k</strong> (ка) — <strong>жёсткость</strong> пружины (тела). Показывает, какую силу нужно приложить, чтобы растянуть тело ровно на 1 метр. Единица измерения: <strong>Н/м</strong> (Ньютон на метр). У стального троса жёсткость огромная, у резиночки — маленькая.</li>
+                <li><strong>|&Delta;l|</strong> (дельта эль) — <strong>удлинение</strong> (или сжатие). Это разница между конечной и начальной длиной тела: &Delta;l = l - l<sub>0</sub>. Берётся по модулю (всегда положительное). Единица измерения: <strong>метры (м)</strong>. Иногда удлинение обозначают буквой <strong>x</strong>.</li>
+            </ul>
+        </div>
+        <p><em>Важно: Закон Гука работает только при малых (упругих) деформациях!</em></p>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>Симуляция: Лаборатория Гука</h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="massSlider">Масса груза (m): <span id="massVal">0</span> кг</label>
+                    <input type="range" id="massSlider" min="0" max="10" step="0.5" value="0">
+                </div>
+                <div class="control-group">
+                    <label for="stiffnessSlider">Жёсткость пружины (k): <span id="stiffnessVal">100</span> Н/м</label>
+                    <input type="range" id="stiffnessSlider" min="20" max="200" step="10" value="100">
+                </div>
+                <div class="control-group">
+                    <label for="gravitySelect">Планета (сила тяжести g):</label>
+                    <select id="gravitySelect">
+                        <option value="9.8">Земля (g ≈ 10 Н/кг)</option>
+                        <option value="1.6">Луна (g ≈ 1.6 Н/кг)</option>
+                        <option value="24.8">Юпитер (g ≈ 25 Н/кг)</option>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button id="btnDrop">Отпустить груз</button>
+                    <button id="btnReset" class="outline">Снять груз (Сброс)</button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="springCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>Что наблюдаем:</strong> <span id="obsText">Выберите массу груза и нажмите «Отпустить груз». Пружина растянется, пока сила упругости (тянет вверх) не уравновесит силу тяжести (тянет вниз).</span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>Пример решения задачи</h2>
+        <p><strong>Условие:</strong> К пружине подвесили груз. Под действием силы тяжести равной 40 Н, пружина растянулась на 8 см. Чему равна жёсткость этой пружины?</p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">Показать решение</button>
+        <div class="problem-solution" id="solutionBox">
+            <p><strong>Дано:</strong><br>
+            F<sub>упр</sub> = 40 Н (так как сила упругости уравновесила вес)<br>
+            &Delta;l = 8 см = 0,08 м (обязательно переводим в СИ!)<br>
+            <strong>Найти:</strong> k — ?</p>
+            <br>
+            <p><strong>Формула:</strong><br>
+            По закону Гука: F<sub>упр</sub> = k &middot; &Delta;l<br>
+            Выразим жёсткость: k = F<sub>упр</sub> / &Delta;l</p>
+            <br>
+            <p><strong>Решение:</strong><br>
+            k = 40 Н / 0,08 м = 500 Н/м.</p>
+            <br>
+            <p><strong>Ответ:</strong> Жёсткость пружины равна 500 Н/м.</p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>Задачи для самостоятельного решения</h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>Уровень A (Базовый)</h4>
+            <p>Вы сжимаете эспандер (пружину для тренировки рук) двумя руками. Куда направлена сила упругости, действующая на ваши ладони со стороны эспандера?</p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="">Выберите ответ...</option>
+                    <option value="in">Внутрь, навстречу друг другу</option>
+                    <option value="out">Наружу, отталкивает ладони</option>
+                    <option value="down">Вниз, к полу</option>
+                </select>
+                <button onclick="checkTaskA()">Проверить</button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Понимает природу силы упругости.<br>
+                - Определяет направление силы упругости (противоположно направлению деформации).
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>Уровень B (Средний)</h4>
+            <p>Пружину жёсткостью 150 Н/м растянули на 0,2 м. Какая сила упругости при этом возникла? (Введите число в Ньютонах).</p>
+            <div class="input-group">
+                <input type="number" id="taskB" placeholder="Например: 10">
+                <button onclick="checkTaskB()">Проверить</button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Записывает закон Гука.<br>
+                - Правильно подставляет значения в формулу.<br>
+                - Производит математическое вычисление.
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>Уровень C (Сложный)</h4>
+            <p>У вас есть две одинаковые по длине пружины. У первой жёсткость k₁ = 100 Н/м, у второй k₂ = 400 Н/м. Если к ним подвесить одинаковые гири по 1 кг, какая пружина растянется сильнее и во сколько раз?</p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="">Выберите ответ...</option>
+                    <option value="1">Первая растянется сильнее в 4 раза</option>
+                    <option value="2">Вторая растянется сильнее в 4 раза</option>
+                    <option value="3">Растянутся одинаково</option>
+                    <option value="4">Первая растянется сильнее в 2 раза</option>
+                </select>
+                <button onclick="checkTaskC()">Проверить</button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Анализирует зависимость удлинения от жёсткости (&Delta;l = F/k).<br>
+                - Понимает обратно пропорциональную связь: чем больше жёсткость, тем меньше удлинение.<br>
+                - Вычисляет отношение удлинений.
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>Видео по теме</h2>
+        <p>Посмотрите короткий видеоурок с экспериментальной проверкой закона Гука.</p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D0%B3%D1%83%D0%BA%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ Найти видеоуроки «Закон Гука» на YouTube
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>Рефлексия: оцени себя</h2>
+        <div class="reflection">
+            <label><input type="checkbox"> Я знаю, как направлена сила упругости.</label>
+            <label><input type="checkbox"> Я запомнил формулу закона Гука и единицы измерения.</label>
+            <label><input type="checkbox"> Я могу рассчитать жёсткость пружины или её удлинение.</label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>Итоговый тест</h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>1. В каком случае возникает сила упругости?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> При нагревании тела</label>
+                <label><input type="radio" name="q1" value="2"> При движении тела с постоянной скоростью</label>
+                <label><input type="radio" name="q1" value="3"> При любой деформации тела</label>
+                <label><input type="radio" name="q1" value="4"> Только при взаимодействии с магнитом</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>2. Укажите математическую запись закона Гука:</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> F = k &middot; &Delta;l</label>
+                <label><input type="radio" name="q2" value="2"> F = m &middot; g</label>
+                <label><input type="radio" name="q2" value="3"> F = &mu; &middot; N</label>
+                <label><input type="radio" name="q2" value="4"> m = &rho; &middot; V</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>3. В каких единицах в системе СИ измеряется жёсткость пружины?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> Ньютон (Н)</label>
+                <label><input type="radio" name="q3" value="2"> Метр (м)</label>
+                <label><input type="radio" name="q3" value="3"> Джоуль (Дж)</label>
+                <label><input type="radio" name="q3" value="4"> Ньютон на метр (Н/м)</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>4. Как направлена сила упругости при растяжении пружины?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> По направлению растяжения</label>
+                <label><input type="radio" name="q4" value="2"> Противоположно направлению растяжения</label>
+                <label><input type="radio" name="q4" value="3"> Перпендикулярно пружине</label>
+                <label><input type="radio" name="q4" value="4"> Сила упругости не имеет направления</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>5. Пружину растягивали силой 20 Н, и её удлинение составило 2 см. Какова жёсткость пружины? (Осторожно с единицами!)</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> 10 Н/м</label>
+                <label><input type="radio" name="q5" value="2"> 1000 Н/м</label>
+                <label><input type="radio" name="q5" value="3"> 40 Н/м</label>
+                <label><input type="radio" name="q5" value="4"> 0,1 Н/м</label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">Проверить тест</button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('springCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const massSlider = document.getElementById('massSlider');
+    const stiffnessSlider = document.getElementById('stiffnessSlider');
+    const gravitySelect = document.getElementById('gravitySelect');
+    const massVal = document.getElementById('massVal');
+    const stiffnessVal = document.getElementById('stiffnessVal');
+    const obsText = document.getElementById('obsText');
+    const btnDrop = document.getElementById('btnDrop');
+    const btnReset = document.getElementById('btnReset');
+
+    // Physics parameters
+    const restLength = 100; // Natural length of spring (pixels)
+    const pixelsPerMeter = 500; // Scaling factor for display
+    let isDropped = false;
+    
+    // Animation state
+    let state = {
+        y: restLength, // Current position of the mass
+        v: 0,          // Velocity
+    };
+
+    // Update labels
+    massSlider.addEventListener('input', (e) => {
+        massVal.textContent = e.target.value;
+        if(isDropped) updateObservation();
+    });
+    
+    stiffnessSlider.addEventListener('input', (e) => {
+        stiffnessVal.textContent = e.target.value;
+        if(isDropped) updateObservation();
+    });
+
+    gravitySelect.addEventListener('change', () => {
+        if(isDropped) updateObservation();
+    });
+
+    // Buttons
+    btnDrop.addEventListener('click', () => {
+        isDropped = true;
+        btnDrop.style.backgroundColor = 'var(--secondary)';
+        btnDrop.textContent = 'Груз подвешен';
+        updateObservation();
+    });
+
+    btnReset.addEventListener('click', () => {
+        isDropped = false;
+        state.y = restLength;
+        state.v = 0;
+        btnDrop.style.backgroundColor = 'var(--primary)';
+        btnDrop.textContent = 'Отпустить груз';
+        massSlider.value = 0;
+        massVal.textContent = "0";
+        obsText.innerHTML = "Выберите массу груза и нажмите «Отпустить груз». Пружина растянется, пока сила упругости (тянет вверх) не уравновесит силу тяжести (тянет вниз).";
+    });
+
+    function updateObservation() {
+        const m = parseFloat(massSlider.value);
+        const k = parseFloat(stiffnessSlider.value);
+        const g = parseFloat(gravitySelect.value);
+        
+        if (m === 0) {
+            obsText.innerHTML = "Масса равна нулю. Пружина не деформируется (Δl = 0).";
+            return;
+        }
+
+        const deltaL = (m * g) / k;
+        const f = m * g;
+        
+        obsText.innerHTML = `Груз тянет вниз с силой тяжести <strong>F<sub>тяж</sub> = ${f.toFixed(1)} Н</strong>. 
+                             Пружина растянулась на <strong>Δl ≈ ${(deltaL*100).toFixed(1)} см</strong>, 
+                             создав силу упругости <strong>${f.toFixed(1)} Н</strong> вверх. Силы уравновешены!`;
+    }
+
+    // Animation Loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const m = isDropped ? parseFloat(massSlider.value) : 0;
+        const k = parseFloat(stiffnessSlider.value);
+        const g = parseFloat(gravitySelect.value);
+        
+        // Damped harmonic oscillator physics
+        if (isDropped && m > 0) {
+            // F_net = m*g - k*(y - y0) - damping*v
+            // However, our units in sim are pixels. We need to scale.
+            // Let's do physics in simulated real units, then convert to pixels for drawing.
+            
+            const targetDeltaL_m = (m * g) / k; // in meters
+            const targetDeltaL_px = targetDeltaL_m * pixelsPerMeter;
+            const targetY = restLength + targetDeltaL_px;
+            
+            // Simple spring force towards target
+            const springForce = -0.1 * (state.y - targetY); // arbitrary visual spring constant
+            const damping = -0.05 * state.v;
+            
+            // Artificial mass effect for visual oscillation frequency
+            const visualMass = m < 1 ? 1 : m; 
+            const acceleration = (springForce + damping) / visualMass;
+            
+            state.v += acceleration;
+            state.y += state.v;
+            
+        } else {
+            // Return to rest
+            const springForce = -0.2 * (state.y - restLength);
+            const damping = -0.1 * state.v;
+            state.v += springForce + damping;
+            state.y += state.v;
+        }
+
+        drawScene(state.y, m, k);
+        requestAnimationFrame(animate);
+    }
+
+    function drawScene(currentY, mass, stiffness) {
+        const centerX = canvas.width / 2;
+        
+        // Draw ceiling
+        ctx.fillStyle = '#64748b';
+        ctx.fillRect(centerX - 100, 0, 200, 20);
+        
+        // Draw mount
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(centerX - 10, 20, 20, 10);
+
+        // Draw spring
+        ctx.beginPath();
+        ctx.moveTo(centerX, 30);
+        
+        const coils = 15;
+        // The spring needs to stretch. width changes slightly based on stiffness
+        const springWidth = 20 + (stiffness / 200) * 15; 
+        const deltaY = (currentY - 30) / coils;
+        
+        for (let i = 1; i <= coils; i++) {
+            let xOffset = (i % 2 === 0) ? -springWidth : springWidth;
+            if (i === coils) xOffset = 0;
+            ctx.lineTo(centerX + xOffset, 30 + i * deltaY);
+        }
+        
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#3b82f6';
+        ctx.stroke();
+
+        // Draw mass block
+        if (mass > 0 && isDropped) {
+            // Block size based on mass
+            const boxSize = 30 + mass * 3;
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(centerX - boxSize/2, currentY, boxSize, boxSize);
+            
+            // Mass text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(mass + ' кг', centerX, currentY + boxSize/2 + 5);
+
+            // Draw Forces (Vectors)
+            // Weight arrow (down)
+            drawArrow(centerX + boxSize/2 + 20, currentY + boxSize/2, centerX + boxSize/2 + 20, currentY + boxSize/2 + 40, '#f59e0b', 'Fт');
+            
+            // Elastic force arrow (up) - visually matches length if settled
+            drawArrow(centerX + boxSize/2 + 20, currentY + boxSize/2, centerX + boxSize/2 + 20, currentY + boxSize/2 - 40, '#10b981', 'Fупр');
+        } else {
+            // Empty hook
+            ctx.beginPath();
+            ctx.arc(centerX, currentY + 10, 10, Math.PI, 0);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#334155';
+            ctx.stroke();
+        }
+
+        // Draw ruler
+        ctx.beginPath();
+        ctx.moveTo(centerX - 80, 20);
+        ctx.lineTo(centerX - 80, 320);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.stroke();
+        
+        // Rest position line
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(centerX - 90, restLength);
+        ctx.lineTo(centerX - 20, restLength);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('0 (без деформ.)', centerX - 95, restLength + 4);
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, label) {
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(label, toX + 5, toY + (dy > 0 ? 10 : -5));
+        }
+    }
+
+    // Start simulation
+    requestAnimationFrame(animate);
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.textContent = 'Показать решение';
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.textContent = 'Скрыть решение';
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ (A, B, C) ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, 'Пожалуйста, выберите вариант.');
+        if (val === 'out') {
+            showFeedback('fbA', true, 'Верно! Вы сжимаете пружину внутрь, а она стремится вернуться обратно и толкает ваши руки наружу.');
+        } else {
+            showFeedback('fbA', false, 'Неверно. Вспомните: сила упругости направлена ПРОТИВОПОЛОЖНО деформации (вашему сжатию).');
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseFloat(document.getElementById('taskB').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbB', false, 'Введите число.');
+        if (val === 30) {
+            showFeedback('fbB', true, 'Отлично! F = k &middot; &Delta;l = 150 Н/м &middot; 0,2 м = 30 Н.');
+        } else {
+            showFeedback('fbB', false, 'Ошибка. Подсказка: умножьте жёсткость на удлинение.');
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, 'Пожалуйста, выберите вариант.');
+        if (val === '1') {
+            showFeedback('fbC', true, 'Гениально! У первой пружины жёсткость в 4 раза меньше (100 против 400). Значит, она более "слабая" и растянется в 4 раза сильнее.');
+        } else {
+            showFeedback('fbC', false, 'Неверно. Подумайте: чем больше k, тем пружина ЖЁСТЧЕ (её труднее растянуть).');
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) correctText = r.parentElement.textContent.trim();
+                });
+                mistakesHTML += `<li>Вопрос ${index + 1}: правильный ответ — <strong>${correctText}</strong></li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(5, 150, 105, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = `Отличный результат: ${score} из ${total}! Вы прекрасно усвоили закон Гука.`;
+        } else {
+            resDiv.style.backgroundColor = 'rgba(220, 38, 38, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = `Ваш результат: ${score} из ${total}.<br>Работа над ошибками:<br>${mistakesHTML}`;
+        }
+    };
+</script>
+</body>
+</html>

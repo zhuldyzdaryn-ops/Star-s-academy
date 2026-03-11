@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Давление твердых тел — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #2563eb; /* Синий (наука/твердость) */
+            --primary-hover: #1d4ed8;
+            --secondary: #10b981;
+            --success: #059669;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #eff6ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e3a8a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .math-fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .math-numerator {
+            border-bottom: 2px solid var(--primary);
+            padding: 0 5px;
+        }
+        .math-denominator {
+            padding: 0 5px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Давление твердых тел — 7 класс</span>
+            <span class="lang-kz">Қатты денелердің қысымы — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему на лыжах легко идти по снегу, а в обычных ботинках мы проваливаемся? Почему острый нож легко режет хлеб, а тупой лишь мнет его? Всё дело в давлении!</span>
+            <span class="lang-kz">Неліктен шаңғымен қар үстінде жүру оңай, ал кәдімгі бәтеңкемен біз батып кетеміз? Неліктен өткір пышақ нанды оңай кеседі, ал доғал пышақ оны тек мыжып тастайды? Мұның бәрі қысымға байланысты!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Что такое давление?</span>
+            <span class="lang-kz">Қысым дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Действие одной и той же силы может приводить к разным результатам. Зависит это от того, на какую <strong>площадь</strong> опирается тело.</span>
+            <span class="lang-kz">Бір ғана күштің әрекеті әртүрлі нәтижелерге әкелуі мүмкін. Бұл дененің қандай <strong>ауданға</strong> тірелетініне байланысты.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Давление</strong> — это физическая величина, равная отношению силы, действующей перпендикулярно поверхности, к площади этой поверхности.</span>
+                <span class="lang-kz"><strong>Қысым</strong> — бұл бетке перпендикуляр бағытта әрекет ететін күштің осы беттің ауданына қатынасына тең физикалық шама.</span>
+            </li>
+            <li>
+                <span class="lang-ru">Чем <strong>больше сила</strong> (при одинаковой площади), тем <strong>больше давление</strong>.</span>
+                <span class="lang-kz"><strong>Күш неғұрлым үлкен болса</strong> (бірдей ауданда), <strong>қысым соғұрлым жоғары болады</strong>.</span>
+            </li>
+            <li>
+                <span class="lang-ru">Чем <strong>больше площадь опоры</strong> (при одинаковой силе), тем <strong>меньше давление</strong>.</span>
+                <span class="lang-kz"><strong>Тіреу ауданы неғұрлым үлкен болса</strong> (бірдей күш кезінде), <strong>қысым соғұрлым аз болады</strong>.</span>
+            </li>
+            <li>
+                <span class="lang-ru">Давление показывает, как сила распределяется по поверхности соприкосновения.</span>
+                <span class="lang-kz">Қысым күштің жанасу беті бойынша қалай бөлінетінін көрсетеді.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Примеры из жизни и техники</span>
+            <span class="lang-kz">Өмірден және техникадан мысалдар</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Уменьшение давления:</strong> Тяжелые тракторы, танки и вездеходы имеют широкие гусеницы вместо колес. Благодаря большой площади опоры, их давление на грунт невелико, и они не вязнут в болоте или снегу.</span>
+                <span class="lang-kz"><strong>Қысымды азайту:</strong> Ауыр тракторлар, танктер және жол талғамайтын көліктер доңғалақтың орнына жалпақ шынжыр табандарға (гусеницалар) ие. Тіреу ауданы үлкен болғандықтан, олардың топыраққа түсіретін қысымы аз, сондықтан олар батпаққа немесе қарға батпайды.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Увеличение давления:</strong> Иглы, гвозди, шила, ножи и зубы хищников имеют очень маленькую площадь на острие. Даже небольшая сила создает там огромное давление, легко протыкая или разрезая материалы.</span>
+                <span class="lang-kz"><strong>Қысымды арттыру:</strong> Инелер, шегелер, біздер, пышақтар және жыртқыштардың тістері ұшында өте кішкентай ауданға ие. Тіпті кішкене күштің өзі сол жерде үлкен қысым тудырып, материалдарды оңай теседі немесе кеседі.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>В быту:</strong> Рюкзак с широкими лямками нести гораздо удобнее, чем сумку на тонкой веревке, так как широкие лямки уменьшают давление на плечи.</span>
+                <span class="lang-kz"><strong>Тұрмыста:</strong> Жалпақ баулары бар арқақапты (рюкзак) жұқа арқанды сөмкеге қарағанда көтеру әлдеқайда ыңғайлы, өйткені жалпақ баулар иыққа түсетін қысымды азайтады.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Формулы и обозначения</span>
+            <span class="lang-kz">Формулалар мен белгілеулер</span>
+        </h2>
+        <div class="formula-box">
+            <span class="math">
+                p = 
+                <div class="math-fraction">
+                    <div class="math-numerator">F</div>
+                    <div class="math-denominator">S</div>
+                </div>
+            </span>
+            <p>
+                <span class="lang-ru">Где:</span>
+                <span class="lang-kz">Мұндағы:</span>
+            </p>
+            <ul>
+                <li>
+                    <span class="lang-ru"><strong>p</strong> — давление. Измеряется в <strong>Паскалях (Па)</strong>. 1 Па = 1 Н / 1 м². (1 Паскаль — это очень маленькое давление, поэтому часто используют кПа — килопаскали).</span>
+                    <span class="lang-kz"><strong>p</strong> — қысым. <strong>Паскальмен (Па)</strong> өлшенеді. 1 Па = 1 Н / 1 м². (1 Паскаль — бұл өте кішкентай қысым, сондықтан жиі кПа — килопаскаль қолданылады).</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>F</strong> — сила давления (действующая перпендикулярно). Если тело просто лежит, то эта сила равна весу тела или силе тяжести: <strong>F = m · g</strong>. Измеряется в <strong>Ньютонах (Н)</strong>.</span>
+                    <span class="lang-kz"><strong>F</strong> — қысым күші (перпендикуляр әрекет ететін). Егер дене жай ғана жатса, онда бұл күш дененің салмағына немесе ауырлық күшіне тең: <strong>F = m · g</strong>. <strong>Ньютонмен (Н)</strong> өлшенеді.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>S</strong> — площадь опоры. Измеряется в <strong>квадратных метрах (м²)</strong>.</span>
+                    <span class="lang-kz"><strong>S</strong> — тіреу ауданы. <strong>Шаршы метрмен (м²)</strong> өлшенеді.</span>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Зависимость глубины погружения</span>
+            <span class="lang-kz">Симуляция: Бату тереңдігінің тәуелділігі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="massSlider">
+                        <span class="lang-ru">Масса груза (m):</span>
+                        <span class="lang-kz">Жүктің массасы (m):</span>
+                        <span id="massVal">10</span> <span class="lang-ru">кг</span><span class="lang-kz">кг</span>
+                    </label>
+                    <input type="range" id="massSlider" min="5" max="50" step="5" value="10">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="areaSlider">
+                        <span class="lang-ru">Площадь опоры (S):</span>
+                        <span class="lang-kz">Тіреу ауданы (S):</span>
+                        <span id="areaVal">0.2</span> <span class="lang-ru">м²</span><span class="lang-kz">м²</span>
+                    </label>
+                    <input type="range" id="areaSlider" min="0.05" max="0.5" step="0.05" value="0.2">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="surfaceSelect">
+                        <span class="lang-ru">Тип поверхности:</span>
+                        <span class="lang-kz">Беттің түрі:</span>
+                    </label>
+                    <select id="surfaceSelect">
+                        <option value="1" data-ru="Твердая земля" data-kz="Қатты жер">Твердая земля</option>
+                        <option value="3" data-ru="Плотный снег" data-kz="Тығыз қар" selected>Плотный снег</option>
+                        <option value="6" data-ru="Рыхлый снег / Песок" data-kz="Борпылдақ қар / Құм">Рыхлый снег / Песок</option>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button id="btnPlayPause">
+                        <span class="lang-ru">Поставить груз</span><span class="lang-kz">Жүкті қою</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Убрать груз</span><span class="lang-kz">Жүкті алу</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container" style="background-color: #e2e8f0; height: 350px;">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Настройте массу и площадь (ширину) груза, выберите поверхность и нажмите «Поставить груз». Чем больше давление, тем глубже проваливается груз!</span>
+                <span class="lang-kz">Жүктің массасы мен ауданын (ені) реттеп, бетті таңдаңыз да, «Жүкті қою» түймесін басыңыз. Қысым неғұрлым көп болса, жүк соғұрлым тереңге батады!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> Мальчик массой 45 кг стоит на снегу на лыжах. Площадь одной лыжи равна 0,15 м². Какое давление оказывает мальчик на снег? (Ускорение свободного падения g = 10 Н/кг).</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Массасы 45 кг ұл бала қар үстінде шаңғымен тұр. Бір шаңғының ауданы 0,15 м²-ге тең. Бала қарға қандай қысым түсіреді? (Еркін түсу үдеуі g = 10 Н/кг).</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>m = 45 кг<br>S₁ = 0,15 м²<br>N = 2 (количество лыж)<br>g = 10 Н/кг<br><strong>Найти:</strong> p — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>m = 45 кг<br>S₁ = 0,15 м²<br>N = 2 (шаңғы саны)<br>g = 10 Н/кг<br><strong>Табу керек:</strong> p — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Формула и анализ:</strong><br>Давление вычисляется по формуле: p = F / S.<br>Сила давления в данном случае равна силе тяжести: F = m · g.<br>Общая площадь опоры равна площади двух лыж: S = N · S₁.<br>Подставляем: p = (m · g) / (N · S₁).</span>
+                <span class="lang-kz"><strong>Формула және талдау:</strong><br>Қысым мына формула бойынша есептеледі: p = F / S.<br>Бұл жағдайда қысым күші ауырлық күшіне тең: F = m · g.<br>Жалпы тіреу ауданы екі шаңғының ауданына тең: S = N · S₁.<br>Орнына қоямыз: p = (m · g) / (N · S₁).</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>F = 45 кг · 10 Н/кг = 450 Н.<br>S = 2 · 0,15 м² = 0,3 м².<br>p = 450 Н / 0,3 м² = 1500 Па.</span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>F = 45 кг · 10 Н/кг = 450 Н.<br>S = 2 · 0,15 м² = 0,3 м².<br>p = 450 Н / 0,3 м² = 1500 Па.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Давление мальчика на снег равно 1500 Па (или 1,5 кПа).</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Баланың қарға түсіретін қысымы 1500 Па-ға (немесе 1,5 кПа) тең.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Зачем у сельскохозяйственных тракторов делают такие широкие колеса или даже используют гусеницы?</span>
+                <span class="lang-kz">Ауылшаруашылық тракторларының доңғалақтарын неліктен соншалықты жалпақ етіп жасайды немесе тіпті гусеницаларды қолданады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="increase" data-ru="Чтобы увеличить давление на мягкую почву" data-kz="Жұмсақ топыраққа қысымды арттыру үшін">Чтобы увеличить давление на мягкую почву</option>
+                    <option value="decrease" data-ru="Чтобы увеличить площадь опоры и УМЕНЬШИТЬ давление на почву" data-kz="Тіреу ауданын арттырып, топыраққа қысымды АЗАЙТУ үшін">Чтобы увеличить площадь опоры и УМЕНЬШИТЬ давление на почву</option>
+                    <option value="speed" data-ru="Чтобы трактор ехал быстрее" data-kz="Трактор тезірек жүруі үшін">Чтобы трактор ехал быстрее</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Понимает зависимость давления от площади опоры.<br>- Знает, как уменьшить давление твердого тела на поверхность.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Қысымның тіреу ауданына тәуелділігін түсінеді.<br>- Қатты дененің бетке түсіретін қысымын қалай азайтуға болатынын біледі.</span>
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">На стол поставили гирю. Сила тяжести, действующая на гирю (и сила, с которой она давит на стол), равна 200 Н. Площадь дна гири равна 0,05 м². Рассчитайте давление гири на стол. (Введите только число в Паскалях).</span>
+                <span class="lang-kz">Үстелге кір тасын қойды. Кір тасына әрекет ететін ауырлық күші (және оның үстелге түсіретін қысым күші) 200 Н-ға тең. Кір тасының табанының ауданы 0,05 м²-ге тең. Кір тасының үстелге түсіретін қысымын есептеңіз. (Тек Паскальмен санды енгізіңіз).</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 1000" data-placeholder-kz="Мысалы: 1000" placeholder="Например: 1000">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Записывает формулу давления p = F / S.<br>- Правильно подставляет значения силы и площади.<br>- Выполняет вычисление без ошибок.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Қысым формуласын p = F / S жазады.<br>- Күш пен аудан мәндерін дұрыс қояды.<br>- Есептеуді қатесіз орындайды.</span>
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">У вас есть кирпич с размерами граней: 25х12 см, 12х6 см, 25х6 см. На какую грань нужно положить кирпич, чтобы он оказывал <strong>МАКСИМАЛЬНОЕ</strong> давление на поверхность?</span>
+                <span class="lang-kz">Сізде жақтарының өлшемдері 25х12 см, 12х6 см, 25х6 см болатын кірпіш бар. Бетке <strong>МАКСИМАЛДЫ</strong> қысым түсіру үшін кірпішті қай жағына қою керек?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="large" data-ru="На самую большую грань (25х12 см)" data-kz="Ең үлкен жағына (25х12 см)">На самую большую грань (25х12 см)</option>
+                    <option value="medium" data-ru="На среднюю грань (25х6 см)" data-kz="Орташа жағына (25х6 см)">На среднюю грань (25х6 см)</option>
+                    <option value="small" data-ru="На самую маленькую грань (12х6 см)" data-kz="Ең кіші жағына (12х6 см)">На самую маленькую грань (12х6 см)</option>
+                </select>
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Понимает обратно пропорциональную зависимость давления от площади.<br>- Определяет грань с наименьшей площадью для получения наибольшего давления.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Қысымның ауданға кері пропорционал тәуелділігін түсінеді.<br>- Ең үлкен қысым алу үшін ауданы ең кіші жағын анықтайды.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите короткий видеоурок с экспериментами, наглядно показывающими зависимость давления от силы и площади.</span>
+            <span class="lang-kz">Қысымның күш пен ауданға тәуелділігін көрнекі түрде көрсететін эксперименттері бар қысқа бейнесабақты қараңыз.</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B4%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5+%D1%82%D0%B2%D0%B5%D1%80%D0%B4%D1%8B%D1%85+%D1%82%D0%B5%D0%BB+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Давление твердых тел» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Қатты денелердің қысымы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю формулу давления и в чем оно измеряется.</span>
+                <span class="lang-kz">Мен қысым формуласын және оның немен өлшенетінін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понимаю, как изменить давление, меняя площадь опоры.</span>
+                <span class="lang-kz">Мен тіреу ауданын өзгерту арқылы қысымды қалай өзгертуге болатынын түсінемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу объяснить, зачем точат ножи и используют широкие лыжи.</span>
+                <span class="lang-kz">Мен пышақтарды неге қайрайтынын және неге жалпақ шаңғыларды қолданатынын түсіндіре аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что называют давлением?</span>
+                <span class="lang-kz">1. Қысым деп нені атайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Силу, с которой тело притягивается к Земле</span><span class="lang-kz">Дененің Жерге тартылу күшін</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Массу тела, деленную на его объем</span><span class="lang-kz">Дененің массасын оның көлеміне бөлгенге тең шаманы</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Отношение силы, действующей перпендикулярно поверхности, к площади этой поверхности</span><span class="lang-kz">Бетке перпендикуляр әрекет ететін күштің осы беттің ауданына қатынасын</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Любую силу, действующую на тело</span><span class="lang-kz">Денеге әрекет ететін кез келген күшті</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. В каких единицах измеряется давление в СИ?</span>
+                <span class="lang-kz">2. ХБЖ-да қысым қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Паскаль (Па)</span><span class="lang-kz">Паскаль (Па)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Ньютон (Н)</span><span class="lang-kz">Ньютон (Н)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Килограмм (кг)</span><span class="lang-kz">Килограмм (кг)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Джоуль (Дж)</span><span class="lang-kz">Джоуль (Дж)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">3. Как можно увеличить давление твердого тела на поверхность, не меняя его массу?</span>
+                <span class="lang-kz">3. Қатты дененің массасын өзгертпей, оның бетке түсіретін қысымын қалай арттыруға болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Увеличить площадь опоры</span><span class="lang-kz">Тіреу ауданын арттыру керек</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Уменьшить площадь опоры</span><span class="lang-kz">Тіреу ауданын азайту керек</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Положить тело на бок, где площадь больше</span><span class="lang-kz">Ауданы үлкенірек болатын жағына жатқызу керек</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Давление нельзя изменить, не меняя массу</span><span class="lang-kz">Массаны өзгертпей қысымды өзгерту мүмкін емес</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Сила давления равна 100 Н, а площадь опоры 2 м². Чему равно давление?</span>
+                <span class="lang-kz">4. Қысым күші 100 Н, ал тіреу ауданы 2 м² тең. Қысым неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">200 Па</span><span class="lang-kz">200 Па</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">102 Па</span><span class="lang-kz">102 Па</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">0,02 Па</span><span class="lang-kz">0,02 Па</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">50 Па</span><span class="lang-kz">50 Па</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Почему лезвия лопат и ножей делают острыми?</span>
+                <span class="lang-kz">5. Күректер мен пышақтардың жүздерін неліктен өткір етіп жасайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Чтобы при небольшой силе создавать большое давление благодаря малой площади лезвия</span><span class="lang-kz">Жүздің кішкентай ауданы арқасында аз күш жұмсап үлкен қысым тудыру үшін</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Чтобы увеличить площадь опоры и уменьшить давление</span><span class="lang-kz">Тіреу ауданын арттырып, қысымды азайту үшін</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Для уменьшения трения о разрезаемый материал</span><span class="lang-kz">Кесілетін материалға үйкелісті азайту үшін</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Для красоты</span><span class="lang-kz">Әдемілік үшін</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            btn_play: '<span class="lang-ru">Поставить груз</span><span class="lang-kz">Жүкті қою</span>',
+            btn_pause: '<span class="lang-ru">Убрать груз</span><span class="lang-kz">Жүкті алу</span>', // Not really used as toggle text, but logic adapted
+            btn_put: '<span class="lang-ru">Поставить груз</span><span class="lang-kz">Жүкті қою</span>',
+            btn_remove: '<span class="lang-ru">Убрать груз</span><span class="lang-kz">Жүкті алу</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Широкие гусеницы увеличивают площадь опоры (S). Так как p = F / S, при увеличении S давление p сильно уменьшается, и тяжелый трактор не проваливается.",
+            fbA_inc: "Неверно. Вспомните формулу p = F / S. Если площадь S увеличивается, что происходит с давлением?",
+            fbB_corr: "Абсолютно верно! p = F / S = 200 Н / 0,05 м² = 4000 Па.",
+            fbB_inc: "Ошибка. Подсказка: разделите силу (200) на площадь (0,05).",
+            fbC_corr: "Точно! Давление тем больше, чем меньше площадь опоры. Самая маленькая грань имеет размеры 12х6 см, поэтому на нее нужно положить кирпич.",
+            fbC_inc: "Неверно. Давление и площадь обратно пропорциональны. Чтобы давление было максимальным, площадь должна быть...",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему давления.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            obs_init: "Настройте параметры и нажмите «Поставить груз».",
+            obs_placed: "Груз поставлен! Масса: {m} кг, Площадь: {a} м². <br>Давление: <strong>{p} Па</strong>. Глубина погружения: {d} см."
+        },
+        kz: {
+            btn_play: '<span class="lang-ru">Поставить груз</span><span class="lang-kz">Жүкті қою</span>',
+            btn_pause: '<span class="lang-ru">Убрать груз</span><span class="lang-kz">Жүкті алу</span>',
+            btn_put: '<span class="lang-ru">Поставить груз</span><span class="lang-kz">Жүкті қою</span>',
+            btn_remove: '<span class="lang-ru">Убрать груз</span><span class="lang-kz">Жүкті алу</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Жалпақ шынжыр табандар тіреу ауданын (S) арттырады. p = F / S болғандықтан, S артқанда p қысым қатты төмендейді және ауыр трактор батып кетпейді.",
+            fbA_inc: "Қате. p = F / S формуласын еске түсіріңіз. Егер S ауданы артса, қысыммен не болады?",
+            fbB_corr: "Мүлдем дұрыс! p = F / S = 200 Н / 0,05 м² = 4000 Па.",
+            fbB_inc: "Қате. Кеңес: күшті (200) ауданға (0,05) бөліңіз.",
+            fbC_corr: "Дұрыс! Тіреу ауданы неғұрлым аз болса, қысым соғұрлым көп болады. Ең кіші жағының өлшемі 12х6 см, сондықтан кірпішті сол жағына қою керек.",
+            fbC_inc: "Қате. Қысым мен аудан кері пропорционал. Қысым максималды болу үшін аудан...",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз қысым тақырыбын өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            obs_init: "Параметрлерді реттеп, «Жүкті қою» түймесін басыңыз.",
+            obs_placed: "Жүк қойылды! Массасы: {m} кг, Ауданы: {a} м². <br>Қысым: <strong>{p} Па</strong>. Бату тереңдігі: {d} см."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        updateSimText();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const massSlider = document.getElementById('massSlider');
+    const areaSlider = document.getElementById('areaSlider');
+    const surfaceSelect = document.getElementById('surfaceSelect');
+    
+    const massVal = document.getElementById('massVal');
+    const areaVal = document.getElementById('areaVal');
+    const obsText = document.getElementById('obsText');
+    
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnReset = document.getElementById('btnReset');
+
+    let isPlaced = false;
+    let animFrame;
+    let currentY = 50; // Стартовая позиция над землей
+    let targetY = 50;
+    
+    function updateSimText() {
+        if (!isPlaced) {
+            obsText.innerHTML = t('obs_init');
+        } else {
+            const m = parseFloat(massSlider.value);
+            const a = parseFloat(areaSlider.value);
+            const p = Math.round((m * 10) / a);
+            const softness = parseFloat(surfaceSelect.value);
+            // Условная глубина погружения для текста
+            const visualDepth = Math.round((p * softness) / 200); 
+            obsText.innerHTML = t('obs_placed', {m: m, a: a, p: p, d: visualDepth});
+        }
+    }
+
+    function handleInput() {
+        massVal.textContent = massSlider.value;
+        areaVal.textContent = areaSlider.value;
+        if(isPlaced) {
+            calculateTargetY();
+            updateSimText();
+        }
+    }
+
+    massSlider.addEventListener('input', handleInput);
+    areaSlider.addEventListener('input', handleInput);
+    surfaceSelect.addEventListener('change', handleInput);
+
+    function calculateTargetY() {
+        const m = parseFloat(massSlider.value);
+        const a = parseFloat(areaSlider.value);
+        const softness = parseFloat(surfaceSelect.value);
+        const groundY = 200; // Уровень поверхности
+        const blockHeight = 60; // Визуальная высота блока
+        
+        // Давление p = m*g / a
+        const p = (m * 10) / a;
+        
+        // Глубина погружения пропорциональна давлению и мягкости поверхности
+        // Коэффициент 0.01 для визуального масштаба
+        let sinkDepth = p * softness * 0.005; 
+        
+        // Ограничиваем погружение, чтобы блок не провалился полностью (если только не слишком сильное давление)
+        if(sinkDepth > 100) sinkDepth = 100;
+        
+        targetY = groundY - blockHeight + sinkDepth;
+    }
+
+    btnPlayPause.addEventListener('click', () => {
+        isPlaced = true;
+        calculateTargetY();
+        updateSimText();
+        if(!animFrame) animate();
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaced = false;
+        targetY = 50; // Вернуть наверх
+        updateSimText();
+        if(!animFrame) animate();
+    });
+
+    function animate() {
+        // Плавное приближение к целевой Y
+        currentY += (targetY - currentY) * 0.1;
+        
+        drawScene();
+        
+        // Продолжаем анимацию если не достигли цели
+        if (Math.abs(targetY - currentY) > 0.5) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const groundY = 200;
+        const surfaceType = surfaceSelect.value;
+        let groundColor = '#94a3b8'; // Твердая
+        if (surfaceType === '3') groundColor = '#e2e8f0'; // Снег
+        if (surfaceType === '6') groundColor = '#fef08a'; // Песок
+
+        // Рисуем небо/фон (задано в canvas style, но можно перерисовать)
+        ctx.fillStyle = '#f1f5f9';
+        ctx.fillRect(0, 0, canvas.width, groundY);
+
+        // Рисуем поверхность
+        ctx.fillStyle = groundColor;
+        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+        
+        // Линия поверхности
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(canvas.width, groundY);
+        ctx.stroke();
+
+        // Параметры груза
+        const a = parseFloat(areaSlider.value);
+        // Визуальная ширина зависит от площади (0.05 - 0.5) -> (40px - 200px)
+        const blockWidth = 20 + a * 360; 
+        const blockHeight = 60;
+        const blockX = canvas.width / 2 - blockWidth / 2;
+        
+        // Если блок погрузился, рисуем "яму" под ним
+        if (currentY + blockHeight > groundY) {
+            ctx.fillStyle = '#334155'; // Цвет тени в яме
+            ctx.beginPath();
+            ctx.moveTo(blockX - 10, groundY);
+            ctx.lineTo(blockX, currentY + blockHeight);
+            ctx.lineTo(blockX + blockWidth, currentY + blockHeight);
+            ctx.lineTo(blockX + blockWidth + 10, groundY);
+            ctx.fill();
+        }
+
+        // Рисуем сам груз
+        ctx.fillStyle = '#ef4444'; // Красный груз
+        ctx.fillRect(blockX, currentY, blockWidth, blockHeight);
+        ctx.strokeStyle = '#b91c1c';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(blockX, currentY, blockWidth, blockHeight);
+
+        // Текст на грузе
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        let massText = massSlider.value + (currentLang === 'kz' ? ' кг' : ' кг');
+        ctx.fillText(massText, canvas.width / 2, currentY + blockHeight / 2 + 5);
+
+        // Стрелка силы давления F, если блок поставлен
+        if (isPlaced && Math.abs(currentY - targetY) < 5) {
+            const f = parseFloat(massSlider.value) * 10;
+            drawArrow(canvas.width / 2, currentY - 40, canvas.width / 2, currentY, '#2563eb', 'F = ' + f + ' Н');
+        }
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, label) {
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, toX, fromY - 10);
+        }
+    }
+
+    // Инициализация холста
+    handleInput();
+    drawScene();
+    obsText.innerHTML = t('obs_init');
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === 'decrease') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseFloat(document.getElementById('taskB').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 4000) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === 'small') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

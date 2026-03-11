@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Графическое представление движения — 7 класс</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --car1: #3b82f6; /* Синий */
+            --car2: #ef4444; /* Красный */
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-light: #475569;
+            --accent: #059669;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --youtube: #ff0000;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --card-bg: #1e293b;
+                --text: #f8fafc;
+                --text-light: #94a3b8;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; transition: background 0.2s, color 0.2s; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container { max-width: 850px; margin: 0 auto; padding: 20px; }
+
+        /* Шапка */
+        header {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: white;
+            border-radius: 0 0 40px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        header h1 { margin: 0; font-size: 2rem; }
+        header p { opacity: 0.9; max-width: 600px; margin: 15px auto 0; font-size: 1.1rem; }
+
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+        h2 { border-left: 5px solid var(--primary); padding-left: 15px; margin-top: 0; color: var(--primary); font-size: 1.4rem; }
+
+        /* Формулы */
+        .formula-block {
+            background: rgba(37, 99, 235, 0.08);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.6rem;
+            margin: 15px 0;
+            font-family: 'Cambria', 'Times New Roman', serif;
+            color: var(--primary);
+        }
+
+        /* Симуляция */
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) { .sim-grid { grid-template-columns: 1fr; } }
+
+        .controls { display: flex; flex-direction: column; gap: 15px; }
+        .control-group { background: var(--bg); padding: 12px; border-radius: 12px; border-left: 4px solid transparent; }
+        .control-group.blue-group { border-left-color: var(--car1); }
+        .control-group.red-group { border-left-color: var(--car2); }
+        
+        .control-group label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .control-group input { width: 100%; cursor: pointer; }
+        
+        .visual-box {
+            background: #111827; /* Темный фон для графиков */
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+        }
+        canvas { width: 100%; height: 100%; display: block; }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            flex: 1;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 2px solid var(--text-light); color: var(--text-light); }
+        .btn-outline:hover { border-color: var(--text); color: var(--text); }
+
+        /* Задачи */
+        .task-box { border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px; }
+        .input-ans { padding: 10px; border: 1px solid var(--border); border-radius: 8px; width: 120px; font-size: 1rem; margin-right: 10px; background: var(--bg); color: var(--text); }
+
+        /* Тест */
+        .test-q { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .options-list { display: grid; gap: 8px; margin-top: 12px; }
+        .opt-btn {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+        .opt-btn:hover { border-color: var(--primary); }
+        .opt-btn.active { border-color: var(--primary); background: rgba(37, 99, 235, 0.1); font-weight: 600; }
+
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--youtube);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            border: 2px solid var(--youtube);
+            border-radius: 10px;
+        }
+        .youtube-btn:hover { background: var(--youtube); color: white; }
+
+        .hidden { display: none; }
+        .alert { margin-top: 15px; padding: 15px; border-radius: 10px; font-weight: bold; }
+        .alert-success { background: rgba(5, 150, 105, 0.15); color: var(--accent); }
+        .alert-error { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Графическое представление движения</h1>
+        <p>Узнаем, как графики превращают цифры в наглядные картинки, и устроим гонку прямо на координатной плоскости!</p>
+    </header>
+
+    <div class="container">
+        <!-- ТЕОРИЯ -->
+        <section class="card">
+            <h2>Теория: Читаем графики</h2>
+            <p>При <strong>равномерном движении</strong> тело за любые равные промежутки времени проходит одинаковые пути.</p>
+            <ul>
+                <li><strong>График пути s(t):</strong> Это прямая линия. Чем быстрее движется тело, тем <em>круче</em> (выше) поднимается график.</li>
+                <li><strong>График скорости v(t):</strong> Это горизонтальная линия. Скорость не меняется, поэтому линия параллельна оси времени.</li>
+                <li>Точка пересечения двух графиков пути означает, что тела <strong>встретились</strong> в одно время в одном месте.</li>
+            </ul>
+        </section>
+
+        <!-- СИМУЛЯЦИЯ -->
+        <section class="card">
+            <h2>Интерактивная лаборатория: Гонка графиков</h2>
+            <p style="margin-bottom: 20px;">Задайте скорости для двух автомобилей и посмотрите, чей график будет круче!</p>
+            <div class="sim-grid">
+                <div class="controls">
+                    <!-- Объект 1 -->
+                    <div class="control-group blue-group">
+                        <label><span style="color: var(--car1);">Синее авто (v₁)</span> <span id="v1-val">5 м/с</span></label>
+                        <input type="range" id="v1-input" min="1" max="15" value="5">
+                        <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 5px;" id="s1-calc">Путь: 0 м</div>
+                    </div>
+                    
+                    <!-- Объект 2 -->
+                    <div class="control-group red-group">
+                        <label><span style="color: var(--car2);">Красное авто (v₂)</span> <span id="v2-val">10 м/с</span></label>
+                        <input type="range" id="v2-input" min="1" max="15" value="10">
+                        <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 5px;" id="s2-calc">Путь: 0 м</div>
+                    </div>
+
+                    <div class="control-group" style="background: transparent; padding: 0;">
+                        <div style="font-size: 1rem; font-weight: bold; text-align: center; margin-bottom: 10px;">Время: <span id="t-val">0.0</span> с</div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" id="start-btn">Старт</button>
+                            <button class="btn btn-outline" id="reset-btn">Сброс</button>
+                        </div>
+                    </div>
+                    
+                    <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 10px;">
+                        <strong>Задание:</strong> Сделайте так, чтобы красная машина достигла финиша (100 м) ровно за 10 секунд. Какую скорость нужно выбрать?
+                    </p>
+                </div>
+                
+                <div class="visual-box" id="sim-wrapper">
+                    <canvas id="mainCanvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ФОРМУЛЫ -->
+        <section class="card">
+            <h2>Основные формулы</h2>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                <div class="formula-block" style="flex: 1;">
+                    s = v · t
+                </div>
+                <div class="formula-block" style="flex: 1;">
+                    v = s / t
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--text-light);"><small>s — путь (метры, м), v — скорость (метры в секунду, м/с), t — время (секунды, с).</small></p>
+        </section>
+
+        <!-- ЗАДАЧА С РЕШЕНИЕМ -->
+        <section class="card">
+            <h2>Пример решения задачи</h2>
+            <p><strong>Условие:</strong> По графику пути определите скорость тела, если за 10 секунд оно прошло 50 метров.</p>
+            <button class="btn btn-outline" style="padding: 5px 15px; font-size: 0.9rem;" onclick="toggleSolution()">Показать решение</button>
+            <div id="solution-box" class="hidden" style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.03); border-radius: 12px;">
+                <p><strong>Дано:</strong> t = 10 с, s = 50 м.</p>
+                <p><strong>Формула:</strong> v = s / t</p>
+                <p><strong>Решение:</strong> v = 50 / 10 = 5 м/с.</p>
+                <p><strong>Ответ:</strong> 5 м/с.</p>
+            </div>
+        </section>
+
+        <!-- ПРАКТИКА -->
+        <section class="card">
+            <h2>Задачи для самостоятельного решения</h2>
+            <div class="task-box">
+                <p><strong>Задача А:</strong> Чему равен путь тела через 3 секунды, если его скорость 10 м/с?</p>
+                <input type="number" id="ansA" class="input-ans" placeholder="Ответ (число)">
+                <button class="btn btn-primary" style="padding: 8px 15px;" onclick="checkA()">Проверить</button>
+                <div id="fbA" class="alert hidden"></div>
+            </div>
+            <div class="task-box">
+                <p><strong>Задача Б:</strong> За 4 секунды тело прошло 24 метра. Чему равна скорость?</p>
+                <input type="number" id="ansB" class="input-ans" placeholder="Ответ (число)">
+                <button class="btn btn-primary" style="padding: 8px 15px;" onclick="checkB()">Проверить</button>
+                <div id="fbB" class="alert hidden"></div>
+            </div>
+        </section>
+
+        <!-- ТЕСТ -->
+        <section class="card">
+            <h2>Итоговый тест (5 вопросов)</h2>
+            <div id="quiz-container">
+                <!-- Тест генерируется JS -->
+            </div>
+            <button class="btn btn-primary" onclick="processQuiz()" style="width: 100%;">Проверить результат теста</button>
+            <div id="quiz-fb" class="alert hidden"></div>
+        </section>
+    </div>
+
+    <script>
+        // --- СИМУЛЯЦИЯ ---
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        const wrapper = document.getElementById('sim-wrapper');
+        
+        let v1 = 5, v2 = 10;
+        let time = 0;
+        let isRunning = false;
+        let animationFrameId;
+
+        // Константы графика
+        const MAX_T = 10;   // Максимальное время на оси X (с)
+        const MAX_S = 100;  // Максимальный путь на оси Y (м)
+        
+        const PADDING = { top: 20, right: 30, bottom: 120, left: 50 }; // Место снизу для дорожек
+
+        function resize() {
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
+            drawFrame();
+        }
+        window.addEventListener('resize', resize);
+
+        // Обработчики инпутов
+        document.getElementById('v1-input').addEventListener('input', (e) => {
+            v1 = parseInt(e.target.value);
+            document.getElementById('v1-val').innerText = v1 + ' м/с';
+            if(!isRunning && time === 0) drawFrame();
+        });
+
+        document.getElementById('v2-input').addEventListener('input', (e) => {
+            v2 = parseInt(e.target.value);
+            document.getElementById('v2-val').innerText = v2 + ' м/с';
+            if(!isRunning && time === 0) drawFrame();
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            if (time >= MAX_T || (v1 * time >= MAX_S && v2 * time >= MAX_S)) {
+                resetSim(); // Если дошли до конца, рестарт перед запуском
+            }
+            isRunning = !isRunning;
+            document.getElementById('start-btn').innerText = isRunning ? 'Пауза' : 'Продолжить';
+            if (isRunning) loop();
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', resetSim);
+
+        function resetSim() {
+            isRunning = false;
+            time = 0;
+            document.getElementById('start-btn').innerText = 'Старт';
+            cancelAnimationFrame(animationFrameId);
+            updateUI();
+            drawFrame();
+        }
+
+        // Вспомогательные функции для координат
+        function getX(t) {
+            const w = canvas.width - PADDING.left - PADDING.right;
+            return PADDING.left + (t / MAX_T) * w;
+        }
+
+        function getY(s) {
+            const h = canvas.height - PADDING.top - PADDING.bottom;
+            return PADDING.top + h - (s / MAX_S) * h;
+        }
+
+        function updateUI() {
+            document.getElementById('t-val').innerText = time.toFixed(1);
+            document.getElementById('s1-calc').innerText = `Путь: ${(v1 * time).toFixed(1)} м`;
+            document.getElementById('s2-calc').innerText = `Путь: ${(v2 * time).toFixed(1)} м`;
+        }
+
+        function drawFrame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // --- Отрисовка осей графика ---
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            
+            const originX = PADDING.left;
+            const originY = canvas.height - PADDING.bottom;
+            
+            ctx.beginPath();
+            ctx.moveTo(originX, PADDING.top); // Ось Y
+            ctx.lineTo(originX, originY);
+            ctx.lineTo(canvas.width - PADDING.right + 10, originY); // Ось X
+            ctx.stroke();
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('s (м)', originX - 35, PADDING.top + 10);
+            ctx.fillText('t (с)', canvas.width - PADDING.right + 5, originY + 20);
+
+            // Метки осей
+            ctx.textAlign = 'right';
+            ctx.fillText('100', originX - 10, getY(100) + 4);
+            ctx.fillText('50', originX - 10, getY(50) + 4);
+            ctx.textAlign = 'center';
+            ctx.fillText('5', getX(5), originY + 20);
+            ctx.fillText('10', getX(10), originY + 20);
+
+            // Сетка
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(originX, getY(50)); ctx.lineTo(getX(10), getY(50));
+            ctx.moveTo(originX, getY(100)); ctx.lineTo(getX(10), getY(100));
+            ctx.moveTo(getX(5), originY); ctx.lineTo(getX(5), PADDING.top);
+            ctx.moveTo(getX(10), originY); ctx.lineTo(getX(10), PADDING.top);
+            ctx.stroke();
+            ctx.setLineDash([]); // Сброс штриховки
+
+            // --- Расчет текущего пути ---
+            const s1 = Math.min(v1 * time, MAX_S); // Ограничиваем, чтобы не улетело в космос
+            const s2 = Math.min(v2 * time, MAX_S);
+            const actualT1 = s1 === MAX_S ? MAX_S / v1 : time;
+            const actualT2 = s2 === MAX_S ? MAX_S / v2 : time;
+
+            // --- График 1 (Синий) ---
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(getX(actualT1), getY(s1));
+            ctx.stroke();
+
+            // --- График 2 (Красный) ---
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(getX(actualT2), getY(s2));
+            ctx.stroke();
+
+            // --- Дорожки внизу ---
+            const track1Y = canvas.height - 80;
+            const track2Y = canvas.height - 30;
+
+            // Рисуем линии дорожек
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(originX, track1Y + 10); ctx.lineTo(getX(10), track1Y + 10);
+            ctx.moveTo(originX, track2Y + 10); ctx.lineTo(getX(10), track2Y + 10);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#6b7280';
+            ctx.textAlign = 'left';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Финиш', getX(10) - 15, track1Y - 10);
+            ctx.fillText('Финиш', getX(10) - 15, track2Y - 10);
+
+            // Рисуем финишную черту
+            ctx.strokeStyle = '#10b981';
+            ctx.beginPath();
+            ctx.moveTo(getX(10), track1Y - 15); ctx.lineTo(getX(10), track1Y + 15);
+            ctx.moveTo(getX(10), track2Y - 15); ctx.lineTo(getX(10), track2Y + 15);
+            ctx.stroke();
+
+            // --- Машинки на дорожках ---
+            // Синяя
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            // Позиция на дорожке пропорциональна пути! 
+            // Это связывает график Y с горизонтальным движением
+            let car1X = originX + (s1 / MAX_S) * (getX(10) - originX);
+            ctx.arc(car1X, track1Y, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Красная
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            let car2X = originX + (s2 / MAX_S) * (getX(10) - originX);
+            ctx.arc(car2X, track2Y, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function loop() {
+            if (!isRunning) return;
+            
+            time += 0.03; // Шаг времени
+            
+            // Останавливаем, если обе дошли до конца или время вышло
+            if (time >= MAX_T && (v1 * time >= MAX_S) && (v2 * time >= MAX_S)) {
+                time = Math.max(MAX_S/v1, MAX_S/v2, MAX_T); // Зафиксировать финальное время
+                isRunning = false;
+                document.getElementById('start-btn').innerText = 'Завершено';
+            }
+
+            if (time > MAX_T) time = MAX_T; // Жесткий стоп на графике по оси времени
+
+            updateUI();
+            drawFrame();
+
+            if (isRunning) {
+                animationFrameId = requestAnimationFrame(loop);
+            }
+        }
+
+        // Инициализация холста
+        setTimeout(resize, 100);
+
+        // --- ЗАДАЧИ ---
+        function toggleSolution() { document.getElementById('solution-box').classList.toggle('hidden'); }
+
+        function checkA() {
+            const a = document.getElementById('ansA').value;
+            const fb = document.getElementById('fbA');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            if(a == 30) { fb.innerText = "Верно! 10 * 3 = 30 м."; fb.classList.add('alert-success'); }
+            else if(a === "") { fb.innerText = "Пожалуйста, введите ответ."; fb.classList.add('alert-error'); }
+            else { fb.innerText = "Не совсем. Умножь скорость на время (10 * 3)."; fb.classList.add('alert-error'); }
+        }
+
+        function checkB() {
+            const b = document.getElementById('ansB').value;
+            const fb = document.getElementById('fbB');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            if(b == 6) { fb.innerText = "Правильно! 24 / 4 = 6 м/с."; fb.classList.add('alert-success'); }
+            else if(b === "") { fb.innerText = "Пожалуйста, введите ответ."; fb.classList.add('alert-error'); }
+            else { fb.innerText = "Ошибка. Используй формулу v = s / t (24 / 4)."; fb.classList.add('alert-error'); }
+        }
+
+        // --- ТЕСТ ---
+        const quizData = [
+            { q: "Как выглядит график пути при равномерном движении?", a: ["Кривая линия", "Прямая линия", "Окружность", "Точка"], c: 1 },
+            { q: "Что показывает наклон графика пути?", a: ["Вес тела", "Размер тела", "Скорость тела", "Цвет тела"], c: 2 },
+            { q: "Если тело стоит на месте, как выглядит его график скорости?", a: ["Линия вверх", "Линия вниз", "Линия на нуле", "Круг"], c: 2 },
+            { q: "В каких единицах измеряется путь в системе СИ?", a: ["Секунды", "Килограммы", "Метры", "Литры"], c: 2 },
+            { q: "Формула скорости — это:", a: ["v = s · t", "v = s / t", "v = t / s", "v = s + t"], c: 1 }
+        ];
+
+        let quizUserAnswers = Array(5).fill(null);
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = ''; 
+            quizData.forEach((item, i) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'test-q';
+                qDiv.innerHTML = `<p><strong>${i+1}. ${item.q}</strong></p>
+                    <div class="options-list">
+                        ${item.a.map((opt, oi) => `<button class="opt-btn" id="q${i}o${oi}" onclick="pickQuiz(${i}, ${oi})">${opt}</button>`).join('')}
+                    </div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        window.pickQuiz = (qi, oi) => {
+            quizUserAnswers[qi] = oi;
+            document.querySelectorAll(`[id^="q${qi}o"]`).forEach(b => b.classList.remove('active'));
+            document.getElementById(`q${qi}o${oi}`).classList.add('active');
+        };
+
+        function processQuiz() {
+            let score = 0;
+            let answered = 0;
+            quizData.forEach((d, i) => { 
+                if(quizUserAnswers[i] !== null) answered++;
+                if(quizUserAnswers[i] === d.c) score++; 
+            });
+            
+            const fb = document.getElementById('quiz-fb');
+            fb.classList.remove('hidden', 'alert-success', 'alert-error');
+            
+            if (answered < 5) {
+                fb.innerHTML = `Пожалуйста, ответьте на все вопросы. (Вы ответили на ${answered} из 5)`;
+                fb.classList.add('alert-error');
+                return;
+            }
+
+            fb.innerHTML = `Твой результат: ${score} из 5.<br><small>Верные ответы: 1-Б, 2-В, 3-В, 4-В, 5-Б</small>`;
+            fb.classList.add(score >= 4 ? 'alert-success' : 'alert-error');
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>

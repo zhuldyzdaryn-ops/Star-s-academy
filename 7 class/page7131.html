@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Атмосферное давление. Измерение атмосферного давления — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff; /* Светло-голубой (небо/воздух) */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #0284c7; /* Синий (Атмосфера) */
+            --primary-hover: #0369a1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+            --mercury-color: #94a3b8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0c4a6e;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: #38bdf8; /* Начальный цвет неба */
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(2, 132, 199, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(2, 132, 199, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Атмосферное давление. Измерение атмосферного давления — 7 класс</span>
+            <span class="lang-kz">Атмосфералық қысым. Атмосфералық қысымды өлшеу — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Мы живем на дне огромного «воздушного океана». Воздух давит на каждого из нас с силой около 15 тонн! Почему же мы этого не замечаем? И как можно измерить то, что нельзя увидеть?</span>
+            <span class="lang-kz">Біз үлкен «ауа мұхитының» түбінде өмір сүреміз. Ауа әрқайсымызға шамамен 15 тонна күшпен қысым жасайды! Неліктен біз оны байқамаймыз? Және көзбен көруге болмайтын нәрсені қалай өлшеуге болады?</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Природа атмосферного давления</span>
+            <span class="lang-kz">Атмосфералық қысымның табиғаты</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Воздух имеет массу. Земля притягивает к себе атмосферу, благодаря чему верхние слои воздуха давят на нижние, а нижние — на поверхность Земли и на все тела, находящиеся на ней. Это давление называется <strong>атмосферным</strong>.</span>
+            <span class="lang-kz">Ауаның массасы бар. Жер атмосфераны өзіне тартады, соның арқасында ауаның жоғарғы қабаттары төменгі қабаттарға, ал төменгі қабаттар Жер бетіне және ондағы барлық денелерге қысым түсіреді. Бұл қысым <strong>атмосфералық</strong> деп аталады.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Почему нас не раздавливает?</strong> Кровеносные сосуды и полости внутри нашего тела заполнены жидкостями и газами, которые давят изнутри с точно такой же силой. Давления компенсируются!</span>
+                <span class="lang-kz"><strong>Неге бізді жаншып тастамайды?</strong> Біздің денеміздің ішіндегі қан тамырлары мен қуыстар дәл сондай күшпен іштен қысым жасайтын сұйықтықтар мен газдарға толы. Қысымдар теңестіріледі!</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Опыт Торричелли:</strong> В 17 веке Эванджелиста Торричелли взял стеклянную трубку длиной 1 метр, запаянную с одного конца, наполнил её ртутью и опустил открытым концом в чашку с ртутью. Ртуть из трубки вылилась не вся! Она остановилась на высоте около <strong>760 мм</strong>. Атмосферное давление, давящее на ртуть в чашке, уравновесило тяжесть столба ртути в трубке.</span>
+                <span class="lang-kz"><strong>Торричелли тәжірибесі:</strong> 17 ғасырда Эванджелиста Торричелли бір ұшы дәнекерленген ұзындығы 1 метр шыны түтікті алып, оны сынапқа толтырып, ашық ұшымен сынабы бар ыдысқа батырды. Түтіктегі сынап толығымен төгілген жоқ! Ол шамамен <strong>760 мм</strong> биіктікте тоқтады. Ыдыстағы сынапқа түсетін атмосфералық қысым түтіктегі сынап бағанының ауырлығын теңестірді.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Где мы видим действие атмосферного давления?</span>
+            <span class="lang-kz">Атмосфералық қысымның әсерін қайдан көреміз?</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Питьё через трубочку:</strong> Когда вы втягиваете воздух из трубочки, давление в ней падает. Атмосферное давление давит на поверхность напитка в стакане и буквально <em>заталкивает</em> жидкость вам в рот!</span>
+                <span class="lang-kz"><strong>Түтікше арқылы ішу:</strong> Түтікшеден ауаны сорған кезде, оның ішіндегі қысым төмендейді. Атмосфералық қысым стақандағы сусынның бетіне қысым жасап, сұйықтықты аузыңызға <em>итеріп</em> кіргізеді!</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Присоски:</strong> Если прижать присоску к стеклу, выдавив из-под неё воздух, атмосферное давление снаружи плотно прижмет её к поверхности.</span>
+                <span class="lang-kz"><strong>Сорғыштар (присоскалар):</strong> Егер сорғышты әйнекке басып, оның астындағы ауаны шығарсаңыз, сырттағы атмосфералық қысым оны бетке мықтап қысады.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Шприц или пипетка:</strong> Поднимая поршень шприца, мы создаем безвоздушное пространство. Атмосферное давление загоняет лекарство внутрь шприца.</span>
+                <span class="lang-kz"><strong>Шприц немесе тамшуыр (пипетка):</strong> Шприцтің поршенін көтеру арқылы біз ауасыз кеңістік жасаймыз. Атмосфералық қысым дәріні шприцтің ішіне айдап кіргізеді.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Закладывает уши:</strong> При быстром взлете на самолете или подъеме в горы атмосферное давление снаружи падает, а внутри уха остается прежним. Барабанная перепонка выгибается наружу.</span>
+                <span class="lang-kz"><strong>Құлақтың бітелуі:</strong> Ұшақпен жылдам көтерілгенде немесе тауға шыққанда сырттағы атмосфералық қысым төмендейді, ал құлақтың ішіндегі қысым бұрынғыдай қалады. Дабыл жарғағы сыртқа қарай иіледі.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ И ЕДИНИЦЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Измерение и единицы давления</span>
+            <span class="lang-kz">Қысымды өлшеу және бірліктері</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Для измерения атмосферного давления используют приборы — <strong>барометры</strong>. Самый удобный в быту — <strong>барометр-анероид</strong> (безжидкостный). Внутри него находится гофрированная металлическая коробочка, из которой выкачан воздух. При изменении давления коробочка сжимается или расширяется, двигая стрелку.</span>
+            <span class="lang-kz">Атмосфералық қысымды өлшеу үшін <strong>барометрлер</strong> деп аталатын құралдар қолданылады. Тұрмыста ең ыңғайлысы — <strong>барометр-анероид</strong> (сұйықтықсыз). Оның ішінде ауасы сорылған гофрленген металл қорапша бар. Қысым өзгерген кезде қорапша сығылады немесе ұлғаяды, бұл көрсеткішті (стрелка) жылжытады.</span>
+        </p>
+        
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Нормальное атмосферное давление:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Қалыпты атмосфералық қысым:</span>
+            <span class="math">p<sub>0</sub> = 760 мм рт. ст. &asymp; 101 300 Па &asymp; 10<sup>5</sup> Па</span>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru"><strong>Важное правило изменения с высотой:</strong> При небольших подъемах (у поверхности Земли) атмосферное давление <strong>падает на 1 мм рт. ст. на каждые 12 метров подъема</strong>.</span>
+                <span class="lang-kz"><strong>Биіктікке байланысты өзгерудің маңызды ережесі:</strong> Аздап көтерілгенде (Жер бетіне жақын маңда) атмосфералық қысым <strong>көтерілген әрбір 12 метр сайын 1 мм сын. бағ. төмендейді</strong>.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Высота и Давление</span>
+            <span class="lang-kz">Симуляция: Биіктік және Қысым</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="altSlider">
+                        <span class="lang-ru">Высота подъема (м):</span>
+                        <span class="lang-kz">Көтерілу биіктігі (м):</span>
+                        <span id="altVal">0</span> <span class="lang-ru">м</span><span class="lang-kz">м</span>
+                    </label>
+                    <input type="range" id="altSlider" min="0" max="3000" step="12" value="0">
+                </div>
+                <div style="background-color: var(--card-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-top: 10px;">
+                    <div style="font-weight: bold; color: var(--danger);">
+                        <span class="lang-ru">Показания барометра:</span>
+                        <span class="lang-kz">Барометр көрсеткіштері:</span>
+                    </div>
+                    <div style="font-size: 1.5rem; color: var(--primary);">
+                        <span id="presMmHg">760</span> <span class="lang-ru">мм рт. ст.</span><span class="lang-kz">мм сын. бағ.</span>
+                    </div>
+                    <div style="color: var(--text-muted);">
+                        &asymp; <span id="presPa">101300</span> Па
+                    </div>
+                </div>
+            </div>
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Перемещайте ползунок высоты. Чем выше поднимается воздушный шар, тем меньше слой воздуха над ним. Из-за этого атмосферное давление падает, и стрелка барометра отклоняется влево! Небо при этом становится более темным, так как воздух разрежен.</span>
+                <span class="lang-kz">Биіктік жүгірткісін жылжытыңыз. Әуе шары неғұрлым жоғары көтерілсе, оның үстіндегі ауа қабаты соғұрлым аз болады. Осыған байланысты атмосфералық қысым төмендейді, ал барометр көрсеткіші солға бұрылады! Ауа сирегендіктен аспан күңгірттенеді.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи</span>
+            <span class="lang-kz">Есеп шығару мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> У подножия башни барометр показывает давление 760 мм рт. ст., а на крыше башни — 755 мм рт. ст. Какова высота этой башни?</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Мұнараның етегінде барометр 760 мм сын. бағ. қысымды көрсетеді, ал мұнараның төбесінде — 755 мм сын. бағ. Бұл мұнараның биіктігі қандай?</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>p<sub>1</sub> = 760 мм рт. ст.<br>p<sub>2</sub> = 755 мм рт. ст.<br><strong>Найти:</strong> h — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>p<sub>1</sub> = 760 мм сын. бағ.<br>p<sub>2</sub> = 755 мм сын. бағ.<br><strong>Табу керек:</strong> h — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>1) Найдем разность давлений: &Delta;p = p<sub>1</sub> - p<sub>2</sub> = 760 - 755 = 5 мм рт. ст.<br>2) Мы знаем, что давление падает на 1 мм рт. ст. каждые 12 метров.<br>Значит, высота равна: h = &Delta;p &middot; 12 м.<br>h = 5 &middot; 12 = 60 м.</span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>1) Қысымдар айырмасын табамыз: &Delta;p = p<sub>1</sub> - p<sub>2</sub> = 760 - 755 = 5 мм сын. бағ.<br>2) Қысым әр 12 метр сайын 1 мм сын. бағ. төмендейтінін білеміз.<br>Демек, биіктік мынаған тең: h = &Delta;p &middot; 12 м.<br>h = 5 &middot; 12 = 60 м.</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> Высота башни 60 метров.</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> Мұнараның биіктігі 60 метр.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему в опыте Торричелли ртуть не выливается из трубки до конца? Что удерживает столб ртути высотой 760 мм?</span>
+                <span class="lang-kz">Торричелли тәжірибесінде сынап неліктен түтіктен соңына дейін төгіліп қалмайды? Биіктігі 760 мм сынап бағанын не ұстап тұр?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Магнитное поле Земли" data-kz="Жердің магнит өрісі">Магнитное поле Земли</option>
+                    <option value="2" data-ru="Сила трения ртути о стекло" data-kz="Сынаптың шыныға үйкеліс күші">Сила трения ртути о стекло</option>
+                    <option value="3" data-ru="Атмосферное давление, давящее на ртуть в чашке" data-kz="Ыдыстағы сынапқа түсетін атмосфералық қысым">Атмосферное давление, давящее на ртуть в чашке</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Нормальное атмосферное давление равно 760 мм рт. ст. Известно, что 1 мм рт. ст. приближенно равен 133,3 Па. Выразите нормальное атмосферное давление в Паскалях (округлите до целых).</span>
+                <span class="lang-kz">Қалыпты атмосфералық қысым 760 мм сын. бағ. тең. 1 мм сын. бағ. шамамен 133,3 Па-ға тең екені белгілі. Қалыпты атмосфералық қысымды Паскальмен өрнектеңіз (бүтін санға дейін дөңгелектеңіз).</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 100000" data-placeholder-kz="Мысалы: 100000" placeholder="Например: 100000">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Группа альпинистов поднялась на гору. У подножия барометр показывал 750 мм рт. ст., а на вершине — 600 мм рт. ст. На какую высоту в метрах поднялись альпинисты? (Считайте, что давление падает на 1 мм рт. ст. каждые 12 м).</span>
+                <span class="lang-kz">Бір топ альпинистер тауға шықты. Тау етегінде барометр 750 мм сын. бағ. көрсетті, ал шыңында — 600 мм сын. бағ. Альпинистер қанша метр биіктікке көтерілді? (Қысым әр 12 м сайын 1 мм сын. бағ. төмендейді деп есептеңіз).</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в метрах" data-placeholder-kz="Жауап метрмен" placeholder="Ответ в метрах">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Подсказка: Найдите разницу давлений в мм рт. ст. и умножьте на 12.</span>
+                <span class="lang-kz">Кеңес: Қысымдар айырмасын мм сын. бағ. табыңыз және 12-ге көбейтіңіз.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересные эксперименты, доказывающие существование огромного атмосферного давления (например, опыт с магдебургскими полушариями)!</span>
+            <span class="lang-kz">Үлкен атмосфералық қысымның бар екенін дәлелдейтін қызықты эксперименттерді (мысалы, магдебург жарты шарларымен тәжірибе) қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B0%D1%82%D0%BC%D0%BE%D1%81%D1%84%D0%B5%D1%80%D0%BD%D0%BE%D0%B5+%D0%B4%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5+%D0%BE%D0%BF%D1%8B%D1%82+%D1%82%D0%BE%D1%80%D1%80%D0%B8%D1%87%D0%B5%D0%BB%D0%BB%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Атмосферное давление» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Атмосфералық қысым» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу объяснить причины существования атмосферного давления.</span>
+                <span class="lang-kz">Мен атмосфералық қысымның пайда болу себептерін түсіндіре аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, чему равно нормальное атмосферное давление.</span>
+                <span class="lang-kz">Мен қалыпты атмосфералық қысым неге тең екенін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я умею рассчитывать высоту по изменению давления.</span>
+                <span class="lang-kz">Мен қысымның өзгеруі бойынша биіктікті есептей аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Вследствие чего создается атмосферное давление?</span>
+                <span class="lang-kz">1. Атмосфералық қысым неліктен пайда болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Из-за движения Солнца</span><span class="lang-kz">Күннің қозғалысына байланысты</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Из-за вращения Земли вокруг своей оси</span><span class="lang-kz">Жердің өз осінен айналуына байланысты</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Из-за действия силы тяжести на слои воздуха</span><span class="lang-kz">Ауа қабаттарына ауырлық күшінің әсерінен</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Из-за испарения воды с поверхности океанов</span><span class="lang-kz">Мұхиттар бетінен судың булануына байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Кто впервые измерил атмосферное давление?</span>
+                <span class="lang-kz">2. Атмосфералық қысымды алғаш рет кім өлшеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Исаак Ньютон</span><span class="lang-kz">Исаак Ньютон</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Эванджелиста Торричелли</span><span class="lang-kz">Эванджелиста Торричелли</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Блез Паскаль</span><span class="lang-kz">Блез Паскаль</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Архимед</span><span class="lang-kz">Архимед</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Как называется прибор для измерения атмосферного давления?</span>
+                <span class="lang-kz">3. Атмосфералық қысымды өлшейтін құрал қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Барометр</span><span class="lang-kz">Барометр</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Термометр</span><span class="lang-kz">Термометр</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Динамометр</span><span class="lang-kz">Динамометр</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Спидометр</span><span class="lang-kz">Спидометр</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Чему равно нормальное атмосферное давление?</span>
+                <span class="lang-kz">4. Қалыпты атмосфералық қысым неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">100 мм рт. ст.</span><span class="lang-kz">100 мм сын. бағ.</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">1000 мм рт. ст.</span><span class="lang-kz">1000 мм сын. бағ.</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">1013 Па</span><span class="lang-kz">1013 Па</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">760 мм рт. ст.</span><span class="lang-kz">760 мм сын. бағ.</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Как изменяется атмосферное давление при подъеме на высокую гору?</span>
+                <span class="lang-kz">5. Биік тауға шыққан кезде атмосфералық қысым қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Увеличивается</span><span class="lang-kz">Артады</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Уменьшается</span><span class="lang-kz">Кемиді</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Не изменяется</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Сначала увеличивается, затем уменьшается</span><span class="lang-kz">Алдымен артады, сосын кемиді</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Атмосфера давит на открытую поверхность ртути в чашке с силой, которая в точности уравновешивает вес 760-миллиметрового столба ртути внутри трубки.",
+            fbA_inc: "Неверно. Вспомните, что именно находится снаружи трубки и давит на жидкость?",
+            fbB_corr: "Абсолютно верно! 760 * 133,3 = 101308 Па. (Обычно округляют до 101300 Па или 10^5 Па).",
+            fbB_inc: "Ошибка. Подсказка: просто умножьте 760 на 133,3.",
+            fbC_corr: "Точно! Разница давлений: 750 - 600 = 150 мм рт. ст. Умножаем на 12 метров: 150 * 12 = 1800 метров.",
+            fbC_inc: "Неверно. Сначала найдите разницу давлений (отнимите от 750 число 600). Затем умножьте результат на 12.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            mmHg: "мм рт. ст."
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Атмосфера ыдыстағы сынаптың ашық бетіне түтіктің ішіндегі 760 миллиметрлік сынап бағанының салмағын дәл теңестіретін күшпен қысым жасайды.",
+            fbA_inc: "Қате. Түтіктің сыртында не бар екенін және сұйықтыққа не қысым жасайтынын есіңізге түсіріңіз?",
+            fbB_corr: "Мүлдем дұрыс! 760 * 133,3 = 101308 Па. (Әдетте 101300 Па немесе 10^5 Па дейін дөңгелектейді).",
+            fbB_inc: "Қате. Кеңес: жай ғана 760-ты 133,3-ке көбейтіңіз.",
+            fbC_corr: "Дұрыс! Қысымдар айырмасы: 750 - 600 = 150 мм сын. бағ. 12 метрге көбейтеміз: 150 * 12 = 1800 метр.",
+            fbC_inc: "Қате. Алдымен қысымдар айырмасын табыңыз (750-ден 600-ді азайтыңыз). Содан кейін нәтижені 12-ге көбейтіңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            mmHg: "мм сын. бағ."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        drawScene(); // Redraw canvas for language changes
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasBox = document.getElementById('canvasBox');
+    
+    const altSlider = document.getElementById('altSlider');
+    const altVal = document.getElementById('altVal');
+    const presMmHg = document.getElementById('presMmHg');
+    const presPa = document.getElementById('presPa');
+
+    function handleInput() {
+        const alt = parseInt(altSlider.value);
+        altVal.textContent = alt;
+        
+        // Расчет давления
+        // На каждые 12 метров падает на 1 мм рт. ст.
+        const drop = alt / 12;
+        const currentP_mmhg = 760 - drop;
+        const currentP_pa = Math.round(currentP_mmhg * 133.3);
+        
+        presMmHg.textContent = currentP_mmhg.toFixed(0);
+        presPa.textContent = currentP_pa;
+
+        drawScene(alt, currentP_mmhg);
+    }
+
+    altSlider.addEventListener('input', handleInput);
+
+    function drawScene(altitude, pressure) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 1. Изменение цвета неба в зависимости от высоты
+        // На высоте 0m = #38bdf8 (r:56, g:189, b:248)
+        // На высоте 3000m = #0f172a (r:15, g:23, b:42)
+        const maxAlt = 3000;
+        const ratio = altitude / maxAlt;
+        
+        const r = Math.round(56 - ratio * (56 - 15));
+        const g = Math.round(189 - ratio * (189 - 23));
+        const b = Math.round(248 - ratio * (248 - 42));
+        const skyColor = `rgb(${r}, ${g}, ${b})`;
+        
+        canvasBox.style.backgroundColor = skyColor;
+
+        // 2. Рисуем горы (движутся вниз при подъеме шара)
+        // Если высота 0, горы занимают низ. При высоте 3000 они уходят далеко вниз.
+        const mountainBaseY = 300 + (altitude * 0.1); 
+        
+        if (mountainBaseY < canvas.height + 200) {
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.moveTo(-50, mountainBaseY);
+            ctx.lineTo(150, mountainBaseY - 200);
+            ctx.lineTo(350, mountainBaseY);
+            ctx.fill();
+
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath();
+            ctx.moveTo(200, mountainBaseY);
+            ctx.lineTo(400, mountainBaseY - 150);
+            ctx.lineTo(600, mountainBaseY);
+            ctx.fill();
+
+            // Снежные шапки
+            ctx.fillStyle = '#f1f5f9';
+            ctx.beginPath();
+            ctx.moveTo(150, mountainBaseY - 200);
+            ctx.lineTo(110, mountainBaseY - 160);
+            ctx.lineTo(160, mountainBaseY - 140);
+            ctx.lineTo(185, mountainBaseY - 165);
+            ctx.fill();
+        }
+
+        // 3. Рисуем воздушный шар (всегда по центру по вертикали, имитируя камеру, следующую за ним)
+        // Но чтобы был эффект взлета, пусть он немного поднимается от земли
+        let balloonY = 200;
+        if (altitude < 500) {
+            // На малых высотах шар поднимается от земли
+            balloonY = 250 - (altitude * 0.1);
+        }
+
+        const balloonX = canvas.width / 2;
+        
+        // Корзина
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(balloonX - 15, balloonY + 50, 30, 20);
+        // Веревки
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(balloonX - 15, balloonY + 50); ctx.lineTo(balloonX - 25, balloonY + 10);
+        ctx.moveTo(balloonX + 15, balloonY + 50); ctx.lineTo(balloonX + 25, balloonY + 10);
+        ctx.stroke();
+        // Купол
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(balloonX, balloonY - 10, 40, 0, Math.PI * 2);
+        ctx.fill();
+        // Полоски на куполе
+        ctx.fillStyle = '#fca5a5';
+        ctx.beginPath();
+        ctx.ellipse(balloonX, balloonY - 10, 20, 40, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4. Рисуем барометр в углу экрана
+        drawBarometer(canvas.width - 70, 70, pressure);
+    }
+
+    function drawBarometer(x, y, pressure) {
+        const radius = 50;
+        
+        // Корпус барометра
+        ctx.fillStyle = '#cbd5e1';
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(x, y, radius - 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Шкала (от 500 до 800)
+        ctx.fillStyle = '#334155';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('mmHg', x, y + 25);
+
+        // Рисуем деления
+        const minP = 500;
+        const maxP = 800;
+        for (let p = minP; p <= maxP; p += 50) {
+            // Угол: 500 = слева-внизу, 800 = справа-внизу
+            const angle = Math.PI * 0.8 + ((p - minP) / (maxP - minP)) * Math.PI * 1.4;
+            const innerR = (p % 100 === 0) ? radius - 15 : radius - 10;
+            const outerR = radius - 6;
+            
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x + Math.cos(angle) * innerR, y + Math.sin(angle) * innerR);
+            ctx.lineTo(x + Math.cos(angle) * outerR, y + Math.sin(angle) * outerR);
+            ctx.stroke();
+
+            if (p % 100 === 0) {
+                ctx.fillText(p, x + Math.cos(angle) * (innerR - 10), y + Math.sin(angle) * (innerR - 10) + 4);
+            }
+        }
+
+        // Стрелка барометра
+        // Рассчитываем угол для текущего давления
+        let boundedP = Math.max(minP, Math.min(pressure, maxP));
+        const needleAngle = Math.PI * 0.8 + ((boundedP - minP) / (maxP - minP)) * Math.PI * 1.4;
+        
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(needleAngle) * (radius - 12), y + Math.sin(needleAngle) * (radius - 12));
+        ctx.stroke();
+
+        // Центр стрелки
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Инициализация
+    handleInput();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseInt(document.getElementById('taskB').value.replace(/\s+/g, ''));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        // 760 * 133.3 = 101308. Allow common rounding: 101300, 101308, 101325 (standard atm), 100000.
+        if (val >= 100000 && val <= 101325) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 1800) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

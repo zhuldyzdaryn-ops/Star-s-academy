@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Относительность механического движения</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        physics: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        accent: '#f59e0b',
+                        darkBg: '#0f172a',
+                        glass: 'rgba(255, 255, 255, 0.03)',
+                    },
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .math-block {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="custom-scrollbar">
+
+    <!-- Hero Section -->
+    <header class="relative min-h-[60vh] flex items-center justify-center px-6 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px]"></div>
+        </div>
+        
+        <div class="relative z-10 text-center max-w-4xl mx-auto">
+            <span class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider text-blue-400 uppercase bg-blue-400/10 border border-blue-400/20 rounded-full">
+                Механика • Классическая физика
+            </span>
+            <h1 class="text-5xl md:text-7xl font-bold font-display mb-6 gradient-text leading-tight">
+                Относительность <br> Движения
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 font-light leading-relaxed max-w-2xl mx-auto">
+                Всё в мире находится в движении, но как мы его измеряем? Погружение в фундаментальные принципы относительности Галилея.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-24 space-y-24">
+
+        <!-- Theoretical Foundations - Bento Grid Style -->
+        <section>
+            <h2 class="text-3xl font-display font-bold mb-12 flex items-center gap-4">
+                <span class="h-1 w-12 bg-blue-500 rounded-full"></span>
+                Теоретическое обоснование
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- System of Reference -->
+                <div class="md:col-span-2 glass-card p-8 hover:border-blue-500/30 transition-all duration-500">
+                    <h3 class="text-2xl font-semibold mb-4 text-blue-300">Система отсчета</h3>
+                    <p class="text-slate-400 mb-6">Совокупность объектов, необходимых для описания движения тела в любой момент времени.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                            <div class="text-blue-400 font-bold mb-1">01. Тело</div>
+                            <p class="text-sm opacity-80">Относительно которого определяется положение.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                            <div class="text-blue-400 font-bold mb-1">02. Координаты</div>
+                            <p class="text-sm opacity-80">Обычно Декартова система (X, Y, Z).</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-white/5">
+                            <div class="text-blue-400 font-bold mb-1">03. Время</div>
+                            <p class="text-sm opacity-80">Прибор для измерения (Часы).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Galileo Principle -->
+                <div class="glass-card p-8 bg-gradient-to-br from-blue-600/10 to-purple-600/10 hover:shadow-2xl hover:shadow-blue-500/10 transition-all">
+                    <h3 class="text-2xl font-semibold mb-4 text-purple-300">Принцип Галилея</h3>
+                    <p class="text-sm leading-relaxed text-slate-300">
+                        Все механические явления протекают одинаково во всех инерциальных системах отсчета. Законы физики инвариантны.
+                    </p>
+                    <div class="mt-8 pt-8 border-t border-white/10 italic text-sm text-slate-500">
+                        "Никакими опытами внутри системы невозможно определить, покоится она или движется равномерно."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transformations and Formulas -->
+        <section class="relative">
+            <div class="absolute -right-20 top-0 w-64 h-64 bg-purple-500/10 blur-[100px] pointer-events-none"></div>
+            
+            <h2 class="text-3xl font-display font-bold mb-12 flex items-center gap-4">
+                <span class="h-1 w-12 bg-purple-500 rounded-full"></span>
+                Математический аппарат
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <div class="glass-card p-6 border-l-4 border-l-blue-500">
+                        <h4 class="font-bold text-lg mb-2">Преобразование координат</h4>
+                        <p class="text-slate-400 text-sm mb-3">Связь радиус-векторов в неподвижной (S) и движущейся (S') системах:</p>
+                        <div class="math-block text-xl">
+                            \[\vec{r} = \vec{r'} + \vec{v}_{\text{отн}} \cdot t\]
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 border-l-4 border-l-purple-500">
+                        <h4 class="font-bold text-lg mb-2">Закон сложения скоростей</h4>
+                        <p class="text-slate-400 text-sm mb-3">Главная формула для решения задач на относительность:</p>
+                        <div class="math-block text-xl">
+                            \[\vec{v} = \vec{v'} + \vec{v}_{\text{отн}}\]
+                        </div>
+                        <ul class="mt-4 space-y-1 text-xs text-slate-400">
+                            <li>\(\vec{v}\) — скорость тела относительно неподвижной системы</li>
+                            <li>\(\vec{v'}\) — скорость тела относительно движущейся системы</li>
+                            <li>\(\vec{v}_{\text{отн}}\) — скорость движущейся системы относительно неподвижной</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 rounded-3xl p-8 border border-white/5 relative overflow-hidden group">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px]"></div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Важное замечание
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed mb-4">
+                        В классической механике Галилея <strong>время абсолютно</strong> (\(t' = t\)). Это означает, что интервалы времени и ускорение (\(\vec{a}\)) не меняются при переходе из одной инерциальной системы в другую.
+                    </p>
+                    <div class="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-200 text-sm">
+                        Это приближение верно только для скоростей значительно меньше скорости света.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solved Examples - Interactive Feel -->
+        <section>
+            <h2 class="text-3xl font-display font-bold mb-12 flex items-center gap-4">
+                <span class="h-1 w-12 bg-emerald-500 rounded-full"></span>
+                Практика: Пошаговые решения
+            </h2>
+
+            <div class="space-y-8">
+                <!-- Example 1 -->
+                <div class="glass-card overflow-hidden group transition-transform hover:-translate-y-1">
+                    <div class="bg-emerald-500/10 px-8 py-4 border-b border-white/5 flex justify-between items-center">
+                        <span class="text-emerald-400 font-bold">Пример 1: Одномерное движение</span>
+                        <span class="text-xs uppercase tracking-widest opacity-50">Автомобили</span>
+                    </div>
+                    <div class="p-8">
+                        <p class="text-lg font-medium mb-6">Автомобиль A (60 км/ч, восток) и B (40 км/ч, запад). Найти скорость B относительно A.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-4">
+                                <div class="flex gap-4">
+                                    <span class="step-number">1</span>
+                                    <div>
+                                        <div class="font-bold">Выбор оси</div>
+                                        <p class="text-sm text-slate-400">Направим ось X на восток. Тогда \(v_A = 60\), \(v_B = -40\).</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <span class="step-number">2</span>
+                                    <div>
+                                        <div class="font-bold">Формула</div>
+                                        <p class="text-sm text-slate-400">\(v_{B \text{ отн } A} = v_B - v_A\)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-black/30 p-6 rounded-2xl flex flex-col justify-center items-center border border-white/5">
+                                <div class="text-3xl font-bold text-emerald-400 mb-2">-100 км/ч</div>
+                                <p class="text-xs text-slate-500 text-center italic">Отрицательный знак означает направление на запад</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="glass-card overflow-hidden group transition-transform hover:-translate-y-1">
+                    <div class="bg-blue-500/10 px-8 py-4 border-b border-white/5 flex justify-between items-center">
+                        <span class="text-blue-400 font-bold">Пример 2: Двумерное движение</span>
+                        <span class="text-xs uppercase tracking-widest opacity-50">Лодка на реке</span>
+                    </div>
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-2 space-y-6">
+                                <p class="text-lg font-medium italic">"Лодка (4 м/с перпенд. берегу) на реке (3 м/с вдоль). Ширина 120 м."</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="bg-slate-800/40 p-4 rounded-xl">
+                                        <div class="text-xs text-blue-400 mb-1 uppercase">Результирующая скорость</div>
+                                        <div class="text-xl font-mono">\(V = \sqrt{3^2 + 4^2} = 5 \, \text{м/с}\)</div>
+                                    </div>
+                                    <div class="bg-slate-800/40 p-4 rounded-xl">
+                                        <div class="text-xs text-blue-400 mb-1 uppercase">Время пересечения</div>
+                                        <div class="text-xl font-mono">\(t = 120 / 4 = 30 \, \text{с}\)</div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl">
+                                    <strong>Смещение:</strong> \(X = V_{\text{течения}} \cdot t = 3 \cdot 30 = 90 \, \text{м}\).
+                                </div>
+                            </div>
+                            <div class="relative flex items-center justify-center min-h-[200px] bg-slate-900 rounded-2xl border border-white/10 overflow-hidden">
+                                <div class="absolute inset-0 bg-blue-900/20"></div>
+                                <!-- Simple Visual representation -->
+                                <svg width="160" height="160" viewBox="0 0 160 160" class="relative z-10">
+                                    <line x1="20" y1="140" x2="20" y2="20" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
+                                    <line x1="20" y1="140" x2="140" y2="140" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
+                                    <!-- River Velocity -->
+                                    <line x1="20" y1="140" x2="80" y2="140" stroke="#3b82f6" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                    <!-- Boat Velocity -->
+                                    <line x1="20" y1="140" x2="20" y2="60" stroke="#10b981" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                    <!-- Resultant -->
+                                    <line x1="20" y1="140" x2="80" y2="60" stroke="#f59e0b" stroke-width="4" marker-end="url(#arrowhead)"/>
+                                    <defs>
+                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                            <polygon points="0 0, 10 3.5, 0 7" fill="context-stroke" />
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example 3 -->
+                <div class="glass-card overflow-hidden group transition-transform hover:-translate-y-1">
+                    <div class="bg-purple-500/10 px-8 py-4 border-b border-white/5 flex justify-between items-center">
+                        <span class="text-purple-400 font-bold">Пример 3: Траектория в поезде</span>
+                        <span class="text-xs uppercase tracking-widest opacity-50">Парабола vs Прямая</span>
+                    </div>
+                    <div class="p-8 space-y-6">
+                        <p class="text-lg">Мяч брошен вверх (\(10 \, \text{м/с}\)) в поезде (\(20 \, \text{м/с}\)). Описать движение относительно Земли.</p>
+                        <div class="math-block">
+                            \[x(t) = 20t\]
+                            \[y(t) = 1.5 + 10t - 4.9t^2\]
+                            <div class="mt-4 text-emerald-400 font-bold">Уравнение траектории: \(y(x) = 1.5 + 0.5x - 0.01225x^2\)</div>
+                        </div>
+                        <p class="text-sm text-slate-400 bg-slate-800/50 p-4 rounded-lg">
+                            Для пассажира мяч летит строго по вертикали. Для наблюдателя на перроне — по параболе. Это и есть <strong>относительность траектории</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Educational Content Section -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-3xl font-display font-bold mb-8">Идеи для анимаций</h2>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Прозрачный вагон</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">Синхронное сравнение вида изнутри и снаружи поезда при броске мяча.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors">
+                        <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Векторный конструктор</h4>
+                            <p class="text-sm text-slate-400 leading-relaxed">Интерактивное сложение векторов лодки и течения с мгновенным пересчетом траектории.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-3xl font-display font-bold mb-8">Темы для видео</h2>
+                <div class="space-y-3">
+                    <a href="https://www.youtube.com/results?search_query=относительность+галилея" target="_blank" class="block p-4 glass-card border-none bg-slate-800/40 hover:bg-slate-700/60 transition-all flex items-center justify-between group">
+                        <span>"Что такое система отсчета?"</span>
+                        <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                    <a href="https://www.youtube.com/results?search_query=закон+сложения+скоростей+задачи" target="_blank" class="block p-4 glass-card border-none bg-slate-800/40 hover:bg-slate-700/60 transition-all flex items-center justify-between group">
+                        <span>"Закон сложения скоростей на реке"</span>
+                        <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                    <a href="https://www.youtube.com/results?search_query=принцип+относительности+эйнштейн+vs+галилей" target="_blank" class="block p-4 glass-card border-none bg-slate-800/40 hover:bg-slate-700/60 transition-all flex items-center justify-between group">
+                        <span>"Путь от Галилея к Эйнштейну"</span>
+                        <svg class="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Interactive Background Elements -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute top-[20%] left-[10%] w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+        <div class="absolute top-[60%] right-[15%] w-3 h-3 bg-purple-500 rounded-full animate-float"></div>
+        <div class="absolute bottom-[20%] left-[20%] w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" style="animation-delay: 1s"></div>
+    </div>
+
+</body>
+</html>

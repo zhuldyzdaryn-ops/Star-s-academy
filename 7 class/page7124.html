@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сила трения. Учет трения в технике — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #fdfaf6;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #ea580c; /* Оранжевый (ассоциация с теплом/трением) */
+            --primary-hover: #c2410c;
+            --secondary: #0ea5e9;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #ca8a04;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #fff7ed;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #431407;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(220, 38, 38, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(234, 88, 12, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>Сила трения. Учет трения в технике — 7 класс</h1>
+        <p class="hook">Почему санки легко скользят по снегу, но их так тяжело тащить по асфальту? Если бы трение внезапно исчезло, мы не смогли бы сделать ни шагу, а автомобили не смогли бы затормозить. Трение — наш невидимый помощник и одновременно враг в технике!</p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>Что такое сила трения?</h2>
+        <p><strong>Сила трения</strong> — это сила, возникающая при соприкосновении поверхностей двух тел и препятствующая их относительному движению.</p>
+        <br>
+        <ul>
+            <li><span class="highlight">Направление:</span> Сила трения всегда направлена <strong>противоположно</strong> направлению движения тела.</li>
+            <li><span class="highlight">Причины возникновения:</span> Во-первых, шероховатость поверхностей (даже самые гладкие на вид тела имеют микронеровности, которые цепляются друг за друга). Во-вторых, взаимное притяжение молекул соприкасающихся тел.</li>
+            <li><strong>Виды трения:</strong>
+                <ul>
+                    <li><strong>Трение покоя:</strong> мешает сдвинуть тело с места. Это самая большая сила из трех видов.</li>
+                    <li><strong>Трение скольжения:</strong> возникает, когда одно тело скользит по поверхности другого (например, коньки по льду).</li>
+                    <li><strong>Трение качения:</strong> возникает, когда тело катится по поверхности (например, колесо). <em>Трение качения всегда значительно меньше трения скольжения!</em></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ И ТЕХНИКИ -->
+    <section>
+        <h2>Полезное и вредное трение</h2>
+        <p>В зависимости от ситуации инженеры пытаются либо увеличить трение, либо максимально его уменьшить.</p>
+        <ul>
+            <li><strong>Полезное трение (увеличиваем):</strong> Протекторы на шинах автомобилей предотвращают скольжение по мокрой дороге. Подошвы зимней обуви делают ребристыми, чтобы мы не падали на льду. Тормозные колодки прижимаются к колесу, создавая огромное трение для остановки.</li>
+            <li><strong>Вредное трение (уменьшаем):</strong> Детали внутри двигателя истираются из-за трения и нагреваются. Чтобы это предотвратить, используют <strong>смазку</strong> (масло разъединяет поверхности). Также инженеры заменяют трение скольжения на трение качения, используя <strong>шарикоподшипники</strong>.</li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>Формулы и обозначения</h2>
+        <p>Для вычисления силы трения скольжения используется закон Амонтона — Кулона:</p>
+        <div class="formula-box">
+            <span class="math">F<sub>тр</sub> = &mu; &middot; N</span>
+            <p>Где:</p>
+            <ul>
+                <li><strong>F<sub>тр</sub></strong> — сила трения скольжения. Единица измерения: <strong>Ньютон (Н)</strong>.</li>
+                <li><strong>&mu;</strong> (мю) — <strong>коэффициент трения</strong>. Зависит от того, из каких материалов состоят соприкасающиеся тела (например, резина по асфальту имеет большое &mu;, а сталь по льду — очень маленькое). <strong>Не имеет единиц измерения!</strong></li>
+                <li><strong>N</strong> — <strong>сила нормальной реакции опоры</strong> (или сила давления на поверхность). На горизонтальной поверхности она равна силе тяжести тела: <strong>N = m &middot; g</strong>. Измеряется в <strong>Ньютонах (Н)</strong>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>Симуляция: Движение тяжелого ящика</h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="massSlider">Масса ящика (m): <span id="massVal">10</span> кг</label>
+                    <input type="range" id="massSlider" min="5" max="50" step="5" value="10">
+                </div>
+                <div class="control-group">
+                    <label for="muSlider">Материал поверхностей (&mu;): <span id="muVal">0.3</span></label>
+                    <select id="muSelect">
+                        <option value="0.02">Сталь по льду (&mu; = 0.02)</option>
+                        <option value="0.3" selected>Дерево по дереву (&mu; = 0.3)</option>
+                        <option value="0.7">Резина по асфальту (&mu; = 0.7)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="forceSlider">Ваша сила тяги (F<sub>тяг</sub>): <span id="forceVal">0</span> Н</label>
+                    <input type="range" id="forceSlider" min="0" max="250" step="5" value="0">
+                </div>
+                <div class="buttons">
+                    <button id="btnPlayPause">Старт</button>
+                    <button id="btnReset" class="outline">Сброс позиции</button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="600" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>Что наблюдаем:</strong> <span id="obsText">Задайте массу, выберите поверхность и плавно увеличивайте силу тяги. Посмотрим, сможете ли вы сдвинуть ящик!</span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>Пример решения задачи</h2>
+        <p><strong>Условие:</strong> Деревянный ящик массой 40 кг равномерно тянут по деревянному полу. Коэффициент трения скольжения дерева по дереву равен 0,3. Какую силу тяги необходимо прикладывать к ящику? Ускорение свободного падения принять g = 10 Н/кг.</p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">Показать решение</button>
+        <div class="problem-solution" id="solutionBox">
+            <p><strong>Дано:</strong><br>
+            m = 40 кг<br>
+            &mu; = 0,3<br>
+            g = 10 Н/кг<br>
+            <strong>Найти:</strong> F<sub>тяг</sub> — ?</p>
+            <br>
+            <p><strong>Анализ и Формулы:</strong><br>
+            Поскольку ящик тянут <em>равномерно</em>, сила тяги уравновешивает силу трения скольжения: <strong>F<sub>тяг</sub> = F<sub>тр</sub></strong>.<br>
+            Сила трения вычисляется по формуле: <strong>F<sub>тр</sub> = &mu; &middot; N</strong>.<br>
+            Так как пол горизонтальный, сила реакции опоры равна силе тяжести: <strong>N = m &middot; g</strong>.<br>
+            Итоговая формула: <strong>F<sub>тяг</sub> = &mu; &middot; m &middot; g</strong>.</p>
+            <br>
+            <p><strong>Решение (подстановка):</strong><br>
+            F<sub>тяг</sub> = 0,3 &middot; 40 кг &middot; 10 Н/кг = 120 Н.</p>
+            <br>
+            <p><strong>Ответ:</strong> Необходимо прикладывать силу 120 Н.</p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>Задачи для самостоятельного решения</h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>Уровень A (Базовый)</h4>
+            <p>Зимой во время гололедицы дворники посыпают тротуары песком. Для чего это делается?</p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="">Выберите ответ...</option>
+                    <option value="decrease">Чтобы уменьшить трение скольжения</option>
+                    <option value="increase">Чтобы увеличить силу трения покоя и скольжения</option>
+                    <option value="melt">Песок выделяет тепло и растапливает лед</option>
+                </select>
+                <button onclick="checkTaskA()">Проверить</button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Понимает причины возникновения трения (шероховатость).<br>
+                - Определяет способы управления трением в быту.<br>
+                - Выбирает правильный метод увеличения полезного трения.
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>Уровень B (Средний)</h4>
+            <p>Мальчик тянет санки по снегу. Масса санок вместе с мальчиком равна 30 кг. Вычислите силу трения скольжения, если коэффициент трения полозьев о снег равен 0,05 (принять g = 10 Н/кг). <em>Введите только число в Ньютонах.</em></p>
+            <div class="input-group">
+                <input type="number" id="taskB" placeholder="Например: 10">
+                <button onclick="checkTaskB()">Проверить</button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Записывает формулу силы трения (F = &mu;mg).<br>
+                - Правильно подставляет значения: масса, &mu; и g.<br>
+                - Выполняет математический расчет без ошибок.
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>Уровень C (Сложный)</h4>
+            <p>В велосипедных колесах используются шарикоподшипники. Если бы изобретатель забыл поставить шарики и ось вращалась бы просто внутри гладкой втулки, что произошло бы с физической точки зрения?</p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="">Выберите ответ...</option>
+                    <option value="1">Трение качения заменилось бы на трение скольжения, сопротивление движению резко возросло бы.</option>
+                    <option value="2">Трение скольжения заменилось бы на трение качения, велосипед поехал бы быстрее.</option>
+                    <option value="3">Сила трения исчезла бы полностью, так как втулка гладкая.</option>
+                </select>
+                <button onclick="checkTaskC()">Проверить</button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Анализирует устройство механизма (шарикоподшипник).<br>
+                - Различает трение скольжения и трение качения.<br>
+                - Делает вывод о соотношении величин этих видов трения (качение < скольжение).
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>Видео по теме</h2>
+        <p>Посмотрите видео, в котором подробно и с опытами показано, от чего зависит сила трения.</p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%81%D0%B8%D0%BB%D0%B0+%D1%82%D1%80%D0%B5%D0%BD%D0%B8%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ Найти видеоуроки «Сила трения (7 класс)» на YouTube
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>Рефлексия: оцени себя</h2>
+        <div class="reflection">
+            <label><input type="checkbox"> Я знаю три вида силы трения.</label>
+            <label><input type="checkbox"> Я понимаю, зачем в механизмах используют смазку и подшипники.</label>
+            <label><input type="checkbox"> Я могу вычислить силу трения скольжения по формуле F = &mu;N.</label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>Итоговый тест</h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>1. Куда направлена сила трения скольжения при движении тела?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> По направлению движения</label>
+                <label><input type="radio" name="q1" value="2"> В сторону, противоположную движению</label>
+                <label><input type="radio" name="q1" value="3"> Вертикально вниз</label>
+                <label><input type="radio" name="q1" value="4"> Вертикально вверх</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>2. Что из перечисленного является причиной возникновения силы трения?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> Только притяжение Земли</label>
+                <label><input type="radio" name="q2" value="2"> Атмосферное давление</label>
+                <label><input type="radio" name="q2" value="3"> Шероховатость поверхностей и взаимное притяжение молекул</label>
+                <label><input type="radio" name="q2" value="4"> Нагревание тел при движении</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>3. По какой формуле можно рассчитать силу трения скольжения?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> F = m &middot; g</label>
+                <label><input type="radio" name="q3" value="2"> F = k &middot; &Delta;l</label>
+                <label><input type="radio" name="q3" value="3"> p = F / S</label>
+                <label><input type="radio" name="q3" value="4"> F = &mu; &middot; N</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>4. Какая сила больше: максимальная сила трения покоя или сила трения качения для одного и того же тела на одной и той же поверхности?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> Сила трения покоя</label>
+                <label><input type="radio" name="q4" value="2"> Сила трения качения</label>
+                <label><input type="radio" name="q4" value="3"> Они абсолютно одинаковы</label>
+                <label><input type="radio" name="q4" value="4"> Зависит от скорости движения тела</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>5. Зачем дверные петли смазывают машинным маслом?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> Чтобы увеличить трение покоя, и дверь не открывалась сама</label>
+                <label><input type="radio" name="q5" value="2"> Смазка разъединяет трущиеся поверхности, уменьшая силу трения скольжения</label>
+                <label><input type="radio" name="q5" value="3"> Чтобы металл расширился от нагревания</label>
+                <label><input type="radio" name="q5" value="4"> Смазка увеличивает коэффициент трения &mu;</label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">Проверить тест</button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const massSlider = document.getElementById('massSlider');
+    const muSelect = document.getElementById('muSelect');
+    const forceSlider = document.getElementById('forceSlider');
+    
+    const massVal = document.getElementById('massVal');
+    const muVal = document.getElementById('muVal');
+    const forceVal = document.getElementById('forceVal');
+    const obsText = document.getElementById('obsText');
+    
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnReset = document.getElementById('btnReset');
+
+    // Physics parameters
+    const g = 10; // Н/кг
+    let isPlaying = false;
+    let animFrame;
+    
+    // Animation state
+    let state = {
+        x: 100,      // Position X
+        v: 0,        // Velocity
+        a: 0         // Acceleration
+    };
+
+    // Update labels
+    massSlider.addEventListener('input', (e) => {
+        massVal.textContent = e.target.value;
+        updatePhysics(false);
+    });
+    
+    muSelect.addEventListener('change', (e) => {
+        muVal.textContent = e.target.value;
+        updatePhysics(false);
+    });
+
+    forceSlider.addEventListener('input', (e) => {
+        forceVal.textContent = e.target.value;
+        updatePhysics(false);
+    });
+
+    // Buttons
+    btnPlayPause.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+            btnPlayPause.textContent = 'Пауза';
+            btnPlayPause.style.backgroundColor = 'var(--secondary)';
+            animate();
+        } else {
+            btnPlayPause.textContent = 'Старт';
+            btnPlayPause.style.backgroundColor = 'var(--primary)';
+            cancelAnimationFrame(animFrame);
+        }
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        btnPlayPause.textContent = 'Старт';
+        btnPlayPause.style.backgroundColor = 'var(--primary)';
+        cancelAnimationFrame(animFrame);
+        
+        state.x = 100;
+        state.v = 0;
+        state.a = 0;
+        forceSlider.value = 0;
+        forceVal.textContent = "0";
+        updatePhysics(false);
+        drawScene();
+    });
+
+    function updatePhysics(isLoop = true) {
+        const m = parseFloat(massSlider.value);
+        const mu = parseFloat(muSelect.value);
+        const F_push = parseFloat(forceSlider.value);
+        
+        // F_tr_max = mu * N = mu * m * g
+        const F_tr_max = mu * m * g;
+        
+        let F_tr_actual = 0;
+        let F_net = 0;
+
+        // Ящик стоит (скорость очень мала)
+        if (Math.abs(state.v) < 0.1) {
+            if (F_push <= F_tr_max) {
+                // Сила тяги не превышает макс. трение покоя
+                F_tr_actual = F_push; // Трение покоя уравновешивает тягу
+                F_net = 0;
+                state.v = 0;
+                obsText.innerHTML = `Трение покоя уравновешивает тягу. <br> F<sub>тяг</sub> = ${F_push} Н, Макс. F<sub>тр</sub> = ${F_tr_max.toFixed(1)} Н. <strong>Ящик стоит на месте.</strong>`;
+            } else {
+                // Сорвали с места
+                F_tr_actual = F_tr_max; // Считаем трение скольжения равным макс. трению покоя для простоты
+                F_net = F_push - F_tr_actual;
+                obsText.innerHTML = `Сила тяги преодолела трение! <br> Результирующая сила: ${F_net.toFixed(1)} Н. <strong>Ящик разгоняется!</strong>`;
+            }
+        } else {
+            // Ящик уже движется
+            F_tr_actual = F_tr_max;
+            F_net = F_push - F_tr_actual;
+            if (F_net > 0) {
+                 obsText.innerHTML = `Результирующая сила направлена вперед (${F_net.toFixed(1)} Н). <strong>Скорость растет!</strong>`;
+            } else if (F_net < 0) {
+                 obsText.innerHTML = `Трение больше тяги! Результирующая сила: ${F_net.toFixed(1)} Н. <strong>Ящик тормозит!</strong>`;
+            } else {
+                 obsText.innerHTML = `Сила тяги равна силе трения (${F_push} Н). <strong>Ящик движется равномерно!</strong>`;
+            }
+        }
+
+        state.a = F_net / m;
+
+        // Update velocity and position if in animation loop
+        if (isLoop && isPlaying) {
+            state.v += state.a * 0.05; // Time step
+            
+            // Если скорость стала отрицательной (откатился назад из-за трения - невозможно в реальности для скольжения по прямой)
+            if (state.v < 0 && F_push <= F_tr_max) {
+                state.v = 0; // Остановился
+            }
+            
+            state.x += state.v;
+            
+            // Зацикливание экрана
+            if (state.x > canvas.width + 50) {
+                state.x = -100;
+            }
+        }
+
+        return { F_push, F_tr_actual };
+    }
+
+    // Animation Loop
+    function animate() {
+        const forces = updatePhysics(true);
+        drawScene(forces.F_push, forces.F_tr_actual);
+        if (isPlaying) {
+            animFrame = requestAnimationFrame(animate);
+        }
+    }
+
+    function drawScene(F_push = parseFloat(forceSlider.value), F_tr = 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const groundY = 220;
+        const boxSize = 60 + parseFloat(massSlider.value); // Визуальный размер зависит от массы
+        const boxY = groundY - boxSize;
+        const mu = parseFloat(muSelect.value);
+
+        // Рисуем поверхность
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+        
+        // Рисуем шероховатость (зависит от mu)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        let step = mu < 0.1 ? 20 : (mu < 0.4 ? 10 : 4); // Чем больше мю, тем плотнее неровности
+        for(let i = 0; i < canvas.width; i+=step) {
+            ctx.moveTo(i, groundY);
+            ctx.lineTo(i-5, groundY+5);
+        }
+        ctx.stroke();
+
+        // Рисуем ящик
+        ctx.fillStyle = '#8b5cf6';
+        ctx.fillRect(state.x, boxY, boxSize, boxSize);
+        ctx.strokeStyle = '#6d28d9';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(state.x, boxY, boxSize, boxSize);
+        
+        // Масса на ящике
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(massSlider.value + ' кг', state.x + boxSize/2, boxY + boxSize/2 + 6);
+
+        // --- РИСУЕМ ВЕКТОРЫ СИЛ ---
+        const cx = state.x + boxSize/2;
+        const cy = boxY + boxSize/2;
+        const m = parseFloat(massSlider.value);
+        
+        // 1. Сила тяжести (mg) - Зеленый, вниз
+        const F_grav = m * g;
+        drawArrow(cx, cy, cx, cy + 30 + F_grav/5, '#16a34a', 'mg');
+
+        // 2. Сила реакции опоры (N) - Синий, вверх
+        drawArrow(cx, cy, cx, cy - 30 - F_grav/5, '#0ea5e9', 'N');
+
+        // 3. Сила тяги (F_push) - Оранжевый, вправо
+        if (F_push > 0) {
+            drawArrow(state.x + boxSize, cy, state.x + boxSize + F_push/2, cy, '#ea580c', 'Fтяг');
+        }
+
+        // 4. Сила трения (F_tr) - Красный, влево
+        if (F_tr > 0) {
+            drawArrow(state.x, groundY, state.x - F_tr/2, groundY, '#dc2626', 'Fтр');
+        }
+        
+        // Отрисовка "линий скорости" если движется
+        if (state.v > 1) {
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.beginPath();
+            ctx.moveTo(state.x - 10, cy); ctx.lineTo(state.x - 30, cy);
+            ctx.moveTo(state.x - 15, cy-15); ctx.lineTo(state.x - 25, cy-15);
+            ctx.moveTo(state.x - 15, cy+15); ctx.lineTo(state.x - 25, cy+15);
+            ctx.stroke();
+        }
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, label) {
+        if (fromX === toX && fromY === toY) return; // Нет вектора
+        const headlen = 10;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        if (label) {
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px sans-serif';
+            // Небольшой сдвиг текста в зависимости от направления
+            let textX = toX + (dx > 0 ? 5 : (dx < 0 ? -30 : 5));
+            let textY = toY + (dy > 0 ? 15 : (dy < 0 ? -5 : -10));
+            ctx.fillText(label, textX, textY);
+        }
+    }
+
+    // Инициализация холста
+    updatePhysics(false);
+    drawScene();
+
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.textContent = 'Показать решение';
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.textContent = 'Скрыть решение';
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ (A, B, C) ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, 'Пожалуйста, выберите вариант.');
+        if (val === 'increase') {
+            showFeedback('fbA', true, 'Верно! Песок делает лед более шероховатым, что сильно увеличивает полезное трение между обувью и дорогой, предотвращая падения.');
+        } else {
+            showFeedback('fbA', false, 'Неверно. Подумайте, мы хотим, чтобы люди больше скользили или, наоборот, не падали?');
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseFloat(document.getElementById('taskB').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbB', false, 'Введите число.');
+        if (val === 15) {
+            showFeedback('fbB', true, 'Отлично! F = &mu; &middot; m &middot; g = 0,05 &middot; 30 &middot; 10 = 15 Н.');
+        } else {
+            showFeedback('fbB', false, 'Ошибка. Подсказка: умножьте массу (30) на g (10), чтобы найти силу реакции опоры, а затем умножьте на &mu; (0,05).');
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, 'Пожалуйста, выберите вариант.');
+        if (val === '1') {
+            showFeedback('fbC', true, 'Абсолютно верно! Шарики позволяют оси катиться (трение качения), а без них металл терся бы о металл (трение скольжения), которое во много раз больше.');
+        } else {
+            showFeedback('fbC', false, 'Неверно. Без шариков ось будет просто скользить по стенкам втулки. Вспомните, какой вид трения больше.');
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) correctText = r.parentElement.textContent.trim();
+                });
+                mistakesHTML += `<li>Вопрос ${index + 1}: правильный ответ — <strong>${correctText}</strong></li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(22, 163, 74, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = `Отличный результат: ${score} из ${total}! Вы прекрасно разобрались с силой трения.`;
+        } else {
+            resDiv.style.backgroundColor = 'rgba(220, 38, 38, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = `Ваш результат: ${score} из ${total}.<br>Работа над ошибками:<br>${mistakesHTML}`;
+        }
+    };
+</script>
+</body>
+</html>

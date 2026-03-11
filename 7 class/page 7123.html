@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Деформация — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f4f7fa;
+            --text-color: #333333;
+            --card-bg: #ffffff;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .formula-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-style: italic;
+            display: block;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .input-group input[type="text"], .input-group select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background-color: #ff000015;
+            color: #ff0000;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: #ff000025;
+        }
+
+        .video-desc {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 20px;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        #testResult {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>Деформация — 7 класс</h1>
+        <p class="hook">Вы когда-нибудь задумывались, почему резиновый мячик легко отскакивает от пола, а кусок пластилина расплющивается и прилипает? Всё дело в том, как материалы реагируют на силы. Знание этих свойств помогает строить надежные мосты и создавать удобную обувь!</p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>Теория</h2>
+        <p><strong>Деформация</strong> — это изменение формы и размеров тела под действием внешних сил. Это происходит из-за того, что меняется расстояние между частицами (молекулами или атомами), из которых состоит тело.</p>
+        <br>
+        <p>Деформации делятся на два основных вида:</p>
+        <ul>
+            <li><strong>Упругая деформация</strong> — полностью исчезает после того, как внешняя сила перестает действовать. Тело восстанавливает свою первоначальную форму и размеры.</li>
+            <li><strong>Пластическая деформация</strong> — сохраняется даже после снятия нагрузки. Тело навсегда меняет свою форму (появляется «остаточная» деформация).</li>
+            <li>При упругой деформации внутри тела возникает <strong>сила упругости</strong>, которая стремится вернуть тело в исходное состояние.</li>
+            <li>Степень деформации зависит от величины приложенной силы и от свойств самого материала.</li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>Примеры из жизни</h2>
+        <ul>
+            <li><strong>Амортизаторы в автомобилях:</strong> Стальные пружины сжимаются на неровностях дороги (упругая деформация) и возвращаются обратно, обеспечивая пассажирам плавный ход.</li>
+            <li><strong>Лепка и ковка:</strong> Художник мнет глину, а кузнец бьет молотом по горячему металлу. В обоих случаях используется пластическая деформация для придания материалу нужной формы навсегда.</li>
+            <li><strong>Натягивание тетивы лука:</strong> Лучник изгибает лук и натягивает тетиву (упругая деформация), чтобы при отпускании накопленная энергия передалась стреле.</li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>Формулы и обозначения</h2>
+        <p>Для упругих деформаций растяжения или сжатия (при небольших изменениях длины) справедлив <strong>Закон Гука</strong>:</p>
+        <div class="formula-box">
+            <span class="math">F<sub>упр</sub> = k &middot; |&Delta;l|</span>
+            <p>Где:</p>
+            <ul>
+                <li><strong>F<sub>упр</sub></strong> — сила упругости, измеряется в Ньютонах (Н).</li>
+                <li><strong>k</strong> — жесткость тела (пружины), измеряется в Ньютонах на метр (Н/м). Показывает, какую силу нужно приложить, чтобы растянуть тело на 1 метр.</li>
+                <li><strong>&Delta;l</strong> (или x) — удлинение (или сжатие) тела, измеряется в метрах (м). Рассчитывается как разность конечной и начальной длины: &Delta;l = l - l<sub>0</sub>.</li>
+            </ul>
+        </div>
+        <p><em>Важно: Для пластических деформаций закон Гука не работает, так как материал "течет" и не стремится вернуться обратно.</em></p>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>Симуляция: Испытание материалов</h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="materialType">Тип материала:</label>
+                    <select id="materialType">
+                        <option value="elastic">Стальная пружина (упругий)</option>
+                        <option value="plastic">Брусок пластилина (пластичный)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="stiffness">Жесткость / Сопротивление (k): <span id="stiffnessVal">50</span> ед.</label>
+                    <input type="range" id="stiffness" min="20" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label for="force">Внешняя сила (F): <span id="forceVal">0</span> Н</label>
+                    <input type="range" id="force" min="0" max="100" value="0">
+                </div>
+                <div class="buttons">
+                    <button id="btnApplyForce">Приложить силу</button>
+                    <button id="btnReset" class="outline">Сброс модели</button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="500" height="250"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>Что наблюдаем:</strong> <span id="obsText">Выберите силу и нажмите «Приложить силу». Обратите внимание, что произойдет с формой после снятия нагрузки (возврат ползунка силы на 0).</span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>Пример решения задачи</h2>
+        <p><strong>Условие:</strong> Пружина жесткостью 200 Н/м растянулась на 5 см под действием подвешенного груза. Какая сила упругости возникла в пружине?</p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">Показать решение</button>
+        <div class="problem-solution" id="solutionBox">
+            <p><strong>Дано:</strong><br>
+            k = 200 Н/м<br>
+            &Delta;l = 5 см = 0,05 м<br>
+            <strong>Найти:</strong> F<sub>упр</sub> — ?</p>
+            <br>
+            <p><strong>Формула:</strong><br>
+            Закон Гука: F<sub>упр</sub> = k &middot; &Delta;l</p>
+            <br>
+            <p><strong>Решение:</strong><br>
+            Подставляем значения в СИ: F<sub>упр</sub> = 200 Н/м &middot; 0,05 м = 10 Н.</p>
+            <br>
+            <p><strong>Ответ:</strong> Сила упругости равна 10 Н.</p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>Задачи для закрепления</h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>Уровень A (Базовый)</h4>
+            <p>Какую деформацию вы используете, когда жуете жевательную резинку и надуваете из нее пузырь?</p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="">Выберите ответ...</option>
+                    <option value="elastic">Упругую</option>
+                    <option value="plastic">Пластическую</option>
+                    <option value="magnetic">Магнитную</option>
+                </select>
+                <button onclick="checkTaskA()">Проверить</button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Знает определения видов деформации.<br>
+                - Распознает пластическую деформацию в быту.<br>
+                - Делает верный выбор из предложенных вариантов.
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>Уровень B (Средний)</h4>
+            <p>На сколько метров растянется пружина жесткостью 500 Н/м, если к ней приложить силу 10 Н? (Введите только число в метрах, используйте точку для дробей).</p>
+            <div class="input-group">
+                <input type="text" id="taskB" placeholder="Например: 0.05">
+                <button onclick="checkTaskB()">Проверить</button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Записывает закон Гука.<br>
+                - Выражает удлинение (&Delta;l) из формулы.<br>
+                - Правильно вычисляет числовое значение.
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>Уровень C (Сложный)</h4>
+            <p>Инженеру нужно создать деталь для пресса, которая должна изменять форму заготовки и <strong>не возвращаться</strong> в исходное состояние при ударе. Какое сочетание «Материал заготовки — Требуемая деформация» верно?</p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="">Выберите ответ...</option>
+                    <option value="1">Резина — Упругая</option>
+                    <option value="2">Свинец — Пластическая</option>
+                    <option value="3">Пружинная сталь — Упругая</option>
+                </select>
+                <button onclick="checkTaskC()">Проверить</button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                Дескрипторы:<br>
+                - Анализирует техническую задачу.<br>
+                - Сопоставляет свойства материалов (свинец, сталь, резина).<br>
+                - Делает вывод о необходимом виде деформации для технологического процесса.
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>Видео по теме</h2>
+        <p class="video-desc">Посмотрите видеоролик с наглядными демонстрациями опытов по упругой и пластической деформации.</p>
+        <div class="video-container" style="margin-top: 10px;">
+            <a href="https://www.youtube.com/results?search_query=%D1%83%D0%BF%D1%80%D1%83%D0%B3%D0%B0%D1%8F+%D0%B8+%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F+%D0%B4%D0%B5%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ Открыть поиск видеоуроков на YouTube (в новой вкладке)
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>Рефлексия</h2>
+        <div class="reflection">
+            <label><input type="checkbox"> Я могу отличить упругую деформацию от пластической.</label>
+            <label><input type="checkbox"> Я понимаю, что такое жесткость и в чем она измеряется.</label>
+            <label><input type="checkbox"> Я умею решать базовые задачи на закон Гука.</label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>Тест для самопроверки</h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>1. Что такое деформация?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> Изменение агрегатного состояния тела</label>
+                <label><input type="radio" name="q1" value="2"> Изменение массы тела</label>
+                <label><input type="radio" name="q1" value="3"> Изменение формы и размеров тела</label>
+                <label><input type="radio" name="q1" value="4"> Изменение скорости тела</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>2. Какая деформация полностью исчезает после снятия нагрузки?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> Пластическая</label>
+                <label><input type="radio" name="q2" value="2"> Упругая</label>
+                <label><input type="radio" name="q2" value="3"> Остаточная</label>
+                <label><input type="radio" name="q2" value="4"> Необратимая</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>3. Примером тела, испытывающего преимущественно пластическую деформацию, является:</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> Резиновый жгут</label>
+                <label><input type="radio" name="q3" value="2"> Стальная пружина амортизатора</label>
+                <label><input type="radio" name="q3" value="3"> Кусок воска или глины</label>
+                <label><input type="radio" name="q3" value="4"> Деревянная линейка (при малом изгибе)</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>4. В каких единицах СИ измеряется жесткость (k)?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> Н (Ньютон)</label>
+                <label><input type="radio" name="q4" value="2"> м (метр)</label>
+                <label><input type="radio" name="q4" value="3"> Дж (Джоуль)</label>
+                <label><input type="radio" name="q4" value="4"> Н/м (Ньютон на метр)</label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>5. Для каких деформаций справедлив закон Гука?</strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> Для любых деформаций</label>
+                <label><input type="radio" name="q5" value="2"> Только для упругих (и небольших) деформаций</label>
+                <label><input type="radio" name="q5" value="3"> Только для пластических деформаций</label>
+                <label><input type="radio" name="q5" value="4"> Закон Гука описывает деформацию жидкостей</label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">Проверить тест</button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // СИМУЛЯЦИЯ
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const materialTypeSelect = document.getElementById('materialType');
+    const stiffnessSlider = document.getElementById('stiffness');
+    const forceSlider = document.getElementById('force');
+    const stiffnessVal = document.getElementById('stiffnessVal');
+    const forceVal = document.getElementById('forceVal');
+    const obsText = document.getElementById('obsText');
+    const btnApplyForce = document.getElementById('btnApplyForce');
+    const btnReset = document.getElementById('btnReset');
+
+    let currentDeformation = 0;
+    let plasticBaseDeformation = 0; // Сохраненная деформация для пластилина
+    let forceApplied = false;
+
+    // Обновление значений на UI
+    stiffnessSlider.addEventListener('input', (e) => stiffnessVal.textContent = e.target.value);
+    forceSlider.addEventListener('input', (e) => {
+        forceVal.textContent = e.target.value;
+        if(forceApplied) updateObservation();
+    });
+
+    materialTypeSelect.addEventListener('change', () => {
+        resetSim();
+    });
+
+    btnApplyForce.addEventListener('click', () => {
+        forceApplied = !forceApplied;
+        if (forceApplied) {
+            btnApplyForce.textContent = 'Снять силу';
+            btnApplyForce.style.backgroundColor = 'var(--danger)';
+        } else {
+            btnApplyForce.textContent = 'Приложить силу';
+            btnApplyForce.style.backgroundColor = 'var(--primary)';
+            // Если материал пластичный, запоминаем текущую деформацию как базовую
+            if (materialTypeSelect.value === 'plastic') {
+                let targetDef = calculateTargetDeformation();
+                if (targetDef > plasticBaseDeformation) {
+                    plasticBaseDeformation = targetDef;
+                }
+            }
+        }
+        updateObservation();
+    });
+
+    btnReset.addEventListener('click', resetSim);
+
+    function resetSim() {
+        forceApplied = false;
+        btnApplyForce.textContent = 'Приложить силу';
+        btnApplyForce.style.backgroundColor = 'var(--primary)';
+        forceSlider.value = 0;
+        forceVal.textContent = 0;
+        plasticBaseDeformation = 0;
+        currentDeformation = 0;
+        obsText.textContent = 'Модель сброшена. Задайте параметры и приложите силу.';
+    }
+
+    function calculateTargetDeformation() {
+        let F = parseFloat(forceSlider.value);
+        let k = parseFloat(stiffnessSlider.value);
+        if (!forceApplied) return 0;
+        // Коэффициент для визуализации
+        return (F / k) * 120; 
+    }
+
+    function updateObservation() {
+        let type = materialTypeSelect.value;
+        if (forceApplied) {
+            if (type === 'elastic') obsText.textContent = 'Пружина растягивается. Сила упругости уравновешивает внешнюю силу.';
+            else obsText.textContent = 'Пластилин сплющивается под действием силы.';
+        } else {
+            if (type === 'elastic') obsText.textContent = 'Сила снята. Упругая пружина полностью вернулась в исходное состояние.';
+            else obsText.textContent = 'Сила снята. Пластичный материал сохранил свою новую форму (остаточная деформация).';
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let type = materialTypeSelect.value;
+        let F = forceApplied ? parseFloat(forceSlider.value) : 0;
+        
+        let targetL = calculateTargetDeformation();
+
+        if (!forceApplied && type === 'plastic') {
+            targetL = plasticBaseDeformation;
+        }
+
+        // Анимация (плавное приближение к цели)
+        currentDeformation += (targetL - currentDeformation) * 0.1;
+
+        ctx.save();
+        // Отрисовка "Стены" слева
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(30, 20, 20, canvas.height - 40);
+
+        if (type === 'elastic') {
+            // Рисуем пружину
+            ctx.beginPath();
+            ctx.moveTo(50, canvas.height / 2);
+            let coils = 12;
+            let baseLen = 150;
+            let totalLen = baseLen + currentDeformation;
+            let coilW = totalLen / coils;
+            
+            for(let i=1; i<=coils; i++) {
+                let x = 50 + i * coilW;
+                let y = canvas.height / 2 + (i % 2 === 0 ? 25 : -25);
+                if (i === coils) y = canvas.height / 2;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#3b82f6';
+            ctx.stroke();
+
+            // Рисуем груз/крючок на конце
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(50 + totalLen, canvas.height / 2 - 20, 40, 40);
+
+            // Вектор силы
+            if (forceApplied && F > 0) {
+                drawArrow(50 + totalLen + 40, canvas.height / 2, F);
+            }
+
+        } else {
+            // Рисуем пластилин (эллипс, который сплющивается)
+            ctx.fillStyle = '#8b5cf6';
+            let startX = 50;
+            let baseW = 120;
+            let baseH = 100;
+            
+            // При деформации увеличиваем ширину, уменьшаем высоту (сохранение объема)
+            let drawW = baseW + currentDeformation;
+            let drawH = baseH - currentDeformation * 0.4;
+            if (drawH < 20) drawH = 20;
+
+            ctx.beginPath();
+            ctx.ellipse(startX + drawW/2, canvas.height/2, drawW/2, drawH/2, 0, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Вектор силы
+            if (forceApplied && F > 0) {
+                drawArrow(startX + drawW, canvas.height / 2, F);
+            }
+        }
+        ctx.restore();
+
+        requestAnimationFrame(draw);
+    }
+
+    function drawArrow(x, y, F) {
+        let arrowLen = F * 1.5; // масштаб стрелки
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + arrowLen, y);
+        ctx.lineTo(x + arrowLen - 10, y - 6);
+        ctx.moveTo(x + arrowLen, y);
+        ctx.lineTo(x + arrowLen - 10, y + 6);
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ef4444';
+        ctx.font = "bold 16px sans-serif";
+        ctx.fillText("F", x + arrowLen / 2 - 5, y - 15);
+    }
+
+    // Запуск анимации
+    requestAnimationFrame(draw);
+
+
+    // РЕШЕНИЕ ЗАДАЧИ
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.textContent = 'Показать решение';
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.textContent = 'Скрыть решение';
+        }
+    });
+
+
+    // ПРОВЕРКА ЗАДАЧ (A, B, C)
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, 'Пожалуйста, выберите вариант.');
+        if (val === 'plastic') {
+            showFeedback('fbA', true, 'Верно! Жевательная резинка принимает новую форму и не возвращается обратно — это пластическая деформация.');
+        } else {
+            showFeedback('fbA', false, 'Неверно. Подумайте, возвращает ли пузырь из жвачки свою первоначальную форму кубика сам по себе?');
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value.replace(',', '.');
+        if (!val) return showFeedback('fbB', false, 'Введите число.');
+        if (parseFloat(val) === 0.02) {
+            showFeedback('fbB', true, 'Отлично! &Delta;l = F / k = 10 / 500 = 0.02 м.');
+        } else {
+            showFeedback('fbB', false, 'Ошибка. Подсказка: используйте формулу &Delta;l = F / k.');
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, 'Пожалуйста, выберите вариант.');
+        if (val === '2') {
+            showFeedback('fbC', true, 'Абсолютно верно! Свинец легко куется и сохраняет форму (пластичность), что идеально для прессовки деталей без обратного отскока.');
+        } else {
+            showFeedback('fbC', false, 'Неверно. Нам нужно, чтобы деталь изменила форму НАВСЕГДА (пластическая). Резина и пружинная сталь восстанавливают форму.');
+        }
+    };
+
+    // ПРОВЕРКА ТЕСТА
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                // Находим текст правильного ответа
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) correctText = r.parentElement.textContent.trim();
+                });
+                mistakesHTML += `<li>Вопрос ${index + 1}: правильный ответ — <strong>${correctText}</strong></li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = `Отличный результат: ${score} из ${total}! Вы прекрасно усвоили тему.`;
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = `Ваш результат: ${score} из ${total}.<br>Работа над ошибками:<br>${mistakesHTML}`;
+        }
+    };
+
+</script>
+</body>
+</html>

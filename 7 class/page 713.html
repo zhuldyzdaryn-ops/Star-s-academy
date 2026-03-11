@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Точность измерений и стандартный вид числа</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #0369a1; /* Синий (точность) */
+            --primary-hover: #075985;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #bae6fd;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+            
+            --ruler-bg: #f8fafc;
+            --ruler-mark: #334155;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0c4a6e;
+                --ruler-bg: #334155;
+                --ruler-mark: #cbd5e1;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .math {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+        }
+
+        /* Симуляция линейки */
+        .ruler-container {
+            background: var(--ruler-bg);
+            border-radius: 12px;
+            padding: 40px 20px;
+            margin: 20px 0;
+            position: relative;
+            border: 2px solid var(--border);
+            overflow: hidden;
+        }
+
+        .ruler-tape {
+            height: 60px;
+            width: 100%;
+            border-bottom: 2px solid var(--ruler-mark);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .mark {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: var(--ruler-mark);
+        }
+
+        .mark-label {
+            position: absolute;
+            top: -25px;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .object-to-measure {
+            height: 30px;
+            background: rgba(14, 165, 233, 0.4);
+            border: 2px solid var(--secondary);
+            position: absolute;
+            left: 20px;
+            bottom: 40px;
+            border-radius: 4px;
+            z-index: 10;
+            cursor: pointer;
+            transition: width 0.3s ease;
+        }
+
+        .measurement-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .info-card strong {
+            display: block;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* Калькулятор стандартного вида */
+        .std-calculator {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .result-display {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 2px dashed var(--primary);
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .controls-ui {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--secondary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .lang-label { font-weight: bold; color: var(--text-muted); font-size: 0.8rem;}
+        .lang-label.active { color: var(--primary); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        .task-card {
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="l-ru">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle">
+        <span class="slider"></span>
+    </label>
+    <span class="lang-label" id="l-kz">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Точность измерений и стандартный вид числа</span>
+            <span class="lang-kz">Өлшеу дәлдігі және санның стандартты түрі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему нельзя измерить толщину волоса обычной строительной рулеткой и зачем ученые пишут "10 в степени"?</span>
+            <span class="lang-kz">Неліктен шаштың қалыңдығын кәдімгі рулеткамен өлшеу мүмкін емес және ғалымдар не үшін "10-ның дәрежесі" деп жазады?</span>
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ 1: СТАНДАРТНЫЙ ВИД -->
+    <section>
+        <h2>
+            <span class="lang-ru">1. Стандартный вид числа</span>
+            <span class="lang-kz">1. Санның стандартты түрі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В физике часто встречаются огромные числа (масса Земли) или крошечные (заряд электрона). Чтобы не писать десятки нулей, используют <strong>стандартный вид</strong>:</span>
+            <span class="lang-kz">Физикада үлкен сандар (Жердің массасы) немесе өте кішкентай сандар (электронның заряды) жиі кездеседі. Ондаған нөлдерді жазбау үшін <strong>стандартты түрді</strong> қолданады:</span>
+        </p>
+        
+        <div class="formula-box">
+            <div class="math">a &times; 10<sup>n</sup></div>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">Где:<br>
+                <strong>a</strong> — значащая часть (мантисса), причем 1 &le; a < 10.<br>
+                <strong>n</strong> — порядок числа (целое число).</span>
+                <span class="lang-kz">Мұндағы:<br>
+                <strong>a</strong> — мәнді бөлік, мұнда 1 &le; a < 10.<br>
+                <strong>n</strong> — санның реті (бүтін сан).</span>
+            </p>
+        </div>
+
+        <div class="std-calculator">
+            <h3>
+                <span class="lang-ru">Научный конвертер</span>
+                <span class="lang-kz">Ғылыми конвертер</span>
+            </h3>
+            <div class="input-group">
+                <input type="text" id="numInput" placeholder="Введите число (напр. 500000)">
+                <button onclick="convertToStandard()">
+                    <span class="lang-ru">Преобразовать</span>
+                    <span class="lang-kz">Түрлендіру</span>
+                </button>
+            </div>
+            <div class="result-display" id="stdResult">
+                <span class="lang-ru">Результат появится здесь</span>
+                <span class="lang-kz">Нәтиже осында шығады</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ТЕОРИЯ 2: ТОЧНОСТЬ И ПОГРЕШНОСТЬ -->
+    <section>
+        <h2>
+            <span class="lang-ru">2. Точность и погрешность</span>
+            <span class="lang-kz">2. Дәлдік және қателік</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Ни одно измерение не бывает абсолютно точным. Всегда есть <strong>погрешность</strong>.</span>
+            <span class="lang-kz">Ешбір өлшеу абсолютті дәл болмайды. Әрқашан <strong>қателік</strong> болады.</span>
+        </p>
+        
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Цена деления (C)</strong> — значение самого маленького деления на шкале прибора.</span>
+                <span class="lang-kz"><strong>Бөлік құны (C)</strong> — аспап шкаласындағы ең кіші бөліктің мәні.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Абсолютная погрешность (&Delta;x)</strong> — обычно принимается равной половине цены деления:</span>
+                <span class="lang-kz"><strong>Абсолют қателік (&Delta;x)</strong> — әдетте бөлік құнының жартысына тең деп қабылданады:</span>
+            </li>
+        </ul>
+
+        <div class="formula-box">
+            <div class="math">&Delta;x = &plusmn; C / 2</div>
+        </div>
+
+        <h3>
+            <span class="lang-ru">Симуляция: Виртуальная линейка</span>
+            <span class="lang-kz">Симуляция: Виртуалды сызғыш</span>
+        </h3>
+        
+        <div class="controls-ui">
+            <div class="control-group">
+                <label>
+                    <span class="lang-ru">Цена деления (C):</span>
+                    <span class="lang-kz">Бөлік құны (C):</span>
+                    <span id="cVal">1</span> см
+                </label>
+                <input type="range" id="priceSlider" min="0.1" max="2" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <label>
+                    <span class="lang-ru">Длина объекта:</span>
+                    <span class="lang-kz">Дененің ұзындығы:</span>
+                </label>
+                <input type="range" id="objectSlider" min="50" max="300" value="120">
+            </div>
+        </div>
+
+        <div class="ruler-container">
+            <div class="object-to-measure" id="obj"></div>
+            <div class="ruler-tape" id="ruler">
+                <!-- Маркеры генерируются JS -->
+            </div>
+        </div>
+
+        <div class="measurement-info">
+            <div class="info-card">
+                <span class="lang-ru">Результат (x):</span>
+                <span class="lang-kz">Нәтиже (x):</span>
+                <strong id="resX">12 см</strong>
+            </div>
+            <div class="info-card">
+                <span class="lang-ru">Погрешность (&Delta;x):</span>
+                <span class="lang-kz">Қателік (&Delta;x):</span>
+                <strong id="resErr">0.5 см</strong>
+            </div>
+        </div>
+        
+        <div class="observation">
+            <span class="lang-ru"><strong>Вывод:</strong> Чем меньше цена деления прибора, тем точнее измерение и меньше его погрешность.</span>
+            <span class="lang-kz"><strong>Қорытынды:</strong> Аспаптың бөлік құны неғұрлым аз болса, өлшеу соғұрлым дәл және оның қателігі аз болады.</span>
+        </div>
+    </section>
+
+    <!-- ПРАКТИКА -->
+    <section>
+        <h2>
+            <span class="lang-ru">3. Проверь себя</span>
+            <span class="lang-kz">3. Өзіңді тексер</span>
+        </h2>
+        
+        <div class="task-card">
+            <p><strong>
+                <span class="lang-ru">Задание: Выразите 0,00045 в стандартном виде.</span>
+                <span class="lang-kz">Тапсырма: 0,00045 санын стандартты түрде жазыңыз.</span>
+            </strong></p>
+            <div class="input-group" style="margin-top:10px">
+                <input type="text" id="task1Input" placeholder="Напр: 4.5*10^-4">
+                <button onclick="checkTask1()">ОК</button>
+            </div>
+            <div id="fb1" class="feedback"></div>
+        </div>
+
+        <div class="task-card">
+            <p><strong>
+                <span class="lang-ru">Задание: На линейке между цифрами 2 и 3 находится 10 делений. Чему равна погрешность измерения такой линейки?</span>
+                <span class="lang-kz">Тапсырма: Сызғышта 2 және 3 сандарының арасында 10 бөлік бар. Осындай сызғыштың өлшеу қателігі неге тең?</span>
+            </strong></p>
+            <div class="input-group" style="margin-top:10px">
+                <select id="task2Input">
+                    <option value="0">---</option>
+                    <option value="1">1 см</option>
+                    <option value="0.1">0.1 см</option>
+                    <option value="0.05">0.05 см</option>
+                </select>
+                <button onclick="checkTask2()">ОК</button>
+            </div>
+            <div id="fb2" class="feedback"></div>
+        </div>
+    </section>
+</div>
+
+<script>
+    const langToggle = document.getElementById('langToggle');
+    const body = document.body;
+
+    langToggle.addEventListener('change', () => {
+        body.classList.toggle('lang-kz', langToggle.checked);
+        document.getElementById('l-ru').classList.toggle('active', !langToggle.checked);
+        document.getElementById('l-kz').classList.toggle('active', langToggle.checked);
+        updateRuler();
+    });
+
+    // --- Логика конвертера ---
+    function convertToStandard() {
+        let input = document.getElementById('numInput').value.replace(',', '.');
+        let num = parseFloat(input);
+        const resDiv = document.getElementById('stdResult');
+
+        if (isNaN(num) || num === 0) {
+            resDiv.innerHTML = body.classList.contains('lang-kz') ? "Қате сан" : "Некорректное число";
+            return;
+        }
+
+        let exponent = Math.floor(Math.log10(Math.abs(num)));
+        let mantissa = num / Math.pow(10, exponent);
+        
+        // Округление мантиссы до 3 знаков
+        mantissa = Math.round(mantissa * 1000) / 1000;
+
+        resDiv.innerHTML = `${mantissa} &times; 10<sup>${exponent}</sup>`;
+    }
+
+    // --- Логика линейки ---
+    const priceSlider = document.getElementById('priceSlider');
+    const objectSlider = document.getElementById('objectSlider');
+    const ruler = document.getElementById('ruler');
+    const obj = document.getElementById('obj');
+
+    function updateRuler() {
+        const C = parseFloat(priceSlider.value);
+        const L = parseInt(objectSlider.value);
+        
+        document.getElementById('cVal').textContent = C;
+        
+        // Отрисовка объекта (L в пикселях, 1см = 40px)
+        obj.style.width = L + 'px';
+        
+        // Очистка линейки
+        ruler.innerHTML = '';
+        
+        // 1см = 40px. Рисуем до 15 см
+        const totalPx = 650;
+        const pxPerCm = 40;
+        
+        // Рисуем деления
+        for(let x = 0; x <= totalPx; x += (C * pxPerCm)) {
+            const mark = document.createElement('div');
+            mark.className = 'mark';
+            mark.style.left = x + 'px';
+            
+            // Высота деления
+            let isWhole = Math.abs((x / pxPerCm) - Math.round(x / pxPerCm)) < 0.01;
+            mark.style.height = isWhole ? '25px' : '15px';
+            
+            if(isWhole) {
+                const label = document.createElement('div');
+                label.className = 'mark-label';
+                label.textContent = Math.round(x / pxPerCm);
+                mark.appendChild(label);
+            }
+            
+            ruler.appendChild(mark);
+        }
+
+        // Расчет результатов
+        let measuredVal = Math.round((L / pxPerCm) / C) * C;
+        let error = C / 2;
+        
+        document.getElementById('resX').textContent = measuredVal.toFixed(1) + (body.classList.contains('lang-kz') ? ' см' : ' см');
+        document.getElementById('resErr').textContent = error.toFixed(2) + (body.classList.contains('lang-kz') ? ' см' : ' см');
+    }
+
+    priceSlider.addEventListener('input', updateRuler);
+    objectSlider.addEventListener('input', updateRuler);
+    updateRuler();
+
+    // --- Проверка заданий ---
+    function checkTask1() {
+        const val = document.getElementById('task1Input').value.replace(/\s/g, '').toLowerCase();
+        const fb = document.getElementById('fb1');
+        fb.style.display = 'block';
+        
+        // Принимаем разные варианты записи
+        if (val.includes('4.5') && (val.includes('10^-4') || val.includes('10-4'))) {
+            fb.innerHTML = body.classList.contains('lang-kz') ? "Дұрыс! 4,5 &times; 10<sup>-4</sup>" : "Верно! 4,5 &times; 10<sup>-4</sup>";
+            fb.className = "feedback correct";
+        } else {
+            fb.innerHTML = body.classList.contains('lang-kz') ? "Қате. Көмек: нүктені 4 орынға оңға жылжытыңыз." : "Неверно. Подсказка: перенесите запятую на 4 знака вправо.";
+            fb.className = "feedback incorrect";
+        }
+    }
+
+    function checkTask2() {
+        const val = document.getElementById('task2Input').value;
+        const fb = document.getElementById('fb2');
+        fb.style.display = 'block';
+        
+        if (val === "0.05") {
+            fb.innerHTML = body.classList.contains('lang-kz') ? "Өте жақсы! Бөлік құны 0,1 см, ал қателік оның жартысы - 0,05 см." : "Отлично! Цена деления 0.1 см, а погрешность — это половина, т.е. 0.05 см.";
+            fb.className = "feedback correct";
+        } else {
+            fb.innerHTML = body.classList.contains('lang-kz') ? "Қате. Алдымен бөлік құнын табыңыз (3-2)/10." : "Неверно. Сначала найди цену деления: (3-2)/10 = 0.1, а затем раздели на 2.";
+            fb.className = "feedback incorrect";
+        }
+    }
+</script>
+
+</body>
+</html>

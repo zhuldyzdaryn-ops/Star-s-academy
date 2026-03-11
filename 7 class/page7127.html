@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Молекулярное строение твердых тел, жидкостей и газов — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #8b5cf6; /* Фиолетовый (космос/наука) */
+            --primary-hover: #7c3aed;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #f3e8ff;
+            --solid-color: #3b82f6;
+            --liquid-color: #0ea5e9;
+            --gas-color: #f43f5e;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #3b0764;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        .control-group select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 350px;
+            display: block;
+            background-color: #0f172a; /* Dark background for particles */
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(139, 92, 246, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Молекулярное строение твердых тел, жидкостей и газов — 7 класс</span>
+            <span class="lang-kz">Қатты денелердің, сұйықтардың және газдардың молекулалық құрылысы — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему лед твердый, вода течет, а пар исчезает в воздухе, хотя это одно и то же вещество? Всё дело в том, как расположены и как движутся невидимые глазу молекулы!</span>
+            <span class="lang-kz">Неліктен мұз қатты, су ағады, ал бу ауада жоғалып кетеді, бірақ бұл бір ғана зат қой? Мұның бәрі көзге көрінбейтін молекулалардың қалай орналасқанына және қалай қозғалатынына байланысты!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Три состояния вещества</span>
+            <span class="lang-kz">Заттың үш күйі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Все вещества состоят из мельчайших частиц — молекул и атомов. Их расположение и характер движения определяют <strong>агрегатное состояние</strong> вещества. Сами молекулы при этом не меняются! Меняются лишь расстояния между ними и скорости их движения.</span>
+            <span class="lang-kz">Барлық заттар өте ұсақ бөлшектерден — молекулалар мен атомдардан тұрады. Олардың орналасуы мен қозғалыс сипаты заттың <strong>агрегаттық күйін</strong> анықтайды. Бұл ретте молекулалардың өздері өзгермейді! Тек олардың арақашықтығы мен қозғалыс жылдамдығы өзгереді.</span>
+        </p>
+        <br>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Твердые тела:</strong> Молекулы расположены в строгом порядке (кристаллическая решетка) и сильно притягиваются друг к другу. Они не могут свободно перемещаться, а лишь <em>колеблются</em> около своих мест. Поэтому твердые тела <strong>сохраняют и форму, и объем</strong>.</span>
+                <span class="lang-kz"><strong>Қатты денелер:</strong> Молекулалар қатаң тәртіппен (кристалдық тор) орналасқан және бір-біріне қатты тартылады. Олар еркін қозғала алмайды, тек өз орындарының маңында <em>тербеледі</em>. Сондықтан қатты денелер <strong>пішінін де, көлемін де сақтайды</strong>.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Жидкости:</strong> Молекулы расположены плотно, почти как в твердых телах, но строгого порядка нет. Они могут "перепрыгивать" с места на место. Поэтому жидкости текут: они <strong>сохраняют объем, но легко меняют форму</strong> (принимают форму сосуда).</span>
+                <span class="lang-kz"><strong>Сұйықтықтар:</strong> Молекулалар қатты денелердегідей тығыз орналасқан, бірақ қатаң тәртіп жоқ. Олар бір орыннан екінші орынға "секіре" алады. Сондықтан сұйықтықтар ағады: олар <strong>көлемін сақтайды, бірақ пішінін оңай өзгертеді</strong> (ыдыстың пішінін қабылдайды).</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Газы:</strong> Расстояния между молекулами во много раз больше размеров самих молекул. Они почти не притягиваются и свободно летают с огромными скоростями во всех направлениях. Поэтому газы <strong>не имеют ни формы, ни объема</strong> (заполняют весь предоставленный объем).</span>
+                <span class="lang-kz"><strong>Газдар:</strong> Молекулалар арасындағы қашықтық молекулалардың өз өлшемдерінен әлдеқайда үлкен. Олар бір-біріне дерлік тартылмайды және барлық бағытта үлкен жылдамдықпен еркін ұшады. Сондықтан газдардың <strong>пішіні де, көлемі де болмайды</strong> (берілген көлемді толығымен толтырады).</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 3. ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Примеры из жизни</span>
+            <span class="lang-kz">Өмірден мысалдар</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Металлический ключ (твердое тело):</strong> Как бы вы ни крутили его в кармане, он не поменяет свою форму и размер.</span>
+                <span class="lang-kz"><strong>Металл кілт (қатты дене):</strong> Оны қалтаңызда қалай айналдырсаңыз да, ол өзінің пішіні мен өлшемін өзгертпейді.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Вокзальная толпа (аналогия жидкости):</strong> Люди стоят плотно друг к другу, но могут протискиваться и перемещаться по залу, подобно молекулам воды, перетекающим из кувшина в стакан.</span>
+                <span class="lang-kz"><strong>Вокзалдағы топ адамдар (сұйықтық аналогиясы):</strong> Адамдар бір-біріне жақын тұрады, бірақ құмырадан стақанға құйылған су молекулалары сияқты зал ішінде сығылысып, орын ауыстыра алады.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Аромат духов (газ):</strong> Если открыть флакон в одном углу комнаты, молекулы духов быстро разлетятся во все стороны и заполнят всё помещение.</span>
+                <span class="lang-kz"><strong>Әтір иісі (газ):</strong> Бөлменің бір бұрышында құтыны ашсаңыз, әтір молекулалары тез арада жан-жаққа таралып, бүкіл бөлмені толтырады.</span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- 4. ФОРМУЛЫ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Формулы и обозначения</span>
+            <span class="lang-kz">Формулалар мен белгілеулер</span>
+        </h2>
+        <div class="formula-box">
+            <span class="math">
+                <span class="lang-ru">В этой теме нет расчетных формул!</span>
+                <span class="lang-kz">Бұл тақырыпта есептеу формулалары жоқ!</span>
+            </span>
+            <p>
+                <span class="lang-ru">Здесь мы изучаем качественные свойства веществ. Главные понятия, которые нужно запомнить:</span>
+                <span class="lang-kz">Мұнда біз заттардың сапалық қасиеттерін зерттейміз. Есте сақтау қажет негізгі ұғымдар:</span>
+            </p>
+            <ul>
+                <li><span class="lang-ru"><strong>Кристаллическая решетка</strong> — строгий порядок расположения частиц в твердых телах.</span><span class="lang-kz"><strong>Кристалдық тор</strong> — қатты денелердегі бөлшектердің қатаң орналасу тәртібі.</span></li>
+                <li><span class="lang-ru"><strong>Тепловое движение</strong> — непрерывное и беспорядочное движение молекул. Чем выше температура, тем быстрее они движутся.</span><span class="lang-kz"><strong>Жылулық қозғалыс</strong> — молекулалардың үздіксіз және ретсіз қозғалысы. Температура неғұрлым жоғары болса, олар соғұрлым жылдам қозғалады.</span></li>
+                <li><span class="lang-ru"><strong>Межмолекулярное взаимодействие</strong> — силы притяжения и отталкивания между молекулами (сильнее всего в твердых телах, слабее всего в газах).</span><span class="lang-kz"><strong>Молекулааралық өзара әсер</strong> — молекулалар арасындағы тартылу және тебілу күштері (қатты денелерде ең күшті, газдарда ең әлсіз).</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 5. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Заглянем внутрь вещества</span>
+            <span class="lang-kz">Симуляция: Заттың ішіне үңілейік</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="stateSelect">
+                        <span class="lang-ru">Агрегатное состояние:</span>
+                        <span class="lang-kz">Агрегаттық күйі:</span>
+                    </label>
+                    <select id="stateSelect">
+                        <option value="solid" data-ru="Твердое тело (Лед)" data-kz="Қатты дене (Мұз)">Твердое тело (Лед)</option>
+                        <option value="liquid" data-ru="Жидкость (Вода)" data-kz="Сұйықтық (Су)" selected>Жидкость (Вода)</option>
+                        <option value="gas" data-ru="Газ (Водяной пар)" data-kz="Газ (Су буы)">Газ (Водяной пар)</option>
+                    </select>
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="tempSlider">
+                        <span class="lang-ru">Температура (Скорость частиц):</span>
+                        <span class="lang-kz">Температура (Бөлшектер жылдамдығы):</span>
+                    </label>
+                    <input type="range" id="tempSlider" min="1" max="100" step="1" value="50">
+                </div>
+                <div class="buttons">
+                    <button id="btnPlayPause">
+                        <span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Сброс</span><span class="lang-kz">Қалпына келтіру</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Что наблюдаем:</span>
+                <span class="lang-kz">Не байқаймыз:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">Переключайте состояния и меняйте температуру. Посмотрите, как меняется порядок и свобода движения молекул!</span>
+                <span class="lang-kz">Күйлерді ауыстырып, температураны өзгертіңіз. Молекулалардың қозғалыс еркіндігі мен реттілігі қалай өзгеретінін көріңіз!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 6. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи (Логическая)</span>
+            <span class="lang-kz">Есеп шығару мысалы (Логикалық)</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> В лаборатории есть три плотно закрытых прозрачных сосуда с одинаковым веществом. В сосуде А вещество лежит на дне в виде кубика. В сосуде Б вещество растеклось по дну лужицей. В сосуде В вещества не видно, но прибор показывает, что оно давит на стенки сосуда во всех направлениях. В каких агрегатных состояниях находится вещество в каждом сосуде?</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Зертханада бірдей зат салынған үш мықтап жабылған мөлдір ыдыс бар. А ыдысында зат түбінде текше түрінде жатыр. Б ыдысында зат түбіне жайылып кеткен. В ыдысында зат көрінбейді, бірақ құрал оның ыдыс қабырғаларына барлық бағытта қысым түсіретінін көрсетеді. Әр ыдыстағы зат қандай агрегаттық күйде?</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Анализ и рассуждение:</strong></span>
+                <span class="lang-kz"><strong>Талдау және пайымдау:</strong></span>
+            </p>
+            <ul>
+                <li><span class="lang-ru"><strong>Сосуд А:</strong> Вещество имеет форму кубика, значит, оно сохраняет свою собственную форму. Это свойство <strong>твердых тел</strong>.</span><span class="lang-kz"><strong>А ыдысы:</strong> Заттың пішіні текше тәрізді, яғни ол өзінің пішінін сақтайды. Бұл <strong>қатты денелердің</strong> қасиеті.</span></li>
+                <li><span class="lang-ru"><strong>Сосуд Б:</strong> Вещество не сохранило форму (растеклось), но осталось на дне, значит сохранило свой объем. Это свойство <strong>жидкости</strong>.</span><span class="lang-kz"><strong>Б ыдысы:</strong> Зат пішінін сақтамаған (жайылып кеткен), бірақ түбінде қалған, яғни көлемін сақтаған. Бұл <strong>сұйықтықтың</strong> қасиеті.</span></li>
+                <li><span class="lang-ru"><strong>Сосуд В:</strong> Вещество заняло весь предоставленный объем сосуда (давит на все стенки) и не имеет своей формы. Это свойство <strong>газа</strong>.</span><span class="lang-kz"><strong>В ыдысы:</strong> Зат ыдыстың барлық көлемін алған (барлық қабырғаларға қысым жасайды) және өз пішіні жоқ. Бұл <strong>газдың</strong> қасиеті.</span></li>
+            </ul>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> А — твердое тело, Б — жидкость, В — газ.</span>
+                <span class="lang-kz"><strong>Жауабы:</strong> А — қатты дене, Б — сұйықтық, В — газ.</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 7. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В каком агрегатном состоянии вещество не имеет ни собственной формы, ни собственного объема, а заполняет всю предоставленную емкость?</span>
+                <span class="lang-kz">Қандай агрегаттық күйде заттың өзіндік пішіні де, өзіндік көлемі де болмайды, ол берілген ыдысты толығымен толтырады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="solid" data-ru="Твердое" data-kz="Қатты">Твердое</option>
+                    <option value="liquid" data-ru="Жидкое" data-kz="Сұйық">Жидкое</option>
+                    <option value="gas" data-ru="Газообразное" data-kz="Газ тәрізді">Газообразное</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Знает основные макроскопические свойства газов.<br>- Понимает разницу между формой и объемом.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Газдардың негізгі макроскопиялық қасиеттерін біледі.<br>- Пішін мен көлем арасындағы айырмашылықты түсінеді.</span>
+            </div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Если сильно сжать воздушный шарик, он уменьшится в размерах. А если попытаться сжать пластиковую бутылку, полностью заполненную водой до крышки, она практически не сожмется. Почему газы легко сжать, а жидкости — нет?</span>
+                <span class="lang-kz">Егер әуе шарын қатты қыссаңыз, оның көлемі кішірейеді. Ал егер қақпағына дейін суға толы пластик шөлмекті қысуға тырыссаңыз, ол іс жүзінде қысылмайды. Неліктен газдар оңай қысылады, ал сұйықтықтар жоқ?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Молекулы жидкости твердые, а молекулы газа мягкие." data-kz="Сұйықтық молекулалары қатты, ал газ молекулалары жұмсақ.">Молекулы жидкости твердые, а молекулы газа мягкие.</option>
+                    <option value="2" data-ru="В газах расстояния между молекулами очень большие, а в жидкостях молекулы расположены вплотную." data-kz="Газдарда молекулалар арасындағы қашықтық өте үлкен, ал сұйықтықтарда молекулалар бір-біріне өте жақын орналасқан.">В газах расстояния между молекулами очень большие, а в жидкостях молекулы расположены вплотную.</option>
+                    <option value="3" data-ru="Жидкость состоит из атомов, а газ из молекул." data-kz="Сұйықтық атомдардан, ал газ молекулалардан тұрады.">Жидкость состоит из атомов, а газ из молекул.</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Связывает макроскопическое свойство (сжимаемость) с микроскопическим строением (расстояния между молекулами).<br>- Делает правильный вывод на основе теории.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Макроскопиялық қасиетті (сығылғыштық) микроскопиялық құрылыммен (молекулалар арасындағы қашықтық) байланыстырады.<br>- Теория негізінде дұрыс қорытынды жасайды.</span>
+            </div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Кусок льда растаял и превратился в воду, а затем вода испарилась и стала водяным паром. Что произошло с <strong>самими молекулами</strong> воды (H₂O) в процессе этих превращений?</span>
+                <span class="lang-kz">Мұз кесегі еріп суға айналды, содан кейін су буланып су буына айналды. Осы түрленулер барысында судың (H₂O) <strong>өз молекулаларымен</strong> не болды?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Молекулы сначала стали жидкими, а потом газообразными." data-kz="Молекулалар алдымен сұйық, сосын газ тәрізді болды.">Молекулы сначала стали жидкими, а потом газообразными.</option>
+                    <option value="2" data-ru="Молекулы распадались на атомы кислорода и водорода." data-kz="Молекулалар оттегі мен сутегі атомдарына ыдырады.">Молекулы распадались на атомы кислорода и водорода.</option>
+                    <option value="3" data-ru="Сами молекулы никак не изменились. Изменилось только их расположение и скорость движения." data-kz="Молекулалардың өздері еш өзгерген жоқ. Тек олардың орналасуы мен қозғалыс жылдамдығы өзгерді.">Сами молекулы никак не изменились. Изменилось только их расположение и скорость движения.</option>
+                </select>
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Дескрипторы:<br>- Понимает, что при изменении агрегатного состояния молекулы остаются неизменными.<br>- Усвоил принцип сохранения частиц вещества.</span>
+                <span class="lang-kz">Дескрипторлар:<br>- Агрегаттық күй өзгергенде молекулалардың өзгермейтінін түсінеді.<br>- Зат бөлшектерінің сақталу принципін меңгерген.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересное видео, где с помощью компьютерной графики показано внутреннее устройство веществ.</span>
+            <span class="lang-kz">Компьютерлік графика арқылы заттардың ішкі құрылысы көрсетілген қызықты бейнені қараңыз.</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BC%D0%BE%D0%BB%D0%B5%D0%BA%D1%83%D0%BB%D1%8F%D1%80%D0%BD%D0%BE%D0%B5+%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BD%D0%B8%D0%B5+%D0%B2%D0%B5%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Молекулярное строение вещества» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Заттың молекулалық құрылысы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 9. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понял(а) разницу в расположении молекул льда, воды и пара.</span>
+                <span class="lang-kz">Мен мұз, су және бу молекулаларының орналасуындағы айырмашылықты түсіндім.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, почему газы не имеют формы и легко сжимаются.</span>
+                <span class="lang-kz">Мен газдардың неге пішіні жоқ екенін және оңай сығылатынын білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я смогу привести примеры всех трех состояний из жизни.</span>
+                <span class="lang-kz">Мен өмірден барлық үш күйге мысалдар келтіре аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 10. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. В каком состоянии молекулы образуют строгий порядок — кристаллическую решетку?</span>
+                <span class="lang-kz">1. Қандай күйде молекулалар қатаң тәртіпті — кристалдық торды құрайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">В твердом</span><span class="lang-kz">Қатты күйде</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">В жидком</span><span class="lang-kz">Сұйық күйде</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">В газообразном</span><span class="lang-kz">Газ күйінде</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Во всех состояниях</span><span class="lang-kz">Барлық күйде</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Как движутся молекулы в жидкостях?</span>
+                <span class="lang-kz">2. Сұйықтықтарда молекулалар қалай қозғалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Свободно разлетаются по всей комнате</span><span class="lang-kz">Бүкіл бөлмеге еркін ұшып тарайды</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Колеблются и перескакивают с места на место, оставаясь плотно друг к другу</span><span class="lang-kz">Тербеледі және бір-біріне жақын қалып, бір орыннан екінші орынға секіреді</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Строго стоят на месте, не двигаясь</span><span class="lang-kz">Қозғалмай, қатаң түрде бір орында тұрады</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Молекулы в жидкостях вообще не движутся</span><span class="lang-kz">Сұйықтықтарда молекулалар мүлдем қозғалмайды</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Расстояние между молекулами во много раз больше размеров самих молекул. Это характерно для:</span>
+                <span class="lang-kz">3. Молекулалар арасындағы қашықтық молекулалардың өз өлшемдерінен әлдеқайда үлкен. Бұл тән:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Твердых тел</span><span class="lang-kz">Қатты денелерге</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Жидкостей</span><span class="lang-kz">Сұйықтықтарға</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Газов</span><span class="lang-kz">Газдарға</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Пластмасс</span><span class="lang-kz">Пластмассаларға</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Какое свойство характерно для жидкостей?</span>
+                <span class="lang-kz">4. Сұйықтықтарға қандай қасиет тән?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Сохраняют объем, но легко меняют форму</span><span class="lang-kz">Көлемін сақтайды, бірақ пішінін оңай өзгертеді</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Сохраняют и форму, и объем</span><span class="lang-kz">Пішінін де, көлемін де сақтайды</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Не сохраняют ни форму, ни объем</span><span class="lang-kz">Пішінін де, көлемін де сақтамайды</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Легко сжимаются до малых размеров</span><span class="lang-kz">Кішкентай өлшемдерге дейін оңай сығылады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Что произойдет со скоростью молекул в чашке чая, если чай начнет остывать?</span>
+                <span class="lang-kz">5. Егер шәй суи бастаса, шыныаяқтағы шәй молекулаларының жылдамдығымен не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Они начнут двигаться быстрее</span><span class="lang-kz">Олар тезірек қозғала бастайды</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Они станут двигаться медленнее</span><span class="lang-kz">Олар баяу қозғалатын болады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Скорость молекул не зависит от температуры</span><span class="lang-kz">Молекулалардың жылдамдығы температураға тәуелді емес</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Молекулы превратятся в атомы льда</span><span class="lang-kz">Молекулалар мұз атомдарына айналады</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            btn_play: '<span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>',
+            btn_pause: '<span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Верно! Газы свободно разлетаются во все стороны, заполняя весь сосуд, и принимают его форму.",
+            fbA_inc: "Ошибка. Вспомните: лед сохраняет форму, вода сохраняет объем. А кто не сохраняет ничего?",
+            fbB_corr: "Абсолютно верно! В газах много пустого места между молекулами, поэтому их легко сдвинуть ближе друг к другу (сжать).",
+            fbB_inc: "Неверно. Сами молекулы не бывают мягкими или твердыми, дело в пустом пространстве между ними.",
+            fbC_corr: "Точно! Молекула H₂O всегда остается молекулой H₂O. Меняется лишь то, как молекулы расположены и как быстро они двигаются.",
+            fbC_inc: "Неверно. Молекулы вещества не меняются при плавлении или кипении (иначе вода перестала бы быть водой). Меняется их расположение.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили строение вещества.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            obs_solid: "Твердое тело: молекулы плотно упакованы в решетку и лишь дрожат на своих местах.",
+            obs_liquid: "Жидкость: молекулы плотно прилегают, но могут свободно перемещаться друг относительно друга (течь).",
+            obs_gas: "Газ: молекулы далеко друг от друга и хаотично летают по всему сосуду."
+        },
+        kz: {
+            btn_play: '<span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>',
+            btn_pause: '<span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>',
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Газдар барлық ыдысты толтырып, оның пішінін қабылдап, жан-жаққа еркін ұшады.",
+            fbA_inc: "Қате. Есіңізде болсын: мұз пішінін сақтайды, су көлемін сақтайды. Ал ештеңе сақтамайтын не?",
+            fbB_corr: "Мүлдем дұрыс! Газдарда молекулалар арасында бос орын көп, сондықтан оларды бір-біріне жақындату (сығу) оңай.",
+            fbB_inc: "Қате. Молекулалардың өздері жұмсақ немесе қатты болмайды, мәселе олардың арасындағы бос кеңістікте.",
+            fbC_corr: "Дұрыс! H₂O молекуласы әрқашан H₂O молекуласы болып қалады. Тек молекулалардың орналасуы мен қозғалыс жылдамдығы өзгереді.",
+            fbC_inc: "Қате. Зат молекулалары ерігенде немесе қайнағанда өзгермейді (әйтпесе су су болудан қалар еді). Олардың орналасуы өзгереді.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз заттың құрылысын өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            obs_solid: "Қатты дене: молекулалар торға тығыз орналасқан және өз орындарында ғана дірілдейді.",
+            obs_liquid: "Сұйықтық: молекулалар тығыз жанасады, бірақ бір-біріне қатысты еркін қозғала алады (ағады).",
+            obs_gas: "Газ: молекулалар бір-бірінен алыс орналасқан және ыдыс ішінде ретсіз ұшады."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        document.getElementById('btnPlayPause').innerHTML = isPlaying ? t('btn_pause') : t('btn_play');
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        updateObservationText();
+    }
+
+    // --- СИМУЛЯЦИЯ (ЧАСТИЦЫ) ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const stateSelect = document.getElementById('stateSelect');
+    const tempSlider = document.getElementById('tempSlider');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnReset = document.getElementById('btnReset');
+    const obsText = document.getElementById('obsText');
+
+    let isPlaying = true;
+    let particles = [];
+    const numParticles = 64; // 8x8 grid for solid
+    const radius = 8;
+    
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * 2;
+            this.vy = (Math.random() - 0.5) * 2;
+            this.homeX = x;
+            this.homeY = y;
+            this.color = '#ffffff';
+        }
+    }
+
+    function initParticles(state) {
+        particles = [];
+        let cols = 8;
+        let rows = 8;
+        let startX = canvas.width / 2 - (cols/2 * 25) + 12.5;
+        let startY = canvas.height - (rows * 25) - 20;
+
+        for (let i = 0; i < numParticles; i++) {
+            let p;
+            if (state === 'solid') {
+                // Строгая решетка внизу
+                let c = i % cols;
+                let r = Math.floor(i / cols);
+                p = new Particle(startX + c * 25, startY + r * 25);
+                p.color = '#3b82f6';
+            } else if (state === 'liquid') {
+                // Кучка внизу
+                p = new Particle(
+                    Math.random() * (canvas.width - 100) + 50,
+                    Math.random() * 100 + canvas.height - 120
+                );
+                p.color = '#0ea5e9';
+            } else {
+                // Разброс по всему объему
+                p = new Particle(
+                    Math.random() * (canvas.width - 40) + 20,
+                    Math.random() * (canvas.height - 40) + 20
+                );
+                p.color = '#f43f5e';
+            }
+            particles.push(p);
+        }
+        updateObservationText();
+    }
+
+    function updateObservationText() {
+        const state = stateSelect.value;
+        if(state === 'solid') obsText.innerHTML = t('obs_solid');
+        else if(state === 'liquid') obsText.innerHTML = t('obs_liquid');
+        else obsText.innerHTML = t('obs_gas');
+    }
+
+    // Простая физика
+    function updatePhysics() {
+        if (!isPlaying) return;
+        
+        const state = stateSelect.value;
+        const temp = parseFloat(tempSlider.value); // 1 to 100
+        const speedMult = temp / 20; // 0.05 to 5
+        const jitter = temp / 50;
+
+        // Движение
+        for (let p of particles) {
+            if (state === 'solid') {
+                // Притягиваемся к "дому"
+                let dx = p.homeX - p.x;
+                let dy = p.homeY - p.y;
+                p.vx += dx * 0.1;
+                p.vy += dy * 0.1;
+                // Тепловое дрожание (jitter)
+                p.vx += (Math.random() - 0.5) * jitter * 2;
+                p.vy += (Math.random() - 0.5) * jitter * 2;
+                // Затухание (чтобы не улетели)
+                p.vx *= 0.8;
+                p.vy *= 0.8;
+            } else if (state === 'liquid') {
+                // Гравитация (слабая)
+                p.vy += 0.2;
+                // Броуновское движение
+                p.vx += (Math.random() - 0.5) * jitter;
+                p.vy += (Math.random() - 0.5) * jitter;
+                // Лимит скорости
+                let currentSpeed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                if(currentSpeed > speedMult + 2) {
+                    p.vx *= 0.9; p.vy *= 0.9;
+                }
+            } else if (state === 'gas') {
+                // Газ: летим по прямой, скорость зависит от температуры
+                let targetSpeed = speedMult * 2 + 1;
+                let currentSpeed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                if(currentSpeed < 0.1) {
+                    p.vx = (Math.random()-0.5); p.vy = (Math.random()-0.5);
+                    currentSpeed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                }
+                p.vx = (p.vx / currentSpeed) * targetSpeed;
+                p.vy = (p.vy / currentSpeed) * targetSpeed;
+            }
+
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Столкновения со стенками
+            if (p.x < radius) { p.x = radius; p.vx *= -1; }
+            if (p.x > canvas.width - radius) { p.x = canvas.width - radius; p.vx *= -1; }
+            if (p.y < radius) { p.y = radius; p.vy *= -1; }
+            if (p.y > canvas.height - radius) { p.y = canvas.height - radius; p.vy *= -0.5; /* потеря энергии при ударе о дно для жидкости */ }
+        }
+
+        // Столкновения друг с другом (O(N^2) - для 64 частиц нормально)
+        if (state !== 'solid') {
+            for(let i=0; i<particles.length; i++) {
+                for(let j=i+1; j<particles.length; j++) {
+                    let p1 = particles[i];
+                    let p2 = particles[j];
+                    let dx = p2.x - p1.x;
+                    let dy = p2.y - p1.y;
+                    let distSq = dx*dx + dy*dy;
+                    let minDist = radius * 2;
+                    
+                    if (distSq < minDist*minDist) {
+                        let dist = Math.sqrt(distSq);
+                        if(dist === 0) { dx = 1; dy = 0; dist = 1; }
+                        let overlap = minDist - dist;
+                        let nx = dx/dist;
+                        let ny = dy/dist;
+                        
+                        // Расталкиваем
+                        p1.x -= nx * overlap * 0.5;
+                        p1.y -= ny * overlap * 0.5;
+                        p2.x += nx * overlap * 0.5;
+                        p2.y += ny * overlap * 0.5;
+                        
+                        // Простой обмен импульсом
+                        if(state === 'gas') {
+                            let tx = p1.vx; let ty = p1.vy;
+                            p1.vx = p2.vx; p1.vy = p2.vy;
+                            p2.vx = tx; p2.vy = ty;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Легкая подсветка в зависимости от состояния
+        ctx.fillStyle = stateSelect.value === 'solid' ? '#1e3a8a33' : 
+                        (stateSelect.value === 'liquid' ? '#0ea5e922' : '#f43f5e11');
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Рисуем молекулы
+        for (let p of particles) {
+            // Рисуем свечение (связи)
+            let grad = ctx.createRadialGradient(p.x, p.y, radius*0.2, p.x, p.y, radius*1.5);
+            grad.addColorStop(0, p.color);
+            grad.addColorStop(1, 'transparent');
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, radius * 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Ядро
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, radius * 0.6, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+        }
+    }
+
+    function loop() {
+        updatePhysics();
+        draw();
+        requestAnimationFrame(loop);
+    }
+
+    // Слушатели событий
+    stateSelect.addEventListener('change', () => initParticles(stateSelect.value));
+    
+    btnPlayPause.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        btnPlayPause.innerHTML = isPlaying ? t('btn_pause') : t('btn_play');
+        btnPlayPause.style.backgroundColor = isPlaying ? 'var(--secondary)' : 'var(--primary)';
+    });
+
+    btnReset.addEventListener('click', () => {
+        tempSlider.value = 50;
+        initParticles(stateSelect.value);
+        if(!isPlaying) {
+            isPlaying = true;
+            btnPlayPause.innerHTML = t('btn_pause');
+            btnPlayPause.style.backgroundColor = 'var(--secondary)';
+        }
+    });
+
+    // Запуск
+    initParticles(stateSelect.value);
+    loop();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === 'gas') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

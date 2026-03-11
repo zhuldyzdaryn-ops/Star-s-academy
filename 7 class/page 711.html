@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика: Фундаментальная наука о природе</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Plus+Jakarta+Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        physics: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            accent: '#10b981', // Emerald for interaction
+                            warm: '#f59e0b',   // Amber for heat
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0c4a6e;
+            background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, #7dd3fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .molecule {
+            transition: all 0.3s ease;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0c4a6e; }
+        ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 10px; }
+    </style>
+</head>
+<body class="font-body text-slate-200 antialiased selection:bg-physics-400 selection:text-physics-900">
+
+    <!-- Hero Header -->
+    <header class="relative min-h-[60vh] flex items-center justify-center overflow-hidden px-6 py-20">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-physics-500/20 rounded-full blur-[100px] animate-pulse-slow"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-physics-accent/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-5xl text-center">
+            <span class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wider uppercase bg-physics-500/10 border border-physics-500/20 text-physics-300 rounded-full">
+                Вводный курс
+            </span>
+            <h1 class="font-display text-5xl md:text-7xl font-bold mb-8 gradient-text leading-tight">
+                Физика — фундаментальная <br class="hidden md:block">наука о природе
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                Откройте для себя законы, управляющие Вселенной: от крошечных атомов до бескрайних галактик.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pb-20 space-y-24">
+        
+        <!-- Theory Section: Bento Grid -->
+        <section id="theory" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-2 glass-card p-8 hover:bg-white/[0.05] transition-colors group">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="p-3 bg-physics-500/20 rounded-xl text-physics-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.754 18 18.168 18.477 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-display font-bold text-white">Природа и её законы</h2>
+                </div>
+                <p class="text-slate-300 leading-relaxed mb-4">
+                    <span class="text-physics-300 font-semibold">Физика</span> (от греч. «фюзис» — природа) — это наука о наиболее простых и общих законах природы, строении и движении материи.
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    Все, что нас окружает, — это <span class="text-physics-300 font-semibold">материя</span>. Она существует в форме <span class="italic">вещества</span> (то, из чего состоят тела) и <span class="italic">полей</span> (магнитное, электрическое). Любое изменение материи называется <span class="text-physics-300 font-semibold text-physics-accent">физическим явлением</span>.
+                </p>
+            </div>
+            
+            <div class="glass-card p-8 border-physics-accent/20 bg-physics-accent/5">
+                <h3 class="text-xl font-display font-bold text-white mb-6">Методы изучения</h3>
+                <ul class="space-y-6">
+                    <li class="flex gap-4">
+                        <div class="text-physics-accent font-bold text-xl leading-none">01</div>
+                        <div>
+                            <span class="block font-bold text-white mb-1">Наблюдение</span>
+                            <span class="text-sm text-slate-400 leading-snug">Изучение без прямого воздействия (фазы Луны).</span>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div class="text-physics-accent font-bold text-xl leading-none">02</div>
+                        <div>
+                            <span class="block font-bold text-white mb-1">Эксперимент</span>
+                            <span class="text-sm text-slate-400 leading-snug">Исследование в контролируемых условиях.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Terms: Horizontal Scroll Cards -->
+        <section id="terms">
+            <h2 class="text-3xl font-display font-bold text-white mb-10 flex items-center gap-3">
+                <span class="w-8 h-1 bg-physics-accent rounded-full"></span>
+                Виды явлений
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">⚙️</div>
+                    <span class="text-sm font-bold text-white block">Механические</span>
+                </div>
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">🔥</div>
+                    <span class="text-sm font-bold text-white block">Тепловые</span>
+                </div>
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">⚡</div>
+                    <span class="text-sm font-bold text-white block">Электрические</span>
+                </div>
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">🧲</div>
+                    <span class="text-sm font-bold text-white block">Магнитные</span>
+                </div>
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">🌈</div>
+                    <span class="text-sm font-bold text-white block">Световые</span>
+                </div>
+                <div class="glass-card p-6 text-center hover:-translate-y-2 transition-transform cursor-default">
+                    <div class="text-3xl mb-3">🔊</div>
+                    <span class="text-sm font-bold text-white block">Звуковые</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Lab: Animation Section -->
+        <section id="lab" class="glass-card overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <div class="p-8 md:p-12 space-y-8">
+                    <div>
+                        <h2 class="text-3xl font-display font-bold text-white mb-4">Интерактивная лаборатория</h2>
+                        <p class="text-slate-400">Сравните пассивное наблюдение и активный эксперимент на примере плавления льда.</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <button onclick="setMode('observation')" id="btn-obs" class="flex-1 px-6 py-4 rounded-2xl bg-physics-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-physics-500/20">
+                                Наблюдение
+                            </button>
+                            <button onclick="setMode('experiment')" id="btn-exp" class="flex-1 px-6 py-4 rounded-2xl bg-white/10 text-white font-bold transition-all hover:bg-white/20 active:scale-95 border border-white/10">
+                                Эксперимент
+                            </button>
+                        </div>
+                        
+                        <div id="controls-exp" class="hidden animate-fade-in space-y-4 pt-4">
+                            <label class="text-sm font-bold text-physics-warm uppercase tracking-widest">Мощность горелки</label>
+                            <input type="range" id="heat-range" min="0" max="100" value="0" class="w-full h-2 bg-physics-900 rounded-lg appearance-none cursor-pointer accent-physics-warm">
+                            <div class="flex justify-between text-xs text-slate-500">
+                                <span>Выкл</span>
+                                <span>Максимум</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-physics-900/50 rounded-2xl border border-white/5">
+                        <p id="lab-desc" class="text-sm leading-relaxed italic text-slate-400">
+                            В режиме наблюдения лед тает под воздействием окружающей среды. Это долгий процесс.
+                        </p>
+                    </div>
+                </div>
+
+                <div id="canvas-container" class="relative min-h-[400px] bg-physics-900/50 flex items-center justify-center overflow-hidden border-l border-white/10">
+                    <!-- Glass Beaker -->
+                    <div class="relative w-48 h-64 bg-white/10 border-2 border-white/20 rounded-b-[40px] z-10 overflow-hidden">
+                        <!-- Water/Ice Container -->
+                        <div id="substance" class="absolute bottom-0 w-full bg-physics-400/30 transition-all duration-1000" style="height: 40%">
+                            <!-- Molecules will be generated here -->
+                            <div id="molecules-grid" class="grid grid-cols-4 gap-2 p-4 h-full"></div>
+                        </div>
+                    </div>
+                    <!-- Burner -->
+                    <div id="burner" class="absolute bottom-10 w-24 h-4 bg-slate-600 rounded-full opacity-0 transition-opacity">
+                        <div id="flame" class="absolute -top-12 left-1/2 -translate-x-1/2 w-8 h-12 bg-physics-warm rounded-full blur-md animate-pulse"></div>
+                    </div>
+                    
+                    <div id="timer" class="absolute top-8 right-8 font-mono text-physics-400 bg-black/40 px-4 py-2 rounded-lg border border-white/10">
+                        Время: <span id="time-val">0.0</span>с
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Solved Examples -->
+        <section id="examples" class="space-y-8">
+            <h2 class="text-3xl font-display font-bold text-white text-center">Разбор примеров</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Example 1 -->
+                <div class="glass-card overflow-hidden flex flex-col">
+                    <div class="bg-physics-500/10 p-6 border-b border-white/10">
+                        <h4 class="font-bold text-physics-300">Пример №1: Свет vs Звук</h4>
+                    </div>
+                    <div class="p-8 space-y-6 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-physics-accent mb-2 block">Условие</span>
+                            <p class="text-white">Гроза: вспышка молнии и раскаты грома. Определите последовательность.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                <span class="block text-slate-500 mb-1 italic text-[10px] uppercase">Дано</span>
+                                Скорость света: ~300к км/с<br>Скорость звука: ~340 м/с
+                            </div>
+                            <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                <span class="block text-slate-500 mb-1 italic text-[10px] uppercase">Логика</span>
+                                Свет доходит почти мгновенно, звуку нужно время.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-physics-accent/10 p-6 border-t border-physics-accent/20">
+                        <p class="text-sm"><strong class="text-physics-accent">Вердикт:</strong> Сначала мы видим молнию, а затем слышим гром.</p>
+                    </div>
+                </div>
+
+                <!-- Example 2 -->
+                <div class="glass-card overflow-hidden flex flex-col">
+                    <div class="bg-physics-500/10 p-6 border-b border-white/10">
+                        <h4 class="font-bold text-physics-300">Пример №2: Сладкий чай</h4>
+                    </div>
+                    <div class="p-8 space-y-6 flex-grow">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-physics-accent mb-2 block">Условие</span>
+                            <p class="text-white">Сахар исчез в стакане с горячим чаем, сделав его сладким.</p>
+                        </div>
+                        <div class="bg-white/5 p-4 rounded-xl border border-white/5 space-y-2">
+                            <p class="text-sm leading-relaxed">
+                                <span class="text-physics-300">Анализ:</span> Молекулы сахара проникают между молекулами воды. Это явление — <strong>Диффузия</strong>. Нагревание ускоряет процесс.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-physics-accent/10 p-6 border-t border-physics-accent/20">
+                        <p class="text-sm"><strong class="text-physics-accent">Вердикт:</strong> Физическое явление — диффузия, ускоренная теплом.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Section -->
+        <section id="practice" class="space-y-12">
+            <div class="text-center">
+                <h2 class="text-3xl font-display font-bold text-white mb-4">Проверьте себя</h2>
+                <p class="text-slate-400">Выберите свой уровень сложности</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Level A -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="step-number w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white">A</span>
+                        <h3 class="font-bold text-white">Базовый</h3>
+                    </div>
+                    <div class="glass-card p-6 border-l-4 border-physics-400">
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            Выберите правильное утверждение:<br><br>
+                            1. Вода — это тело, а капля — вещество.<br>
+                            2. <strong>Стакан — это тело, а стекло — вещество.</strong><br>
+                            3. Кипение — магнитное явление.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Level B -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="step-number w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white">B</span>
+                        <h3 class="font-bold text-white">Средний</h3>
+                    </div>
+                    <div class="glass-card p-6 border-l-4 border-physics-accent">
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            Классифицируйте: <br>
+                            <span class="italic text-physics-300">эхо, радуга, нагревание чайника, работа компаса, падение яблока.</span><br><br>
+                            Обоснуйте один пример.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Level C -->
+                <div class="space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="step-number w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white">C</span>
+                        <h3 class="font-bold text-white">Сложный</h3>
+                    </div>
+                    <div class="glass-card p-6 border-l-4 border-physics-warm">
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            Предложите план опыта, доказывающего, что <strong>воздух занимает объем</strong>, используя только стакан и таз с водой.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Descriptors -->
+            <div class="max-w-2xl mx-auto p-6 bg-physics-500/5 rounded-2xl border border-physics-500/10">
+                <h4 class="text-xs font-bold text-physics-400 uppercase tracking-[0.2em] mb-4">Дескрипторы</h4>
+                <ul class="text-sm text-slate-400 space-y-2 list-disc list-inside">
+                    <li>Различает физическое тело и вещество.</li>
+                    <li>Классифицирует физические явления по видам.</li>
+                    <li>Описывает роль эксперимента в науке.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Videos -->
+        <section id="videos" class="space-y-10">
+            <h2 class="text-3xl font-display font-bold text-white text-center">Медиатека знаний</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video 1 -->
+                <div class="glass-card overflow-hidden group">
+                    <div class="aspect-video bg-black relative">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed?listType=search&list=введение+в+физику" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-5">
+                        <h5 class="font-bold text-white mb-2 group-hover:text-physics-400 transition-colors">Физика мира</h5>
+                        <p class="text-xs text-slate-500">Обзор того, как физика объясняет всё: от атомов до галактик.</p>
+                    </div>
+                </div>
+                <!-- Video 2 -->
+                <div class="glass-card overflow-hidden group">
+                    <div class="aspect-video bg-black relative">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/results?search_query=физические+опыты+наблюдение+эксперимент" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-5">
+                        <h5 class="font-bold text-white mb-2 group-hover:text-physics-400 transition-colors">Опыты для школы</h5>
+                        <p class="text-xs text-slate-500">Демонстрация диффузии и теплового расширения в действии.</p>
+                    </div>
+                </div>
+                <!-- Video 3 -->
+                <div class="glass-card overflow-hidden group">
+                    <div class="aspect-video bg-black relative">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed?listType=search&list=TED-Ed+physics+basics" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-5">
+                        <h5 class="font-bold text-white mb-2 group-hover:text-physics-400 transition-colors">TED-Ed: Природа</h5>
+                        <p class="text-xs text-slate-500">Визуально богатые объяснения сложных природных явлений.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reflection -->
+        <section id="reflection" class="text-center py-12 px-6 glass-card border-physics-accent/30 bg-physics-accent/5">
+            <h2 class="text-2xl font-display font-bold text-white mb-6">Ваш шаг в науку</h2>
+            <p class="text-slate-300 max-w-2xl mx-auto mb-8 leading-relaxed">
+                Задание для размышления: найдите прямо сейчас вокруг себя одно <strong>физическое тело</strong>, одно <strong>вещество</strong> и одно <strong>физическое явление</strong>.
+            </p>
+            <div class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-physics-accent text-physics-900 font-bold">
+                Поздравляем, вы исследователь!
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Lab Logic
+        let mode = 'observation';
+        let timerInterval;
+        let time = 0;
+        let molecules = [];
+        const grid = document.getElementById('molecules-grid');
+        const substance = document.getElementById('substance');
+        const heatRange = document.getElementById('heat-range');
+        const timerText = document.getElementById('time-val');
+        const burner = document.getElementById('burner');
+        const flame = document.getElementById('flame');
+        const labDesc = document.getElementById('lab-desc');
+
+        // Initialize Molecules
+        for (let i = 0; i < 12; i++) {
+            const mol = document.createElement('div');
+            mol.className = 'molecule w-4 h-4 bg-physics-200 rounded-full mx-auto';
+            grid.appendChild(mol);
+            molecules.push(mol);
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            resetLab();
+            
+            document.getElementById('btn-obs').className = mode === 'observation' 
+                ? 'flex-1 px-6 py-4 rounded-2xl bg-physics-500 text-white font-bold transition-all shadow-lg' 
+                : 'flex-1 px-6 py-4 rounded-2xl bg-white/10 text-white font-bold transition-all border border-white/10';
+            
+            document.getElementById('btn-exp').className = mode === 'experiment' 
+                ? 'flex-1 px-6 py-4 rounded-2xl bg-physics-warm text-white font-bold transition-all shadow-lg' 
+                : 'flex-1 px-6 py-4 rounded-2xl bg-white/10 text-white font-bold transition-all border border-white/10';
+
+            document.getElementById('controls-exp').style.display = mode === 'experiment' ? 'block' : 'none';
+            burner.style.opacity = mode === 'experiment' ? '1' : '0';
+            
+            labDesc.innerText = mode === 'observation' 
+                ? 'В режиме наблюдения лед тает под воздействием окружающей среды. Это долгий процесс.' 
+                : 'В режиме эксперимента вы управляете горелкой. Чем выше температура, тем быстрее движутся молекулы!';
+            
+            startLab();
+        }
+
+        function resetLab() {
+            clearInterval(timerInterval);
+            time = 0;
+            timerText.innerText = '0.0';
+            substance.style.height = '40%';
+            substance.style.backgroundColor = 'rgba(56, 189, 248, 0.3)';
+            molecules.forEach(m => {
+                m.style.transform = 'translate(0, 0)';
+                m.style.backgroundColor = '#bae6fd';
+            });
+        }
+
+        function startLab() {
+            timerInterval = setInterval(() => {
+                let speed = mode === 'observation' ? 0.1 : (parseInt(heatRange.value) / 10 + 0.1);
+                time += 0.1;
+                timerText.innerText = time.toFixed(1);
+
+                // Update molecules vibration
+                molecules.forEach(m => {
+                    let intensity = speed * 5;
+                    let x = (Math.random() - 0.5) * intensity;
+                    let y = (Math.random() - 0.5) * intensity;
+                    m.style.transform = `translate(${x}px, ${y}px)`;
+                });
+
+                // Update substance state
+                if (time > (20 / (speed + 0.5))) {
+                    substance.style.height = '35%';
+                    substance.style.backgroundColor = 'rgba(14, 165, 233, 0.6)';
+                    molecules.forEach(m => m.style.backgroundColor = '#0ea5e9');
+                }
+
+                if (time > 100) clearInterval(timerInterval);
+            }, 100);
+        }
+
+        heatRange.addEventListener('input', (e) => {
+            let val = e.target.value;
+            flame.style.transform = `translateX(-50%) scale(${0.5 + val/50})`;
+            flame.style.opacity = 0.3 + (val / 140);
+        });
+
+        // Start in observation mode
+        setMode('observation');
+    </script>
+</body>
+</html>

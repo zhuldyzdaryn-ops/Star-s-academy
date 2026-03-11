@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Основы календаря (сутки, месяц, год) — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc; /* Светло-серо-синий фон */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #1e40af; /* Глубокий синий (космос/время) */
+            --primary-hover: #1e3a8a;
+            --secondary: #0284c7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #dbeafe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #020617;
+                --text-color: #f8fafc;
+                --card-bg: #0f172a;
+                --border: #1e293b;
+                --text-muted: #94a3b8;
+                --formula-bg: #172554;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: column;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: #020617; /* Всегда темный космос */
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 15px;
+            border: 1px solid #334155;
+            pointer-events: none;
+        }
+
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .hud-val {
+            font-weight: bold;
+            color: #38bdf8;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(30, 64, 175, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(30, 64, 175, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(30, 64, 175, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(30, 64, 175, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Основы календаря (сутки, месяц, год)</span>
+            <span class="lang-kz">Күнтізбе негіздері (тәулік, ай, жыл)</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему в году 365 дней, а в сутках 24 часа? Кто придумал високосный год? Оказывается, наш календарь — это не просто выдумка людей, а строгое отражение законов космоса и движения планет!</span>
+            <span class="lang-kz">Неліктен бір жылда 365 күн, ал бір тәулікте 24 сағат бар? Кібісе жылды кім ойлап тапты? Сөйтсек, біздің күнтізбеміз — адамдардың жай ғана ойлап тапқаны емес, ғарыш заңдары мен планеталар қозғалысының қатаң көрінісі екен!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: СУТКИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Сутки — вращение Земли вокруг своей оси</span>
+            <span class="lang-kz">Тәулік — Жердің өз осінен айналуы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Самая главная мера времени для человека — это смена дня и ночи. Земля не стоит на месте, она постоянно вращается вокруг воображаемой линии, проходящей через полюса — своей оси.</span>
+            <span class="lang-kz">Адам үшін уақыттың ең басты өлшемі — күн мен түннің ауысуы. Жер бір орында тұрмайды, ол үнемі полюстер арқылы өтетін қиял-ғажайып сызық — өз осінің айналасында айналады.</span>
+        </p>
+        <div class="observation" style="background-color: rgba(2, 132, 199, 0.1); border-left-color: var(--secondary);">
+            <span class="lang-ru">Время, за которое Земля совершает <strong>один полный оборот вокруг своей оси</strong>, называется <strong>сутками</strong>. Одни сутки равны 24 часам.</span>
+            <span class="lang-kz">Жердің <strong>өз осінен бір толық айналым</strong> жасайтын уақыты <strong>тәулік</strong> деп аталады. Бір тәулік 24 сағатқа тең.</span>
+        </div>
+        <p style="margin-top: 10px;">
+            <span class="lang-ru">Та сторона Земли, которая повернута к Солнцу, освещается — там наступает день. На противоположной стороне, оказавшейся в тени, царит ночь.</span>
+            <span class="lang-kz">Жердің Күнге қараған жағы жарықтандырылады — ол жерде күндіз болады. Көлеңкеде қалған қарама-қарсы жағында түн орнайды.</span>
+        </p>
+    </section>
+
+    <!-- 3. ТЕОРИЯ: МЕСЯЦ И ГОД -->
+    <section>
+        <h2>
+            <span class="lang-ru">Месяц и Год — орбитальные движения</span>
+            <span class="lang-kz">Ай және Жыл — орбиталық қозғалыстар</span>
+        </h2>
+        
+        <h3>
+            <span class="lang-ru">Месяц (Движение Луны)</span>
+            <span class="lang-kz">Ай (Айдың қозғалысы)</span>
+        </h3>
+        <p>
+            <span class="lang-ru">У Земли есть естественный спутник — Луна. Луна вращается вокруг Земли. Древние люди заметили, что Луна меняет свой вид (фазы Луны: от новолуния до полнолуния и обратно).</span>
+            <span class="lang-kz">Жердің табиғи серігі бар — ол Ай. Ай Жерді айнала қозғалады. Ежелгі адамдар Айдың өз бейнесін өзгертетінін байқаған (Ай фазалары: жаңа айдан толған айға дейін және керісінше).</span>
+        </p>
+        <p>
+            <span class="lang-ru"><strong>Один астрономический месяц</strong> — это время полного оборота Луны вокруг Земли со сменой всех лунных фаз. Он длится примерно <strong>29,5 суток</strong>. Именно поэтому в наших календарных месяцах от 28 до 31 дня.</span>
+            <span class="lang-kz"><strong>Бір астрономиялық ай</strong> — бұл барлық ай фазаларының өзгеруімен Айдың Жерді толық айналып шығу уақыты. Ол шамамен <strong>29,5 тәулікке</strong> созылады. Сондықтан біздің күнтізбелік айларымызда 28-ден 31 күнге дейін болады.</span>
+        </p>
+        <br>
+
+        <h3>
+            <span class="lang-ru">Год (Движение Земли вокруг Солнца)</span>
+            <span class="lang-kz">Жыл (Жердің Күнді айнала қозғалуы)</span>
+        </h3>
+        <p>
+            <span class="lang-ru">Земля не только вращается вокруг своей оси, но и мчится по огромной круговой орбите вокруг Солнца. Это движение приводит к смене времен года (зима, весна, лето, осень).</span>
+            <span class="lang-kz">Жер өз осінен айналып қана қоймайды, сонымен бірге Күнді айнала үлкен шеңберлік орбитамен ұшады. Бұл қозғалыс жыл мезгілдерінің (қыс, көктем, жаз, күз) ауысуына әкеледі.</span>
+        </p>
+        
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Сколько длится год?</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Жыл қаншаға созылады?</span>
+            <span class="math">1 год &asymp; 365 суток и 6 часов</span>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">
+                <strong>Год</strong> — это время одного полного оборота Земли вокруг Солнца. Точное время оборота составляет 365 суток 5 часов 48 минут и 46 секунд (округляют до 365 суток и 6 часов). <br><br>
+                <strong>Високосный год:</strong> Так как каждый год остается «лишних» 6 часов, за 4 года накапливается ровно 24 часа (одни сутки). Поэтому раз в 4 года в календарь добавляют 29 февраля, и в таком году становится <strong>366 дней</strong>!
+                </span>
+                <span class="lang-kz">
+                <strong>Жыл</strong> — бұл Жердің Күнді бір толық айналып шығу уақыты. Айналудың нақты уақыты 365 тәулік 5 сағат 48 минут 46 секундты құрайды (365 тәулік пен 6 сағатқа дейін дөңгелектейді). <br><br>
+                <strong>Кібісе жыл:</strong> Әр жыл сайын «артық» 6 сағат қалатындықтан, 4 жыл ішінде дәл 24 сағат (бір тәулік) жиналады. Сондықтан әр 4 жыл сайын күнтізбеге 29 ақпан қосылады, және мұндай жылда <strong>366 күн</strong> болады!
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 4. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Космический календарь</span>
+            <span class="lang-kz">Симуляция: Ғарыштық күнтізбе</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="speedSlider" style="color: var(--text-color)">
+                        <span class="lang-ru">Скорость (Дней в секунду):</span>
+                        <span class="lang-kz">Жылдамдық (Секундына күндер):</span>
+                        <span id="speedVal">5</span>
+                    </label>
+                    <input type="range" id="speedSlider" min="1" max="60" step="1" value="5">
+                </div>
+                <div class="buttons">
+                    <button id="btnTogglePlay">
+                        <span class="lang-ru">Пауза</span><span class="lang-kz">Кідірту</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Сброс</span><span class="lang-kz">Қалпына келтіру</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <!-- Оверлей с показателями времени -->
+                <div class="hud">
+                    <div class="hud-row">
+                        <span class="lang-ru">Прошло Суток:</span><span class="lang-kz">Өткен Тәулік:</span> 
+                        <span class="hud-val" id="hudDays">0</span>
+                    </div>
+                    <div class="hud-row">
+                        <span class="lang-ru">Лунных Месяцев:</span><span class="lang-kz">Айлық Айлар:</span> 
+                        <span class="hud-val" id="hudMonths" style="color: #9ca3af;">0</span>
+                    </div>
+                    <div class="hud-row">
+                        <span class="lang-ru">Земных Лет:</span><span class="lang-kz">Жер Жылдары:</span> 
+                        <span class="hud-val" id="hudYears" style="color: #10b981;">0</span>
+                    </div>
+                </div>
+                <canvas id="simCanvas" width="800" height="500"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru">Поиграйте со скоростью симуляции. 1 полный оборот Луны вокруг Земли добавит 1 месяц. 1 полный оборот Земли вокруг Солнца добавит 1 год. Сможете дождаться високосного года (когда счетчик дней достигнет 1461)?</span>
+                <span class="lang-kz">Симуляция жылдамдығын өзгертіп көріңіз. Айдың Жерді 1 толық айналуы 1 айды қосады. Жердің Күнді 1 толық айналуы 1 жылды қосады. Сіз кібісе жылды (күндер санағышы 1461-ге жеткенде) күте аласыз ба?</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 5. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример расчета</span>
+            <span class="lang-kz">Есептеу мысалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Задача:</strong> Сколько суток в 4 годах подряд, если один из них високосный?</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Егер олардың біреуі кібісе жыл болса, қатарынан 4 жылда қанша тәулік бар?</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать расчет</span><span class="lang-kz">Есептеуді көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>
+                Обычный год длится 365 суток.<br>
+                Високосный год длится 366 суток.<br>
+                В цикле из 4 лет есть 3 обычных и 1 високосный год.<br>
+                Количество суток = (3 &middot; 365) + 366 = 1095 + 366 = <strong>1461 сутки</strong>.
+                </span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>
+                Қалыпты жыл 365 тәулікке созылады.<br>
+                Кібісе жыл 366 тәулікке созылады.<br>
+                4 жылдық циклде 3 қалыпты және 1 кібісе жыл бар.<br>
+                Тәуліктер саны = (3 &middot; 365) + 366 = 1095 + 366 = <strong>1461 тәулік</strong>.
+                </span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Основы)</span>
+                <span class="lang-kz">1-тапсырма (Негіздері)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Какое астрономическое явление является причиной смены дня и ночи на Земле?</span>
+                <span class="lang-kz">Жер бетінде күн мен түннің ауысуына қандай астрономиялық құбылыс себеп болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вращение Луны вокруг Земли" data-kz="Айдың Жерді айнала қозғалуы">Вращение Луны вокруг Земли</option>
+                    <option value="2" data-ru="Вращение Земли вокруг своей оси" data-kz="Жердің өз осінен айналуы">Вращение Земли вокруг своей оси</option>
+                    <option value="3" data-ru="Вращение Земли вокруг Солнца" data-kz="Жердің Күнді айнала қозғалуы">Вращение Земли вокруг Солнца</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Расчет)</span>
+                <span class="lang-kz">2-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Примерно сколько лунных месяцев укладывается в один земной год (365 суток)? Разделите 365 на 29.5 и округлите до целого числа.</span>
+                <span class="lang-kz">Бір жер жылына (365 тәулік) шамамен қанша айлық ай сыяды? 365-ті 29,5-ке бөліп, бүтін санға дейін дөңгелектеңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Количество месяцев" data-placeholder-kz="Айлар саны" placeholder="Количество месяцев">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Именно поэтому в нашем календаре 12 месяцев!</span>
+                <span class="lang-kz">Сондықтан біздің күнтізбемізде 12 ай бар!</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понимаю, почему происходят смена дня и ночи.</span>
+                <span class="lang-kz">Мен күн мен түннің неліктен ауысатынын түсінемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю, чему равен один лунный месяц.</span>
+                <span class="lang-kz">Бір айлық ай неге тең екенін білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу объяснить, зачем нужен високосный год.</span>
+                <span class="lang-kz">Кібісе жыл не үшін қажет екенін түсіндіре аламын.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 8. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что определяет продолжительность одних суток?</span>
+                <span class="lang-kz">1. Бір тәуліктің ұзақтығын не анықтайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Оборот Луны вокруг Земли</span><span class="lang-kz">Айдың Жерді айналуы</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Оборот Земли вокруг своей оси</span><span class="lang-kz">Жердің өз осінен айналуы</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Оборот Земли вокруг Солнца</span><span class="lang-kz">Жердің Күнді айналуы</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Смена лунных фаз</span><span class="lang-kz">Ай фазаларының өзгеруі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Что определяет продолжительность одного года?</span>
+                <span class="lang-kz">2. Бір жылдың ұзақтығын не анықтайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Оборот Земли вокруг своей оси</span><span class="lang-kz">Жердің өз осінен айналуы</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Оборот Луны вокруг Земли</span><span class="lang-kz">Айдың Жерді айналуы</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Оборот Земли вокруг Солнца</span><span class="lang-kz">Жердің Күнді айналуы</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Вращение Солнца</span><span class="lang-kz">Күннің айналуы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">3. Сколько дней в високосном году?</span>
+                <span class="lang-kz">3. Кібісе жылда неше күн бар?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">365</span><span class="lang-kz">365</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">366</span><span class="lang-kz">366</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">364</span><span class="lang-kz">364</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">360</span><span class="lang-kz">360</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Приблизительная продолжительность астрономического лунного месяца:</span>
+                <span class="lang-kz">4. Астрономиялық айлық айдың шамамен ұзақтығы:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">29,5 суток</span><span class="lang-kz">29,5 тәулік</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">24 часа</span><span class="lang-kz">24 сағат</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">365 суток</span><span class="lang-kz">365 тәулік</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">7 суток</span><span class="lang-kz">7 тәулік</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">5. Как часто бывает високосный год?</span>
+                <span class="lang-kz">5. Кібісе жыл қаншалықты жиі болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Каждый год</span><span class="lang-kz">Жыл сайын</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Раз в 10 лет</span><span class="lang-kz">10 жылда бір рет</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Раз в 100 лет</span><span class="lang-kz">100 жылда бір рет</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Один раз в 4 года</span><span class="lang-kz">4 жылда бір рет</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Вращение Земли вокруг своей оси подставляет под лучи Солнца то одну, то другую сторону планеты.",
+            fbA_inc: "Неверно. Вспомните, как Земля подставляет Солнцу свои разные стороны в течение 24 часов.",
+            fbB_corr: "Точно! 365 / 29.5 &asymp; 12.37. Округленно 12. Именно поэтому в году 12 месяцев!",
+            fbB_inc: "Неверно. Разделите 365 на 29.5 и округлите. (Ответ должен быть между 10 и 15).",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_play: "Продолжить",
+            btn_pause: "Пауза",
+            show_sol: "Показать расчет",
+            hide_sol: "Скрыть расчет"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Жердің өз осінен айналуы планетаның бірде бір жағын, бірде екінші жағын Күн сәулесіне тосады.",
+            fbA_inc: "Қате. Жер 24 сағат ішінде өзінің әртүрлі жақтарын Күнге қалай тосатынын есіңізге түсіріңіз.",
+            fbB_corr: "Дұрыс! 365 / 29,5 &asymp; 12,37. Дөңгелектегенде 12. Сондықтан бір жылда 12 ай бар!",
+            fbB_inc: "Қате. 365-ті 29,5-ке бөліп, дөңгелектеңіз. (Жауап 10 мен 15 арасында болуы керек).",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_play: "Жалғастыру",
+            btn_pause: "Кідірту",
+            show_sol: "Есептеуді көрсету",
+            hide_sol: "Есептеуді жасыру"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        // Update Buttons
+        updatePlayBtnText();
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+    }
+
+    // --- СИМУЛЯЦИЯ: КАЛЕНДАРЬ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const speedSlider = document.getElementById('speedSlider');
+    const speedVal = document.getElementById('speedVal');
+    const btnTogglePlay = document.getElementById('btnTogglePlay');
+    const btnReset = document.getElementById('btnReset');
+    
+    const hudDays = document.getElementById('hudDays');
+    const hudMonths = document.getElementById('hudMonths');
+    const hudYears = document.getElementById('hudYears');
+
+    let animFrame;
+    let isPlaying = true;
+    let totalDays = 0; // Главный счетчик времени
+    let lastTime = 0;
+
+    // Звезды для фона
+    const stars = [];
+    for(let i=0; i<150; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 1.5,
+            opacity: Math.random()
+        });
+    }
+
+    function updatePlayBtnText() {
+        if(isPlaying) {
+            btnTogglePlay.innerHTML = `<span class="lang-${currentLang}">${t('btn_pause')}</span>`;
+        } else {
+            btnTogglePlay.innerHTML = `<span class="lang-${currentLang}">${t('btn_play')}</span>`;
+        }
+    }
+
+    speedSlider.addEventListener('input', () => {
+        speedVal.textContent = speedSlider.value;
+    });
+
+    btnTogglePlay.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        updatePlayBtnText();
+        if(isPlaying) {
+            lastTime = performance.now();
+            animateScene(lastTime);
+        } else {
+            cancelAnimationFrame(animFrame);
+        }
+    });
+    
+    btnReset.addEventListener('click', () => {
+        totalDays = 0;
+        updateHUD();
+        if(!isPlaying) drawScene();
+    });
+
+    function updateHUD() {
+        hudDays.textContent = Math.floor(totalDays);
+        hudMonths.textContent = Math.floor(totalDays / 29.53);
+        hudYears.textContent = Math.floor(totalDays / 365.25);
+    }
+
+    function drawScene() {
+        ctx.fillStyle = '#020617';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        // Рисуем звезды
+        stars.forEach(s => {
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+            ctx.fill();
+        });
+
+        // 1. Рисуем Солнце (Центр)
+        ctx.shadowBlur = 30;
+        ctx.shadowColor = '#fbbf24';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 35, 0, Math.PI * 2);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fill();
+        ctx.shadowBlur = 0; 
+        
+        // Орбита Земли
+        const earthDist = 180;
+        ctx.beginPath();
+        ctx.arc(cx, cy, earthDist, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // 2. Рассчитываем углы на основе totalDays
+        // Земля вокруг Солнца (365.25 дней = 2*PI)
+        const earthOrbitAngle = (totalDays / 365.25) * Math.PI * 2;
+        
+        // Луна вокруг Земли (29.53 дней = 2*PI)
+        const moonOrbitAngle = (totalDays / 29.53) * Math.PI * 2;
+        
+        // Вращение Земли вокруг своей оси (1 день = 2*PI)
+        const earthSpinAngle = totalDays * Math.PI * 2;
+
+        // Позиция Земли
+        const earthX = cx + Math.cos(earthOrbitAngle) * earthDist;
+        const earthY = cy + Math.sin(earthOrbitAngle) * earthDist;
+
+        // Орбита Луны (относительно Земли)
+        const moonDist = 45;
+        ctx.beginPath();
+        ctx.arc(earthX, earthY, moonDist, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.stroke();
+
+        // 3. Рисуем Землю
+        ctx.save();
+        ctx.translate(earthX, earthY);
+        ctx.rotate(earthSpinAngle);
+        // Сама планета
+        ctx.beginPath();
+        ctx.arc(0, 0, 15, 0, Math.PI * 2);
+        ctx.fillStyle = '#3b82f6';
+        ctx.fill();
+        // Материки (условные точки для видимости вращения)
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath(); ctx.arc(-5, -3, 4, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(6, 4, 5, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+
+        // Тень на Земле (опционально, для красоты - всегда от Солнца)
+        // Чтобы сделать реалистично, полушарие от Солнца должно быть темным
+        ctx.save();
+        ctx.translate(earthX, earthY);
+        ctx.rotate(earthOrbitAngle + Math.PI/2); // перпендикулярно направлению к Солнцу
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.beginPath();
+        ctx.arc(0, 0, 15, 0, Math.PI);
+        ctx.fill();
+        ctx.restore();
+
+        // 4. Позиция Луны
+        const moonX = earthX + Math.cos(moonOrbitAngle) * moonDist;
+        const moonY = earthY + Math.sin(moonOrbitAngle) * moonDist;
+        
+        // Рисуем Луну
+        ctx.beginPath();
+        ctx.arc(moonX, moonY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fill();
+    }
+
+    function animateScene(timestamp) {
+        if (!isPlaying) return;
+        
+        if (!lastTime) lastTime = timestamp;
+        const dt = (timestamp - lastTime) / 1000; // секунды
+        lastTime = timestamp;
+        
+        // Получаем скорость из ползунка (дней в секунду реального времени)
+        const daysPerSec = parseFloat(speedSlider.value);
+        
+        totalDays += daysPerSec * dt;
+        
+        updateHUD();
+        drawScene();
+        
+        animFrame = requestAnimationFrame(animateScene);
+    }
+
+    // Инициализация
+    const solutionBox = document.getElementById('solutionBox');
+    document.getElementById('toggleSolution').addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            document.getElementById('toggleSolution').innerHTML = `<span class="lang-${currentLang}">${t('show_sol')}</span>`;
+        } else {
+            solutionBox.style.display = 'block';
+            document.getElementById('toggleSolution').innerHTML = `<span class="lang-${currentLang}">${t('hide_sol')}</span>`;
+        }
+        toggleLang(); // update translations inside
+    });
+
+    updatePlayBtnText();
+    
+    // Запускаем симуляцию после того, как все загрузится
+    window.onload = function() {
+        lastTime = performance.now();
+        animateScene(lastTime);
+    };
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseInt(document.getElementById('taskB').value.replace(/\s+/g, ''));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 12) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

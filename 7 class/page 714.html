@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практическая работа №1: Запись больших и малых чисел</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        glass: "rgba(255, 255, 255, 0.7)",
+                        accent: {
+                            light: '#E0F2FE',
+                            DEFAULT: '#0EA5E9',
+                            dark: '#0369A1',
+                        },
+                        secondary: '#6366F1',
+                        surface: '#F8FAFC',
+                    },
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%);
+        }
+        .prefix-row:nth-child(even) { background-color: rgba(241, 245, 249, 0.5); }
+        .math-font { font-family: 'Times New Roman', serif; font-style: italic; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-surface font-body text-slate-800 antialiased selection:bg-accent/20">
+
+    <!-- Hero Header -->
+    <header class="relative min-h-[40vh] flex items-center justify-center overflow-hidden bg-slate-950 px-6 py-20">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary rounded-full blur-[120px]"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-4xl text-center space-y-6 animate-fade-in-up">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent font-semibold text-sm tracking-wider uppercase">
+                Физика • 7 класс
+            </span>
+            <h1 class="text-4xl md:text-6xl font-display font-bold text-white tracking-tight">
+                Практическая работа №1
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 font-light italic">
+                «Запись больших и малых чисел»
+            </p>
+            <div class="pt-8 flex flex-col items-center gap-4">
+                <div class="flex items-center gap-2 text-slate-400 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>ГОСО 7.1.2.3</span>
+                </div>
+                <p class="max-w-2xl text-slate-300 bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                    Цель обучения: Применять кратные и дольные приставки (микро, милли, санти, деци, кило, мега).
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-16 space-y-24">
+
+        <!-- Observation Section -->
+        <section class="grid lg:grid-cols-2 gap-12 items-center reveal">
+            <div class="space-y-6">
+                <div class="inline-flex items-center gap-3 text-accent font-bold">
+                    <span class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">01</span>
+                    <h2 class="text-2xl font-display uppercase tracking-widest">Наблюдение</h2>
+                </div>
+                <h3 class="text-3xl font-display font-bold leading-tight">Мир огромных расстояний и крошечных частиц</h3>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    В физике мы постоянно сталкиваемся с объектами, размеры которых трудно вообразить. Как записать эти числа компактно, чтобы не запутаться в нулях?
+                </p>
+                <div class="space-y-4">
+                    <div class="p-4 bg-white rounded-xl shadow-sm border-l-4 border-accent">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Макромир</span>
+                        <p class="text-lg font-mono text-slate-700 mt-1">40 000 000 000 000 000 м</p>
+                        <p class="text-sm text-slate-500 italic">— расстояние до Проксимы Центавра</p>
+                    </div>
+                    <div class="p-4 bg-white rounded-xl shadow-sm border-l-4 border-secondary">
+                        <span class="text-xs font-bold text-slate-400 uppercase">Микромир</span>
+                        <p class="text-lg font-mono text-slate-700 mt-1">0,000 000 000 3 м</p>
+                        <p class="text-sm text-slate-500 italic">— размер молекулы воды</p>
+                    </div>
+                </div>
+            </div>
+            <div class="relative glass-card rounded-3xl p-8 overflow-hidden group">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl group-hover:bg-accent/20 transition-colors"></div>
+                <div class="relative z-10 space-y-4">
+                    <div class="text-6xl font-display font-black text-slate-100 absolute -top-4 right-4">?</div>
+                    <h4 class="text-xl font-bold">Решение:</h4>
+                    <p class="text-slate-600">Для удобства используют <strong>стандартный вид числа</strong> и специальные <strong>десятичные приставки</strong>.</p>
+                    <ul class="space-y-3 pt-4">
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-2 h-2 rounded-full bg-accent"></div>
+                            Упрощение расчетов
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-2 h-2 rounded-full bg-accent"></div>
+                            Наглядность масштабов
+                        </li>
+                        <li class="flex items-center gap-3 text-slate-700">
+                            <div class="w-2 h-2 rounded-full bg-accent"></div>
+                            Избежание ошибок при записи
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theory Section -->
+        <section class="space-y-12 reveal">
+            <div class="text-center space-y-4">
+                <div class="inline-flex items-center gap-3 text-secondary font-bold">
+                    <span class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">02</span>
+                    <h2 class="text-2xl font-display uppercase tracking-widest">Научное объяснение</h2>
+                </div>
+                <h3 class="text-4xl font-display font-bold">Стандартный вид числа</h3>
+                <div class="max-w-2xl mx-auto p-8 rounded-3xl bg-slate-900 text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 text-slate-700 font-mono text-xs select-none">FORMULA_V1</div>
+                    <p class="text-3xl font-display mb-4">
+                        <span class="math-font text-accent">a</span> × 10<sup class="text-secondary">n</sup>
+                    </p>
+                    <p class="text-slate-400 text-sm">где <span class="math-font text-white">1 ≤ a < 10</span>, а <span class="math-font text-white">n</span> — целое число.</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-3xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100">
+                                <th class="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-wider">Приставка</th>
+                                <th class="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-wider">Обозначение</th>
+                                <th class="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-wider">Множитель</th>
+                                <th class="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-wider">Степень</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Мега</td>
+                                <td class="px-8 py-4">М</td>
+                                <td class="px-8 py-4 font-mono text-sm">1 000 000</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-accent/10 text-accent font-bold">10<sup>6</sup></span></td>
+                            </tr>
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Кило</td>
+                                <td class="px-8 py-4">к</td>
+                                <td class="px-8 py-4 font-mono text-sm">1 000</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-accent/10 text-accent font-bold">10<sup>3</sup></span></td>
+                            </tr>
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Деци</td>
+                                <td class="px-8 py-4">д</td>
+                                <td class="px-8 py-4 font-mono text-sm">0,1</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-secondary/10 text-secondary font-bold">10<sup>-1</sup></span></td>
+                            </tr>
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Санти</td>
+                                <td class="px-8 py-4">с</td>
+                                <td class="px-8 py-4 font-mono text-sm">0,01</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-secondary/10 text-secondary font-bold">10<sup>-2</sup></span></td>
+                            </tr>
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Милли</td>
+                                <td class="px-8 py-4">м</td>
+                                <td class="px-8 py-4 font-mono text-sm">0,001</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-secondary/10 text-secondary font-bold">10<sup>-3</sup></span></td>
+                            </tr>
+                            <tr class="prefix-row hover:bg-slate-100/50 transition-colors">
+                                <td class="px-8 py-4 font-bold text-slate-700">Микро</td>
+                                <td class="px-8 py-4">мк (µ)</td>
+                                <td class="px-8 py-4 font-mono text-sm">0,000 001</td>
+                                <td class="px-8 py-4"><span class="px-3 py-1 rounded-md bg-secondary/10 text-secondary font-bold">10<sup>-6</sup></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section class="reveal">
+            <div class="flex flex-col md:flex-row items-end justify-between mb-8 gap-4">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-3 text-emerald-600 font-bold">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">03</span>
+                        <h2 class="text-2xl font-display uppercase tracking-widest">Примеры решения</h2>
+                    </div>
+                    <h3 class="text-3xl font-display font-bold">Разбор типичных задач</h3>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="group bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="mb-6 flex justify-between items-start">
+                        <span class="text-emerald-500 font-bold px-3 py-1 bg-emerald-50 rounded-lg text-sm">Задача 1</span>
+                    </div>
+                    <p class="text-lg font-medium text-slate-700 mb-6">Выразить <span class="font-bold">5,4 МПа</span> в Паскалях.</p>
+                    <div class="p-6 bg-slate-50 rounded-2xl space-y-3 font-mono text-slate-600">
+                        <p>5,4 МПа = 5,4 × 10<sup>6</sup> Па</p>
+                        <p>= 5 400 000 Па</p>
+                    </div>
+                </div>
+
+                <div class="group bg-white rounded-3xl p-8 border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="mb-6 flex justify-between items-start">
+                        <span class="text-emerald-500 font-bold px-3 py-1 bg-emerald-50 rounded-lg text-sm">Задача 2</span>
+                    </div>
+                    <p class="text-lg font-medium text-slate-700 mb-6">Записать <span class="font-bold">0,000025 м</span> в стандартном виде через микро.</p>
+                    <div class="p-6 bg-slate-50 rounded-2xl space-y-3 font-mono text-slate-600">
+                        <p>0,000025 м = 25 мкм</p>
+                        <p>= 2,5 × 10<sup>-5</sup> м</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Tasks (Bento Grid) -->
+        <section class="space-y-12 reveal">
+            <div class="text-center space-y-4">
+                <div class="inline-flex items-center gap-3 text-orange-500 font-bold">
+                    <span class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">04</span>
+                    <h2 class="text-2xl font-display uppercase tracking-widest">Практика</h2>
+                </div>
+                <h3 class="text-4xl font-display font-bold">Задания для закрепления</h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Level A -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 border-t-4 border-accent">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-full uppercase tracking-widest">Уровень А</span>
+                        <span class="text-slate-400 text-sm">Базовый</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Установить соответствие:</h4>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="p-4 bg-white rounded-xl border border-slate-100 flex justify-between items-center group cursor-pointer hover:border-accent transition-colors" onclick="toggleAnswer('a1')">
+                            <span>15 км</span>
+                            <span id="a1" class="hidden font-mono text-accent">15 000 м</span>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </div>
+                        <div class="p-4 bg-white rounded-xl border border-slate-100 flex justify-between items-center group cursor-pointer hover:border-accent transition-colors" onclick="toggleAnswer('a2')">
+                            <span>300 см</span>
+                            <span id="a2" class="hidden font-mono text-accent">3 м</span>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </div>
+                        <div class="p-4 bg-white rounded-xl border border-slate-100 flex justify-between items-center group cursor-pointer hover:border-accent transition-colors" onclick="toggleAnswer('a3')">
+                            <span>250 мг</span>
+                            <span id="a3" class="hidden font-mono text-accent">0,25 г</span>
+                            <svg class="w-4 h-4 text-slate-300 group-hover:text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Level B -->
+                <div class="md:col-span-1 glass-card rounded-3xl p-8 border-t-4 border-secondary">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-widest">Уровень B</span>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4 italic">Стандартный вид (a × 10<sup>n</sup>):</h4>
+                    <ul class="space-y-4">
+                        <li class="p-3 bg-slate-50 rounded-xl text-sm">
+                            <span class="block text-slate-500 mb-1">Радиус Земли: 6 400 000 м</span>
+                            <button onclick="toggleAnswer('b1')" class="text-secondary font-bold hover:underline">Ответ: <span id="b1" class="hidden">6,4 × 10<sup>6</sup> м</span></button>
+                        </li>
+                        <li class="p-3 bg-slate-50 rounded-xl text-sm">
+                            <span class="block text-slate-500 mb-1">Лист бумаги: 0,0001 м</span>
+                            <button onclick="toggleAnswer('b2')" class="text-secondary font-bold hover:underline">Ответ: <span id="b2" class="hidden">1 × 10<sup>-4</sup> м</span></button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Level C -->
+                <div class="md:col-span-3 glass-card rounded-3xl p-8 border-t-4 border-rose-500 bg-rose-50/20">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="px-3 py-1 bg-rose-500/10 text-rose-500 text-xs font-bold rounded-full uppercase tracking-widest">Уровень C</span>
+                        <span class="text-slate-400 text-sm italic">Продвинутый: Перевод в СИ</span>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-12">
+                        <div class="space-y-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm">
+                                    <span class="font-medium">Скорость гепарда: 110 км/ч</span>
+                                    <button onclick="toggleAnswer('c1')" class="px-4 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-200 hover:scale-105 transition-transform">Проверить</button>
+                                </div>
+                                <div id="c1" class="hidden p-4 bg-emerald-50 text-emerald-700 rounded-2xl font-mono text-center border border-emerald-100">
+                                    ≈ 30,5 м/с
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm">
+                                    <span class="font-medium">Плотность Al: 2,7 г/см³</span>
+                                    <button onclick="toggleAnswer('c2')" class="px-4 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-rose-200 hover:scale-105 transition-transform">Проверить</button>
+                                </div>
+                                <div id="c2" class="hidden p-4 bg-emerald-50 text-emerald-700 rounded-2xl font-mono text-center border border-emerald-100">
+                                    = 2700 кг/м³
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white/50 p-6 rounded-2xl border border-rose-100">
+                            <h5 class="text-rose-600 font-bold text-sm uppercase mb-3 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                Дескриптор
+                            </h5>
+                            <p class="text-sm text-slate-600 leading-relaxed italic">
+                                Ученик переводит производные единицы в СИ, правильно используя кратные приставки и степени. Для плотности: 1 г/см³ = (10⁻³ кг) / (10⁻² м)³ = 10⁻³ / 10⁻⁶ = 10³ кг/м³.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Media & Quiz Section -->
+        <section class="grid lg:grid-cols-5 gap-8 reveal">
+            <!-- Video Placeholder -->
+            <div class="lg:col-span-3 group relative overflow-hidden rounded-3xl bg-slate-900 shadow-2xl aspect-video flex flex-col items-center justify-center text-center p-12">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30"></div>
+                <div class="relative z-10 space-y-6">
+                    <button class="w-20 h-20 bg-accent rounded-full flex items-center justify-center shadow-2xl shadow-accent/40 group-hover:scale-110 transition-transform duration-500">
+                        <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </button>
+                    <div>
+                        <h4 class="text-2xl font-display font-bold text-white mb-2">Смотреть урок</h4>
+                        <p class="text-slate-400">«Приставки и стандартный вид числа»</p>
+                    </div>
+                </div>
+                <div class="absolute bottom-6 left-6 right-6 flex justify-between text-xs text-slate-500 font-mono">
+                    <span>LECTURE_ID: PHY-7-01</span>
+                    <span>12:45 MIN</span>
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div class="lg:col-span-2 glass-card rounded-3xl p-8 flex flex-col justify-between border-b-4 border-emerald-500">
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xl font-bold font-display">Мини-тест</h4>
+                        <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 font-medium leading-relaxed">Чему равен множитель десятичной приставки <span class="text-secondary font-bold underline decoration-secondary/30">«милли» (м)</span>?</p>
+                    
+                    <div class="space-y-3" id="quiz-options">
+                        <button onclick="checkQuiz(this, false)" class="quiz-option w-full p-4 rounded-2xl border-2 border-slate-100 hover:border-accent text-left transition-all duration-200 font-mono">10<sup>-2</sup></button>
+                        <button onclick="checkQuiz(this, true)" class="quiz-option w-full p-4 rounded-2xl border-2 border-slate-100 hover:border-accent text-left transition-all duration-200 font-mono">10<sup>-3</sup></button>
+                        <button onclick="checkQuiz(this, false)" class="quiz-option w-full p-4 rounded-2xl border-2 border-slate-100 hover:border-accent text-left transition-all duration-200 font-mono">10<sup>-6</sup></button>
+                    </div>
+                </div>
+                <div id="quiz-feedback" class="mt-6 opacity-0 transition-opacity duration-300">
+                    <p class="text-sm font-bold flex items-center gap-2"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Toggle visibility of answers
+        function toggleAnswer(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('hidden');
+            if (!element.classList.contains('hidden')) {
+                element.classList.add('animate-fade-in-up');
+            }
+        }
+
+        // Quiz Logic
+        function checkQuiz(button, isCorrect) {
+            const feedback = document.getElementById('quiz-feedback');
+            const options = document.querySelectorAll('.quiz-option');
+            
+            // Reset states
+            options.forEach(opt => {
+                opt.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-rose-500', 'bg-rose-50');
+                opt.disabled = true;
+            });
+
+            if (isCorrect) {
+                button.classList.add('border-emerald-500', 'bg-emerald-50');
+                feedback.querySelector('p').innerHTML = '✨ Правильно! Приставка милли уменьшает величину в 1000 раз.';
+                feedback.querySelector('p').className = 'text-emerald-600 font-bold';
+            } else {
+                button.classList.add('border-rose-500', 'bg-rose-50');
+                feedback.querySelector('p').innerHTML = '❌ Попробуйте еще раз! Подсказка: милли — это 1/1000.';
+                feedback.querySelector('p').className = 'text-rose-600 font-bold';
+                
+                // Re-enable after short delay for retry
+                setTimeout(() => {
+                    options.forEach(opt => opt.disabled = false);
+                }, 1500);
+            }
+            feedback.style.opacity = '1';
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

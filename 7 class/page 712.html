@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 7 класс: СИ, Скаляры и Векторы</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        accent: '#10b981',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+        }
+        .math-font {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="selection:bg-brand-200 selection:text-brand-900">
+
+    <!-- Header -->
+    <header class="relative pt-12 pb-20 px-6 overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20">
+            <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[60%] bg-brand-500 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[60%] bg-accent rounded-full blur-[120px]"></div>
+        </div>
+        
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-brand-700 uppercase bg-brand-100 rounded-full">Урок Физики • 7 Класс</span>
+            <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 leading-tight">
+                Международная система единиц (СИ). <br>
+                <span class="gradient-text text-5xl md:text-7xl">Скаляры и Векторы</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
+                Фундаментальные основы измерений: как физики договорились понимать друг друга и почему направление иногда важнее величины.
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 pb-24 space-y-12">
+        
+        <!-- Section: Observation -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="glass p-8 rounded-3xl shadow-sm border border-white/50">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-xl bg-brand-500 flex items-center justify-center text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-display font-bold">Наблюдение</h2>
+                </div>
+                <div class="space-y-4 text-slate-700 leading-relaxed">
+                    <p>Представьте две ситуации:</p>
+                    <div class="flex gap-4 p-4 bg-white/50 rounded-2xl border border-brand-100">
+                        <div class="font-bold text-brand-600">01.</div>
+                        <p>Врач говорит пациенту: "У вас температура 38 градусов". Этого достаточно, чтобы понять состояние.</p>
+                    </div>
+                    <div class="flex gap-4 p-4 bg-white/50 rounded-2xl border border-brand-100">
+                        <div class="font-bold text-brand-600">02.</div>
+                        <p>Заблудившийся человек спрашивает дорогу. Ему говорят: "Пройдите 5 километров". Поможет ли это, если не указать **куда** именно идти?</p>
+                    </div>
+                    <p class="font-medium text-brand-900 mt-4 italic">Вывод: для одних величин важно только число, для других — и число, и направление.</p>
+                </div>
+            </div>
+
+            <div class="relative group">
+                <div class="absolute -inset-1 bg-gradient-to-r from-brand-400 to-accent rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative bg-white rounded-[2rem] p-8 h-full flex flex-col justify-center items-center text-center">
+                    <div class="text-6xl mb-4">🧭</div>
+                    <h3 class="text-xl font-bold mb-2">Почему это важно?</h3>
+                    <p class="text-slate-500">Без единых стандартов и понимания направлений мы не смогли бы строить мосты, запускать ракеты или даже просто обмениваться рецептами.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: SI System -->
+        <section class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-3xl font-display font-bold mb-2">Международная система единиц (СИ)</h2>
+                <p class="text-slate-500">Язык, на котором говорят все ученые мира</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-1 bg-brand-900 text-white p-8 rounded-[2rem] shadow-xl flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">История</h3>
+                        <p class="text-brand-100 leading-relaxed opacity-90">
+                            До 1960 года в разных странах использовали свои меры: футы, локти, пуды. Это создавало путаницу. Система СИ (Système International) стала универсальным стандартом для науки и техники.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-brand-800">
+                        <div class="text-sm uppercase tracking-widest text-brand-400 font-bold mb-1">Принята в</div>
+                        <div class="text-4xl font-display font-bold">1960 году</div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 overflow-hidden glass rounded-[2rem] border border-white/40 shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/50 text-slate-500 text-sm uppercase tracking-wider">
+                                <th class="px-8 py-5 font-semibold">Физическая величина</th>
+                                <th class="px-8 py-5 font-semibold">Единица измерения</th>
+                                <th class="px-8 py-5 font-semibold">Обозначение</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-brand-50/50 transition-colors">
+                                <td class="px-8 py-5 font-medium">Длина</td>
+                                <td class="px-8 py-5">метр</td>
+                                <td class="px-8 py-5 font-mono text-brand-600">м (m)</td>
+                            </tr>
+                            <tr class="hover:bg-brand-50/50 transition-colors">
+                                <td class="px-8 py-5 font-medium">Масса</td>
+                                <td class="px-8 py-5">килограмм</td>
+                                <td class="px-8 py-5 font-mono text-brand-600">кг (kg)</td>
+                            </tr>
+                            <tr class="hover:bg-brand-50/50 transition-colors">
+                                <td class="px-8 py-5 font-medium">Время</td>
+                                <td class="px-8 py-5">секунда</td>
+                                <td class="px-8 py-5 font-mono text-brand-600">с (s)</td>
+                            </tr>
+                            <tr class="hover:bg-brand-50/50 transition-colors">
+                                <td class="px-8 py-5 font-medium">Температура</td>
+                                <td class="px-8 py-5">кельвин</td>
+                                <td class="px-8 py-5 font-mono text-brand-600">К (K)</td>
+                            </tr>
+                            <tr class="hover:bg-brand-50/50 transition-colors">
+                                <td class="px-8 py-5 font-medium">Сила тока</td>
+                                <td class="px-8 py-5">ампер</td>
+                                <td class="px-8 py-5 font-mono text-brand-600">А (A)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Scalar vs Vector -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Scalar -->
+            <div class="group card-hover bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <svg class="w-24 h-24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                </div>
+                <h3 class="text-3xl font-display font-bold mb-4 flex items-center gap-3">
+                    <span class="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-2xl">⚖️</span>
+                    Скалярные
+                </h3>
+                <p class="text-slate-600 mb-6 leading-relaxed">
+                    Величины, которые полностью определяются своим **числовым значением** (магнитудой). Направление для них не имеет смысла.
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    <span class="px-4 py-2 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">Масса</span>
+                    <span class="px-4 py-2 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">Время</span>
+                    <span class="px-4 py-2 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">Объем</span>
+                    <span class="px-4 py-2 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">Путь</span>
+                    <span class="px-4 py-2 bg-slate-50 rounded-xl text-slate-700 font-medium border border-slate-100">Температура</span>
+                </div>
+            </div>
+
+            <!-- Vector -->
+            <div class="group card-hover bg-brand-600 text-white p-8 rounded-[2.5rem] shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <svg class="w-24 h-24" viewBox="0 0 24 24" fill="currentColor"><path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4v3z"/></svg>
+                </div>
+                <h3 class="text-3xl font-display font-bold mb-4 flex items-center gap-3">
+                    <span class="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-2xl">🏹</span>
+                    Векторные
+                </h3>
+<p class="text-brand-100 mb-6 leading-relaxed">
+    Величины, имеющие и <b>числовое значение</b> и <b>направление</b>.
+    В формулах обозначаются буквой со стрелочкой:
+    <span class="math-font text-white font-bold inline-flex gap-2 px-2 bg-white/10 rounded">
+        <span class="vec">v</span>,
+        <span class="vec">F</span>,
+        <span class="vec">s</span>
+    </span>.
+</p>
+
+<div class="flex flex-wrap gap-2">
+    <span class="px-4 py-2 bg-white/10 rounded-xl text-white font-medium border border-white/20">Скорость</span>
+    <span class="px-4 py-2 bg-white/10 rounded-xl text-white font-medium border border-white/20">Сила</span>
+    <span class="px-4 py-2 bg-white/10 rounded-xl text-white font-medium border border-white/20">Перемещение</span>
+    <span class="px-4 py-2 bg-white/10 rounded-xl text-white font-medium border border-white/20">Ускорение</span>
+</div>
+        </section>
+
+        <!-- Interactive: Feel the Vector -->
+        <section class="glass p-8 md:p-12 rounded-[3rem] border border-white shadow-xl">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="flex-1 space-y-6">
+                    <h2 class="text-3xl font-display font-bold">Интерактив: Почувствуй вектор</h2>
+                    <p class="text-slate-600">Меняйте параметры силы <span class="math-font font-bold">F⃗</span> и наблюдайте, как меняется её визуальное представление.</p>
+                    
+                    <div class="space-y-8">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="font-bold text-slate-700">Модуль силы (F): <span id="val-force" class="text-brand-600">100</span> Н</label>
+                            </div>
+                            <input type="range" id="input-force" min="20" max="250" value="100" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="font-bold text-slate-700">Направление: <span id="val-angle" class="text-brand-600">0</span>°</label>
+                            </div>
+                            <input type="range" id="input-angle" min="0" max="360" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-brand-50 rounded-2xl border border-brand-100">
+                        <p class="text-brand-800 text-sm italic">"Вектор — это направленный отрезок. Длина отрезка в масштабе показывает значение величины."</p>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full aspect-square bg-slate-900 rounded-[2rem] shadow-2xl relative overflow-hidden flex items-center justify-center p-4">
+                    <canvas id="vectorCanvas" width="400" height="400" class="max-w-full h-auto"></canvas>
+                    <div class="absolute bottom-6 left-6 text-white/50 text-xs font-mono uppercase tracking-widest">Physics Lab v1.0 • Vector Visualizer</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reference Table (Bento Grid Style) -->
+        <section class="space-y-8">
+            <h2 class="text-3xl font-display font-bold text-center">Справочник Величин (7 класс)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Row 1 -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:border-brand-200 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Длина / Путь</span>
+                        <div class="text-2xl font-bold math-font mt-1">l, s</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">метр (м)</span>
+                        <span class="px-2 py-1 bg-slate-100 text-[10px] rounded uppercase font-bold text-slate-500">Скаляр</span>
+                    </div>
+                </div>
+                <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100 shadow-sm flex flex-col justify-between hover:border-brand-300 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-brand-400 uppercase">Перемещение</span>
+                        <div class="text-2xl font-bold math-font mt-1">s⃗ = x - x₀</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">метр (м)</span>
+                        <span class="px-2 py-1 bg-brand-200 text-[10px] rounded uppercase font-bold text-brand-700">Вектор</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:border-brand-200 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Масса</span>
+                        <div class="text-2xl font-bold math-font mt-1">m = ρV</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">килограмм (кг)</span>
+                        <span class="px-2 py-1 bg-slate-100 text-[10px] rounded uppercase font-bold text-slate-500">Скаляр</span>
+                    </div>
+                </div>
+                <!-- Row 2 -->
+                <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100 shadow-sm flex flex-col justify-between hover:border-brand-300 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-brand-400 uppercase">Скорость</span>
+                        <div class="text-2xl font-bold math-font mt-1">v⃗ = s⃗/t</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">м/с</span>
+                        <span class="px-2 py-1 bg-brand-200 text-[10px] rounded uppercase font-bold text-brand-700">Вектор</span>
+                    </div>
+                </div>
+                <div class="bg-brand-50 p-6 rounded-3xl border border-brand-100 shadow-sm flex flex-col justify-between hover:border-brand-300 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-brand-400 uppercase">Сила тяжести</span>
+                        <div class="text-2xl font-bold math-font mt-1">F⃗ = mg⃗</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">ньютон (Н)</span>
+                        <span class="px-2 py-1 bg-brand-200 text-[10px] rounded uppercase font-bold text-brand-700">Вектор</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between hover:border-brand-200 transition-colors">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Давление</span>
+                        <div class="text-2xl font-bold math-font mt-1">p = F/S</div>
+                    </div>
+                    <div class="mt-4 flex justify-between items-end">
+                        <span class="text-brand-600 font-mono">паскаль (Па)</span>
+                        <span class="px-2 py-1 bg-slate-100 text-[10px] rounded uppercase font-bold text-slate-500">Скаляр</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Solving -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="space-y-6">
+                <h2 class="text-3xl font-display font-bold">Примеры решения задач</h2>
+                
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                    <h4 class="font-bold text-brand-600 mb-2">Задача 1: Перевод в СИ</h4>
+                    <p class="mb-4 text-slate-600">**Дано:** масса 500 г, путь 5 км. Найти значения в СИ.</p>
+                    <div class="bg-slate-50 p-4 rounded-2xl space-y-2 font-mono text-sm">
+                        <p>1. Масса (СИ — кг): 500 г = 500 / 1000 = **0,5 кг**</p>
+                        <p>2. Путь (СИ — м): 5 км = 5 * 1000 = **5000 м**</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                    <h4 class="font-bold text-brand-600 mb-2">Задача 2: Логика</h4>
+                    <p class="mb-4 text-slate-600">**Вопрос:** К какому типу относятся: объем бака и сила удара?</p>
+                    <p class="text-slate-700 italic">"Объем — скаляр, так как у 5 литров воды нет направления. Сила удара — вектор, так как важно, в какую сторону направлен импульс."</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-[3rem] p-8 text-white relative overflow-hidden flex flex-col justify-center">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
+                <div class="relative z-10">
+                    <h3 class="text-2xl font-bold mb-6">Видеоматериалы</h3>
+                    <div class="space-y-4">
+                        <div class="group flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.522-2.333 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.257.69-2.78-.217-2.78-1.644V5.653Z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold">Видео 1: Что такое СИ?</div>
+                                <div class="text-xs text-white/40">Основы системы измерений</div>
+                            </div>
+                        </div>
+                        <div class="group flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer">
+                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.522-2.333 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.257.69-2.78-.217-2.78-1.644V5.653Z" clip-rule="evenodd" /></svg>
+                            </div>
+                            <div>
+                                <div class="font-bold">Видео 2: Скаляры и Векторы</div>
+                                <div class="text-xs text-white/40">Визуализация физических величин</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practical Tasks -->
+        <section class="space-y-8">
+            <h2 class="text-3xl font-display font-bold text-center">Практические задания</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Level A -->
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm relative pt-12">
+                    <span class="absolute top-6 left-8 px-3 py-1 bg-green-100 text-green-700 text-[10px] font-black rounded-full uppercase tracking-tighter">Уровень A</span>
+                    <h4 class="text-xl font-bold mb-4">На знание</h4>
+                    <p class="text-slate-600 text-sm mb-4">Соедините пары в уме:</p>
+                    <ul class="space-y-2 text-sm font-medium">
+                        <li class="flex justify-between p-2 bg-slate-50 rounded-lg"><span>Время</span> <span>→ с</span></li>
+                        <li class="flex justify-between p-2 bg-slate-50 rounded-lg"><span>Сила</span> <span>→ Н</span></li>
+                        <li class="flex justify-between p-2 bg-slate-50 rounded-lg"><span>Длина</span> <span>→ м</span></li>
+                    </ul>
+                </div>
+                <!-- Level B -->
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm relative pt-12">
+                    <span class="absolute top-6 left-8 px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-black rounded-full uppercase tracking-tighter">Уровень B</span>
+                    <h4 class="text-xl font-bold mb-4">На понимание</h4>
+                    <p class="text-slate-600 text-sm mb-4">Выпишите только векторные:</p>
+                    <p class="text-xs italic text-slate-400 mb-4">Температура, Скорость, Масса, Вес, Путь, Перемещение, Площадь, Сила трения.</p>
+                    <details class="text-xs">
+                        <summary class="cursor-pointer text-brand-600 font-bold hover:underline">Показать ответ</summary>
+                        <div class="mt-2 p-2 bg-brand-50 rounded-lg text-brand-800">Скорость, Вес, Перемещение, Сила трения.</div>
+                    </details>
+                </div>
+                <!-- Level C -->
+                <div class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm relative pt-12">
+                    <span class="absolute top-6 left-8 px-3 py-1 bg-red-100 text-red-700 text-[10px] font-black rounded-full uppercase tracking-tighter">Уровень C</span>
+                    <h4 class="text-xl font-bold mb-4">На применение</h4>
+                    <p class="text-slate-600 text-sm mb-4">Турист прошел 3 км на север, затем 4 км на восток.</p>
+                    <p class="text-sm font-bold text-slate-800">1. Какой путь пройден? <br>2. Чему равно перемещение?</p>
+                    <details class="text-xs mt-4">
+                        <summary class="cursor-pointer text-brand-600 font-bold hover:underline">Решение</summary>
+                        <div class="mt-2 p-2 bg-brand-50 rounded-lg text-brand-800">Путь = 3+4 = 7 км. Перемещение = √(3² + 4²) = 5 км.</div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-brand-600 to-accent rounded-[3rem] blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+            <div class="relative bg-white rounded-[3rem] p-8 md:p-12 shadow-xl border border-slate-100">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-display font-bold">Проверь себя</h2>
+                    <p class="text-slate-500 mt-2">Закрепите знания пройденным тестом</p>
+                </div>
+
+                <div id="quiz-container" class="space-y-8 max-w-3xl mx-auto">
+                    <!-- Q1 -->
+                    <div class="quiz-q" data-correct="1">
+                        <p class="font-bold text-lg mb-4">1. Основная единица длины в СИ?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button onclick="selectOption(this, 0)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Сантиметр</button>
+                            <button onclick="selectOption(this, 1)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Метр</button>
+                            <button onclick="selectOption(this, 2)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Километр</button>
+                        </div>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="quiz-q" data-correct="2">
+                        <p class="font-bold text-lg mb-4">2. Какая из этих величин векторная?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button onclick="selectOption(this, 0)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Масса</button>
+                            <button onclick="selectOption(this, 1)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Температура</button>
+                            <button onclick="selectOption(this, 2)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Скорость</button>
+                        </div>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="quiz-q" data-correct="0">
+                        <p class="font-bold text-lg mb-4">3. Единица массы в системе СИ?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button onclick="selectOption(this, 0)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Килограмм</button>
+                            <button onclick="selectOption(this, 1)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Грамм</button>
+                            <button onclick="selectOption(this, 2)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Тонна</button>
+                        </div>
+                    </div>
+                    <!-- Q4 -->
+                    <div class="quiz-q" data-correct="1">
+                        <p class="font-bold text-lg mb-4">4. С помощью чего измеряют силу?</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button onclick="selectOption(this, 0)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Весы</button>
+                            <button onclick="selectOption(this, 1)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Динамометр</button>
+                            <button onclick="selectOption(this, 2)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">Термометр</button>
+                        </div>
+                    </div>
+                    <!-- Q5 -->
+                    <div class="quiz-q" data-correct="2">
+                        <p class="font-bold text-lg mb-4">5. Переведите 2 минуты в систему СИ:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <button onclick="selectOption(this, 0)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">2 м</button>
+                            <button onclick="selectOption(this, 1)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">0.033 ч</button>
+                            <button onclick="selectOption(this, 2)" class="option-btn p-4 rounded-2xl border border-slate-200 text-left hover:border-brand-500 transition-all">120 с</button>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 text-center">
+                        <button onclick="checkResults()" class="px-10 py-4 bg-brand-600 text-white font-bold rounded-2xl hover:bg-brand-700 transform transition hover:scale-105 shadow-lg shadow-brand-200">
+                            Проверить ответы
+                        </button>
+                    </div>
+
+                    <div id="quiz-result" class="hidden mt-8 p-6 rounded-3xl text-center font-bold text-xl animate-pulse-soft"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Vector Animation
+        const canvas = document.getElementById('vectorCanvas');
+        const ctx = canvas.getContext('2d');
+        const inputForce = document.getElementById('input-force');
+        const inputAngle = document.getElementById('input-angle');
+        const valForce = document.getElementById('val-force');
+        const valAngle = document.getElementById('val-angle');
+
+        function drawVector() {
+            const force = parseInt(inputForce.value);
+            const angleDeg = parseInt(inputAngle.value);
+            const angleRad = (angleDeg * Math.PI) / 180;
+            
+            valForce.innerText = force;
+            valAngle.innerText = angleDeg;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Draw Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for(let i=0; i<canvas.width; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
+            }
+
+            // Vector math
+            const endX = centerX + force * Math.cos(angleRad);
+            const endY = centerY - force * Math.sin(angleRad); // canvas Y is inverted
+
+            // Shadow
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#3b82f6';
+
+            // Draw line
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(endX, endY);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Arrow head
+            const headlen = 15;
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX - headlen * Math.cos(angleRad - Math.PI / 6), endY + headlen * Math.sin(angleRad - Math.PI / 6));
+            ctx.lineTo(endX - headlen * Math.cos(angleRad + Math.PI / 6), endY + headlen * Math.sin(angleRad + Math.PI / 6));
+            ctx.lineTo(endX, endY);
+            ctx.fillStyle = '#10b981';
+            ctx.fill();
+
+            // Origin dot
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+
+            requestAnimationFrame(drawVector);
+        }
+
+        inputForce.oninput = drawVector;
+        inputAngle.oninput = drawVector;
+        drawVector();
+
+        // Quiz Logic
+        let answers = [null, null, null, null, null];
+
+        function selectOption(btn, index) {
+            const parent = btn.closest('.quiz-q');
+            const options = parent.querySelectorAll('.option-btn');
+            options.forEach(o => o.classList.remove('bg-brand-50', 'border-brand-500', 'ring-2', 'ring-brand-200'));
+            
+            btn.classList.add('bg-brand-50', 'border-brand-500', 'ring-2', 'ring-brand-200');
+            
+            const questionIndex = Array.from(document.querySelectorAll('.quiz-q')).indexOf(parent);
+            answers[questionIndex] = index;
+        }
+
+        function checkResults() {
+            const questions = document.querySelectorAll('.quiz-q');
+            let score = 0;
+            let complete = true;
+
+            questions.forEach((q, i) => {
+                const correct = parseInt(q.dataset.correct);
+                if (answers[i] === null) complete = false;
+                if (answers[i] === correct) score++;
+            });
+
+            if (!complete) {
+                alert("Пожалуйста, ответьте на все вопросы!");
+                return;
+            }
+
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden');
+            
+            if (score === 5) {
+                resultDiv.innerText = `Отлично! Вы ответили на ${score}/5 правильно! 🏆`;
+                resultDiv.className = 'mt-8 p-6 rounded-3xl text-center font-bold text-xl animate-pulse-soft bg-accent/10 text-accent';
+            } else if (score >= 3) {
+                resultDiv.innerText = `Хорошо! Ваш результат: ${score}/5.`;
+                resultDiv.className = 'mt-8 p-6 rounded-3xl text-center font-bold text-xl animate-pulse-soft bg-brand-50 text-brand-600';
+            } else {
+                resultDiv.innerText = `Нужно еще потренироваться. Результат: ${score}/5.`;
+                resultDiv.className = 'mt-8 p-6 rounded-3xl text-center font-bold text-xl animate-pulse-soft bg-red-50 text-red-600';
+            }
+            
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>

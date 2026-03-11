@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Превращение и сохранение энергии — 7 класс</title>
+    <style>
+        :root {
+            --bg-color: #ecfdf5; /* Светло-изумрудный (сохранение/природа) */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #059669; /* Изумрудный */
+            --primary-hover: #047857;
+            --secondary: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #d1fae5;
+            --text-muted: #64748b;
+            --formula-bg: #d1fae5;
+            
+            --pot-color: #3b82f6; /* Синий для потенциальной */
+            --kin-color: #ef4444; /* Красный для кинетической */
+            --int-color: #f59e0b; /* Оранжевый для внутренней (тепло) */
+            --tot-color: #059669; /* Зеленый для полной */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #064e3b;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .formula-box .math {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .problem-solution {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px dashed var(--primary);
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input[type="text"], .input-group input[type="number"], .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .descriptors {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(5, 150, 105, 0.2);
+        }
+
+        .reflection label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(5, 150, 105, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- 1. ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Превращение и сохранение энергии — 7 класс</span>
+            <span class="lang-kz">Энергияның түрленуі және сақталуы — 7 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему качающийся маятник в конце концов останавливается? И куда исчезает энергия метеорита, который сгорает в атмосфере Земли? Ответ кроется в одном из самых великих законов природы!</span>
+            <span class="lang-kz">Тербеліп тұрған маятник неліктен ақырында тоқтайды? Ал Жер атмосферасында жанып кететін метеориттің энергиясы қайда жоғалады? Жауап табиғаттың ең ұлы заңдарының бірінде жатыр!</span>
+        </p>
+    </header>
+
+    <!-- 2. ТЕОРИЯ: ПРЕВРАЩЕНИЕ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Взаимное превращение энергий</span>
+            <span class="lang-kz">Энергиялардың өзара түрленуі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В природе энергия никогда не существует в застывшем виде. Она постоянно переходит из одной формы в другую. Рассмотрим падающий с ветки орех:</span>
+            <span class="lang-kz">Табиғатта энергия ешқашан қатып қалған күйде болмайды. Ол үнемі бір түрден екінші түрге ауысып отырады. Бұтақтан құлап бара жатқан жаңғақты қарастырайық:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>В момент отрыва:</strong> Скорость равна нулю, но высота максимальна. Вся энергия — <strong>потенциальная</strong>.</span>
+                <span class="lang-kz"><strong>Үзілген сәтте:</strong> Жылдамдық нөлге тең, бірақ биіктік максималды. Барлық энергия — <strong>потенциалдық</strong>.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Во время падения:</strong> Высота уменьшается, а скорость растет. Потенциальная энергия <em>превращается</em> в <strong>кинетическую</strong>.</span>
+                <span class="lang-kz"><strong>Құлау кезінде:</strong> Биіктік азаяды, ал жылдамдық артады. Потенциалдық энергия <strong>кинетикалыққа</strong> <em>түрленеді</em>.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Перед ударом о землю:</strong> Высота равна нулю (потенциальная энергия исчезла), зато скорость максимальна! Вся энергия стала <strong>кинетической</strong>.</span>
+                <span class="lang-kz"><strong>Жерге соғылар алдында:</strong> Биіктік нөлге тең (потенциалдық энергия жоғалды), есесіне жылдамдық максималды! Барлық энергия <strong>кинетикалық</strong> болды.</span>
+            </li>
+        </ul>
+        <p>
+            <span class="lang-ru">Такой же процесс происходит при прыжках на батуте или качании на качелях: потенциальная энергия упругости превращается в кинетическую энергию прыжка, а затем в потенциальную энергию высоты!</span>
+            <span class="lang-kz">Дәл осындай процесс батутта секіргенде немесе әткеншек тепкенде орын алады: серпімділіктің потенциалдық энергиясы секірудің кинетикалық энергиясына, содан кейін биіктіктің потенциалдық энергиясына айналады!</span>
+        </p>
+    </section>
+
+    <!-- 3. ТЕОРИЯ: ЗАКОН СОХРАНЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Закон сохранения механической энергии</span>
+            <span class="lang-kz">Механикалық энергияның сақталу заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если два тела взаимодействуют только друг с другом (например, Земля и падающий мяч), и между ними нет силы трения, то выполняется <strong>Закон сохранения механической энергии</strong>.</span>
+            <span class="lang-kz">Егер екі дене тек бір-бірімен өзара әрекеттессе (мысалы, Жер мен құлап келе жатқан доп) және олардың арасында үйкеліс күші болмаса, онда <strong>Механикалық энергияның сақталу заңы</strong> орындалады.</span>
+        </p>
+
+        <div class="formula-box">
+            <span class="lang-ru" style="display:block; margin-bottom: 5px; font-weight: 600;">Полная механическая энергия замкнутой системы тел остается неизменной:</span>
+            <span class="lang-kz" style="display:block; margin-bottom: 5px; font-weight: 600;">Тұйық денелер жүйесінің толық механикалық энергиясы өзгеріссіз қалады:</span>
+            <span class="math">E = E<sub>к</sub> + E<sub>п</sub> = const (постоянная)</span>
+            <p style="margin-top: 10px;">
+                <span class="lang-ru">Это означает, что сумма кинетической и потенциальной энергии в любой момент времени одинакова:<br><strong>E<sub>к1</sub> + E<sub>п1</sub> = E<sub>к2</sub> + E<sub>п2</sub></strong></span>
+                <span class="lang-kz">Бұл кинетикалық және потенциалдық энергияның қосындысы кез келген уақыт мезетінде бірдей болатынын білдіреді:<br><strong>E<sub>к1</sub> + E<sub>п1</sub> = E<sub>к2</sub> + E<sub>п2</sub></strong></span>
+            </p>
+        </div>
+
+        <div class="observation" style="background-color: rgba(245, 158, 11, 0.1); border-left-color: var(--warning);">
+            <span class="lang-ru"><strong>А что если есть трение?</strong> Если маятник испытывает сопротивление воздуха, его полная механическая энергия <em>уменьшается</em>. Но она не исчезает бесследно! Она превращается во <strong>внутреннюю (тепловую) энергию</strong> воздуха и самого маятника. Природа строго ведет учет: общая энергия Вселенной всегда сохраняется!</span>
+            <span class="lang-kz"><strong>Ал егер үйкеліс болса ше?</strong> Егер маятникке ауа кедергісі әсер етсе, оның толық механикалық энергиясы <em>азаяды</em>. Бірақ ол із-түзсіз жоғалмайды! Ол ауаның және маятниктің <strong>ішкі (жылулық) энергиясына</strong> айналады. Табиғат қатаң есеп жүргізеді: Ғаламның жалпы энергиясы әрқашан сақталады!</span>
+        </div>
+    </section>
+
+    <!-- 4. СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Маятник и учёт энергии</span>
+            <span class="lang-kz">Симуляция: Маятник және энергияны есепке алу</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="angleSlider" style="color: var(--primary)">
+                        <span class="lang-ru">Начальный угол (&alpha;):</span>
+                        <span class="lang-kz">Бастапқы бұрыш (&alpha;):</span>
+                        <span id="angleVal">45</span>&deg;
+                    </label>
+                    <input type="range" id="angleSlider" min="10" max="80" step="5" value="45">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="massSlider" style="color: var(--text-color)">
+                        <span class="lang-ru">Масса груза (m):</span>
+                        <span class="lang-kz">Жүк массасы (m):</span>
+                        <span id="massVal">5</span> кг
+                    </label>
+                    <input type="range" id="massSlider" min="1" max="10" step="1" value="5">
+                </div>
+                <div class="control-group" style="margin-top: 10px;">
+                    <label for="fricSlider" style="color: var(--warning)">
+                        <span class="lang-ru">Сопротивление воздуха (трение):</span>
+                        <span class="lang-kz">Ауа кедергісі (үйкеліс):</span>
+                        <span id="fricVal">0</span>%
+                    </label>
+                    <input type="range" id="fricSlider" min="0" max="100" step="10" value="0">
+                </div>
+                <div class="buttons">
+                    <button id="btnPlay">
+                        <span class="lang-ru">Сбросить маятник</span><span class="lang-kz">Маятникті жіберу</span>
+                    </button>
+                </div>
+            </div>
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="650" height="320"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <strong>
+                <span class="lang-ru">Анализ графика:</span>
+                <span class="lang-kz">Графикті талдау:</span>
+            </strong> 
+            <span id="obsText">
+                <span class="lang-ru">При нулевом трении Потенциальная (синяя) и Кинетическая (красная) энергии непрерывно переходят друг в друга, а Полная механическая энергия (зеленая) постоянна. <strong>Добавьте трение</strong> — и вы увидите, как механическая энергия убывает, перетекая во Внутреннюю энергию (оранжевая теплота)!</span>
+                <span class="lang-kz">Нөлдік үйкеліс кезінде Потенциалдық (көк) және Кинетикалық (қызыл) энергиялар үздіксіз бір-біріне ауысады, ал Толық механикалық энергия (жасыл) тұрақты. <strong>Үйкеліс қосыңыз</strong> — сіз механикалық энергияның қалай азайып, Ішкі энергияға (қызғылт сары жылу) ауысатынын көресіз!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- 5. ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Пример решения задачи (Применение закона)</span>
+            <span class="lang-kz">Есеп шығару мысалы (Заңды қолдану)</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Условие:</strong> Яблоко массой 0,2 кг падает с ветки, находящейся на высоте 5 метров. Чему равна кинетическая энергия яблока и его скорость прямо перед ударом о землю? (Сопротивлением воздуха пренебречь, g &asymp; 10 Н/кг).</span>
+            <span class="lang-kz"><strong>Есеп:</strong> Массасы 0,2 кг алма 5 метр биіктіктегі бұтақтан құлайды. Жерге соғылар алдында алманың кинетикалық энергиясы мен жылдамдығы неге тең? (Ауа кедергісін ескермеңіз, g &asymp; 10 Н/кг).</span>
+        </p>
+        <button id="toggleSolution" class="outline" style="margin-top: 10px;">
+            <span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>
+        </button>
+        <div class="problem-solution" id="solutionBox">
+            <p>
+                <span class="lang-ru"><strong>Дано:</strong><br>m = 0,2 кг<br>h = 5 м<br>v<sub>0</sub> = 0 (падало без начальной скорости)<br><strong>Найти:</strong> E<sub>к2</sub> — ?, v<sub>2</sub> — ?</span>
+                <span class="lang-kz"><strong>Берілгені:</strong><br>m = 0,2 кг<br>h = 5 м<br>v<sub>0</sub> = 0 (бастапқы жылдамдықсыз құлады)<br><strong>Табу керек:</strong> E<sub>к2</sub> — ?, v<sub>2</sub> — ?</span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Решение:</strong><br>
+                1. В момент отрыва (точка 1) скорость равна 0, значит E<sub>к1</sub> = 0.<br>
+                Начальная энергия только потенциальная: E<sub>п1</sub> = m &middot; g &middot; h = 0,2 &middot; 10 &middot; 5 = 10 Дж.<br><br>
+                2. У самой земли (точка 2) высота h = 0, значит E<sub>п2</sub> = 0.<br>
+                По закону сохранения: E<sub>к1</sub> + E<sub>п1</sub> = E<sub>к2</sub> + E<sub>п2</sub>.<br>
+                0 + 10 Дж = E<sub>к2</sub> + 0.<br>
+                Следовательно, кинетическая энергия перед ударом <strong>E<sub>к2</sub> = 10 Дж</strong>.<br><br>
+                3. Зная кинетическую энергию, найдем скорость:<br>
+                E<sub>к</sub> = (m &middot; v<sup>2</sup>) / 2 &rArr; 10 = (0,2 &middot; v<sup>2</sup>) / 2 &rArr; 10 = 0,1 &middot; v<sup>2</sup> &rArr; v<sup>2</sup> = 100 &rArr; <strong>v = 10 м/с</strong>.
+                </span>
+                <span class="lang-kz"><strong>Шешуі:</strong><br>
+                1. Үзілген сәтте (1-нүкте) жылдамдық 0-ге тең, демек E<sub>к1</sub> = 0.<br>
+                Бастапқы энергия тек потенциалдық: E<sub>п1</sub> = m &middot; g &middot; h = 0,2 &middot; 10 &middot; 5 = 10 Дж.<br><br>
+                2. Жер бетінде (2-нүкте) биіктік h = 0, демек E<sub>п2</sub> = 0.<br>
+                Сақталу заңы бойынша: E<sub>к1</sub> + E<sub>п1</sub> = E<sub>к2</sub> + E<sub>п2</sub>.<br>
+                0 + 10 Дж = E<sub>к2</sub> + 0.<br>
+                Демек, соғылар алдындағы кинетикалық энергия <strong>E<sub>к2</sub> = 10 Дж</strong>.<br><br>
+                3. Кинетикалық энергияны біле отырып, жылдамдықты табамыз:<br>
+                E<sub>к</sub> = (m &middot; v<sup>2</sup>) / 2 &rArr; 10 = (0,2 &middot; v<sup>2</sup>) / 2 &rArr; 10 = 0,1 &middot; v<sup>2</sup> &rArr; v<sup>2</sup> = 100 &rArr; <strong>v = 10 м/с</strong>.
+                </span>
+            </p>
+            <br>
+            <p>
+                <span class="lang-ru"><strong>Ответ:</strong> 10 Дж; 10 м/с. <em>(Вся потенциальная перешла в кинетическую!)</em></span>
+                <span class="lang-kz"><strong>Жауабы:</strong> 10 Дж; 10 м/с. <em>(Барлық потенциалдық энергия кинетикалыққа ауысты!)</em></span>
+            </p>
+        </div>
+    </section>
+
+    <!-- 6. ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Задачи для самостоятельного решения</span>
+            <span class="lang-kz">Өзіндік жұмысқа арналған есептер</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В какой точке траектории математический маятник обладает <strong>максимальной кинетической энергией</strong>?</span>
+                <span class="lang-kz">Математикалық маятник траекторияның қай нүктесінде <strong>максималды кинетикалық энергияға</strong> ие болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="В крайних левой и правой точках отклонения" data-kz="Сол және оң жақ шеткі ауытқу нүктелерінде">В крайних левой и правой точках отклонения</option>
+                    <option value="2" data-ru="В самой нижней точке (точке равновесия)" data-kz="Ең төменгі нүктеде (тепе-теңдік нүктесінде)">В самой нижней точке (точке равновесия)</option>
+                    <option value="3" data-ru="Кинетическая энергия маятника везде одинакова" data-kz="Маятниктің кинетикалық энергиясы барлық жерде бірдей">Кинетическая энергия маятника везде одинакова</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Тело бросили вертикально вверх. На некоторой высоте его кинетическая энергия составила 40 Дж, а потенциальная энергия относительно земли — 60 Дж. Чему равна <strong>полная механическая энергия</strong> тела в высшей точке полета, если трением воздуха можно пренебречь? Введите число в <strong>Джоулях</strong>.</span>
+                <span class="lang-kz">Денені тік жоғары лақтырды. Белгілі бір биіктікте оның кинетикалық энергиясы 40 Дж, ал жерге қатысты потенциалдық энергиясы 60 Дж құрады. Егер ауа кедергісін ескермесек, ұшудың ең жоғарғы нүктесіндегі дененің <strong>толық механикалық энергиясы</strong> неге тең? Санды <strong>Джоульмен</strong> енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskB" data-placeholder-ru="Например: 50" data-placeholder-kz="Мысалы: 50" placeholder="Например: 50">
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задача C -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень C (Сложный)</span>
+                <span class="lang-kz">C деңгейі (Күрделі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Мяч бросают с земли вертикально вверх с начальной скоростью 20 м/с. На какую максимальную высоту поднимется мяч? (Сопротивлением воздуха пренебречь, g = 10 Н/кг). Введите ответ в <strong>метрах</strong>.</span>
+                <span class="lang-kz">Допты жерден тік жоғары 20 м/с бастапқы жылдамдықпен лақтырады. Доп қандай максималды биіктікке көтеріледі? (Ауа кедергісін ескермеңіз, g = 10 Н/кг). Жауапты <strong>метрмен</strong> енгізіңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskC" data-placeholder-ru="Ответ в м" data-placeholder-kz="Жауап м-мен" placeholder="Ответ в м">
+                <button onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+            <div class="descriptors">
+                <span class="lang-ru">Подсказка: Вся начальная кинетическая энергия превращается в потенциальную энергию на максимальной высоте: (m &middot; v<sup>2</sup>) / 2 = m &middot; g &middot; h. Масса (m) сокращается!</span>
+                <span class="lang-kz">Кеңес: Барлық бастапқы кинетикалық энергия максималды биіктікте потенциалдық энергияға айналады: (m &middot; v<sup>2</sup>) / 2 = m &middot; g &middot; h. Масса (m) қысқарады!</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите эксперименты с американскими горками и маятником, где законы сохранения энергии демонстрируются на практике!</span>
+            <span class="lang-kz">Американдық төбешіктер мен маятникпен жасалған эксперименттерді қараңыз, онда энергияның сақталу заңдары іс жүзінде көрсетіледі!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D0%B5%D0%BD%D0%B8%D1%8F+%D0%BC%D0%B5%D1%85%D0%B0%D0%BD%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B9+%D1%8D%D0%BD%D0%B5%D1%80%D0%B3%D0%B8%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+7+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Закон сохранения энергии» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Энергияның сақталу заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 8. РЕФЛЕКСИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Рефлексия: оцени себя</span>
+            <span class="lang-kz">Рефлексия: өзіңді бағала</span>
+        </h2>
+        <div class="reflection">
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я могу привести примеры перехода потенциальной энергии в кинетическую и обратно.</span>
+                <span class="lang-kz">Мен потенциалдық энергияның кинетикалыққа және керісінше ауысуына мысалдар келтіре аламын.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я знаю формулировку закона сохранения механической энергии.</span>
+                <span class="lang-kz">Мен механикалық энергияның сақталу заңының тұжырымдамасын білемін.</span>
+            </label>
+            <label>
+                <input type="checkbox"> 
+                <span class="lang-ru">Я понимаю, во что превращается механическая энергия при наличии трения.</span>
+                <span class="lang-kz">Үйкеліс болған жағдайда механикалық энергия неге айналатынын түсінемін.</span>
+            </label>
+        </div>
+    </section>
+
+    <!-- 9. ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что гласит закон сохранения механической энергии (при отсутствии трения)?</span>
+                <span class="lang-kz">1. Механикалық энергияның сақталу заңы нені білдіреді (үйкеліс болмаған жағдайда)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Кинетическая энергия всегда равна потенциальной</span><span class="lang-kz">Кинетикалық энергия әрқашан потенциалдыққа тең</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Механическая энергия постоянно уменьшается</span><span class="lang-kz">Механикалық энергия үнемі азаяды</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Сумма кинетической и потенциальной энергии остается неизменной</span><span class="lang-kz">Кинетикалық және потенциалдық энергияның қосындысы өзгеріссіз қалады</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Энергия исчезает бесследно</span><span class="lang-kz">Энергия із-түзсіз жоғалады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Вы подбрасываете камень вертикально вверх. Как меняются его энергии во время подъема?</span>
+                <span class="lang-kz">2. Сіз тасты тік жоғары лақтырасыз. Оның көтерілу кезіндегі энергиялары қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Кинетическая растет, потенциальная растет</span><span class="lang-kz">Кинетикалық артады, потенциалдық артады</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Кинетическая уменьшается, потенциальная растет</span><span class="lang-kz">Кинетикалық кемиді, потенциалдық артады</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Кинетическая растет, потенциальная уменьшается</span><span class="lang-kz">Кинетикалық артады, потенциалдық кемиді</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Обе энергии уменьшаются</span><span class="lang-kz">Екі энергия да кемиді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">3. В какой вид энергии переходит механическая энергия при торможении автомобиля (под действием силы трения)?</span>
+                <span class="lang-kz">3. Автомобиль тежелген кезде (үйкеліс күшінің әсерінен) механикалық энергия қандай энергия түріне ауысады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">В потенциальную</span><span class="lang-kz">Потенциалдыққа</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Во внутреннюю (тепловую)</span><span class="lang-kz">Ішкі (жылулық) энергияға</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Она полностью уничтожается</span><span class="lang-kz">Ол толығымен жойылады</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">В электрическую</span><span class="lang-kz">Электрлік энергияға</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Если потенциальная энергия падающего тела уменьшилась на 15 Дж, то на сколько (без учета сопротивления воздуха) увеличится его кинетическая энергия?</span>
+                <span class="lang-kz">4. Егер құлап келе жатқан дененің потенциалдық энергиясы 15 Дж-ға азайса, онда оның кинетикалық энергиясы (ауа кедергісін есепке алмағанда) қаншаға артады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">На 15 Дж</span><span class="lang-kz">15 Дж-ға</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">На 30 Дж</span><span class="lang-kz">30 Дж-ға</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Она не изменится</span><span class="lang-kz">Ол өзгермейді</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Невозможно определить</span><span class="lang-kz">Анықтау мүмкін емес</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">5. Полная механическая энергия падающего камня на высоте 10 метров равна 50 Дж. Чему она будет равна на высоте 5 метров? (Трением пренебречь).</span>
+                <span class="lang-kz">5. Құлап келе жатқан тастың 10 метр биіктіктегі толық механикалық энергиясы 50 Дж-ға тең. Ол 5 метр биіктікте қаншаға тең болады? (Үйкелісті ескермеңіз).</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">25 Дж</span><span class="lang-kz">25 Дж</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">0 Дж</span><span class="lang-kz">0 Дж</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">100 Дж</span><span class="lang-kz">100 Дж</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">50 Дж</span><span class="lang-kz">50 Дж</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! В самой нижней точке маятник движется с максимальной скоростью, следовательно, его кинетическая энергия максимальна. Потенциальная же здесь минимальна.",
+            fbA_inc: "Неверно. Вспомните: кинетическая энергия зависит от скорости. Где скорость маятника самая большая (где он пролетает быстрее всего)?",
+            fbB_corr: "Абсолютно верно! По закону сохранения, полная энергия E = E_к + E_п = 40 + 60 = 100 Дж. Она сохраняется неизменной на любой высоте!",
+            fbB_inc: "Ошибка. Подсказка: просто сложите кинетическую и потенциальную энергии. Полная энергия не меняется на всем пути.",
+            fbC_corr: "Точно! v² / (2g) = 400 / 20 = 20 метров. Отлично усвоен закон сохранения!",
+            fbC_inc: "Неверно. По закону сохранения: m*v²/2 = m*g*h. Массу можно сократить. h = v² / (2*g). Возведите 20 в квадрат и разделите на 20.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_pot: "Потенц. (E_п)",
+            lbl_kin: "Кинет. (E_к)",
+            lbl_int: "Внутр. (Тепло)",
+            lbl_tot: "Полная Мех."
+        },
+        kz: {
+            show_sol: '<span class="lang-ru">Показать решение</span><span class="lang-kz">Шешімін көрсету</span>',
+            hide_sol: '<span class="lang-ru">Скрыть решение</span><span class="lang-kz">Шешімін жасыру</span>',
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Ең төменгі нүктеде маятник максималды жылдамдықпен қозғалады, демек оның кинетикалық энергиясы максималды. Ал потенциалдық энергия мұнда минималды.",
+            fbA_inc: "Қате. Есіңізде болсын: кинетикалық энергия жылдамдыққа байланысты. Маятниктің жылдамдығы қай жерде ең үлкен (қай жерден ең жылдам өтеді)?",
+            fbB_corr: "Мүлдем дұрыс! Сақталу заңы бойынша толық энергия E = E_к + E_п = 40 + 60 = 100 Дж. Ол кез келген биіктікте өзгеріссіз сақталады!",
+            fbB_inc: "Қате. Кеңес: жай ғана кинетикалық және потенциалдық энергияны қосыңыз. Толық энергия бүкіл жолда өзгермейді.",
+            fbC_corr: "Дұрыс! v² / (2g) = 400 / 20 = 20 метр. Сақталу заңы өте жақсы меңгерілген!",
+            fbC_inc: "Қате. Сақталу заңы бойынша: m*v²/2 = m*g*h. Массаны қысқартуға болады. h = v² / (2*g). 20-ны квадраттап, 20-ға бөліңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_pot: "Потенц. (E_п)",
+            lbl_kin: "Кинет. (E_к)",
+            lbl_int: "Ішкі (Жылу)",
+            lbl_tot: "Толық Мех."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+
+        const solutionBox = document.getElementById('solutionBox');
+        document.getElementById('toggleSolution').innerHTML = solutionBox.style.display === 'block' ? t('hide_sol') : t('show_sol');
+
+        if(!isPlaying) drawSimFrame(); 
+    }
+
+    // --- СИМУЛЯЦИЯ: МАЯТНИК С ТРЕНИЕМ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const angleSlider = document.getElementById('angleSlider');
+    const massSlider = document.getElementById('massSlider');
+    const fricSlider = document.getElementById('fricSlider');
+    
+    const angleVal = document.getElementById('angleVal');
+    const massVal = document.getElementById('massVal');
+    const fricVal = document.getElementById('fricVal');
+    
+    const btnPlay = document.getElementById('btnPlay');
+
+    let animFrame;
+    let isPlaying = false;
+    
+    // Физические параметры маятника
+    let g = 9.81;
+    let L = 2.0; // Длина подвеса в метрах для расчетов
+    let m = 5;
+    let theta = 0; // Текущий угол в радианах
+    let omega = 0; // Угловая скорость
+    let damping = 0; // Коэффициент затухания
+    
+    let initialTotalEnergy = 0; // Для отслеживания внутренней энергии
+    let timeLastFrame = 0;
+
+    function resetSimulation() {
+        m = parseFloat(massSlider.value);
+        let angleDeg = parseFloat(angleSlider.value);
+        theta = angleDeg * Math.PI / 180;
+        omega = 0;
+        
+        // Преобразуем 0-100 в коэффициент трения.
+        let fricPercent = parseFloat(fricSlider.value);
+        damping = fricPercent * 0.005; 
+        
+        // Считаем начальную энергию (все E_п)
+        let h_initial = L * (1 - Math.cos(theta));
+        initialTotalEnergy = m * g * h_initial;
+        
+        drawSimFrame();
+    }
+
+    function updateLabels() {
+        angleVal.textContent = angleSlider.value;
+        massVal.textContent = massSlider.value;
+        fricVal.textContent = fricSlider.value;
+        if(!isPlaying) {
+            resetSimulation();
+        }
+    }
+
+    angleSlider.addEventListener('input', updateLabels);
+    massSlider.addEventListener('input', updateLabels);
+    fricSlider.addEventListener('input', updateLabels);
+
+    btnPlay.addEventListener('click', () => {
+        if(isPlaying) {
+            // Если уже играет, останавливаем и сбрасываем
+            isPlaying = false;
+            cancelAnimationFrame(animFrame);
+            btnPlay.innerHTML = '<span class="lang-ru">Сбросить маятник</span><span class="lang-kz">Маятникті жіберу</span>';
+            toggleLang(); // update button text correctly
+            angleSlider.disabled = false;
+            massSlider.disabled = false;
+            resetSimulation();
+        } else {
+            // Начинаем
+            isPlaying = true;
+            btnPlay.innerHTML = '<span class="lang-ru">Остановить</span><span class="lang-kz">Тоқтату</span>';
+            toggleLang();
+            
+            angleSlider.disabled = true;
+            massSlider.disabled = true;
+            
+            timeLastFrame = performance.now();
+            requestAnimationFrame(animateScene);
+        }
+    });
+
+    function drawSimFrame() {
+        if(!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Геометрия отрисовки
+        const pivotX = 200;
+        const pivotY = 20;
+        const scalePx = 100; // 100 px = 1 метр
+        
+        // Вычисляем энергии
+        let h = L * (1 - Math.cos(theta));
+        let Ep = m * g * h;
+        
+        let v = L * omega;
+        let Ek = 0.5 * m * v * v;
+        
+        let E_mech = Ep + Ek;
+        
+        // Трение не может добавить энергию. Ограничим погрешность численного интегрирования.
+        if (E_mech > initialTotalEnergy) E_mech = initialTotalEnergy;
+        
+        let E_int = initialTotalEnergy - E_mech; // Внутренняя (тепло)
+        if (E_int < 0) E_int = 0;
+
+        // --- РИСУЕМ МАЯТНИК ---
+        // Потолок
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(pivotX - 50, pivotY - 10, 100, 10);
+        
+        // Нить
+        let bobX = pivotX + Math.sin(theta) * (L * scalePx);
+        let bobY = pivotY + Math.cos(theta) * (L * scalePx);
+        
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(pivotX, pivotY);
+        ctx.lineTo(bobX, bobY);
+        ctx.stroke();
+        
+        // Груз
+        let radius = 10 + m * 1.5;
+        ctx.fillStyle = '#059669';
+        ctx.beginPath();
+        ctx.arc(bobX, bobY, radius, 0, Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle = '#064e3b';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Отрисовка траектории (дуги)
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        let maxTheta = parseFloat(angleSlider.value) * Math.PI/180;
+        ctx.arc(pivotX, pivotY, L * scalePx, Math.PI/2 - maxTheta, Math.PI/2 + maxTheta);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // --- РИСУЕМ ГИСТОГРАММЫ ---
+        const barStartX = 420;
+        const barBaseY = 280;
+        
+        // Чтобы столбцы не прыгали, найдем максимум возможной энергии из слайдеров (m=10, angle=80)
+        let max_possible_h = L * (1 - Math.cos(80 * Math.PI/180));
+        let max_possible_E = 10 * g * max_possible_h; // ~162 J
+        let pxPerJoule = 200 / max_possible_E; 
+        
+        const barW = 35;
+        const gap = 15;
+        
+        function drawBar(x, E, color, labelText) {
+            let hPx = E * pxPerJoule;
+            ctx.fillStyle = color;
+            ctx.fillRect(x, barBaseY - hPx, barW, hPx);
+            ctx.fillStyle = '#1e293b';
+            ctx.font = '12px sans-serif'; 
+            ctx.textAlign = 'center';
+            ctx.fillText(Math.round(E) + ' Дж', x + barW/2, barBaseY - hPx - 5);
+            
+            // Text wrap for label
+            let lines = labelText.split(' ');
+            for(let i=0; i<lines.length; i++) {
+                ctx.fillText(lines[i], x + barW/2, barBaseY + 15 + i*14);
+            }
+        }
+
+        drawBar(barStartX, Ep, '#3b82f6', t('lbl_pot'));
+        drawBar(barStartX + barW + gap, Ek, '#ef4444', t('lbl_kin'));
+        drawBar(barStartX + (barW + gap)*2, E_int, '#f59e0b', t('lbl_int'));
+        
+        // Полная мех энергия (Ep + Ek) для наглядности убывания
+        drawBar(barStartX + (barW + gap)*3, E_mech, '#059669', t('lbl_tot'));
+    }
+
+    function animateScene(timestamp) {
+        if (!isPlaying) return;
+        
+        let dt = (timestamp - timeLastFrame) / 1000;
+        if(dt > 0.05) dt = 0.05; // ограничение если вкладка была неактивна
+        timeLastFrame = timestamp;
+        
+        // Численное интегрирование (метод Эйлера-Кромера)
+        // Угловое ускорение: alpha = - (g/L)*sin(theta) - damping * omega
+        let alpha = -(g / L) * Math.sin(theta) - (damping * omega);
+        
+        // Если скорость почти 0 и угол почти 0, остановим маятник чтобы не дрожал
+        if (Math.abs(omega) < 0.01 && Math.abs(theta) < 0.01) {
+            omega = 0;
+            theta = 0;
+        } else {
+            omega += alpha * dt;
+            theta += omega * dt;
+        }
+        
+        drawSimFrame();
+        
+        animFrame = requestAnimationFrame(animateScene);
+    }
+
+    // Инициализация
+    updateLabels();
+    drawSimFrame();
+
+    // --- РЕШЕНИЕ ЗАДАЧИ ---
+    const toggleSolutionBtn = document.getElementById('toggleSolution');
+    const solutionBox = document.getElementById('solutionBox');
+    toggleSolutionBtn.addEventListener('click', () => {
+        if (solutionBox.style.display === 'block') {
+            solutionBox.style.display = 'none';
+            toggleSolutionBtn.innerHTML = t('show_sol');
+        } else {
+            solutionBox.style.display = 'block';
+            toggleSolutionBtn.innerHTML = t('hide_sol');
+        }
+    });
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = parseInt(document.getElementById('taskB').value.replace(/\s+/g, ''));
+        if (isNaN(val)) return showFeedback('fbB', false, t('num_req'));
+        if (val === 100) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = parseFloat(document.getElementById('taskC').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbC', false, t('num_req'));
+        if (val === 20) {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>
