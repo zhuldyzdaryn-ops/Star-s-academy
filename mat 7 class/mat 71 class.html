@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 7 класс: 1 четверть</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .correct-bg { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .lang-active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        
+        /* Стили для графика */
+        .graph-grid line { stroke: #e2e8f0; stroke-width: 1; }
+        .graph-axis { stroke: #475569; stroke-width: 2; }
+        .graph-line { stroke: #3b82f6; stroke-width: 3; stroke-linecap: round; }
+        .graph-dot { fill: #ef4444; stroke: white; stroke-width: 2; }
+        .axis-label { font-size: 12px; font-weight: 600; fill: #64748b; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Тумблер языка -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all lang-active">РУС</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">ҚАЗ</button>
+            </div>
+
+            <div class="hidden md:flex gap-1">
+                <button onclick="showTab('quiz')" data-t="navQuiz" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Тесты</button>
+                <button onclick="showTab('tasks')" data-t="navTasks" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Задачи</button>
+                <button onclick="showTab('lab')" data-t="navLab" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Лаборатория</button>
+                <button onclick="showTab('theory')" data-t="navTheory" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Справочник</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="tab-content active">
+            <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-3xl p-10 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold mb-3 uppercase tracking-tight" data-t="mainTitle">Тренажер по физике</h1>
+                    <p class="text-blue-100 text-lg max-w-2xl opacity-90 font-medium" data-t="mainDesc">
+                        Самостоятельная подготовка к суммативному оцениванию по физике за 1 четверть
+                    </p>
+                </div>
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-10 transform rotate-12">
+                    <svg width="240" height="240" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 10 10 2.66 0 5.08-1.03 6.87-2.71l-2.13-2.13C15.5 18.45 13.84 19 12 19z"/></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="showTab('quiz')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer btn-transition group">
+                    <div class="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardQuizTitle">Тестирование</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardQuizDesc">Блок А: Понятия движения, путь и система СИ.</p>
+                </div>
+
+                <div onclick="showTab('tasks')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-400 cursor-pointer btn-transition group">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTasksTitle">Средняя скорость</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTasksDesc">Расчет движения на разных участках пути.</p>
+                </div>
+
+                <div onclick="showTab('lab')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-purple-400 cursor-pointer btn-transition group">
+                    <div class="bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardLabTitle">Анализ графиков</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardLabDesc">Определение скорости по графику S(t).</p>
+                </div>
+
+                <div onclick="showTab('theory')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 cursor-pointer btn-transition group">
+                    <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTheoryTitle">Справочник</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTheoryDesc">Перевод величин и формулы.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТ -->
+        <div id="quiz" class="tab-content max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center justify-between text-slate-500 font-bold px-2 uppercase text-xs tracking-widest">
+                <span id="question-counter">...</span>
+                <span id="score-display" class="text-blue-600">...</span>
+            </div>
+            <div id="quiz-container" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[350px]"></div>
+            <div id="quiz-result" class="hidden bg-white p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                <h2 class="text-3xl font-black mb-2" data-t="quizResultTitle">Тест завершен!</h2>
+                <p id="final-score" class="text-xl text-slate-500 mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition" data-t="btnRetry">Повторить</button>
+            </div>
+        </div>
+
+        <!-- ЗАДАЧИ -->
+        <div id="tasks" class="tab-content max-w-3xl mx-auto space-y-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task1Title">Расчет средней скорости</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-blue-500" data-t="task1Desc">
+                    Автомобиль проехал первые 100 метров за 5 секунд, а следующие 300 метров за 15 секунд. Определите среднюю скорость автомобиля на всем пути.
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (м/с):</label>
+                    <input type="number" id="ans-vavg" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('vavg', 20)" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-vavg" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task2Title">Перевод в систему СИ</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-indigo-500" data-t="task2Desc">
+                    Заполните пропуски: 12 см = ? м; 500 см² = ? м².
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <input type="number" step="0.0001" id="ans-si1" class="p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" placeholder="12 см -> м">
+                    <input type="number" step="0.0001" id="ans-si2" class="p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" placeholder="500 см² -> м²">
+                </div>
+                <button onclick="checkTaskSI()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-indigo-700 btn-transition shadow-lg shadow-indigo-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-si" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРИЯ С ДЕТАЛЬНЫМ ГРАФИКОМ -->
+        <div id="lab" class="tab-content max-w-4xl mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold mb-4" data-t="labTitle">Анализ графика S(t)</h2>
+                <p class="text-slate-500 mb-8" data-t="labDesc">Используя представленный график, рассчитайте скорость равномерного движения тела.</p>
+                
+                <div class="flex flex-col lg:flex-row gap-10 items-start">
+                    <!-- SVG ГРАФИК -->
+                    <div class="w-full lg:w-3/5 bg-slate-50 p-6 rounded-2xl border border-slate-200 overflow-visible">
+                        <svg viewBox="0 0 400 300" class="w-full h-auto overflow-visible">
+                            <!-- Сетка -->
+                            <g class="graph-grid">
+                                <!-- Вертикальные линии (t) -->
+                                <line x1="50" y1="250" x2="350" y2="250" />
+                                <line x1="50" y1="210" x2="350" y2="210" />
+                                <line x1="50" y1="170" x2="350" y2="170" />
+                                <line x1="50" y1="130" x2="350" y2="130" />
+                                <line x1="50" y1="90" x2="350" y2="90" />
+                                <line x1="50" y1="50" x2="350" y2="50" />
+                                
+                                <!-- Горизонтальные линии (S) -->
+                                <line x1="50" y1="250" x2="50" y2="40" />
+                                <line x1="110" y1="250" x2="110" y2="40" />
+                                <line x1="170" y1="250" x2="170" y2="40" />
+                                <line x1="230" y1="250" x2="230" y2="40" />
+                                <line x1="290" y1="250" x2="290" y2="40" />
+                                <line x1="350" y1="250" x2="350" y2="40" />
+                            </g>
+
+                            <!-- Оси -->
+                            <g class="graph-axis">
+                                <!-- Ось t -->
+                                <line x1="50" y1="250" x2="370" y2="250" />
+                                <path d="M 370 250 L 360 245 L 360 255 Z" fill="#475569" />
+                                <!-- Ось S -->
+                                <line x1="50" y1="250" x2="50" y2="30" />
+                                <path d="M 50 30 L 45 40 L 55 40 Z" fill="#475569" />
+                            </g>
+
+                            <!-- Подписи шкал -->
+                            <g class="axis-label">
+                                <!-- Время t (с) -->
+                                <text x="50" y="270" text-anchor="middle">0</text>
+                                <text x="110" y="270" text-anchor="middle">1</text>
+                                <text x="170" y="270" text-anchor="middle">2</text>
+                                <text x="230" y="270" text-anchor="middle">3</text>
+                                <text x="290" y="270" text-anchor="middle">4</text>
+                                <text x="350" y="270" text-anchor="middle">5</text>
+                                <text x="370" y="285" text-anchor="end">t (с)</text>
+
+                                <!-- Путь S (м) -->
+                                <text x="40" y="215" text-anchor="end">5</text>
+                                <text x="40" y="175" text-anchor="end">10</text>
+                                <text x="40" y="135" text-anchor="end">15</text>
+                                <text x="40" y="95" text-anchor="end">20</text>
+                                <text x="40" y="55" text-anchor="end">25</text>
+                                <text x="35" y="30" text-anchor="end">S (м)</text>
+                            </g>
+
+                            <!-- Линия графика (V = 5 м/с) -->
+                            <!-- (0,0) -> (4, 20) -> (5, 25) -->
+                            <line x1="50" y1="250" x2="350" y2="50" class="graph-line" />
+                            
+                            <!-- Ключевая точка (4, 20) -->
+                            <circle cx="290" cy="90" r="5" class="graph-dot" />
+                            <line x1="290" y1="250" x2="290" y2="90" stroke="#94a3b8" stroke-dasharray="4" />
+                            <line x1="50" y1="90" x2="290" y2="90" stroke="#94a3b8" stroke-dasharray="4" />
+                        </svg>
+                    </div>
+
+                    <!-- ПОЛЕ ОТВЕТА -->
+                    <div class="w-full lg:w-2/5 space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                            <h4 class="font-bold text-blue-800 mb-2 uppercase text-xs tracking-wider" data-t="labInstruction">Инструкция:</h4>
+                            <p class="text-sm text-blue-700 leading-relaxed" data-t="labStep">
+                                Найдите на графике выделенную красную точку. Определите путь $S$ и время $t$, соответствующие этой точке, и вычислите скорость по формуле $V = S / t$.
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <label class="block text-sm font-bold text-slate-500 uppercase" data-t="labelSpeed">Скорость V (м/с):</label>
+                            <input type="number" id="ans-lab-v" class="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none font-bold text-2xl shadow-sm focus:ring-2 focus:ring-purple-500 transition-all" placeholder="?">
+                            <button onclick="checkTask('lab-v', 5)" class="w-full bg-purple-600 text-white py-4 rounded-xl font-bold hover:bg-purple-700 btn-transition shadow-lg shadow-purple-100 uppercase tracking-widest" data-t="btnCheck">Проверить</button>
+                            <div id="feedback-lab-v" class="hidden font-bold p-4 rounded-xl text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СПРАВОЧНИК -->
+        <div id="theory" class="tab-content max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory1">Средняя скорость</h4>
+                    <code class="text-2xl font-black block mb-2 text-slate-800">V_cp = S_общ / t_общ</code>
+                    <p class="text-xs text-slate-500" data-t="theory1p">S_общ = S1 + S2 + ...</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory2">Система СИ</h4>
+                    <div class="text-left text-sm space-y-1">
+                        <div class="flex justify-between"><span>см -> м</span> <span>/ 100</span></div>
+                        <div class="flex justify-between"><span>дм -> м</span> <span>/ 10</span></div>
+                        <div class="flex justify-between"><span>см² -> м²</span> <span>/ 10 000</span></div>
+                        <div class="flex justify-between"><span>км/ч -> м/с</span> <span>/ 3.6</span></div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory3">Движение</h4>
+                    <code class="text-2xl font-black block mb-2 text-slate-800">S = V · t</code>
+                    <p class="text-xs text-slate-500 font-medium" data-t="theory3p">Для равномерного прямолинейного движения</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button id="back-btn" onclick="showTab('menu')" class="hidden fixed bottom-6 left-6 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl hover:bg-slate-800 btn-transition flex items-center gap-2 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span class="font-bold uppercase tracking-widest" data-t="btnMenu">МЕНЮ</span>
+    </button>
+
+    <script>
+        const langData = {
+            ru: {
+                navQuiz: "Тесты", navTasks: "Задачи", navLab: "Лаборатория", navTheory: "Справочник",
+                mainTitle: "Тренажер по физике (1 четверть)", mainDesc: "Самостоятельная подготовка к суммативному оцениванию по физике за 1 четверть",
+                cardQuizTitle: "Тестирование", cardQuizDesc: "Блок А: Понятия движения, путь и система СИ.",
+                cardTasksTitle: "Задачи и СИ", cardTasksDesc: "Расчет движения на разных участках пути.",
+                cardLabTitle: "Анализ графиков", cardLabDesc: "Определение скорости по графику S(t).",
+                cardTheoryTitle: "Справочник", cardTheoryDesc: "Перевод величин и формулы.",
+                quizResultTitle: "Тест завершен!", btnRetry: "Повторить", btnMenu: "МЕНЮ",
+                labelAnswer: "Ваш ответ:", labelSpeed: "Скорость V (м/с):",
+                btnCheck: "Проверить", btnCheckTable: "Проверить расчеты",
+                task1Title: "Расчет средней скорости", task1Desc: "Автомобиль проехал первые 100 метров за 5 секунд, а следующие 300 метров за 15 секунд. Определите среднюю скорость автомобиля на всем пути.",
+                task2Title: "Перевод в систему СИ", task2Desc: "Заполните пропуски: 12 см = ? м; 500 см² = ? м².",
+                labTitle: "Анализ графика S(t)", labDesc: "Используя представленный график, рассчитайте скорость равномерного движения тела.",
+                labInstruction: "Инструкция:", labStep: "Найдите на графике выделенную красную точку. Определите путь S и время t, соответствующие этой точке, и вычислите скорость по формуле V = S / t.",
+                theory1: "Средняя скорость", theory1p: "S_общ = S1 + S2 + ...",
+                theory2: "Система СИ",
+                theory3: "Движение", theory3p: "Для равномерного прямолинейного движения",
+                fbCorrect: "ВЕРНО ✅", fbWrong: "ОШИБКА ❌", fbBothCorrect: "ОТЛИЧНО ✅", fbErrorCalc: "ПРОВЕРЬТЕ РАСЧЕТЫ ❌"
+            },
+            kk: {
+                navQuiz: "Тесттер", navTasks: "Есептер", navLab: "Зертхана", navTheory: "Анықтамалық",
+                mainTitle: "Физика тренажеры (1-тоқсан)", mainDesc: "1-тоқсан бойынша физикадан жиынтық бағалауға өз бетінше дайындық",
+                cardQuizTitle: "Тест тапсырмалары", cardQuizDesc: "А Блогы: Қозғалыс ұғымдары, жол және ХБЖ.",
+                cardTasksTitle: "Есептер мен ХБЖ", cardTasksDesc: "Жолдың әртүрлі бөліктеріндегі қозғалысты есептеу.",
+                cardLabTitle: "Графиктер", cardLabDesc: "S(t) графигі бойынша жылдамдықты анықтау.",
+                cardTheoryTitle: "Анықтамалық", cardTheoryDesc: "Шамаларды аудару және формулалар.",
+                quizResultTitle: "Тест аяқталды!", btnRetry: "Қайталау", btnMenu: "МӘЗІР",
+                labelAnswer: "Жауабыңыз:", labelSpeed: "V жылдамдығы (м/с):",
+                btnCheck: "Тексеру", btnCheckTable: "Есептеуді тексеру",
+                task1Title: "Орташа жылдамдықты есептеу", task1Desc: "Автомобиль алғашқы 100 метрді 5 секундта, ал келесі 300 метрді 15 секундта жүріп өтті. Барлық жолдағы орташа жылдамдықты анықтаңыз.",
+                task2Title: "ХБЖ жүйесіне аудару", task2Desc: "Бос орындарды толтырыңыз: 12 см = ? м; 500 см² = ? м².",
+                labTitle: "S(t) графигін талдау", labDesc: "Ұсынылған графикті пайдаланып, дененің бірқалыпты қозғалыс жылдамдығын есептеңіз.",
+                labInstruction: "Нұсқаулық:", labStep: "Графиктен қызыл нүктені табыңыз. Осы нүктеге сәйкес келетін S жолын және t уақытын анықтаңыз және V = S / t формуласы бойынша жылдамдықты есептеңіз.",
+                theory1: "Орташа жылдамдық", theory1p: "S_жалпы = S1 + S2 + ...",
+                theory2: "ХБЖ жүйесі",
+                theory3: "Қозғалыс", theory3p: "Бірқалыпты түзусызықты қозғалыс үшін",
+                fbCorrect: "ДҰРЫС ✅", fbWrong: "ҚАТЕ ❌", fbBothCorrect: "ӨТЕ ЖАҚСЫ ✅", fbErrorCalc: "ЕСЕПТЕУДІ ТЕКСЕРІҢІЗ ❌"
+            }
+        };
+
+        const questions = {
+            ru: [
+                { q: "Изменение положения тела относительно других тел с течением времени называется...", o: ["Путь", "Траектория", "Механическое движение", "Инерция"], a: 2 },
+                { q: "Как называется линия, по которой движется тело?", o: ["Путь", "Траектория", "Перемещение", "Вектор"], a: 1 },
+                { q: "Длина траектории — это...", o: ["Скорость", "Время", "Путь", "Ускорение"], a: 2 },
+                { q: "Какое движение называют равномерным?", o: ["Скорость постоянно меняется", "За любые равные промежутки времени тело проходит равные пути", "Движение по кругу", "Движение только вперед"], a: 1 },
+                { q: "Основная единица времени в системе СИ?", o: ["Минута", "Час", "Сутки", "Секунда"], a: 3 }
+            ],
+            kk: [
+                { q: "Уақыт өтуіне қарай дененің басқа денелерге қатысты орнының өзгеруі...", o: ["Жол", "Траектория", "Механикалық қозғалыс", "Инерция"], a: 2 },
+                { q: "Дененің қозғалыс сызығы қалай аталады?", o: ["Жол", "Траектория", "Орын ауыстыру", "Вектор"], a: 1 },
+                { q: "Траекторияның ұзындығы — бұл...", o: ["Жылдамдық", "Уақыт", "Жол", "Үдеу"], a: 2 },
+                { q: "Қандай қозғалыс бірқалыпты деп аталады?", o: ["Жылдамдық үнемі өзгереді", "Кез келген тең уақыт аралығында дене тең жолдар жүреді", "Шеңбер бойымен қозғалыс", "Тек алға қозғалыс"], a: 1 },
+                { q: "ХБЖ жүйесіндегі уақыттың негізгі бірлігі?", o: ["Минут", "Сағат", "Тәулік", "Секунд"], a: 3 }
+            ]
+        };
+
+        let currentLang = 'ru';
+        let currentQ = 0;
+        let score = 0;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').classList.toggle('lang-active', lang === 'ru');
+            document.getElementById('lang-kk').classList.toggle('lang-active', lang === 'kk');
+            updateUI();
+            if (document.getElementById('quiz').classList.contains('active')) restartQuiz();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                el.innerHTML = langData[currentLang][key];
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('back-btn');
+            tabId === 'menu' ? btn.classList.add('hidden') : btn.classList.remove('hidden');
+            if (tabId === 'quiz') restartQuiz();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            const data = questions[currentLang][currentQ];
+            const counterText = currentLang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.ru.length}` : `Сұрақ ${currentQ + 1} / ${questions.kk.length}`;
+            const scoreText = currentLang === 'ru' ? `Баллы: ${score}` : `Ұпай: ${score}`;
+            
+            document.getElementById('question-counter').innerText = counterText;
+            document.getElementById('score-display').innerText = scoreText;
+            
+            let html = `<h2 class="text-xl font-bold text-slate-800 mb-8 leading-relaxed">${data.q}</h2><div class="grid grid-cols-1 gap-3">`;
+            data.o.forEach((opt, i) => {
+                html += `<button onclick="handleSelect(${i})" class="w-full text-left p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium">${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function handleSelect(idx) {
+            const container = document.getElementById('quiz-container');
+            const btns = container.querySelectorAll('button');
+            const correct = questions[currentLang][currentQ].a;
+            
+            if (idx === correct) {
+                score++;
+                btns[idx].classList.add('correct-bg');
+            } else {
+                btns[idx].classList.add('wrong-bg');
+                btns[correct].classList.add('correct-bg');
+            }
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < questions[currentLang].length) renderQuestion();
+                else showQuizResult();
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            const resText = currentLang === 'ru' ? `Результат: ${score} из ${questions.ru.length}` : `Нәтиже: ${questions.kk.length} сұрақтан ${score}`;
+            document.getElementById('final-score').innerText = resText;
+        }
+
+        function restartQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function checkTask(id, correctVal) {
+            const val = parseFloat(document.getElementById('ans-' + id).value);
+            const fb = document.getElementById('feedback-' + id);
+            fb.classList.remove('hidden');
+            if (val === correctVal) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-4 rounded-xl text-center shadow-inner";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-4 rounded-xl text-center shadow-inner";
+            }
+        }
+
+        function checkTaskSI() {
+            const a1 = parseFloat(document.getElementById('ans-si1').value);
+            const a2 = parseFloat(document.getElementById('ans-si2').value);
+            const fb = document.getElementById('feedback-si');
+            fb.classList.remove('hidden');
+            
+            if (a1 === 0.12 && a2 === 0.05) {
+                fb.innerText = langData[currentLang].fbBothCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-3 rounded-lg";
+            } else {
+                fb.innerText = langData[currentLang].fbErrorCalc;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-3 rounded-lg";
+            }
+        }
+
+        updateUI();
+        renderQuestion();
+    </script>
+</body>
+</html>

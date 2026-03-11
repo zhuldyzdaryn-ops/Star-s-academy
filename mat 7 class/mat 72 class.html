@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 7 класс: 2 четверть</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .correct-bg { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .lang-active { background-color: #10b981; color: white; border-color: #10b981; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Тумблер языка -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all lang-active">РУС</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">ҚАЗ</button>
+            </div>
+
+            <div class="hidden md:flex gap-1">
+                <button onclick="showTab('quiz')" data-t="navQuiz" class="font-bold text-slate-500 hover:text-emerald-600 px-4 py-2 rounded-xl hover:bg-slate-50">Тесты</button>
+                <button onclick="showTab('tasks')" data-t="navTasks" class="font-bold text-slate-500 hover:text-emerald-600 px-4 py-2 rounded-xl hover:bg-slate-50">Задачи</button>
+                <button onclick="showTab('lab')" data-t="navLab" class="font-bold text-slate-500 hover:text-emerald-600 px-4 py-2 rounded-xl hover:bg-slate-50">Лаборатория</button>
+                <button onclick="showTab('theory')" data-t="navTheory" class="font-bold text-slate-500 hover:text-emerald-600 px-4 py-2 rounded-xl hover:bg-slate-50">Справочник</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="tab-content active">
+            <div class="bg-gradient-to-br from-emerald-700 to-teal-700 rounded-3xl p-10 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold mb-3 uppercase tracking-tight" data-t="mainTitle">Тренажер по физике</h1>
+                    <p class="text-emerald-100 text-lg max-w-2xl opacity-90 font-medium" data-t="mainDesc">
+                        Самостоятельная подготовка к суммативному оцениванию по физике за 2 четверть
+                    </p>
+                </div>
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-10 transform rotate-12">
+                    <svg width="240" height="240" viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 11h3c.8 0 1.5-.7 1.5-1.5v-3C9 5.7 8.3 5 7.5 5h-3C3.7 5 3 5.7 3 6.5v3c0 .8.7 1.5 1.5 1.5zM16.5 5h-3c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5zM4.5 19h3c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5h-3c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5zM16.5 19h-3c-.8 0-1.5.7-1.5 1.5v3c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5v-3c0-.8-.7-1.5-1.5-1.5z"/></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="showTab('quiz')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-400 cursor-pointer btn-transition group">
+                    <div class="bg-emerald-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardQuizTitle">Тестирование</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardQuizDesc">Блок А: Плотность, инерция и силы трения.</p>
+                </div>
+
+                <div onclick="showTab('tasks')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer btn-transition group">
+                    <div class="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTasksTitle">Задачи Блока Б</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTasksDesc">Расчет плотности и коэффициента жесткости.</p>
+                </div>
+
+                <div onclick="showTab('lab')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-teal-400 cursor-pointer btn-transition group">
+                    <div class="bg-teal-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardLabTitle">Лаборатория</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardLabDesc">Исследование закона Гука по графикам.</p>
+                </div>
+
+                <div onclick="showTab('theory')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 cursor-pointer btn-transition group">
+                    <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTheoryTitle">Справочник</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTheoryDesc">Формулы плотности и сил.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТ -->
+        <div id="quiz" class="tab-content max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center justify-between text-slate-500 font-bold px-2 uppercase text-xs tracking-widest">
+                <span id="question-counter">...</span>
+                <span id="score-display" class="text-emerald-600">...</span>
+            </div>
+            <div id="quiz-container" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[350px]"></div>
+            <div id="quiz-result" class="hidden bg-white p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                <h2 class="text-3xl font-black mb-2" data-t="quizResultTitle">Тест завершен!</h2>
+                <p id="final-score" class="text-xl text-slate-500 mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 btn-transition" data-t="btnRetry">Повторить</button>
+            </div>
+        </div>
+
+        <!-- ЗАДАЧИ -->
+        <div id="tasks" class="tab-content max-w-3xl mx-auto space-y-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task1Title">Плотность камня</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-emerald-500" data-t="task1Desc">
+                    Камень весом 4 Н поместили в воду. Объем вытесненной воды равен 200 см³. Определите плотность камня. (g = 10 м/с²)
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelMass">Масса (кг):</label>
+                        <input type="number" id="ans-density-m" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" placeholder="...">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelDensity">Плотность (кг/м³):</label>
+                        <input type="number" id="ans-density-p" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold" placeholder="...">
+                    </div>
+                </div>
+                <button onclick="checkDensityTask()" class="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 btn-transition shadow-lg shadow-emerald-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-density" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task2Title">Закон Гука</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-blue-500" data-t="task2Desc">
+                    Под действием силы 30 Н пружина удлинилась на 0,03 м. Определите коэффициент жесткости пружины (k).
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (Н/м):</label>
+                    <input type="number" id="ans-hooke" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('hooke', 1000)" class="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-700 btn-transition shadow-lg shadow-emerald-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-hooke" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРИЯ -->
+        <div id="lab" class="tab-content max-w-4xl mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold mb-4" data-t="labTitle">Закон Гука: Таблица данных</h2>
+                <p class="text-slate-500 mb-6" data-t="labDesc">Рассчитайте силу упругости для пружины с жесткостью k = 500 Н/м для разных удлинений x.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse mb-6 text-center">
+                        <thead>
+                            <tr class="bg-slate-50">
+                                <th class="p-4 border border-slate-200">x (м)</th>
+                                <th class="p-4 border border-slate-200">F упр (Н)</th>
+                                <th class="p-4 border border-slate-200">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="p-4 border border-slate-200 font-bold">0.01</td><td class="p-4 border border-slate-200"><input type="number" id="lab-1" class="w-24 p-2 border-b-2 border-emerald-200 outline-none text-center"></td><td id="lab-chk-1" class="p-4 border border-slate-200">-</td></tr>
+                            <tr><td class="p-4 border border-slate-200 font-bold">0.02</td><td class="p-4 border border-slate-200"><input type="number" id="lab-2" class="w-24 p-2 border-b-2 border-emerald-200 outline-none text-center"></td><td id="lab-chk-2" class="p-4 border border-slate-200">-</td></tr>
+                            <tr><td class="p-4 border border-slate-200 font-bold">0.05</td><td class="p-4 border border-slate-200"><input type="number" id="lab-3" class="w-24 p-2 border-b-2 border-emerald-200 outline-none text-center"></td><td id="lab-chk-3" class="p-4 border border-slate-200">-</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button onclick="checkLab()" class="w-full bg-teal-600 text-white py-4 rounded-xl font-bold hover:bg-teal-700 btn-transition shadow-lg shadow-teal-100 uppercase tracking-widest" data-t="btnCheckTable">Проверить расчеты</button>
+            </div>
+        </div>
+
+        <!-- СПРАВОЧНИК -->
+        <div id="theory" class="tab-content max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-emerald-600 font-bold mb-4" data-t="theory1">Плотность вещества</h4>
+                    <code class="text-xl font-black block mb-2">ρ = m / V</code>
+                    <p class="text-xs text-slate-500" data-t="theory1p">Единицы: кг/м³</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-emerald-600 font-bold mb-4" data-t="theory2">Сила тяжести</h4>
+                    <code class="text-xl font-black block mb-2">F = m · g</code>
+                    <p class="text-xs text-slate-500" data-t="theory2p">g ≈ 10 Н/кг</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-emerald-600 font-bold mb-4" data-t="theory3">Закон Гука</h4>
+                    <code class="text-xl font-black block mb-2">Fупр = k · x</code>
+                    <p class="text-xs text-slate-500" data-t="theory3p">k — жесткость, x — удлинение</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button id="back-btn" onclick="showTab('menu')" class="hidden fixed bottom-6 left-6 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl hover:bg-slate-800 btn-transition flex items-center gap-2 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span class="font-bold uppercase tracking-widest" data-t="btnMenu">МЕНЮ</span>
+    </button>
+
+    <script>
+        const langData = {
+            ru: {
+                navQuiz: "Тесты", navTasks: "Задачи", navLab: "Лаборатория", navTheory: "Справочник",
+                mainTitle: "Тренажер по физике (2 четверть)", mainDesc: "Самостоятельная подготовка к суммативному оцениванию по физике за 2 четверть",
+                cardQuizTitle: "Тестирование", cardQuizDesc: "Блок А: Плотность, инерция и силы трения.",
+                cardTasksTitle: "Задачи Блока Б", cardTasksDesc: "Расчет плотности и коэффициента жесткости.",
+                cardLabTitle: "Лаборатория", cardLabDesc: "Исследование закона Гука по графикам.",
+                cardTheoryTitle: "Справочник", cardTheoryDesc: "Формулы плотности и сил.",
+                quizResultTitle: "Тест завершен!", btnRetry: "Повторить", btnMenu: "МЕНЮ",
+                labelAnswer: "Ваш ответ:", labelMass: "Масса (кг):", labelDensity: "Плотность (кг/м³):",
+                btnCheck: "Проверить", btnCheckTable: "Проверить расчеты",
+                task1Title: "Плотность камня", task1Desc: "Камень весом 4 Н поместили в воду. Объем вытесненной воды равен 200 см³. Определите плотность камня. (g = 10 м/с²)",
+                task2Title: "Закон Гука", task2Desc: "Под действием силы 30 Н пружина удлинилась на 0,03 м. Определите коэффициент жесткости пружины (k).",
+                labTitle: "Закон Гука: Таблица данных", labDesc: "Рассчитайте силу упругости для пружины с жесткостью k = 500 Н/м для разных удлинений x.",
+                theory1: "Плотность вещества", theory2: "Сила тяжести", theory3: "Закон Гука",
+                theory1p: "Единицы: кг/м³", theory2p: "g ≈ 10 Н/кг", theory3p: "k — жесткость, x — удлинение",
+                fbCorrect: "ВЕРНО ✅", fbWrong: "ОШИБКА ❌", fbBothCorrect: "ОТЛИЧНО ✅", fbErrorCalc: "ПРОВЕРЬТЕ РАСЧЕТЫ ❌"
+            },
+            kk: {
+                navQuiz: "Тесттер", navTasks: "Есептер", navLab: "Зертхана", navTheory: "Анықтамалық",
+                mainTitle: "Физика тренажеры (2-тоқсан)", mainDesc: "2-тоқсан бойынша физикадан жиынтық бағалауға өз бетінше дайындық",
+                cardQuizTitle: "Тест тапсырмалары", cardQuizDesc: "А Блогы: Тығыздық, инерция және үйкеліс күштері.",
+                cardTasksTitle: "Б Блогы есептері", cardTasksDesc: "Тығыздықты және қатаңдық коэффициентін есептеу.",
+                cardLabTitle: "Зертхана", cardLabDesc: "Гук заңын график бойынша зерттеу.",
+                cardTheoryTitle: "Анықтамалық", cardTheoryDesc: "Тығыздық пен күштердің формулалары.",
+                quizResultTitle: "Тест аяқталды!", btnRetry: "Қайталау", btnMenu: "МӘЗІР",
+                labelAnswer: "Жауабыңыз:", labelMass: "Масса (кг):", labelDensity: "Тығыздық (кг/м³):",
+                btnCheck: "Тексеру", btnCheckTable: "Есептеулерді тексеру",
+                task1Title: "Тастың тығыздығы", task1Desc: "Салмағы 4 Н тасты суға салды. Ығыстырылған судың көлемі 200 см³ тең. Тастың тығыздығын анықтаңыз. (g = 10 м/с²)",
+                task2Title: "Гук заңы", task2Desc: "30 Н күштің әсерінен серіппе 0,03 м-ге ұзарды. Серіппенің қатаңдық коэффициентін (k) анықтаңыз.",
+                labTitle: "Гук заңы: Деректер кестесі", labDesc: "Қатаңдығы k = 500 Н/м серіппе үшін әртүрлі x ұзаруындағы серпімділік күшін есептеңіз.",
+                theory1: "Заттың тығыздығы", theory2: "Ауырлық күші", theory3: "Гук заңы",
+                theory1p: "Өлшем бірлігі: кг/м³", theory2p: "g ≈ 10 Н/кг", theory3p: "k — қатаңдық, x — ұзару",
+                fbCorrect: "ДҰРЫС ✅", fbWrong: "ҚАТЕ ❌", fbBothCorrect: "ӨТЕ ЖАҚСЫ ✅", fbErrorCalc: "ЕСЕПТЕУДІ ТЕКСЕРІҢІЗ ❌"
+            }
+        };
+
+        const questions = {
+            ru: [
+                { q: "Плотность масла 900 кг/м³. Что это означает?", o: ["1 кг масла занимает 900 м³", "900 кг масла занимают 1 м³", "900 кг масла занимают 900 м³", "1 м³ масла весит 1 кг"], a: 1 },
+                { q: "Человек идет вперед и спотыкается. Куда он упадет?", o: ["Назад", "Вперед", "Останется на месте", "В сторону"], a: 1 },
+                { q: "Автобус резко тормозит. Куда отклоняются пассажиры?", o: ["Назад", "Вперед", "Вправо", "Влево"], a: 1 },
+                { q: "Какой вид трения возникает при качении колеса по дороге?", o: ["Трение покоя", "Трение скольжения", "Трение качения", "Сила упругости"], a: 2 },
+                { q: "Как изменится сила тяжести при увеличении массы тела в 3 раза?", o: ["Уменьшится в 3 раза", "Увеличится в 3 раза", "Не изменится", "Увеличится в 9 раз"], a: 1 }
+            ],
+            kk: [
+                { q: "Майдың тығыздығы 900 кг/м³. Бұл нені білдіреді?", o: ["1 кг май 900 м³ көлемді алады", "900 кг май 1 м³ көлемді алады", "900 кг май 900 м³ көлемді алады", "1 м³ май 1 кг тартады"], a: 1 },
+                { q: "Адам алға қарай жүріп келе жатып сүрініп кетті. Ол қай жаққа құлайды?", o: ["Артқа", "Алға", "Орнында қалады", "Бүйіріне"], a: 1 },
+                { q: "Автобус кенет тежелді. Жолаушылар қай жаққа қарай қисаяды?", o: ["Артқа", "Алға", "Оңға", "Солға"], a: 1 },
+                { q: "Дөңгелектің жол бойымен қозғалысы кезінде үйкелістің қай түрі пайда болады?", o: ["Тыныштық үйкелісі", "Сырғанау үйкелісі", "Домалау үйкелісі", "Серпімділік күші"], a: 2 },
+                { q: "Дене массасын 3 есе арттырғанда ауырлық күші қалай өзгереді?", o: ["3 есе азаяды", "3 есе артады", "Өзгермейді", "9 есе артады"], a: 1 }
+            ]
+        };
+
+        let currentLang = 'ru';
+        let currentQ = 0;
+        let score = 0;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').classList.toggle('lang-active', lang === 'ru');
+            document.getElementById('lang-kk').classList.toggle('lang-active', lang === 'kk');
+            updateUI();
+            if (document.getElementById('quiz').classList.contains('active')) restartQuiz();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                el.innerHTML = langData[currentLang][key];
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('back-btn');
+            tabId === 'menu' ? btn.classList.add('hidden') : btn.classList.remove('hidden');
+            if (tabId === 'quiz') restartQuiz();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            const data = questions[currentLang][currentQ];
+            const counterText = currentLang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.ru.length}` : `Сұрақ ${currentQ + 1} / ${questions.kk.length}`;
+            const scoreText = currentLang === 'ru' ? `Баллы: ${score}` : `Ұпай: ${score}`;
+            
+            document.getElementById('question-counter').innerText = counterText;
+            document.getElementById('score-display').innerText = scoreText;
+            
+            let html = `<h2 class="text-xl font-bold text-slate-800 mb-8 leading-relaxed">${data.q}</h2><div class="grid grid-cols-1 gap-3">`;
+            data.o.forEach((opt, i) => {
+                html += `<button onclick="handleSelect(${i})" class="w-full text-left p-5 rounded-2xl border border-slate-200 hover:border-emerald-400 hover:bg-emerald-50 transition-all font-medium">${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function handleSelect(idx) {
+            const container = document.getElementById('quiz-container');
+            const btns = container.querySelectorAll('button');
+            const correct = questions[currentLang][currentQ].a;
+            
+            if (idx === correct) {
+                score++;
+                btns[idx].classList.add('correct-bg');
+            } else {
+                btns[idx].classList.add('wrong-bg');
+                btns[correct].classList.add('correct-bg');
+            }
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < questions[currentLang].length) renderQuestion();
+                else showQuizResult();
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            const resText = currentLang === 'ru' ? `Результат: ${score} из ${questions.ru.length}` : `Нәтиже: ${questions.kk.length} сұрақтан ${score}`;
+            document.getElementById('final-score').innerText = resText;
+        }
+
+        function restartQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function checkTask(id, correctVal) {
+            const val = parseFloat(document.getElementById('ans-' + id).value);
+            const fb = document.getElementById('feedback-' + id);
+            fb.classList.remove('hidden');
+            if (val === correctVal) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-3 rounded-lg text-center";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-3 rounded-lg text-center";
+            }
+        }
+
+        function checkDensityTask() {
+            const m = parseFloat(document.getElementById('ans-density-m').value);
+            const p = parseFloat(document.getElementById('ans-density-p').value);
+            const fb = document.getElementById('feedback-density');
+            fb.classList.remove('hidden');
+            
+            // m = P/g = 4 / 10 = 0.4 kg
+            // V = 200 cm3 = 0.0002 m3
+            // rho = 0.4 / 0.0002 = 2000 kg/m3
+            if (m === 0.4 && p === 2000) {
+                fb.innerText = langData[currentLang].fbBothCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-3 rounded-lg";
+            } else {
+                fb.innerText = langData[currentLang].fbErrorCalc;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-3 rounded-lg";
+            }
+        }
+
+        function checkLab() {
+            const k = 500;
+            const xVals = [0.01, 0.02, 0.05];
+            let allCorrect = true;
+            for(let i=1; i<=3; i++) {
+                const userVal = parseFloat(document.getElementById('lab-' + i).value);
+                const chk = document.getElementById('lab-chk-' + i);
+                const correct = k * xVals[i-1];
+                if (Math.abs(userVal - correct) < 0.1) {
+                    chk.innerText = "✅"; chk.className = "p-4 text-green-600 font-bold border border-slate-200";
+                } else {
+                    chk.innerText = "❌"; chk.className = "p-4 text-red-500 font-bold border border-slate-200";
+                    allCorrect = false;
+                }
+            }
+        }
+
+        updateUI();
+        renderQuestion();
+    </script>
+</body>
+</html>
