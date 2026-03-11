@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 8 класс: Электрические явления</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .correct-bg { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .lang-active { background-color: #2563eb; color: white; border-color: #2563eb; }
+        
+        /* Стили для схем и приборов */
+        .circuit-element { stroke: #1e293b; stroke-width: 2; fill: none; }
+        .meter-scale-main { stroke: #1e293b; stroke-width: 2; }
+        .meter-scale-minor { stroke: #94a3b8; stroke-width: 1; }
+        .meter-needle { stroke: #ef4444; stroke-width: 3; stroke-linecap: round; transition: all 0.5s ease-out; }
+        .meter-label { font-size: 11px; font-weight: bold; fill: #1e293b; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Тумблер языка -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all lang-active">РУС</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">ҚАЗ</button>
+            </div>
+
+            <div class="hidden md:flex gap-1">
+                <button onclick="showTab('quiz')" data-t="navQuiz" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Тесты</button>
+                <button onclick="showTab('tasks')" data-t="navTasks" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Задачи</button>
+                <button onclick="showTab('lab')" data-t="navLab" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Лаборатория</button>
+                <button onclick="showTab('theory')" data-t="navTheory" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Справочник</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="tab-content active">
+            <div class="bg-gradient-to-br from-blue-700 to-cyan-700 rounded-3xl p-10 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold mb-3 uppercase tracking-tight" data-t="mainTitle">Тренажер по физике (8 класс)</h1>
+                    <p class="text-blue-100 text-lg max-w-2xl opacity-90 font-medium" data-t="mainDesc">
+                        Самостоятельная подготовка к суммативному оцениванию по физике за 3 четверть
+                    </p>
+                </div>
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-10 transform rotate-12">
+                    <svg width="240" height="240" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="showTab('quiz')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer btn-transition group">
+                    <div class="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardQuizTitle">Тестирование</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardQuizDesc">Блок А: Носители тока, напряжение, мощность.</p>
+                </div>
+
+                <div onclick="showTab('tasks')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-400 cursor-pointer btn-transition group">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTasksTitle">Задачи Блока Б</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTasksDesc">Схемы соединений, сопротивление и электролиз.</p>
+                </div>
+
+                <div onclick="showTab('lab')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-cyan-400 cursor-pointer btn-transition group">
+                    <div class="bg-cyan-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardLabTitle">Приборы</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardLabDesc">Цена деления и снятие показаний.</p>
+                </div>
+
+                <div onclick="showTab('theory')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 cursor-pointer btn-transition group">
+                    <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTheoryTitle">Справочник</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTheoryDesc">Формулы и основные понятия четверти.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТ -->
+        <div id="quiz" class="tab-content max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center justify-between text-slate-500 font-bold px-2 uppercase text-xs tracking-widest">
+                <span id="question-counter">...</span>
+                <span id="score-display" class="text-blue-600">...</span>
+            </div>
+            <div id="quiz-container" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[350px]"></div>
+            <div id="quiz-result" class="hidden bg-white p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                <h2 class="text-3xl font-black mb-2" data-t="quizResultTitle">Тест завершен!</h2>
+                <p id="final-score" class="text-xl text-slate-500 mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition" data-t="btnRetry">Повторить</button>
+            </div>
+        </div>
+
+        <!-- ЗАДАЧИ -->
+        <div id="tasks" class="tab-content max-w-3xl mx-auto space-y-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task1Title">Смешанное соединение</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-indigo-500" data-t="task1Desc">
+                    Резисторы R1 и R2 по 1 Ом соединены последовательно. К ним параллельно подключена группа из R3 (2 Ом) и R4 (4 Ом). 
+                    Вычислите общее сопротивление цепи (в Омах).
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (Ом):</label>
+                    <input type="number" step="0.01" id="ans-resistor" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('resistor', 3.33)" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-resistor" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task2Title">Работа и мощность тока</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-cyan-500" data-t="task2Desc">
+                    Каково напряжение на лампочке, если при прохождении заряда 200 Кл была совершена работа 1200 Дж?
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswerV">Напряжение (В):</label>
+                    <input type="number" id="ans-voltage" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('voltage', 6)" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-voltage" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРИЯ -->
+        <div id="lab" class="tab-content max-w-4xl mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold mb-4" data-t="labTitle">Шкалы измерительных приборов</h2>
+                <p class="text-slate-500 mb-8" data-t="labDesc">Определите цену деления (ЦД) и показания приборов. Оцифровка вынесена ниже штрихов для удобства.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <!-- УЛУЧШЕННЫЙ АМПЕРМЕТР -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
+                        <h4 class="font-bold mb-4 text-blue-800">Амперметр (A)</h4>
+                        <div class="relative w-48 h-36 mx-auto">
+                            <svg viewBox="0 0 200 130" class="w-full h-auto overflow-visible">
+                                <!-- Штрихи амперметра (0-2A, шаг 0.1) -->
+                                <g id="amm-ticks"></g>
+                                <!-- Подписи (смещены ниже) -->
+                                <text x="18" y="118" class="meter-label">0</text>
+                                <text x="100" y="45" class="meter-label" text-anchor="middle">1</text>
+                                <text x="182" y="118" class="meter-label" text-anchor="end">2</text>
+                                <text x="100" y="85" class="text-lg font-black fill-blue-800" text-anchor="middle">A</text>
+                                <!-- Стрелка (цель 0.6А) -->
+                                <line x1="100" y1="110" x2="68" y2="40" class="meter-needle" id="needle-amm" />
+                                <circle cx="100" cy="110" r="6" fill="#1e293b"/>
+                            </svg>
+                        </div>
+                        <div class="mt-6 space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">ЦД (А/дел)</label>
+                                <input type="number" step="0.01" id="ans-amm-cd" class="w-full p-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-blue-500" placeholder="?">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Показание (А)</label>
+                                <input type="number" step="0.1" id="ans-amm-val" class="w-full p-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-blue-500" placeholder="?">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- УЛУЧШЕННЫЙ ВОЛЬТМЕТР -->
+                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center">
+                        <h4 class="font-bold mb-4 text-red-800">Вольтметр (V)</h4>
+                        <div class="relative w-48 h-36 mx-auto">
+                            <svg viewBox="0 0 200 130" class="w-full h-auto overflow-visible">
+                                <!-- Штрихи вольтметра (0-10V, шаг 0.5) -->
+                                <g id="vol-ticks"></g>
+                                <!-- Подписи (смещены ниже) -->
+                                <text x="18" y="118" class="meter-label">0</text>
+                                <text x="100" y="45" class="meter-label" text-anchor="middle">5</text>
+                                <text x="182" y="118" class="meter-label" text-anchor="end">10</text>
+                                <text x="100" y="85" class="text-lg font-black fill-red-800" text-anchor="middle">V</text>
+                                <!-- Стрелка (цель 8V) -->
+                                <line x1="100" y1="110" x2="152" y2="52" class="meter-needle" id="needle-vol" />
+                                <circle cx="100" cy="110" r="6" fill="#1e293b"/>
+                            </svg>
+                        </div>
+                        <div class="mt-6 space-y-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">ЦД (В/дел)</label>
+                                <input type="number" step="0.1" id="ans-vol-cd" class="w-full p-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-red-500" placeholder="?">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase">Показание (В)</label>
+                                <input type="number" step="0.5" id="ans-vol-val" class="w-full p-2 border rounded-lg text-center outline-none focus:ring-2 focus:ring-red-500" placeholder="?">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="checkLabWithDetails()" class="w-full mt-8 bg-cyan-600 text-white py-4 rounded-xl font-bold hover:bg-cyan-700 btn-transition shadow-lg shadow-cyan-100 uppercase tracking-widest" data-t="btnCheck">Проверить показания</button>
+                <div id="feedback-lab" class="mt-4 hidden font-bold p-4 rounded-xl text-center"></div>
+            </div>
+        </div>
+
+        <!-- СПРАВОЧНИК -->
+        <div id="theory" class="tab-content max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory1">Закон Ома</h4>
+                    <code class="text-xl font-black block mb-2 text-slate-800">I = U / R</code>
+                    <p class="text-xs text-slate-500" data-t="theory1p">Для участка цепи</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory2">Работа и Мощность</h4>
+                    <code class="text-xl font-black block mb-2 text-slate-800">A = U · I · t</code>
+                    <code class="text-xl font-black block text-slate-800">P = U · I</code>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory3">Электролиз</h4>
+                    <code class="text-xl font-black block mb-2 text-slate-800">m = k · I · t</code>
+                    <p class="text-xs text-slate-500" data-t="theory3p">Закон Фарадея</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button id="back-btn" onclick="showTab('menu')" class="hidden fixed bottom-6 left-6 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl hover:bg-slate-800 btn-transition flex items-center gap-2 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span class="font-bold uppercase tracking-widest" data-t="btnMenu">МЕНЮ</span>
+    </button>
+
+    <script>
+        const langData = {
+            ru: {
+                navQuiz: "Тесты", navTasks: "Задачи", navLab: "Лаборатория", navTheory: "Справочник",
+                mainTitle: "Тренажер по физике (8 класс)", mainDesc: "Самостоятельная подготовка к суммативному оцениванию по физике за 3 четверть",
+                cardQuizTitle: "Тестирование", cardQuizDesc: "Блок А: Носители тока, напряжение, мощность.",
+                cardTasksTitle: "Задачи Блока Б", cardTasksDesc: "Схемы соединений, сопротивление и электролиз.",
+                cardLabTitle: "Приборы", cardLabDesc: "Цена деления и снятие показаний.",
+                cardTheoryTitle: "Справочник", cardTheoryDesc: "Формулы и основные понятия четверти.",
+                quizResultTitle: "Тест завершен!", btnRetry: "Повторить", btnMenu: "МЕНЮ",
+                labelAnswer: "Ваш ответ (Ом):", labelAnswerV: "Напряжение (В):",
+                btnCheck: "Проверить",
+                task1Title: "Смешанное соединение", task1Desc: "Резисторы R1 и R2 по 1 Ом соединены последовательно. К ним параллельно подключена группа из R3 (2 Ом) и R4 (4 Ом). Вычислите общее сопротивление цепи.",
+                task2Title: "Работа и мощность тока", task2Desc: "Каково напряжение на лампочке, если при прохождении заряда 200 Кл была совершена работа 1200 Дж?",
+                labTitle: "Шкалы измерительных приборов", labDesc: "Определите цену деления и показания амперметра и вольтметра на рисунке.",
+                theory1: "Закон Ома", theory1p: "I — сила тока, U — напряжение, R — сопротивление",
+                theory2: "Энергия тока",
+                theory3: "Электролиз", theory3p: "k — электрохимический эквивалент",
+                fbCorrect: "ВЕРНО ✅", fbWrong: "ОШИБКА ❌"
+            },
+            kk: {
+                navQuiz: "Тесттер", navTasks: "Есептер", navLab: "Зертхана", navTheory: "Анықтама",
+                mainTitle: "Физика тренажеры (8-сынып)", mainDesc: "3-тоқсан бойынша физикадан жиынтық бағалауға өз бетінше дайындық",
+                cardQuizTitle: "Тест тапсырмалары", cardQuizDesc: "А Блогы: Ток тасымалдаушылар, кернеу, қуат.",
+                cardTasksTitle: "Б Блогы есептері", cardTasksDesc: "Қосу схемалары, кедергі және электролиз.",
+                cardLabTitle: "Аспаптар", cardLabDesc: "Бөлік құны және көрсеткіштерді алу.",
+                cardTheoryTitle: "Анықтамалық", cardTheoryDesc: "Формулалар мен тоқсанның негізгі ұғымдары.",
+                quizResultTitle: "Тест аяқталды!", btnRetry: "Қайталау", btnMenu: "МӘЗІР",
+                labelAnswer: "Жауабыңыз (Ом):", labelAnswerV: "Кернеу (В):",
+                btnCheck: "Тексеру",
+                task1Title: "Аралас қосу", task1Desc: "R1 және R2 (әрқайсысы 1 Ом) тізбектей қосылған. Оларға R3 (2 Ом) и R4 (4 Ом) параллель қосылған топ жалғанған. Тізбектің жалпы кедергісін есептеңіз.",
+                task2Title: "Токтың жұмысы мен қуаты", task2Desc: "Егер 200 Кл заряд өткенде 1200 Дж жұмыс атқарылса, шамдағы кернеу қандай?",
+                labTitle: "Өлшеу аспаптарының шкалалары", labDesc: "Суреттегі амперметр мен вольтметрдің бөлік құны мен көрсеткіштерін анықтаңыз.",
+                theory1: "Ом заңы", theory1p: "I — ток күші, U — кернеу, R — кедергі",
+                theory2: "Ток энергиясы",
+                theory3: "Электролиз", theory3p: "k — электрохимиялық эквивалент",
+                fbCorrect: "ДҰРЫС ✅", fbWrong: "ҚАТЕ ❌"
+            }
+        };
+
+        const questions = {
+            ru: [
+                { q: "Какие частицы являются носителями тока в жидкостях?", o: ["Положительные и отрицательные ионы", "Свободные электроны", "Ионы и электроны", "Электроны и дырки"], a: 0 },
+                { q: "Представьте в системе СИ 2 киловатт · час (кВт·ч).", o: ["7.2 · 10³ Дж", "7.2 · 10⁴ Дж", "7.2 · 10⁵ Дж", "7.2 · 10⁶ Дж"], a: 3 },
+                { q: "Как называется отключающее устройство при коротком замыкании?", o: ["Реостат", "Плавкий предохранитель", "Резистор", "Амперметр"], a: 1 },
+                { q: "Как изменится общее сопротивление при последовательном соединении проводников?", o: ["Уменьшится", "Увеличится", "Не изменится", "Станет равным нулю"], a: 1 },
+                { q: "Формула мощности электрического тока:", o: ["P = U / I", "P = A · t", "P = U · I", "P = I² / R"], a: 2 }
+            ],
+            kk: [
+                { q: "Сұйықтықтардағы ток тасымалдаушылар қандай бөлшектер?", o: ["Оң және теріс иондар", "Еркін электрондар", "Иондар мен электрондар", "Электрондар мен кемтіктер"], a: 0 },
+                { q: "2 киловатт · сағатты (кВт·сағ) СИ жүйесінде көрсетіңіз.", o: ["7.2 · 10³ Дж", "7.2 · 10⁴ Дж", "7.2 · 10⁵ Дж", "7.2 · 10⁶ Дж"], a: 3 },
+                { q: "Қысқа тұйықталу кезінде ажырататын құрылғы қалай аталады?", o: ["Реостат", "Балқымалы сақтандырғыш", "Резистор", "Амперметр"], a: 1 },
+                { q: "Өткізгіштерді тізбектей қосқанда жалпы кедергі қалай өзгереді?", o: ["Азаяды", "Артады", "Өзгермейді", "Нөлге тең болады"], a: 1 },
+                { q: "Электр тогы қуатының формуласы:", o: ["P = U / I", "P = A · t", "P = U · I", "P = I² / R"], a: 2 }
+            ]
+        };
+
+        let currentLang = 'ru';
+        let currentQ = 0;
+        let score = 0;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').classList.toggle('lang-active', lang === 'ru');
+            document.getElementById('lang-kk').classList.toggle('lang-active', lang === 'kk');
+            updateUI();
+            if (document.getElementById('quiz').classList.contains('active')) restartQuiz();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                el.innerText = langData[currentLang][key];
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('back-btn');
+            tabId === 'menu' ? btn.classList.add('hidden') : btn.classList.remove('hidden');
+            if (tabId === 'quiz') restartQuiz();
+            if (tabId === 'lab') generateTicks();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            const data = questions[currentLang][currentQ];
+            const counterText = currentLang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.ru.length}` : `Сұрақ ${currentQ + 1} / ${questions.kk.length}`;
+            const scoreText = currentLang === 'ru' ? `Баллы: ${score}` : `Ұпай: ${score}`;
+            
+            document.getElementById('question-counter').innerText = counterText;
+            document.getElementById('score-display').innerText = scoreText;
+            
+            let html = `<h2 class="text-xl font-bold text-slate-800 mb-8 leading-relaxed">${data.q}</h2><div class="grid grid-cols-1 gap-3">`;
+            data.o.forEach((opt, i) => {
+                html += `<button onclick="handleSelect(${i})" class="w-full text-left p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium">${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function handleSelect(idx) {
+            const container = document.getElementById('quiz-container');
+            const btns = container.querySelectorAll('button');
+            const correct = questions[currentLang][currentQ].a;
+            
+            if (idx === correct) {
+                score++;
+                btns[idx].classList.add('correct-bg');
+            } else {
+                btns[idx].classList.add('wrong-bg');
+                btns[correct].classList.add('correct-bg');
+            }
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < questions[currentLang].length) renderQuestion();
+                else showQuizResult();
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            const resText = currentLang === 'ru' ? `Результат: ${score} из ${questions.ru.length}` : `Нәтиже: ${questions.kk.length} сұрақтан ${score}`;
+            document.getElementById('final-score').innerText = resText;
+        }
+
+        function restartQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function checkTask(id, correctVal) {
+            const val = parseFloat(document.getElementById('ans-' + id).value);
+            const fb = document.getElementById('feedback-' + id);
+            fb.classList.remove('hidden');
+            if (Math.abs(val - correctVal) < 0.1) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-4 rounded-xl text-center shadow-inner";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-4 rounded-xl text-center shadow-inner";
+            }
+        }
+
+        function checkLabWithDetails() {
+            const ammCd = parseFloat(document.getElementById('ans-amm-cd').value);
+            const ammVal = parseFloat(document.getElementById('ans-amm-val').value);
+            const volCd = parseFloat(document.getElementById('ans-vol-cd').value);
+            const volVal = parseFloat(document.getElementById('ans-vol-val').value);
+            const fb = document.getElementById('feedback-lab');
+            fb.classList.remove('hidden');
+            
+            const isCorrect = (ammCd === 0.1 && ammVal === 0.6 && volCd === 0.5 && volVal === 8.0);
+            
+            if (isCorrect) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-4 rounded-xl text-center shadow-inner";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-4 rounded-xl text-center shadow-inner";
+            }
+        }
+
+        function generateTicks() {
+            const centerX = 100, centerY = 110, radius = 90;
+            const drawTicks = (elementId, count, length, isMajor) => {
+                const group = document.getElementById(elementId);
+                group.innerHTML = '';
+                for (let i = 0; i <= count; i++) {
+                    const angle = 180 + (i / count) * 180;
+                    const rad = angle * Math.PI / 180;
+                    const x1 = centerX + Math.cos(rad) * radius;
+                    const y1 = centerY + Math.sin(rad) * radius;
+                    const l = isMajor(i) ? length * 2.5 : length;
+                    const x2 = centerX + Math.cos(rad) * (radius - l);
+                    const y2 = centerY + Math.sin(rad) * (radius - l);
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+                    line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+                    line.setAttribute("class", isMajor(i) ? "meter-scale-main" : "meter-scale-minor");
+                    group.appendChild(line);
+                }
+            };
+            drawTicks('amm-ticks', 20, 4, i => i % 10 === 0);
+            drawTicks('vol-ticks', 20, 4, i => i % 10 === 0);
+        }
+
+        updateUI();
+        renderQuestion();
+    </script>
+</body>
+</html>

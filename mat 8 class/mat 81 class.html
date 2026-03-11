@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 8 класс: Тепловые явления</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .correct-bg { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .lang-active { background-color: #f59e0b; color: white; border-color: #f59e0b; }
+        
+        .graph-grid line { stroke: #e2e8f0; stroke-width: 1; }
+        .graph-axis { stroke: #475569; stroke-width: 2; }
+        .graph-line { stroke: #f59e0b; stroke-width: 3; stroke-linecap: round; fill: none; }
+        .graph-dot { fill: #3b82f6; stroke: white; stroke-width: 2; }
+        .axis-label { font-size: 11px; font-weight: 600; fill: #64748b; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Тумблер языка -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all lang-active">РУС</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">ҚАЗ</button>
+            </div>
+
+            <div class="hidden md:flex gap-1">
+                <button onclick="showTab('quiz')" data-t="navQuiz" class="font-bold text-slate-500 hover:text-amber-600 px-4 py-2 rounded-xl hover:bg-slate-50">Тесты</button>
+                <button onclick="showTab('tasks')" data-t="navTasks" class="font-bold text-slate-500 hover:text-amber-600 px-4 py-2 rounded-xl hover:bg-slate-50">Задачи</button>
+                <button onclick="showTab('lab')" data-t="navLab" class="font-bold text-slate-500 hover:text-amber-600 px-4 py-2 rounded-xl hover:bg-slate-50">Лаборатория</button>
+                <button onclick="showTab('theory')" data-t="navTheory" class="font-bold text-slate-500 hover:text-amber-600 px-4 py-2 rounded-xl hover:bg-slate-50">Справочник</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="tab-content active">
+            <div class="bg-gradient-to-br from-amber-600 to-orange-700 rounded-3xl p-10 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold mb-3 uppercase tracking-tight" data-t="mainTitle">Тренажер по физике (8 класс)</h1>
+                    <p class="text-amber-100 text-lg max-w-2xl opacity-90 font-medium" data-t="mainDesc">
+                        Самостоятельная подготовка к суммативному оцениванию по физике за 1 четверть
+                    </p>
+                </div>
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-10 transform rotate-12">
+                    <svg width="240" height="240" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="showTab('quiz')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 cursor-pointer btn-transition group">
+                    <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardQuizTitle">Тестирование</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardQuizDesc">Блок А: Способы теплопередачи и диффузия.</p>
+                </div>
+
+                <div onclick="showTab('tasks')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-orange-400 cursor-pointer btn-transition group">
+                    <div class="bg-orange-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTasksTitle">Теплота и пар</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTasksDesc">Расчет энергии нагревания и кипения.</p>
+                </div>
+
+                <div onclick="showTab('lab')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer btn-transition group">
+                    <div class="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardLabTitle">Графики</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardLabDesc">Анализ процесса изменения температуры.</p>
+                </div>
+
+                <div onclick="showTab('theory')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-400 cursor-pointer btn-transition group">
+                    <div class="bg-slate-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTheoryTitle">Формулы</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTheoryDesc">Константы и расчетные формулы.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТ -->
+        <div id="quiz" class="tab-content max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center justify-between text-slate-500 font-bold px-2 uppercase text-xs tracking-widest">
+                <span id="question-counter">...</span>
+                <span id="score-display" class="text-amber-600">...</span>
+            </div>
+            <div id="quiz-container" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[350px]"></div>
+            <div id="quiz-result" class="hidden bg-white p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                <h2 class="text-3xl font-black mb-2" data-t="quizResultTitle">Тест завершен!</h2>
+                <p id="final-score" class="text-xl text-slate-500 mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-amber-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-700 btn-transition" data-t="btnRetry">Повторить</button>
+            </div>
+        </div>
+
+        <!-- ЗАДАЧИ -->
+        <div id="tasks" class="tab-content max-w-3xl mx-auto space-y-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task1Title">Нагревание воды</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-amber-500" data-t="task1Desc">
+                    Вода массой 2 кг имеет начальную температуру 20 °С. Сколько теплоты (Q) необходимо, чтобы нагреть её до кипения (100 °С)? Удельная теплоемкость воды 4200 Дж/(кг·°С).
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (в Джоулях):</label>
+                    <input type="number" id="ans-heat" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('heat', 672000)" class="bg-amber-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-amber-700 btn-transition shadow-lg shadow-amber-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-heat" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task2Title">Парообразование</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-orange-500" data-t="task2Desc">
+                    Какое количество теплоты потребуется, чтобы превратить 2 кг кипящей воды в пар? Удельная теплота парообразования воды $r = 2.3 \cdot 10^6$ Дж/кг.
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (в Джоулях):</label>
+                    <input type="number" id="ans-steam" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('steam', 4600000)" class="bg-orange-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-orange-700 btn-transition shadow-lg shadow-orange-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-steam" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРИЯ (ГРАФИК) -->
+        <div id="lab" class="tab-content max-w-4xl mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold mb-4" data-t="labTitle">Анализ графика нагревания</h2>
+                <p class="text-slate-500 mb-8" data-t="labDesc">По графику определите температуру кипения жидкости. Обратите внимание на горизонтальный участок.</p>
+                
+                <div class="flex flex-col lg:flex-row gap-10 items-center">
+                    <div class="w-full lg:w-3/5 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <svg viewBox="0 0 400 250" class="w-full h-auto overflow-visible">
+                            <!-- Сетка -->
+                            <g class="graph-grid">
+                                <line x1="50" y1="200" x2="350" y2="200" />
+                                <line x1="50" y1="150" x2="350" y2="150" />
+                                <line x1="50" y1="100" x2="350" y2="100" />
+                                <line x1="50" y1="50" x2="350" y2="50" />
+                            </g>
+                            <!-- Оси -->
+                            <g class="graph-axis">
+                                <line x1="50" y1="200" x2="370" y2="200" /> <!-- t -->
+                                <line x1="50" y1="200" x2="50" y2="30" /> <!-- T -->
+                            </g>
+                            <!-- Линия графика -->
+                            <path d="M 50 180 L 150 100 L 300 100 L 350 50" class="graph-line" />
+                            <circle cx="225" cy="100" r="5" class="graph-dot" />
+                            <!-- Подписи -->
+                            <g class="axis-label">
+                                <text x="40" y="185" text-anchor="end">20°</text>
+                                <text x="40" y="105" text-anchor="end">100°</text>
+                                <text x="35" y="30" text-anchor="end">T (°C)</text>
+                                <text x="370" y="215" text-anchor="end">t (мин)</text>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="w-full lg:w-2/5 space-y-4">
+                        <label class="block text-sm font-bold text-slate-500 uppercase" data-t="labelBoilTemp">Температура кипения (°C):</label>
+                        <input type="number" id="ans-lab-boil" class="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none font-bold text-2xl shadow-sm" placeholder="?">
+                        <button onclick="checkTask('lab-boil', 100)" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                        <div id="feedback-lab-boil" class="hidden font-bold p-3 rounded-lg text-center"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СПРАВОЧНИК -->
+        <div id="theory" class="tab-content max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-amber-600 font-bold mb-4" data-t="theory1">Нагревание</h4>
+                    <code class="text-2xl font-black block mb-2 text-slate-800">Q = cmΔT</code>
+                    <p class="text-xs text-slate-500" data-t="theory1p">ΔT = T₂ - T₁</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-orange-600 font-bold mb-4" data-t="theory2">Парообразование</h4>
+                    <code class="text-2xl font-black block mb-2 text-slate-800">Q = Lm</code>
+                    <p class="text-xs text-slate-500" data-t="theory2p">L (или r) - удельная теплота</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory3">Шкала Кельвина</h4>
+                    <code class="text-2xl font-black block mb-2 text-slate-800">T = t + 273</code>
+                    <p class="text-xs text-slate-500" data-t="theory3p">0 °C = 273 K</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button id="back-btn" onclick="showTab('menu')" class="hidden fixed bottom-6 left-6 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl hover:bg-slate-800 btn-transition flex items-center gap-2 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span class="font-bold uppercase tracking-widest" data-t="btnMenu">МЕНЮ</span>
+    </button>
+
+    <script>
+        const langData = {
+            ru: {
+                navQuiz: "Тесты", navTasks: "Задачи", navLab: "Лаборатория", navTheory: "Справочник",
+                mainTitle: "Физика 8 класс", mainDesc: "Самостоятельная подготовка к суммативному оцениванию по физике за 1 четверть",
+                cardQuizTitle: "Тестирование", cardQuizDesc: "Блок А: Способы теплопередачи и диффузия.",
+                cardTasksTitle: "Теплота и пар", cardTasksDesc: "Расчет энергии нагревания и кипения.",
+                cardLabTitle: "Графики", cardLabDesc: "Анализ процесса изменения температуры.",
+                cardTheoryTitle: "Формулы", cardTheoryDesc: "Константы и расчетные формулы.",
+                quizResultTitle: "Тест завершен!", btnRetry: "Повторить", btnMenu: "МЕНЮ",
+                labelAnswer: "Ваш ответ:", labelBoilTemp: "Температура кипения (°C):",
+                btnCheck: "Проверить",
+                task1Title: "Нагревание воды", task1Desc: "Вода массой 2 кг имеет начальную температуру 20 °С. Сколько теплоты (Q) необходимо, чтобы нагреть её до кипения (100 °С)? Удельная теплоемкость воды 4200 Дж/(кг·°С).",
+                task2Title: "Парообразование", task2Desc: "Какое количество теплоты потребуется, чтобы превратить 2 кг кипящей воды в пар? Удельная теплота парообразования воды r = 2,3·10⁶ Дж/кг.",
+                labTitle: "Анализ графика нагревания", labDesc: "По графику определите температуру кипения жидкости. Обратите внимание на горизонтальный участок.",
+                theory1: "Нагревание", theory1p: "ΔT = T₂ - T₁",
+                theory2: "Парообразование", theory2p: "L (или r) - удельная теплота",
+                theory3: "Шкала Кельвина", theory3p: "0 °C = 273 K",
+                fbCorrect: "ВЕРНО ✅", fbWrong: "ОШИБКА ❌"
+            },
+            kk: {
+                navQuiz: "Тесттер", navTasks: "Есептер", navLab: "Зертхана", navTheory: "Анықтама",
+                mainTitle: "Физика 8 сынып", mainDesc: "1-тоқсан бойынша физикадан жиынтық бағалауға өз бетінше дайындық",
+                cardQuizTitle: "Тест тапсырмалары", cardQuizDesc: "А Блогы: Жылу берілу тәсілдері мен диффузия.",
+                cardTasksTitle: "Жылу және бу", cardTasksDesc: "Қыздыру және қайнау энергиясын есептеу.",
+                cardLabTitle: "Графиктер", cardLabDesc: "Температураның өзгеру процесін талдау.",
+                cardTheoryTitle: "Формулалар", cardTheoryDesc: "Тұрақтылар мен есептеу формулалары.",
+                quizResultTitle: "Тест аяқталды!", btnRetry: "Қайталау", btnMenu: "МӘЗІР",
+                labelAnswer: "Жауабыңыз:", labelBoilTemp: "Қайнау температурасы (°C):",
+                btnCheck: "Тексеру",
+                task1Title: "Суды қыздыру", task1Desc: "Массасы 2 кг судың бастапқы температурасы 20 °С. Оны қайнағанға дейін (100 °С) қыздыру үшін қанша жылу мөлшері (Q) қажет? Судың меншікті жылу сыйымдылығы 4200 Дж/(кг·°С).",
+                task2Title: "Булану", task2Desc: "2 кг қайнап тұрған суды буға айналдыру үшін қанша жылу мөлшері қажет? Судың меншікті булану жылуы r = 2,3·10⁶ Дж/кг.",
+                labTitle: "Қыздыру графигін талдау", labDesc: "График бойынша сұйықтықтың қайнау температурасын анықтаңыз. Көлденең бөлікке назар аударыңыз.",
+                theory1: "Қыздыру", theory1p: "ΔT = T₂ - T₁",
+                theory2: "Булану", theory2p: "L (немесе r) - меншікті жылу",
+                theory3: "Кельвин шкаласы", theory3p: "0 °C = 273 K",
+                fbCorrect: "ДҰРЫС ✅", fbWrong: "ҚАТЕ ❌"
+            }
+        };
+
+        const questions = {
+            ru: [
+                { q: "Холодную ложку опустили в горячую воду. Как изменилась внутренняя энергия ложки и каким способом?", o: ["Увеличилась путем совершения работы", "Уменьшилась за счет работы", "Увеличилась вследствие теплопередачи", "Не изменилась"], a: 2 },
+                { q: "В каких телах наблюдается диффузия?", o: ["Только в газах", "Только в жидкостях", "В газах, жидкостях и твердых телах", "Только в твердых телах"], a: 2 },
+                { q: "Тепловая энергия передается через контакт от более нагретого тела менее нагретому без переноса вещества. Это...", o: ["Конвекция", "Излучение", "Теплопроводность", "Диффузия"], a: 2 },
+                { q: "Вода кипит при 100°C. Переведите эту температуру в Кельвины.", o: ["100 K", "273 K", "373 K", "0 K"], a: 2 },
+                { q: "Каким способом тепло от Солнца передается на Землю?", o: ["Теплопроводностью", "Конвекцией", "Излучением", "Работой"], a: 2 }
+            ],
+            kk: [
+                { q: "Суық қасықты ыстық суға салды. Қасықтың ішкі энергиясы қалай және қандай тәсілмен өзгерді?", o: ["Жұмыс істеу арқылы артты", "Жұмыс есебінен азайды", "Жылу берілу нәтижесінде артты", "Өзгермеді"], a: 2 },
+                { q: "Диффузия қандай денелерде байқалады?", o: ["Тек газдарда", "Тек сұйықтарда", "Газдарда, сұйықтарда және қатты денелерде", "Тек қатты денелерде"], a: 2 },
+                { q: "Жылу энергиясы жанасу арқылы зат тасымалысыз беріледі. Бұл...", o: ["Конвекция", "Сәуле шығару", "Жылуөткізгіштік", "Диффузия"], a: 2 },
+                { q: "Су 100°C-та қайнайды. Осы температураны Кельвинге айналдырыңыз.", o: ["100 K", "273 K", "373 K", "0 K"], a: 2 },
+                { q: "Күннен жерге жылу қандай тәсілмен беріледі?", o: ["Жылуөткізгіштікпен", "Конвекциямен", "Сәуле шығарумен", "Жұмыспен"], a: 2 }
+            ]
+        };
+
+        let currentLang = 'ru';
+        let currentQ = 0;
+        let score = 0;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').classList.toggle('lang-active', lang === 'ru');
+            document.getElementById('lang-kk').classList.toggle('lang-active', lang === 'kk');
+            updateUI();
+            if (document.getElementById('quiz').classList.contains('active')) restartQuiz();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                el.innerText = langData[currentLang][key];
+            });
+            // Update placeholders for inputs
+            document.getElementById('ans-heat').placeholder = currentLang === 'ru' ? 'Введите число...' : 'Санды енгізіңіз...';
+            document.getElementById('ans-steam').placeholder = currentLang === 'ru' ? 'Введите число...' : 'Санды енгізіңіз...';
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('back-btn');
+            tabId === 'menu' ? btn.classList.add('hidden') : btn.classList.remove('hidden');
+            if (tabId === 'quiz') restartQuiz();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            const data = questions[currentLang][currentQ];
+            const counterText = currentLang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.ru.length}` : `Сұрақ ${currentQ + 1} / ${questions.kk.length}`;
+            const scoreText = currentLang === 'ru' ? `Баллы: ${score}` : `Ұпай: ${score}`;
+            
+            document.getElementById('question-counter').innerText = counterText;
+            document.getElementById('score-display').innerText = scoreText;
+            
+            let html = `<h2 class="text-xl font-bold text-slate-800 mb-8 leading-relaxed">${data.q}</h2><div class="grid grid-cols-1 gap-3">`;
+            data.o.forEach((opt, i) => {
+                html += `<button onclick="handleSelect(${i})" class="w-full text-left p-5 rounded-2xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50 transition-all font-medium">${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function handleSelect(idx) {
+            const container = document.getElementById('quiz-container');
+            const btns = container.querySelectorAll('button');
+            const correct = questions[currentLang][currentQ].a;
+            
+            if (idx === correct) {
+                score++;
+                btns[idx].classList.add('correct-bg');
+            } else {
+                btns[idx].classList.add('wrong-bg');
+                btns[correct].classList.add('correct-bg');
+            }
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < questions[currentLang].length) renderQuestion();
+                else showQuizResult();
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            const resText = currentLang === 'ru' ? `Результат: ${score} из ${questions.ru.length}` : `Нәтиже: ${questions.kk.length} сұрақтан ${score}`;
+            document.getElementById('final-score').innerText = resText;
+        }
+
+        function restartQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function checkTask(id, correctVal) {
+            const val = parseFloat(document.getElementById('ans-' + id).value);
+            const fb = document.getElementById('feedback-' + id);
+            fb.classList.remove('hidden');
+            if (val === correctVal) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-4 rounded-xl text-center shadow-inner";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-4 rounded-xl text-center shadow-inner";
+            }
+        }
+
+        updateUI();
+        renderQuestion();
+    </script>
+</body>
+</html>
