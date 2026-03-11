@@ -153,7 +153,7 @@
         input:checked + .slider { background-color: var(--accent); }
         input:checked + .slider:before { transform: translateX(26px); }
 
-        /* Physics Animation (Floating Atoms) */
+        /* Physics Animation */
         .atom-container {
             position: absolute;
             top: 50%; left: 50%;
@@ -336,7 +336,10 @@
                 lesson: "Урок",
                 open: "Открыть",
                 back: "Назад",
-                materials_for: "Материалы для"
+                quarter_1: "1 четверть",
+                quarter_2: "2 четверть",
+                quarter_3: "3 четверть",
+                quarter_4: "4 четверть"
             },
             kz: {
                 platform_desc: "Онлайн платформасы",
@@ -354,7 +357,10 @@
                 lesson: "Сабақ",
                 open: "Ашу",
                 back: "Артқа",
-                materials_for: "Бөлім материалдары:"
+                quarter_1: "1-тоқсан",
+                quarter_2: "2-тоқсан",
+                quarter_3: "3-тоқсан",
+                quarter_4: "4-тоқсан"
             }
         };
 
@@ -389,18 +395,24 @@
                 { file: "page7138.html", ru: "Простые механизмы", kz: "Жай механизмдер" },
                 { file: "page7139.html", ru: "Наука о небесных телах. Солнечная система", kz: "Аспан денелері туралы ғылым. Күн жүйесі" },
                 { file: "page7140.html", ru: "Основы календаря (сутки, месяц, год)", kz: "Күнтізбе негіздері (тәулік, ай, жыл)" }
-            ]
+            ],
+            '8': [] // Добавьте уроки 8 класса по аналогии при необходимости
         };
 
-        // База данных материалов СОР/СОЧ по классам
+        // База данных СОР/СОЧ по классам
         const sorMaterialsData = {
             '7': [
-                { file: "mat711.html", ru: "СОР №1: Физика — наука о природе", kz: "БЖБ №1: Физика — табиғат туралы ғылым" },
-                { file: "mat712.html", ru: "СОР №2: Механическое движение", kz: "БЖБ №2: Механикалық қозғалыс" },
-                { file: "mat713.html", ru: "СОЧ за 1 четверть", kz: "1-тоқсан бойынша ТЖБ" },
-                { file: "mat714.html", ru: "СОР №3: Плотность и масса", kz: "БЖБ №3: Тығыздық пен масса" }
+                { file: "mat 71 class.html", ru: "СОР/СОЧ за 1 четверть", kz: "1-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 72 class.html", ru: "СОР/СОЧ за 2 четверть", kz: "2-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 73 class.html", ru: "СОР/СОЧ за 3 четверть", kz: "3-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 74 class.html", ru: "СОР/СОЧ за 4 четверть", kz: "4-тоқсан БЖБ/ТЖБ" }
             ],
-            '8': [], '9': [], '10': [], '11': []
+            '8': [
+                { file: "mat 81 class.html", ru: "СОР/СОЧ за 1 четверть", kz: "1-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 82class.html", ru: "СОР/СОЧ за 2 четверть", kz: "2-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 83 class.html", ru: "СОР/СОЧ за 3 четверть", kz: "3-тоқсан БЖБ/ТЖБ" },
+                { file: "mat 84 class.html", ru: "СОР/СОЧ за 4 четверть", kz: "4-тоқсан БЖБ/ТЖБ" }
+            ]
         };
 
         let currentLang = 'ru';
@@ -412,7 +424,6 @@
                 el.innerText = translations[lang][key];
             });
             
-            // Если мы находимся в каком-то хабе, перерисовываем его содержимое на новом языке
             const activeItem = document.querySelector('.nav-item.active');
             if (activeItem) {
                 if (activeItem.innerText.includes('СОР') || activeItem.innerText.includes('БЖБ')) {
@@ -434,7 +445,6 @@
             updateLanguage(e.target.checked ? 'kz' : 'ru');
         });
 
-        // Загрузка обычных уроков класса
         function loadGradeHub(grade, element) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
@@ -446,10 +456,9 @@
             document.getElementById('topicGrid').style.display = 'grid';
 
             document.getElementById('currentSelectionTitle').innerText = translations[currentLang][`grade_${grade}`];
-            renderTopicGrid(grade, 'lesson');
+            renderTopicGrid(grade);
         }
 
-        // Загрузка хаба СОР/СОЧ (выбор класса)
         function loadSORSOCHHub(element) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
@@ -473,7 +482,7 @@
                         <h3 class="text-xl font-bold mt-2 text-white">${translations[currentLang][`grade_${grade}`]}</h3>
                     </div>
                     <div class="mt-4 flex items-center justify-between text-sm text-slate-400">
-                        <span>Архив материалов</span>
+                        <span>Открыть материалы</span>
                         <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-folder-open ml-1"></i></span>
                     </div>
                 `;
@@ -482,7 +491,6 @@
             });
         }
 
-        // Загрузка конкретных файлов СОР/СОЧ для выбранного класса
         function loadSORGradeMaterials(grade) {
             document.getElementById('currentSelectionTitle').innerText = `${translations[currentLang].sor_soch} — ${grade} ${currentLang === 'ru' ? 'класс' : 'сынып'}`;
             document.getElementById('backToHub').classList.remove('hidden');
@@ -492,7 +500,7 @@
             
             const materials = sorMaterialsData[grade] || [];
             if (materials.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center p-20 text-slate-500"><i class="fas fa-file-excel text-4xl mb-4"></i><br>Файлы для ${grade} класса скоро будут добавлены.</div>`;
+                grid.innerHTML = `<div class="col-span-full text-center p-20 text-slate-500"><i class="fas fa-file-excel text-4xl mb-4"></i><br>Материалы для ${grade} класса скоро будут добавлены.</div>`;
                 return;
             }
 
@@ -501,7 +509,7 @@
                 card.className = 'topic-card group';
                 card.innerHTML = `
                     <div>
-                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Document ${index + 1}</span>
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Document</span>
                         <h3 class="text-lg font-semibold mt-2 text-white leading-tight">${mat[currentLang]}</h3>
                     </div>
                     <div class="mt-4 flex items-center justify-between text-sm text-slate-400">
@@ -509,13 +517,14 @@
                         <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-external-link-alt ml-1"></i></span>
                     </div>
                 `;
-                // Путь согласно вашему запросу: папка "mat 7 class", файл "mat7***.html"
-                card.onclick = () => loadLesson(`mat ${grade} class`, mat.file);
+                // Папка: mat 8 class / Файл: mat 81 class.html
+                const folder = `mat ${grade} class`;
+                card.onclick = () => loadLesson(folder, mat.file);
                 grid.appendChild(card);
             });
         }
 
-        function renderTopicGrid(grade, type) {
+        function renderTopicGrid(grade) {
             const grid = document.getElementById('topicGrid');
             grid.innerHTML = '';
             const topics = gradeData[grade] || [];
