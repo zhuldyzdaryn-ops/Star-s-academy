@@ -58,6 +58,12 @@
             color: white;
         }
 
+        .nav-divider {
+            height: 1px;
+            background: #334155;
+            margin: 1rem 1.5rem;
+        }
+
         /* Top Bar */
         header {
             height: 70px;
@@ -202,6 +208,18 @@
             justify-content: center;
             z-index: 10;
         }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+        .back-btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -233,6 +251,13 @@
             <div class="nav-item" onclick="loadGradeHub('11', this)">
                 <i class="fas fa-rocket"></i>
                 <span data-i18n="grade_11">11 класс</span>
+            </div>
+
+            <div class="nav-divider"></div>
+
+            <div class="nav-item" onclick="loadSORSOCHHub(this)">
+                <i class="fas fa-folder-open"></i>
+                <span data-i18n="sor_soch">СОР/СОЧ</span>
             </div>
         </nav>
     </aside>
@@ -267,17 +292,20 @@
                 <div class="orbit" style="--d: 12s; transform: rotateX(10deg) rotateY(70deg);"><div class="electron"></div></div>
                 <div class="orbit" style="--d: 10s; transform: rotateX(45deg) rotateY(45deg);"><div class="electron"></div></div>
             </div>
-            <h2 class="text-5xl font-bold mb-4" data-i18n="welcome_title">Изучай физику со звездами</h2>
+            <h2 class="text-5xl font-bold mb-4" data-i18n="welcome_title">Изучай физику легко и просто</h2>
             <p class="text-xl text-slate-400 max-w-lg mx-auto" data-i18n="welcome_subtitle">Интерактивные уроки и задачи для учеников 7-11 классов</p>
             <button class="mt-8 px-8 py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-full transition-all shadow-lg shadow-sky-500/20" data-i18n="start_btn" onclick="loadGradeHub('7', document.querySelector('.nav-item'))">
                 Начать обучение
             </button>
         </div>
 
-        <!-- Grade Selection Grid -->
-        <div id="gradeHeader" class="hidden mb-8">
-            <h2 class="text-3xl font-bold text-white mb-2" id="currentGradeTitle"></h2>
-            <p class="text-slate-400" data-i18n="select_topic">Выберите тему для изучения</p>
+        <!-- Selection Hub Header -->
+        <div id="selectionHeader" class="hidden flex flex-col">
+            <div id="backToHub" class="back-btn hidden" onclick="loadSORSOCHHub(document.querySelector('.nav-item[onclick*=\'SORSOCH\']'))">
+                <i class="fas fa-chevron-left"></i> <span data-i18n="back">Назад</span>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2" id="currentSelectionTitle"></h2>
+            <p class="text-slate-400 mb-8" data-i18n="select_item">Выберите нужный раздел</p>
         </div>
         <div id="topicGrid"></div>
 
@@ -299,13 +327,16 @@
                 grade_9: "9 класс",
                 grade_10: "10 класс",
                 grade_11: "11 класс",
-                welcome_title: "Изучай физику со звездами",
+                sor_soch: "СОР/СОЧ",
+                welcome_title: "Изучай физику легко и просто",
                 welcome_subtitle: "Интерактивные уроки и задачи для учеников 7-11 классов",
                 start_btn: "Начать обучение",
                 developer: "Разработчик",
-                select_topic: "Выберите тему для изучения",
+                select_item: "Выберите нужный раздел",
                 lesson: "Урок",
-                open: "Открыть"
+                open: "Открыть",
+                back: "Назад",
+                materials_for: "Материалы для"
             },
             kz: {
                 platform_desc: "Онлайн платформасы",
@@ -314,23 +345,25 @@
                 grade_9: "9 сынып",
                 grade_10: "10 сынып",
                 grade_11: "11 сынып",
-                welcome_title: "Физиканы жұлдыздармен бірге оқы",
+                sor_soch: "БЖБ/ТЖБ",
+                welcome_title: "Физиканы оңай әрі қарапайым оқы",
                 welcome_subtitle: "7-11 сынып оқушыларына арналған интерактивті сабақтар мен тапсырмалар",
                 start_btn: "Оқуды бастау",
                 developer: "Әзірлеуші",
-                select_topic: "Зерттеу тақырыбын таңдаңыз",
+                select_item: "Қажетті бөлімді таңдаңыз",
                 lesson: "Сабақ",
-                open: "Ашу"
+                open: "Ашу",
+                back: "Артқа",
+                materials_for: "Бөлім материалдары:"
             }
         };
 
-        // База данных тем для 7 класса (включает ВСЕ ваши файлы)
         const gradeData = {
             '7': [
                 { file: "page 711.html", ru: "Физика: Фундаментальная наука о природе", kz: "Физика: Табиғат туралы іргелі ғылым" },
                 { file: "page 712.html", ru: "СИ, Скаляры и Векторы", kz: "ХБЖ, Скалярлар және векторлар" },
                 { file: "page 713.html", ru: "Точность измерений и погрешность", kz: "Өлшеу дәлдігі мен қателік" },
-                { file: "page 714.html", ru: "Запись больших и малых чисел", kz: "Үлкен және кіші сандарды жазу" },
+                { file: "page 714.html", ru: "Запись больших и малых чисел", kz: "Үлкен и кіші сандарды жазу" },
                 { file: "page 715.html", ru: "Механическое движение", kz: "Механикалық қозғалыс" },
                 { file: "page 716.html", ru: "Относительность движения", kz: "Қозғалыс салыстырмалылығы" },
                 { file: "page 717.html", ru: "Расчет скорости и средней скорости", kz: "Жылдамдық пен орташа жылдамдықты есептеу" },
@@ -352,10 +385,20 @@
                 { file: "page7133.html", ru: "Механическая работа. Мощность", kz: "Механикалық жұмыс. Қуат" },
                 { file: "page7134.html", ru: "Коэффициент полезного действия (КПД)", kz: "Пайдалы әрекет коэффициенті (ПӘК)" },
                 { file: "page7135.html", ru: "Кинетическая и потенциальная энергия", kz: "Кинетикалық және потенциалдық энергия" },
-                { file: "page7136.html", ru: "Превращение и сохранение энергии", kz: "Энергияның түрленуі және сақталуы" },
+                { file: "page7136.html", ru: "Превращение и сохранение энергии", kz: "Энергияның түрленуі и сақталуы" },
                 { file: "page7138.html", ru: "Простые механизмы", kz: "Жай механизмдер" },
                 { file: "page7139.html", ru: "Наука о небесных телах. Солнечная система", kz: "Аспан денелері туралы ғылым. Күн жүйесі" },
                 { file: "page7140.html", ru: "Основы календаря (сутки, месяц, год)", kz: "Күнтізбе негіздері (тәулік, ай, жыл)" }
+            ]
+        };
+
+        // База данных материалов СОР/СОЧ по классам
+        const sorMaterialsData = {
+            '7': [
+                { file: "mat711.html", ru: "СОР №1: Физика — наука о природе", kz: "БЖБ №1: Физика — табиғат туралы ғылым" },
+                { file: "mat712.html", ru: "СОР №2: Механическое движение", kz: "БЖБ №2: Механикалық қозғалыс" },
+                { file: "mat713.html", ru: "СОЧ за 1 четверть", kz: "1-тоқсан бойынша ТЖБ" },
+                { file: "mat714.html", ru: "СОР №3: Плотность и масса", kz: "БЖБ №3: Тығыздық пен масса" }
             ],
             '8': [], '9': [], '10': [], '11': []
         };
@@ -368,10 +411,22 @@
                 const key = el.getAttribute('data-i18n');
                 el.innerText = translations[lang][key];
             });
-            const activeGrade = document.querySelector('.nav-item.active');
-            if(activeGrade) {
-                const gradeNum = activeGrade.innerText.match(/\d+/)[0];
-                renderTopicGrid(gradeNum);
+            
+            // Если мы находимся в каком-то хабе, перерисовываем его содержимое на новом языке
+            const activeItem = document.querySelector('.nav-item.active');
+            if (activeItem) {
+                if (activeItem.innerText.includes('СОР') || activeItem.innerText.includes('БЖБ')) {
+                    const currentTitle = document.getElementById('currentSelectionTitle').innerText;
+                    if (currentTitle.match(/\d/)) {
+                        const gradeNum = currentTitle.match(/\d+/)[0];
+                        loadSORGradeMaterials(gradeNum);
+                    } else {
+                        loadSORSOCHHub(activeItem);
+                    }
+                } else if (activeItem.innerText.match(/\d/)) {
+                    const gradeNum = activeItem.innerText.match(/\d+/)[0];
+                    loadGradeHub(gradeNum, activeItem);
+                }
             }
         }
 
@@ -379,30 +434,92 @@
             updateLanguage(e.target.checked ? 'kz' : 'ru');
         });
 
+        // Загрузка обычных уроков класса
         function loadGradeHub(grade, element) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
 
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('pageFrame').style.display = 'none';
-            document.getElementById('gradeHeader').classList.remove('hidden');
+            document.getElementById('selectionHeader').classList.remove('hidden');
+            document.getElementById('backToHub').classList.add('hidden');
             document.getElementById('topicGrid').style.display = 'grid';
 
-            document.getElementById('currentGradeTitle').innerText = translations[currentLang][`grade_${grade}`];
-            renderTopicGrid(grade);
+            document.getElementById('currentSelectionTitle').innerText = translations[currentLang][`grade_${grade}`];
+            renderTopicGrid(grade, 'lesson');
         }
 
-        function renderTopicGrid(grade) {
+        // Загрузка хаба СОР/СОЧ (выбор класса)
+        function loadSORSOCHHub(element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('pageFrame').style.display = 'none';
+            document.getElementById('selectionHeader').classList.remove('hidden');
+            document.getElementById('backToHub').classList.add('hidden');
+            document.getElementById('topicGrid').style.display = 'grid';
+
+            document.getElementById('currentSelectionTitle').innerText = translations[currentLang].sor_soch;
+            
+            const grid = document.getElementById('topicGrid');
+            grid.innerHTML = '';
+            ['7', '8', '9', '10', '11'].forEach(grade => {
+                const card = document.createElement('div');
+                card.className = 'topic-card group';
+                card.innerHTML = `
+                    <div>
+                        <span class="text-xs font-bold text-sky-500 uppercase tracking-widest">${translations[currentLang].sor_soch}</span>
+                        <h3 class="text-xl font-bold mt-2 text-white">${translations[currentLang][`grade_${grade}`]}</h3>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-sm text-slate-400">
+                        <span>Архив материалов</span>
+                        <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-folder-open ml-1"></i></span>
+                    </div>
+                `;
+                card.onclick = () => loadSORGradeMaterials(grade);
+                grid.appendChild(card);
+            });
+        }
+
+        // Загрузка конкретных файлов СОР/СОЧ для выбранного класса
+        function loadSORGradeMaterials(grade) {
+            document.getElementById('currentSelectionTitle').innerText = `${translations[currentLang].sor_soch} — ${grade} ${currentLang === 'ru' ? 'класс' : 'сынып'}`;
+            document.getElementById('backToHub').classList.remove('hidden');
+            
             const grid = document.getElementById('topicGrid');
             grid.innerHTML = '';
             
-            const topics = gradeData[grade] || [];
-            
-            if (topics.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center p-20 text-slate-500"><i class="fas fa-tools text-4xl mb-4"></i><br>Материалы для этого класса скоро появятся.</div>`;
+            const materials = sorMaterialsData[grade] || [];
+            if (materials.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center p-20 text-slate-500"><i class="fas fa-file-excel text-4xl mb-4"></i><br>Файлы для ${grade} класса скоро будут добавлены.</div>`;
                 return;
             }
 
+            materials.forEach((mat, index) => {
+                const card = document.createElement('div');
+                card.className = 'topic-card group';
+                card.innerHTML = `
+                    <div>
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Document ${index + 1}</span>
+                        <h3 class="text-lg font-semibold mt-2 text-white leading-tight">${mat[currentLang]}</h3>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between text-sm text-slate-400">
+                        <span class="bg-slate-800 px-2 py-1 rounded text-[10px] uppercase">Grade ${grade}</span>
+                        <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-external-link-alt ml-1"></i></span>
+                    </div>
+                `;
+                // Путь согласно вашему запросу: папка "mat 7 class", файл "mat7***.html"
+                card.onclick = () => loadLesson(`mat ${grade} class`, mat.file);
+                grid.appendChild(card);
+            });
+        }
+
+        function renderTopicGrid(grade, type) {
+            const grid = document.getElementById('topicGrid');
+            grid.innerHTML = '';
+            const topics = gradeData[grade] || [];
+            
             topics.forEach((topic, index) => {
                 const card = document.createElement('div');
                 card.className = 'topic-card group';
@@ -416,26 +533,24 @@
                         <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-arrow-right ml-1 group-hover:translate-x-1 transition-transform"></i></span>
                     </div>
                 `;
-                card.onclick = () => loadLesson(grade, topic.file);
+                card.onclick = () => loadLesson(`${grade} class`, topic.file);
                 grid.appendChild(card);
             });
         }
 
-        function loadLesson(grade, fileName) {
+        function loadLesson(folder, fileName) {
             document.getElementById('topicGrid').style.display = 'none';
-            document.getElementById('gradeHeader').classList.add('hidden');
+            document.getElementById('selectionHeader').classList.add('hidden');
             const frame = document.getElementById('pageFrame');
             frame.style.display = 'block';
-            
-            // Загружаем файл из папки "7 class" (или другого класса)
-            frame.src = `${grade} class/${fileName}`;
+            frame.src = `${folder}/${fileName}`;
         }
 
         function goHome() {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById('welcomeScreen').style.display = 'flex';
             document.getElementById('topicGrid').style.display = 'none';
-            document.getElementById('gradeHeader').classList.add('hidden');
+            document.getElementById('selectionHeader').classList.add('hidden');
             document.getElementById('pageFrame').style.display = 'none';
         }
     </script>
