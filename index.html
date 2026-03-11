@@ -232,30 +232,30 @@
         </div>
 
         <nav class="flex-grow">
-            <div class="nav-item" onclick="loadGradeHub('7', this)">
+            <div class="nav-item" data-grade="7" onclick="loadGradeHub('7', this)">
                 <i class="fas fa-microscope"></i>
                 <span data-i18n="grade_7">7 класс</span>
             </div>
-            <div class="nav-item" onclick="loadGradeHub('8', this)">
+            <div class="nav-item" data-grade="8" onclick="loadGradeHub('8', this)">
                 <i class="fas fa-bolt"></i>
                 <span data-i18n="grade_8">8 класс</span>
             </div>
-            <div class="nav-item" onclick="loadGradeHub('9', this)">
+            <div class="nav-item" data-grade="9" onclick="loadGradeHub('9', this)">
                 <i class="fas fa-magnet"></i>
                 <span data-i18n="grade_9">9 класс</span>
             </div>
-            <div class="nav-item" onclick="loadGradeHub('10', this)">
+            <div class="nav-item" data-grade="10" onclick="loadGradeHub('10', this)">
                 <i class="fas fa-atom"></i>
                 <span data-i18n="grade_10">10 класс</span>
             </div>
-            <div class="nav-item" onclick="loadGradeHub('11', this)">
+            <div class="nav-item" data-grade="11" onclick="loadGradeHub('11', this)">
                 <i class="fas fa-rocket"></i>
                 <span data-i18n="grade_11">11 класс</span>
             </div>
 
             <div class="nav-divider"></div>
 
-            <div class="nav-item" onclick="loadSORSOCHHub(this)">
+            <div class="nav-item" id="sorSochBtn" onclick="loadSORSOCHHub(this)">
                 <i class="fas fa-folder-open"></i>
                 <span data-i18n="sor_soch">СОР/СОЧ</span>
             </div>
@@ -301,7 +301,7 @@
 
         <!-- Selection Hub Header -->
         <div id="selectionHeader" class="hidden flex flex-col">
-            <div id="backToHub" class="back-btn hidden" onclick="loadSORSOCHHub(document.querySelector('.nav-item[onclick*=\'SORSOCH\']'))">
+            <div id="backToHub" class="back-btn hidden" onclick="loadSORSOCHHub(document.getElementById('sorSochBtn'))">
                 <i class="fas fa-chevron-left"></i> <span data-i18n="back">Назад</span>
             </div>
             <h2 class="text-3xl font-bold text-white mb-2" id="currentSelectionTitle"></h2>
@@ -395,11 +395,9 @@
                 { file: "page7138.html", ru: "Простые механизмы", kz: "Жай механизмдер" },
                 { file: "page7139.html", ru: "Наука о небесных телах. Солнечная система", kz: "Аспан денелері туралы ғылым. Күн жүйесі" },
                 { file: "page7140.html", ru: "Основы календаря (сутки, месяц, год)", kz: "Күнтізбе негіздері (тәулік, ай, жыл)" }
-            ],
-            '8': [] // Добавьте уроки 8 класса по аналогии при необходимости
+            ]
         };
 
-        // База данных СОР/СОЧ по классам
         const sorMaterialsData = {
             '7': [
                 { file: "mat 71 class.html", ru: "СОР/СОЧ за 1 четверть", kz: "1-тоқсан БЖБ/ТЖБ" },
@@ -416,6 +414,8 @@
         };
 
         let currentLang = 'ru';
+        let currentView = 'home'; // 'home', 'grade', 'sor', 'sor-grade'
+        let currentGrade = null;
 
         function updateLanguage(lang) {
             currentLang = lang;
@@ -424,19 +424,17 @@
                 el.innerText = translations[lang][key];
             });
             
-            const activeItem = document.querySelector('.nav-item.active');
-            if (activeItem) {
-                if (activeItem.innerText.includes('СОР') || activeItem.innerText.includes('БЖБ')) {
-                    const currentTitle = document.getElementById('currentSelectionTitle').innerText;
-                    if (currentTitle.match(/\d/)) {
-                        const gradeNum = currentTitle.match(/\d+/)[0];
-                        loadSORGradeMaterials(gradeNum);
-                    } else {
-                        loadSORSOCHHub(activeItem);
-                    }
-                } else if (activeItem.innerText.match(/\d/)) {
-                    const gradeNum = activeItem.innerText.match(/\d+/)[0];
-                    loadGradeHub(gradeNum, activeItem);
+            // Обновляем текущий заголовок, если мы не на главной
+            if (currentView !== 'home') {
+                if (currentView === 'grade') {
+                    document.getElementById('currentSelectionTitle').innerText = translations[currentLang][`grade_${currentGrade}`];
+                    renderTopicGrid(currentGrade);
+                } else if (currentView === 'sor') {
+                    document.getElementById('currentSelectionTitle').innerText = translations[currentLang].sor_soch;
+                    renderSORHub();
+                } else if (currentView === 'sor-grade') {
+                    document.getElementById('currentSelectionTitle').innerText = `${translations[currentLang].sor_soch} — ${currentGrade} ${currentLang === 'ru' ? 'класс' : 'сынып'}`;
+                    renderSORGradeMaterials(currentGrade);
                 }
             }
         }
@@ -446,8 +444,9 @@
         });
 
         function loadGradeHub(grade, element) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
+            currentView = 'grade';
+            currentGrade = grade;
+            setActive(element);
 
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('pageFrame').style.display = 'none';
@@ -460,8 +459,8 @@
         }
 
         function loadSORSOCHHub(element) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
+            currentView = 'sor';
+            setActive(element);
 
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('pageFrame').style.display = 'none';
@@ -470,7 +469,10 @@
             document.getElementById('topicGrid').style.display = 'grid';
 
             document.getElementById('currentSelectionTitle').innerText = translations[currentLang].sor_soch;
-            
+            renderSORHub();
+        }
+
+        function renderSORHub() {
             const grid = document.getElementById('topicGrid');
             grid.innerHTML = '';
             ['7', '8', '9', '10', '11'].forEach(grade => {
@@ -486,7 +488,11 @@
                         <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-folder-open ml-1"></i></span>
                     </div>
                 `;
-                card.onclick = () => loadSORGradeMaterials(grade);
+                card.onclick = () => {
+                    currentView = 'sor-grade';
+                    currentGrade = grade;
+                    loadSORGradeMaterials(grade);
+                };
                 grid.appendChild(card);
             });
         }
@@ -494,7 +500,10 @@
         function loadSORGradeMaterials(grade) {
             document.getElementById('currentSelectionTitle').innerText = `${translations[currentLang].sor_soch} — ${grade} ${currentLang === 'ru' ? 'класс' : 'сынып'}`;
             document.getElementById('backToHub').classList.remove('hidden');
-            
+            renderSORGradeMaterials(grade);
+        }
+
+        function renderSORGradeMaterials(grade) {
             const grid = document.getElementById('topicGrid');
             grid.innerHTML = '';
             
@@ -517,7 +526,6 @@
                         <span class="text-sky-400 font-medium">${translations[currentLang].open} <i class="fas fa-external-link-alt ml-1"></i></span>
                     </div>
                 `;
-                // Папка: mat 8 class / Файл: mat 81 class.html
                 const folder = `mat ${grade} class`;
                 card.onclick = () => loadLesson(folder, mat.file);
                 grid.appendChild(card);
@@ -552,11 +560,23 @@
             document.getElementById('selectionHeader').classList.add('hidden');
             const frame = document.getElementById('pageFrame');
             frame.style.display = 'block';
+            
+            // Кодируем пробелы в путях для корректной работы на сервере
+            const encodedFolder = encodeURIComponent(folder).replace(/%20/g, ' ');
+            const encodedFile = encodeURIComponent(fileName).replace(/%20/g, ' ');
+            
+            // Примечание: браузеры понимают пробелы, но GitHub иногда требует %20
             frame.src = `${folder}/${fileName}`;
         }
 
-        function goHome() {
+        function setActive(element) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+
+        function goHome() {
+            currentView = 'home';
+            setActive(null);
             document.getElementById('welcomeScreen').style.display = 'flex';
             document.getElementById('topicGrid').style.display = 'none';
             document.getElementById('selectionHeader').classList.add('hidden');
