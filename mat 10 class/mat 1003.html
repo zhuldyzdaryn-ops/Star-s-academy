@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Физика 10 класс: Электродинамика</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body { font-family: 'Inter', sans-serif; transition: background 0.3s; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .correct-bg { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-transition { transition: all 0.2s ease-in-out; }
+        .lang-active { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+        .node-circle { fill: #1e293b; stroke: #3b82f6; stroke-width: 3; }
+        .current-arrow { stroke: #3b82f6; stroke-width: 3; marker-end: url(#arrowhead); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Навигация -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <!-- Тумблер языка -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all lang-active">РУС</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all">ҚАЗ</button>
+            </div>
+
+            <div class="hidden md:flex gap-1">
+                <button onclick="showTab('quiz')" data-t="navQuiz" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Блок А</button>
+                <button onclick="showTab('tasks')" data-t="navTasks" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Блок Б</button>
+                <button onclick="showTab('lab')" data-t="navLab" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Лаборатория</button>
+                <button onclick="showTab('theory')" data-t="navTheory" class="font-bold text-slate-500 hover:text-blue-600 px-4 py-2 rounded-xl hover:bg-slate-50">Справочник</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ГЛАВНОЕ МЕНЮ -->
+        <div id="menu" class="tab-content active">
+            <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-3xl p-10 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold mb-3 uppercase tracking-tight" data-t="mainTitle">Тренажер по физике (10 класс)</h1>
+                    <p class="text-blue-100 text-lg max-w-2xl opacity-90 font-medium" data-t="mainDesc">
+                        Самостоятельная подготовка к суммативному оцениванию по физике за 3 четверть
+                    </p>
+                </div>
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-10 transform rotate-12">
+                    <svg width="240" height="240" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div onclick="showTab('quiz')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-400 cursor-pointer btn-transition group">
+                    <div class="bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardQuizTitle">Блок А</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardQuizDesc">Тестирование по основным темам 3 четверти.</p>
+                </div>
+
+                <div onclick="showTab('tasks')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-400 cursor-pointer btn-transition group">
+                    <div class="bg-indigo-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTasksTitle">Блок Б</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTasksDesc">Решение задач на закон Кулона и напряженность.</p>
+                </div>
+
+                <div onclick="showTab('lab')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-400 cursor-pointer btn-transition group">
+                    <div class="bg-emerald-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardLabTitle">Лаборатория</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardLabDesc">Интерактивные узлы и законы Кирхгофа.</p>
+                </div>
+
+                <div onclick="showTab('theory')" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-400 cursor-pointer btn-transition group">
+                    <div class="bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2" data-t="cardTheoryTitle">Справочник</h3>
+                    <p class="text-slate-500 text-sm" data-t="cardTheoryDesc">Законы и формулы для быстрой проверки.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ТЕСТ (БЛОК А) -->
+        <div id="quiz" class="tab-content max-w-2xl mx-auto">
+            <div class="mb-6 flex items-center justify-between text-slate-500 font-bold px-2 uppercase text-xs tracking-widest">
+                <span id="question-counter">...</span>
+                <span id="score-display" class="text-blue-600">...</span>
+            </div>
+            <div id="quiz-container" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 min-h-[400px]"></div>
+            <div id="quiz-result" class="hidden bg-white p-10 rounded-3xl shadow-lg border border-slate-100 text-center">
+                <h2 class="text-3xl font-black mb-2" data-t="quizResultTitle">Тест завершен!</h2>
+                <p id="final-score" class="text-xl text-slate-500 mb-8"></p>
+                <button onclick="restartQuiz()" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition" data-t="btnRetry">Повторить</button>
+            </div>
+        </div>
+
+        <!-- ЗАДАЧИ (БЛОК Б) -->
+        <div id="tasks" class="tab-content max-w-3xl mx-auto space-y-6">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task1Title">Сила взаимодействия (Закон Кулона)</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-blue-500" data-t="task1Desc">
+                    Определите, с какой силой взаимодействуют два тела, заряды которых $2 \text{ нКл}$ и $3 \text{ нКл}$, находящиеся на расстоянии $10 \text{ см}$ друг от друга в вакууме. ($k = 9 \cdot 10^9 \text{ Н}\cdot\text{м}^2/\text{Кл}^2$)
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswer">Ваш ответ (мкН):</label>
+                    <input type="number" step="0.01" id="ans-coulomb" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('coulomb', 5.4)" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-coulomb" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold mb-4" data-t="task2Title">Напряженность поля</h3>
+                <p class="bg-slate-50 p-6 rounded-2xl text-slate-700 mb-6 leading-relaxed border-l-4 border-indigo-500" data-t="task2Desc">
+                    Чему равна напряженность электрического поля в точке, удаленной на $30 \text{ см}$ от точечного заряда $Q = 10 \text{ нКл}$? (Дайте ответ в В/м)
+                </p>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-slate-500 mb-2 uppercase" data-t="labelAnswerV">Напряженность (В/м):</label>
+                    <input type="number" id="ans-intensity" class="w-full md:w-64 p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none font-bold text-xl" placeholder="...">
+                </div>
+                <button onclick="checkTask('intensity', 1000)" class="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-700 btn-transition shadow-lg shadow-blue-100" data-t="btnCheck">Проверить</button>
+                <div id="feedback-intensity" class="mt-4 hidden font-bold p-3 rounded-lg text-center"></div>
+            </div>
+        </div>
+
+        <!-- ЛАБОРАТОРИЯ (ЗАКОНЫ КИРХГОФА) -->
+        <div id="lab" class="tab-content max-w-4xl mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold mb-4" data-t="labTitle">Узел электрической цепи</h2>
+                <p class="text-slate-500 mb-8" data-t="labDesc">Определите неизвестный ток в узле цепи, используя первый закон Кирхгофа: сумма входящих токов равна сумме выходящих.</p>
+                
+                <div class="flex flex-col lg:flex-row gap-10 items-center">
+                    <div class="w-full lg:w-3/5 bg-slate-50 p-10 rounded-2xl border border-slate-200 flex items-center justify-center">
+                        <svg width="400" height="300" viewBox="0 0 400 300">
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                                </marker>
+                            </defs>
+                            <circle cx="200" cy="150" r="10" class="node-circle" />
+                            <line x1="50" y1="150" x2="190" y2="150" class="current-arrow" />
+                            <text x="70" y="140" class="text-sm font-bold fill-blue-600">I₁ = 8A</text>
+                            <line x1="210" y1="150" x2="350" y2="150" class="current-arrow" />
+                            <text x="280" y="140" class="text-sm font-bold fill-blue-600" id="lab-i2-text">I₂ = ?</text>
+                            <line x1="200" y1="140" x2="200" y2="40" class="current-arrow" style="transform: rotate(180deg); transform-origin: 200px 140px;" />
+                            <text x="210" y="80" class="text-sm font-bold fill-blue-600">I₃ = 3A</text>
+                        </svg>
+                    </div>
+                    <div class="w-full lg:w-2/5 space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                            <h4 class="font-bold text-blue-800 mb-2 uppercase text-xs tracking-wider" data-t="labInstruction">Задание:</h4>
+                            <p class="text-sm text-blue-700 leading-relaxed" data-t="labTaskDesc">
+                                Ток I₁ входит в узел. Токи I₂ и I₃ выходят из него. Если I₁ = 8А, а I₃ = 3А, чему равен ток I₂?
+                            </p>
+                        </div>
+                        <div class="space-y-4">
+                            <label class="block text-sm font-bold text-slate-500 uppercase" data-t="labelCurrent">Сила тока I₂ (А):</label>
+                            <input type="number" id="ans-kirchhoff" class="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none font-bold text-2xl" placeholder="?">
+                            <button onclick="checkTask('kirchhoff', 5)" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 btn-transition" data-t="btnCheck">Проверить</button>
+                            <div id="feedback-kirchhoff" class="hidden font-bold p-3 rounded-lg text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- СПРАВОЧНИК -->
+        <div id="theory" class="tab-content max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory1">Закон Кулона</h4>
+                    <code class="text-xl font-black block mb-2 text-slate-800">F = k · |q₁| · |q₂| / r²</code>
+                    <p class="text-xs text-slate-500" data-t="theory1p">k = 9 · 10⁹ Н·м²/Кл²</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory2">Напряженность</h4>
+                    <code class="text-xl font-black block mb-2 text-slate-800">E = F / q = k · Q / r²</code>
+                    <p class="text-xs text-slate-500" data-t="theory2p">Единица измерения: В/м или Н/Кл</p>
+                </div>
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm text-center">
+                    <h4 class="text-blue-600 font-bold mb-4" data-t="theory3">Законы Кирхгофа</h4>
+                    <code class="text-sm font-black block mb-2 text-slate-800">1: ΣI_in = ΣI_out</code>
+                    <code class="text-sm font-black block text-slate-800">2: ΣE = Σ(I · R)</code>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button id="back-btn" onclick="showTab('menu')" class="hidden fixed bottom-6 left-6 bg-slate-900 text-white p-4 rounded-2xl shadow-2xl hover:bg-slate-800 btn-transition flex items-center gap-2 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" /></svg>
+        <span class="font-bold uppercase tracking-widest" data-t="btnMenu">МЕНЮ / МӘЗІР</span>
+    </button>
+
+    <script>
+        const langData = {
+            ru: {
+                navQuiz: "Блок А", navTasks: "Блок Б", navLab: "Лаборатория", navTheory: "Справочник",
+                mainTitle: "Тренажер по физике (10 класс)", mainDesc: "Самостоятельная подготовка к суммативному оцениванию по физике за 3 четверть",
+                cardQuizTitle: "Тестирование", cardQuizDesc: "Блок А: Потенциал, напряженность и законы Кирхгофа.",
+                cardTasksTitle: "Задачи Блока Б", cardTasksDesc: "Решение задач на закон Кулона и напряженность.",
+                cardLabTitle: "Лаборатория", cardLabDesc: "Интерактивные узлы и законы Кирхгофа.",
+                cardTheoryTitle: "Справочник", cardTheoryDesc: "Законы и формулы для быстрой проверки.",
+                quizResultTitle: "Тест завершен!", btnRetry: "Повторить", btnMenu: "МЕНЮ",
+                labelAnswer: "Ваш ответ (мкН):", labelAnswerV: "Напряженность (В/м):", labelCurrent: "Сила тока I₂ (А):",
+                btnCheck: "Проверить", labInstruction: "Задание:", labTaskDesc: "Ток I₁ входит в узел. Токи I₂ и I₃ выходят из него. Если I₁ = 8А, а I₃ = 3А, чему равен ток I₂?",
+                task1Title: "Сила взаимодействия (Закон Кулона)", task1Desc: "Определите, с какой силой взаимодействуют два тела, заряды которых 2 нКл и 3 нКл, находящиеся на расстоянии 10 см друг от друга в вакууме.",
+                task2Title: "Напряженность поля", task2Desc: "Чему равна напряженность электрического поля в точке, удаленной на 30 см от точечного заряда Q = 10 нКл? (Дайте ответ в В/м)",
+                labTitle: "Узел электрической цепи", labDesc: "Определите неизвестный ток в узле цепи, используя первый закон Кирхгофа.",
+                theory1: "Закон Кулона", theory1p: "k = 9 · 10⁹ Н·м²/Кл²",
+                theory2: "Напряженность", theory2p: "Силовая характеристика поля",
+                theory3: "Законы Кирхгофа",
+                fbCorrect: "ВЕРНО ✅", fbWrong: "ОШИБКА ❌"
+            },
+            kk: {
+                navQuiz: "А Блогы", navTasks: "Б Блогы", navLab: "Зертхана", navTheory: "Анықтамалық",
+                mainTitle: "Физика тренажеры (10 сынып)", mainDesc: "3-тоқсан бойынша физикадан жиынтық бағалауға өз бетінше дайындық",
+                cardQuizTitle: "Тест тапсырмалары", cardQuizDesc: "А блогы: Потенциал, кернеулік және Кирхгоф заңдары.",
+                cardTasksTitle: "Б блогы есептері", cardTasksDesc: "Кулон заңы және кернеулік бойынша есептер шығару.",
+                cardLabTitle: "Зертхана", cardLabDesc: "Интерактивті түйіндер және Кирхгоф заңдары.",
+                cardTheoryTitle: "Анықтамалық", cardTheoryDesc: "Жылдам тексеруге арналған заңдар мен формулалар.",
+                quizResultTitle: "Тест аяқталды!", btnRetry: "Қайталау", btnMenu: "МӘЗІР",
+                labelAnswer: "Жауабыңыз (мкН):", labelAnswerV: "Кернеулік (В/м):", labelCurrent: "I₂ ток күші (А):",
+                btnCheck: "Тексеру", labInstruction: "Тапсырма:", labTaskDesc: "I₁ тогы түйінге кіреді. I₂ және I₃ токтары одан шығады. Егер I₁ = 8А, ал I₃ = 3А болса, I₂ тогы неге тең?",
+                task1Title: "Өзара әрекеттесу күші (Кулон заңы)", task1Desc: "Вакуумда бір-бірінен 10 см қашықтықта орналасқан, зарядтары 2 нКл және 3 нКл екі дененің өзара әрекеттесу күшін анықтаңыз.",
+                task2Title: "Өріс кернеулігі", task2Desc: "Нүктелік Q = 10 нКл зарядынан 30 см қашықтықтағы нүктедегі электр өрісінің кернеулігі неге тең? (Жауабы В/м)",
+                labTitle: "Электр тізбегінің түйіні", labDesc: "Кирхгофтың бірінші заңын қолдана отырып, тізбек түйініндегі белгісіз токты анықтаңыз.",
+                theory1: "Кулон заңы", theory1p: "k = 9 · 10⁹ Н·м²/Кл²",
+                theory2: "Кернеулік", theory2p: "Өрістің күштік сипаттамасы",
+                theory3: "Кирхгоф заңдары",
+                fbCorrect: "ДҰРЫС ✅", fbWrong: "ҚАТЕ ❌"
+            }
+        };
+
+        const questions = {
+            ru: [
+                { q: "Как формулируется закон сохранения заряда?", o: ["Заряд не создается и не исчезает, а только переходит от одного тела к другому", "В замкнутой системе алгебраическая сумма зарядов остается постоянной", "Заряд движется только в проводниках", "Электрический заряд зависит от массы тела"], a: 1 },
+                { q: "Какой физический смысл имеет электрический потенциал?", o: ["Работа по перемещению заряда из одной точки в другую", "Энергия, запасенная в магнитном поле", "Работа по перемещению единичного заряда из бесконечности в данную точку", "Сила, действующая на электрический заряд"], a: 2 },
+                { q: "В каких единицах измеряется напряженность электрического поля?", o: ["Вольт (В)", "Ньютон (Н)", "Вольт на метр (В/м)", "Ом (Ω)"], a: 2 },
+                { q: "Чему равна напряженность электрического поля точечного заряда Q на расстоянии r?", o: ["E = k · (Q / r)", "E = k · (Q / r²)", "E = k · (Q / r³)", "E = k · Q · r"], a: 1 },
+                { q: "Какая из формул определяет связь между потенциалом и напряженностью?", o: ["U = E · d", "U = E / d", "E = V / d", "E = V · d²"], a: 0 },
+                { q: "Какой закон используется для определения суммарного тока в узле?", o: ["Закон Ома", "Первый закон Кирхгофа", "Второй закон Кирхгофа", "Закон Кулона"], a: 1 },
+                { q: "Сколько уравнений нужно написать по второму правилу Кирхгофа для контура?", o: ["3", "2", "По количеству независимых контуров", "6"], a: 2 },
+                { q: "Какой физический смысл имеет сумма всех напряжений в замкнутом контуре (II закон Кирхгофа)?", o: ["Она всегда больше нуля", "Она равна нулю (или сумме ЭДС)", "Она равна произведению силы тока и сопротивления", "Она зависит от количества узлов"], a: 1 },
+                { q: "Точка на схеме, в которой сходятся не менее трех проводников, называется...", o: ["Узлом", "Контуром", "Ветвью", "Зажимом"], a: 0 },
+                { q: "Уравнение для узла (входят I₁, I₂; выходит I₃):", o: ["I₁ + I₂ - I₃ = 0", "I₁ - I₂ = I₃", "I₃ = I₁ / I₂", "I₁ + I₂ + I₃ = 0"], a: 0 }
+            ],
+            kk: [
+                { q: "Зарядтың сақталу заңы қалай тұжырымдалады?", o: ["Заряд пайда болмайды және жоғалмайды", "Тұйық жүйеде зарядтардың алгебралық қосындысы тұрақты болады", "Заряд тек өткізгіштерде қозғалады", "Электр заряды массаға тәуелді"], a: 1 },
+                { q: "Электрлік потенциалдың физикалық мағынасы қандай?", o: ["Зарядты бір нүктеден екінші нүктеге жылжыту жұмысы", "Магнит өрісінің энергиясы", "Бірлік зарядты шексіздіктен берілген нүктеге жылжыту жұмысы", "Зарядқа әсер ететін күш"], a: 2 },
+                { q: "Электр өрісінің кернеулігі қандай бірлікпен өлшенеді?", o: ["Вольт (В)", "Ньютон (Н)", "Вольт метрге (В/м)", "Ом (Ω)"], a: 2 },
+                { q: "Нүктелік Q зарядының r қашықтықтағы кернеулігі неге тең?", o: ["E = k · (Q / r)", "E = k · (Q / r²)", "E = k · (Q / r³)", "E = k · Q · r"], a: 1 },
+                { q: "Потенциал мен кернеулік арасындағы байланысты қандай формула анықтайды?", o: ["U = E · d", "U = E / d", "E = V / d", "E = V · d²"], a: 0 },
+                { q: "Түйіндегі толық токты анықтау үшін қандай заң қолданылады?", o: ["Ом заңы", "Кирхгофтың бірінші заңы", "Кирхгофтың екінші заңы", "Кулон заңы"], a: 1 },
+                { q: "Контур үшін Кирхгофтың екінші ережесі бойынша неше теңдеу құру керек?", o: ["3", "2", "Тәуелсіз контурлар саны бойынша", "6"], a: 2 },
+                { q: "Тұйық контурдағы кернеулер қосындысының физикалық мағынасы (Кирхгофтың II заңы):", o: ["Ол әрқашан нөлден үлкен", "Ол нөлге (немесе ЭҚК қосындысына) тең", "Ол ток күші мен кедергі көбейтіндісіне тең", "Ол түйіндер санына тәуелді"], a: 1 },
+                { q: "Тізбектегі кемінде үш өткізгіш тоғысатын нүкте қалай аталады?", o: ["Түйін", "Контур", "Тармақ", "Қысқыш"], a: 0 },
+                { q: "Түйін үшін теңдеу (I₁, I₂ кіреді; I₃ шығады):", o: ["I₁ + I₂ - I₃ = 0", "I₁ - I₂ = I₃", "I₃ = I₁ / I₂", "I₁ + I₂ + I₃ = 0"], a: 0 }
+            ]
+        };
+
+        let currentLang = 'ru';
+        let currentQ = 0;
+        let score = 0;
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lang-ru').classList.toggle('lang-active', lang === 'ru');
+            document.getElementById('lang-kk').classList.toggle('lang-active', lang === 'kk');
+            updateUI();
+            if (document.getElementById('quiz').classList.contains('active')) restartQuiz();
+        }
+
+        function updateUI() {
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                el.innerText = langData[currentLang][key];
+            });
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btn = document.getElementById('back-btn');
+            tabId === 'menu' ? btn.classList.add('hidden') : btn.classList.remove('hidden');
+            if (tabId === 'quiz') restartQuiz();
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('quiz-container');
+            const data = questions[currentLang][currentQ];
+            const counterText = currentLang === 'ru' ? `Вопрос ${currentQ + 1} из ${questions.ru.length}` : `Сұрақ ${currentQ + 1} / ${questions.kk.length}`;
+            const scoreText = currentLang === 'ru' ? `Баллы: ${score}` : `Ұпай: ${score}`;
+            
+            document.getElementById('question-counter').innerText = counterText;
+            document.getElementById('score-display').innerText = scoreText;
+            
+            let html = `<h2 class="text-xl font-bold text-slate-800 mb-8 leading-relaxed">${data.q}</h2><div class="grid grid-cols-1 gap-3">`;
+            data.o.forEach((opt, i) => {
+                html += `<button onclick="handleSelect(${i})" class="w-full text-left p-5 rounded-2xl border border-slate-200 hover:border-blue-400 hover:bg-blue-50 transition-all font-medium">${opt}</button>`;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function handleSelect(idx) {
+            const container = document.getElementById('quiz-container');
+            const btns = container.querySelectorAll('button');
+            const correct = questions[currentLang][currentQ].a;
+            
+            if (idx === correct) {
+                score++;
+                btns[idx].classList.add('correct-bg');
+            } else {
+                btns[idx].classList.add('wrong-bg');
+                btns[correct].classList.add('correct-bg');
+            }
+            btns.forEach(b => b.disabled = true);
+
+            setTimeout(() => {
+                currentQ++;
+                if (currentQ < questions[currentLang].length) renderQuestion();
+                else showQuizResult();
+            }, 1200);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            const resText = currentLang === 'ru' ? `Результат: ${score} из ${questions.ru.length}` : `Нәтиже: ${questions.kk.length} сұрақтан ${score}`;
+            document.getElementById('final-score').innerText = resText;
+        }
+
+        function restartQuiz() {
+            currentQ = 0; score = 0;
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            renderQuestion();
+        }
+
+        function checkTask(id, correctVal) {
+            const val = parseFloat(document.getElementById('ans-' + id).value);
+            const fb = document.getElementById('feedback-' + id);
+            fb.classList.remove('hidden');
+            if (Math.abs(val - correctVal) < 0.1) {
+                fb.innerText = langData[currentLang].fbCorrect;
+                fb.className = "mt-4 font-bold text-green-600 bg-green-50 p-4 rounded-xl text-center shadow-inner";
+            } else {
+                fb.innerText = langData[currentLang].fbWrong;
+                fb.className = "mt-4 font-bold text-red-500 bg-red-50 p-4 rounded-xl text-center shadow-inner";
+            }
+        }
+
+        updateUI();
+        renderQuestion();
+    </script>
+</body>
+</html>
