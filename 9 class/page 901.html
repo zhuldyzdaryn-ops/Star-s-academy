@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вводный инструктаж по ТБ. Механическое движение. Материальная точка</title>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            --primary-light: #e0f2fe;
+            --border-color: #cbd5e1;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- ШАПКА И ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКОВ --- */
+        .top-header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: flex-end;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .lang-toggle {
+            display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem;
+        }
+        .lang-toggle span { cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        .lang-toggle span.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); border-radius: 22px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: .4s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        /* --- ОСНОВНОЙ МАКЕТ --- */
+        .container {
+            max-width: 1200px; margin: 20px auto; padding: 0 15px;
+            display: flex; gap: 20px; align-items: flex-start;
+        }
+
+        .main-content {
+            flex: 1; background-color: var(--bg-card); border-radius: 12px;
+            padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); min-width: 0;
+        }
+
+        .sidebar {
+            width: 280px; background-color: var(--bg-card); border-radius: 12px;
+            padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: sticky;
+            top: 70px; flex-shrink: 0;
+        }
+
+        /* --- ХЛЕБНЫЕ КРОШКИ И ЗАГОЛОВКИ --- */
+        .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .breadcrumbs a { color: var(--primary); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+
+        h1 { font-size: 1.8rem; margin-bottom: 20px; color: #0f172a; line-height: 1.3;}
+        h2 { font-size: 1.4rem; margin-top: 35px; margin-bottom: 15px; color: #1e293b; border-bottom: 2px solid var(--primary-light); padding-bottom: 5px; }
+        h3 { font-size: 1.15rem; margin-bottom: 10px; color: var(--primary); margin-top: 20px;}
+
+        /* --- БЛОКИ ИНФОРМАЦИИ --- */
+        .alert-box {
+            background-color: var(--primary-light); border-left: 4px solid var(--primary);
+            padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0;
+        }
+        
+        .alert-box.safety {
+            background-color: var(--warning-light); border-left-color: var(--warning);
+        }
+
+        .alert-box.success {
+            background-color: var(--success-light); border-left-color: var(--success);
+        }
+
+        .grid-2 {
+            display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px;
+        }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        .info-card {
+            border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; background: #fafafa;
+        }
+
+        .list-styled { margin-left: 20px; margin-bottom: 15px; }
+        .list-styled li { margin-bottom: 8px; }
+        .list-styled li::marker { color: var(--primary); font-weight: bold; }
+
+        /* --- САЙДБАР (СОДЕРЖАНИЕ) --- */
+        .toc-title { font-size: 0.85rem; text-transform: uppercase; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 0.5px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 5px; }
+        .toc-list a {
+            text-decoration: none; color: var(--text-main); display: block;
+            padding: 8px 12px; border-radius: 6px; transition: background 0.2s, color 0.2s; font-size: 0.95rem;
+        }
+        .toc-list a:hover { background-color: var(--bg-body); }
+        .toc-list a.active { background-color: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+        /* --- ПРАКТИКА И ТЕСТ --- */
+        .practice-item { margin-bottom: 15px; font-size: 1.05rem; line-height: 1.8; }
+        select.dropdown-select {
+            padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px;
+            font-size: 1rem; color: var(--primary); font-weight: bold; outline: none; background: #fff; cursor: pointer;
+        }
+        .correct { border-color: var(--success) !important; background-color: var(--success-light) !important; color: var(--success) !important; }
+        .wrong { border-color: var(--danger) !important; background-color: var(--danger-light) !important; color: var(--danger) !important; }
+
+        .test-q { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
+        .test-q:last-child { border-bottom: none; }
+        .test-q h4 { margin-bottom: 12px; font-size: 1.05rem; font-weight: 600; }
+        .test-options { display: flex; flex-direction: column; gap: 8px; }
+        .test-options label {
+            display: flex; align-items: flex-start; gap: 10px; background: #fafafa; padding: 12px 15px;
+            border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s, border-color 0.2s;
+        }
+        .test-options label:hover { background: #f1f5f9; border-color: #cbd5e1; }
+        .test-options input[type="radio"] { margin-top: 4px; }
+
+        .btn {
+            background-color: var(--primary); color: white; border: none; padding: 10px 24px;
+            border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .result-box { margin-top: 15px; padding: 15px; border-radius: 6px; font-weight: bold; display: none; }
+
+        /* --- ВИДЕО --- */
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .sim-container { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; background: #ffffff; }
+        .sim-controls { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; align-items: flex-end; }
+        .sim-control-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+        .sim-control-group label { font-size: 0.9rem; font-weight: bold; color: var(--text-muted); }
+        .sim-control-group select { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 1rem; background: #f8fafc; cursor: pointer; }
+        .sim-canvas-wrapper { background: #0f172a; border-radius: 8px; padding: 5px; display: flex; justify-content: center; position: relative; overflow: hidden; height: 250px;}
+        canvas { max-width: 100%; height: 100%; display: block; border-radius: 4px; }
+        .sim-status { margin-top: 15px; padding: 12px; border-radius: 6px; font-weight: 600; text-align: center; border: 1px solid var(--border-color); background: #f8fafc; }
+
+        /* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; position: static; margin-bottom: 20px; top: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-header">
+    <div class="lang-toggle">
+        <span id="label-ru" class="active" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+        <label class="switch">
+            <input type="checkbox" id="langToggle" onchange="toggleLang()">
+            <span class="slider"></span>
+        </label>
+        <span id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+    </div>
+</header>
+
+<div class="container">
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <span class="lang-ru"><a href="#">Главная</a> > <a href="#">Физика</a> > <a href="#">9 класс</a> > <a href="#">Кинематика</a> > ТБ и Механическое движение</span>
+            <span class="lang-kz"><a href="#">Басты бет</a> > <a href="#">Физика</a> > <a href="#">9 сынып</a> > <a href="#">Кинематика</a> > ҚТ және Механикалық қозғалыс</span>
+        </div>
+
+        <h1>
+            <span class="lang-ru">Урок 1. Вводный инструктаж по ТБ. Механическое движение. Материальная точка</span>
+            <span class="lang-kz">1-сабақ. ҚТ бойынша кіріспе нұсқама. Механикалық қозғалыс. Материялық нүкте</span>
+        </h1>
+
+        <!-- 1. ТБ -->
+        <section id="safety" class="content-section">
+            <h2>
+                <span class="lang-ru">Техника безопасности в кабинете физики</span>
+                <span class="lang-kz">Физика кабинетіндегі қауіпсіздік техникасы</span>
+            </h2>
+            <div class="alert-box safety">
+                <strong><span class="lang-ru">Внимание!</span><span class="lang-kz">Назар аударыңыз!</span></strong>
+                <span class="lang-ru"> Физика — наука экспериментальная. В кабинете находятся электроприборы, стекло и хрупкие механизмы. Строго соблюдайте правила!</span>
+                <span class="lang-kz"> Физика — эксперименталды ғылым. Кабинетте электр құрылғылары, шыны және сынғыш механизмдер бар. Ережелерді қатаң сақтаңыз!</span>
+            </div>
+
+            <ul class="list-styled">
+                <li>
+                    <span class="lang-ru"><strong>Рабочее место:</strong> Держите стол в чистоте. Не кладите на него посторонние предметы.</span>
+                    <span class="lang-kz"><strong>Жұмыс орны:</strong> Үстелді таза ұстаңыз. Оған бөгде заттарды қоймаңыз.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>Электричество:</strong> Не собирайте электрические цепи без разрешения учителя. Не прикасайтесь к оголенным проводам.</span>
+                    <span class="lang-kz"><strong>Электр тогы:</strong> Мұғалімнің рұқсатынсыз электр тізбектерін жинамаңыз. Жалаңаш сымдарға қол тигізбеңіз.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>Приборы:</strong> Не включайте оборудование в сеть без проверки преподавателем.</span>
+                    <span class="lang-kz"><strong>Құралдар:</strong> Оқытушы тексермейінше жабдықты желіге қоспаңыз.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>Поломки:</strong> При обнаружении неисправности (запах гари, искрение, разбитое стекло) немедленно сообщите учителю.</span>
+                    <span class="lang-kz"><strong>Ақаулар:</strong> Ақаулықты (күйік иісі, ұшқын, сынған әйнек) байқаған жағдайда дереу мұғалімге хабарлаңыз.</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- 2. МЕХАНИЧЕСКОЕ ДВИЖЕНИЕ -->
+        <section id="motion" class="content-section">
+            <h2>
+                <span class="lang-ru">Механическое движение и система отсчета</span>
+                <span class="lang-kz">Механикалық қозғалыс және санақ жүйесі</span>
+            </h2>
+            
+            <div class="alert-box">
+                <strong><span class="lang-ru">Механическое движение</span><span class="lang-kz">Механикалық қозғалыс</span></strong> — 
+                <span class="lang-ru">это изменение положения тела в пространстве относительно других тел с течением времени.</span>
+                <span class="lang-kz">бұл уақыт өтуімен дене орнының басқа денелерге қатысты кеңістікте өзгеруі.</span>
+            </div>
+
+            <p>
+                <span class="lang-ru">Движение всегда <strong>относительно</strong>. Нельзя сказать, движется тело или покоится, пока мы не выберем тело, относительно которого рассматривается движение.</span>
+                <span class="lang-kz">Қозғалыс әрқашан <strong>салыстырмалы</strong> болады. Қозғалыс қарастырылатын денені таңдамайынша, дененің қозғалатынын немесе тыныштықта екенін айту мүмкін емес.</span>
+            </p>
+
+            <!-- ПРИМЕР С ПАССАЖИРОМ (вместо фото) -->
+            <div class="info-card" style="border-left: 4px solid var(--primary); margin: 20px 0;">
+                <p style="font-size: 1.05rem; font-style: italic;">
+                    <span class="lang-ru"><strong>Пример относительности:</strong> Пассажир сидит в движущемся поезде. Относительно своего вагона он <strong>покоится</strong> (не меняет своего положения). Однако относительно деревьев за окном — он <strong>движется</strong> вместе с поездом.</span>
+                    <span class="lang-kz"><strong>Салыстырмалылық мысалы:</strong> Жолаушы қозғалып келе жатқан пойызда отыр. Өз вагонына қатысты ол <strong>тыныштықта</strong> (орнын өзгертпейді). Алайда терезе сыртындағы ағаштарға қатысты — ол пойызбен бірге <strong>қозғалады</strong>.</span>
+                </p>
+            </div>
+
+            <div class="info-card">
+                <h3>
+                    <span class="lang-ru">Система отсчета</span>
+                    <span class="lang-kz">Санақ жүйесі</span>
+                </h3>
+                <p>
+                    <span class="lang-ru">Чтобы описать движение физически, необходимо ввести <strong>систему отсчета (СО)</strong>. Она состоит из трех обязательных компонентов:</span>
+                    <span class="lang-kz">Қозғалысты физикалық түрде сипаттау үшін <strong>санақ жүйесін (СЖ)</strong> енгізу қажет. Ол үш міндетті компоненттен тұрады:</span>
+                </p>
+                <ul class="list-styled" style="margin-top: 10px;">
+                    <li><span class="lang-ru"><strong>Тело отсчета</strong> (точка отсчета)</span><span class="lang-kz"><strong>Санақ денесі</strong> (санақ нүктесі)</span></li>
+                    <li><span class="lang-ru"><strong>Система координат</strong>, связанная с телом отсчета</span><span class="lang-kz">Санақ денесімен байланысқан <strong>координаттар жүйесі</strong></span></li>
+                    <li><span class="lang-ru"><strong>Прибор для измерения времени</strong> (часы)</span><span class="lang-kz"><strong>Уақытты өлшейтін құрал</strong> (сағат)</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. МАТЕРИАЛЬНАЯ ТОЧКА -->
+        <section id="material-point" class="content-section">
+            <h2>
+                <span class="lang-ru">Материальная точка</span>
+                <span class="lang-kz">Материялық нүкте</span>
+            </h2>
+
+            <p>
+                <span class="lang-ru">В физике часто используют упрощенные модели (идеализации) реальных объектов. Одной из самых важных моделей кинематики является <strong>материальная точка</strong>.</span>
+                <span class="lang-kz">Физикада көбінесе нақты объектілердің жеңілдетілген модельдері (идеализациялар) қолданылады. Кинематиканың ең маңызды модельдерінің бірі — <strong>материялық нүкте</strong>.</span>
+            </p>
+
+            <div class="alert-box success">
+                <strong><span class="lang-ru">Материальная точка</span><span class="lang-kz">Материялық нүкте</span></strong> — 
+                <span class="lang-ru">это физическое тело, размерами и формой которого в условиях данной задачи можно пренебречь.</span>
+                <span class="lang-kz">бұл берілген есептің шартында өлшемдері мен пішінін ескермеуге болатын физикалық дене.</span>
+            </div>
+
+            <h3 style="margin-top: 25px;">
+                <span class="lang-ru">Когда тело МОЖНО считать материальной точкой?</span>
+                <span class="lang-kz">Денені ҚАШАН материялық нүкте деп санауға болады?</span>
+            </h3>
+            
+            <div class="grid-2">
+                <div class="info-card" style="border-top: 4px solid var(--success);">
+                    <p><strong><span class="lang-ru">Условие 1</span><span class="lang-kz">1-шарт</span></strong></p>
+                    <p>
+                        <span class="lang-ru">Пройденное расстояние во много раз превышает размеры самого тела.</span>
+                        <span class="lang-kz">Жүріп өткен қашықтық дененің өз өлшемдерінен әлдеқайда үлкен болса.</span>
+                    </p>
+                    <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-muted);">
+                        <em><span class="lang-ru">Пример: Автомобиль едет из Астаны в Караганду (200 км). Автомобиль (5 метров) — это материальная точка.</span>
+                        <span class="lang-kz">Мысал: Автомобиль Астанадан Қарағандыға (200 км) бара жатыр. Автомобиль (5 метр) — материялық нүкте.</span></em>
+                    </p>
+                </div>
+                <div class="info-card" style="border-top: 4px solid var(--success);">
+                    <p><strong><span class="lang-ru">Условие 2</span><span class="lang-kz">2-шарт</span></strong></p>
+                    <p>
+                        <span class="lang-ru">Тело движется поступательно (все его точки движутся одинаково).</span>
+                        <span class="lang-kz">Дене ілгерілемелі қозғалады (оның барлық нүктелері бірдей қозғалады).</span>
+                    </p>
+                    <p style="font-size: 0.9rem; margin-top: 8px; color: var(--text-muted);">
+                        <em><span class="lang-ru">Пример: Санки скользят со снежной горки вниз.</span>
+                        <span class="lang-kz">Мысал: Шана қарлы төбеден төмен сырғанауда.</span></em>
+                    </p>
+                </div>
+            </div>
+
+            <div class="alert-box safety" style="margin-top: 20px;">
+                <strong><span class="lang-ru">Когда НЕЛЬЗЯ:</span><span class="lang-kz">Қашан БОЛМАЙДЫ:</span></strong>
+                <span class="lang-ru"> Если автомобиль (5 метров) паркуется в гараж (6 метров), мы <strong>не можем</strong> пренебречь его размерами! В этой задаче автомобиль не является материальной точкой.</span>
+                <span class="lang-kz"> Егер автомобиль (5 метр) гаражға (6 метр) тұраққа қойылса, біз оның өлшемдерін <strong>елемеуге болмайды</strong>! Бұл есепте автомобиль материялық нүкте емес.</span>
+            </div>
+        </section>
+
+        <!-- 4. СИМУЛЯЦИЯ -->
+        <section id="simulation" class="content-section">
+            <h2>
+                <span class="lang-ru">Интерактивная симуляция: Поезд</span>
+                <span class="lang-kz">Интерактивті симуляция: Пойыз</span>
+            </h2>
+            <p style="margin-bottom: 15px;">
+                <span class="lang-ru">Выберите сценарий, чтобы понять, является ли поезд материальной точкой. Длина поезда — 100 метров.</span>
+                <span class="lang-kz">Пойыздың материялық нүкте екенін түсіну үшін сценарийді таңдаңыз. Пойыздың ұзындығы — 100 метр.</span>
+            </p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label>
+                            <span class="lang-ru">Сценарий движения</span><span class="lang-kz">Қозғалыс сценарийі</span>
+                        </label>
+                        <select id="simScenario" onchange="startSim()">
+                            <option value="city" data-ru="Путь: Астана -> Алматы (1200 км)" data-kz="Жол: Астана -> Алматы (1200 км)">Путь: Астана -> Алматы (1200 км)</option>
+                            <option value="station" data-ru="Поезд проезжает мост (200 метров)" data-kz="Пойыз көпірден өтуде (200 метр)">Поезд проезжает мост (200 метров)</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="startSim()" style="padding: 8px 16px;">
+                        <span class="lang-ru">Запустить</span><span class="lang-kz">Іске қосу</span>
+                    </button>
+                </div>
+                
+                <div class="sim-canvas-wrapper">
+                    <canvas id="motionCanvas" width="800" height="250"></canvas>
+                </div>
+                
+                <div id="simResult" class="sim-status" style="border-color: var(--success); color: var(--success);">
+                    <span class="lang-ru">Поезд МОЖНО считать материальной точкой (S >> L)</span>
+                    <span class="lang-kz">Пойызды материялық нүкте деп санауға БОЛАДЫ (S >> L)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ПРАКТИКА -->
+        <section id="practice" class="content-section">
+            <h2>
+                <span class="lang-ru">Закрепление (Практика)</span>
+                <span class="lang-kz">Бекіту (Практика)</span>
+            </h2>
+            <div class="alert-box" style="background: #f8fafc; border-left-color: #cbd5e1; margin-bottom: 20px;">
+                <span class="lang-ru">Выберите правильный вариант из выпадающего списка.</span>
+                <span class="lang-kz">Ашылмалы тізімнен дұрыс нұсқаны таңдаңыз.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">1. Система отсчета включает тело отсчета, прибор для измерения времени и</span>
+                <span class="lang-kz">1. Санақ жүйесіне санақ денесі, уақытты өлшейтін құрал және</span>
+                <select class="dropdown-select" id="dd1">
+                    <option value="none">...</option>
+                    <option value="speed" data-ru="скоростьмера" data-kz="жылдамдық өлшегіш">скоростьмера</option>
+                    <option value="coords" data-ru="систему координат" data-kz="координаттар жүйесі">систему координат</option>
+                </select>
+                <span class="lang-ru">.</span><span class="lang-kz">кіреді.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">2. Землю</span>
+                <span class="lang-kz">2. Жерді Күннің айналасында қозғалғанда материялық нүкте деп санауға</span>
+                <select class="dropdown-select" id="dd2">
+                    <option value="none">...</option>
+                    <option value="yes" data-ru="МОЖНО" data-kz="БОЛАДЫ">МОЖНО</option>
+                    <option value="no" data-ru="НЕЛЬЗЯ" data-kz="БОЛМАЙДЫ">НЕЛЬЗЯ</option>
+                </select>
+                <span class="lang-ru">считать материальной точкой при её движении вокруг Солнца.</span><span class="lang-kz">.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">3. Девочку, выполняющую гимнастическое упражнение,</span>
+                <span class="lang-kz">3. Гимнастикалық жаттығу жасайтын қызды материялық нүкте деп санауға</span>
+                <select class="dropdown-select" id="dd3">
+                    <option value="none">...</option>
+                    <option value="yes" data-ru="можно" data-kz="болады">можно</option>
+                    <option value="no" data-ru="нельзя" data-kz="болмайды">нельзя</option>
+                </select>
+                <span class="lang-ru">считать материальной точкой.</span><span class="lang-kz">.</span>
+            </div>
+
+            <button class="btn" onclick="checkPractice()" style="margin-top: 10px;">
+                <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+            </button>
+            <div id="practiceResult" class="result-box"></div>
+        </section>
+
+        <!-- 6. ВИДЕО МАТЕРИАЛ -->
+        <section id="video" class="content-section">
+            <h2>
+                <span class="lang-ru">Видео урок</span>
+                <span class="lang-kz">Бейне сабақ</span>
+            </h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/5U9N5X-vM7w" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- 7. ТЕСТОВЫЕ ВОПРОСЫ -->
+        <section id="test" class="content-section">
+            <h2>
+                <span class="lang-ru">Тест для самопроверки</span>
+                <span class="lang-kz">Өзін-өзі тексеру тесті</span>
+            </h2>
+            
+            <div class="test-q" data-ans="2">
+                <h4>
+                    <span class="lang-ru">1. В каком случае самолет можно считать материальной точкой?</span>
+                    <span class="lang-kz">1. Қай жағдайда ұшақты материялық нүкте деп санауға болады?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Механик чинит двигатель самолета.</span><span class="lang-kz">Механик ұшақ қозғалтқышын жөндеп жатыр.</span></label>
+                    <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Самолет летит из Лондона в Нью-Йорк.</span><span class="lang-kz">Ұшақ Лондоннан Нью-Йоркке ұшып барады.</span></label>
+                    <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Пассажиры садятся в самолет по трапу.</span><span class="lang-kz">Жолаушылар ұшаққа басқыш арқылы мінуде.</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="3">
+                <h4>
+                    <span class="lang-ru">2. Что НЕ входит в систему отсчета?</span>
+                    <span class="lang-kz">2. Санақ жүйесіне НЕ кірмейді?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Часы</span><span class="lang-kz">Сағат</span></label>
+                    <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Система координат</span><span class="lang-kz">Координаттар жүйесі</span></label>
+                    <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Сила притяжения</span><span class="lang-kz">Тартылыс күші</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="1">
+                <h4>
+                    <span class="lang-ru">3. Девочка сидит на скамейке в парке. Относительно чего она движется?</span>
+                    <span class="lang-kz">3. Қыз саябақтағы орындықта отыр. Ол неге қатысты қозғалады?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Относительно проезжающего мимо велосипедиста.</span><span class="lang-kz">Жанынан өтіп бара жатқан велосипедшіге қатысты.</span></label>
+                    <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Относительно скамейки.</span><span class="lang-kz">Орындыққа қатысты.</span></label>
+                    <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Относительно дерева рядом.</span><span class="lang-kz">Жанындағы ағашқа қатысты.</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="2">
+                <h4>
+                    <span class="lang-ru">4. Главное правило техники безопасности при работе с электроприборами в кабинете физики:</span>
+                    <span class="lang-kz">4. Физика кабинетінде электр құралдарымен жұмыс істеу кезіндегі негізгі қауіпсіздік ережесі:</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Можно включать приборы, если уверен в схеме.</span><span class="lang-kz">Схемаға сенімді болсаңыз, құралдарды қосуға болады.</span></label>
+                    <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Не включать цепь без проверки учителем.</span><span class="lang-kz">Тізбекті мұғалім тексермейінше қоспау.</span></label>
+                    <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Все провода можно трогать руками без изоляции.</span><span class="lang-kz">Барлық сымдарды изоляциясыз қолмен ұстауға болады.</span></label>
+                </div>
+            </div>
+
+            <!-- ДОБАВЛЕННЫЙ 5 ВОПРОС -->
+            <div class="test-q" data-ans="2">
+                <h4>
+                    <span class="lang-ru">5. Что такое материальная точка в физике?</span>
+                    <span class="lang-kz">5. Физикадағы материялық нүкте дегеніміз не?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Очень маленькое тело, которое нельзя увидеть глазом (например, атом).</span><span class="lang-kz">Көзбен көруге болмайтын өте кішкентай дене (мысалы, атом).</span></label>
+                    <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Тело, размерами и формой которого в условиях данной задачи можно пренебречь.</span><span class="lang-kz">Берілген есептің шартында өлшемдері мен пішінін ескермеуге болатын дене.</span></label>
+                    <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Любое физическое тело в природе.</span><span class="lang-kz">Табиғаттағы кез келген физикалық дене.</span></label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="checkTest()">
+                <span class="lang-ru">Завершить тест</span><span class="lang-kz">Тестті аяқтау</span>
+            </button>
+            <div id="testResult" class="result-box"></div>
+        </section>
+
+    </main>
+
+    <!-- САЙДБАР (ПРАВАЯ ПАНЕЛЬ) -->
+    <aside class="sidebar">
+        <div class="toc-title">
+            <span class="lang-ru">Содержание</span>
+            <span class="lang-kz">Мазмұны</span>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#safety" class="nav-link"><span class="lang-ru">Техника безопасности</span><span class="lang-kz">Қауіпсіздік техникасы</span></a></li>
+            <li><a href="#motion" class="nav-link"><span class="lang-ru">Мех. движение и СО</span><span class="lang-kz">Мех. қозғалыс және СЖ</span></a></li>
+            <li><a href="#material-point" class="nav-link"><span class="lang-ru">Материальная точка</span><span class="lang-kz">Материялық нүкте</span></a></li>
+            <li><a href="#simulation" class="nav-link"><span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span></a></li>
+            <li><a href="#practice" class="nav-link"><span class="lang-ru">Практика</span><span class="lang-kz">Практика</span></a></li>
+            <li><a href="#video" class="nav-link"><span class="lang-ru">Видео</span><span class="lang-kz">Бейне</span></a></li>
+            <li><a href="#test" class="nav-link"><span class="lang-ru">Тест</span><span class="lang-kz">Тест</span></a></li>
+        </ul>
+    </aside>
+</div>
+
+<script>
+    // --- ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ ---
+    let currentLang = 'ru';
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+        
+        // Обновляем select options
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+        
+        updateSimText();
+        document.getElementById('practiceResult').style.display = 'none';
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    function t(ruText, kzText) { return currentLang === 'ru' ? ruText : kzText; }
+
+    // --- ПОДСВЕТКА СОДЕРЖАНИЯ ---
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            if (scrollY >= section.offsetTop - 150) current = section.getAttribute('id');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) link.classList.add('active');
+        });
+    });
+
+    // --- АНИМАЦИЯ СИМУЛЯЦИИ ---
+    const canvas = document.getElementById('motionCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let animId;
+    let trainX = 0;
+    let currentScenario = 'city';
+
+    function drawCityMap() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Фон карты
+        ctx.fillStyle = '#1e293b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Дорога (линия)
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.moveTo(100, 125); ctx.lineTo(700, 125); ctx.stroke(); ctx.setLineDash([]);
+        
+        // Города (точки)
+        ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(100, 125, 8, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(700, 125, 8, 0, Math.PI*2); ctx.fill();
+        
+        ctx.fillStyle = '#f8fafc'; ctx.font = '14px sans-serif';
+        ctx.fillText(t("Астана", "Астана"), 80, 100);
+        ctx.fillText(t("Алматы", "Алматы"), 680, 100);
+        ctx.fillText("S = 1200 km", 350, 110);
+        
+        // Поезд (Материальная точка = маленькая белая точка)
+        ctx.fillStyle = '#0ea5e9';
+        ctx.beginPath(); ctx.arc(100 + trainX, 125, 4, 0, Math.PI*2); ctx.fill();
+    }
+
+    function drawBridge() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Фон
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Река
+        ctx.fillStyle = '#0284c7'; ctx.fillRect(250, 160, 300, 90);
+        
+        // Мост (длина 300px = 200 метров условно)
+        ctx.fillStyle = '#475569'; ctx.fillRect(250, 140, 300, 20);
+        ctx.fillStyle = '#f8fafc'; ctx.font = '14px sans-serif';
+        ctx.fillText(t("Мост (200 м)", "Көпір (200 м)"), 350, 130);
+        
+        // Опоры моста
+        ctx.fillStyle = '#334155'; ctx.fillRect(250, 160, 20, 90); ctx.fillRect(530, 160, 20, 90);
+        
+        // Поезд (Детальный прямоугольник = НЕ точка)
+        // Длина поезда на экране 150px (условно 100м)
+        const trainLength = 150;
+        ctx.fillStyle = '#0ea5e9';
+        ctx.fillRect(trainX - trainLength, 120, trainLength, 20);
+        
+        // Окна поезда
+        ctx.fillStyle = '#f8fafc';
+        for(let i=10; i<trainLength; i+=20) {
+            ctx.fillRect(trainX - trainLength + i, 125, 10, 10);
+        }
+        
+        ctx.fillStyle = '#cbd5e1'; ctx.font = '12px sans-serif';
+        if (trainX > trainLength) {
+            ctx.fillText(t("Поезд L=100м", "Пойыз L=100м"), trainX - trainLength + 30, 110);
+        }
+    }
+
+    function updateSimText() {
+        const resultBox = document.getElementById('simResult');
+        if (currentScenario === 'city') {
+            resultBox.style.color = 'var(--success)';
+            resultBox.style.borderColor = 'var(--success)';
+            resultBox.style.backgroundColor = 'var(--success-light)';
+            resultBox.innerHTML = t("✓ Поезд <strong>МОЖНО</strong> считать материальной точкой. Расстояние в тысячи раз больше размеров поезда.", "✓ Пойызды материялық нүкте деп санауға <strong>БОЛАДЫ</strong>. Қашықтық пойыз өлшемінен мыңдаған есе үлкен.");
+        } else {
+            resultBox.style.color = 'var(--danger)';
+            resultBox.style.borderColor = 'var(--danger)';
+            resultBox.style.backgroundColor = 'var(--danger-light)';
+            resultBox.innerHTML = t("✗ Поезд <strong>НЕЛЬЗЯ</strong> считать материальной точкой. Длина поезда (100м) соизмерима с длиной моста (200м).", "✗ Пойызды материялық нүкте деп санауға <strong>БОЛМАЙДЫ</strong>. Пойыздың ұзындығы (100м) көпірдің ұзындығымен (200м) шамалас.");
+        }
+    }
+
+    window.startSim = function() {
+        cancelAnimationFrame(animId);
+        currentScenario = document.getElementById('simScenario').value;
+        trainX = 0;
+        updateSimText();
+        animate();
+    }
+
+    function animate() {
+        if (currentScenario === 'city') {
+            drawCityMap();
+            trainX += 2; // скорость на карте
+            if (trainX > 600) trainX = 0; // Зацикливание
+        } else {
+            drawBridge();
+            trainX += 3; // скорость на мосту
+            if (trainX - 150 > canvas.width) trainX = 0;
+        }
+        animId = requestAnimationFrame(animate);
+    }
+
+    // Запуск при загрузке
+    window.onload = () => {
+        startSim();
+    };
+
+    // --- ПРОВЕРКА ПРАКТИКИ ---
+    window.checkPractice = function() {
+        const ans = { dd1: 'coords', dd2: 'yes', dd3: 'no' };
+        let c = 0;
+        for(let id in ans) {
+            const el = document.getElementById(id);
+            el.classList.remove('correct', 'wrong');
+            if(el.value === ans[id]) { el.classList.add('correct'); c++; } 
+            else if (el.value !== 'none') el.classList.add('wrong');
+        }
+        const r = document.getElementById('practiceResult');
+        r.style.display = 'block';
+        if(c === 3) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t("Все верно! Отлично.", "Барлығы дұрыс! Тамаша.");
+        } else {
+            r.style.backgroundColor = 'var(--danger-light)'; r.style.color = 'var(--danger)';
+            r.innerHTML = t("Есть ошибки. Исправьте их.", "Қателер бар. Оларды түзеңіз.");
+        }
+    }
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0; const total = 5; // Обновили количество вопросов до 5
+        document.querySelectorAll('.test-q').forEach((q) => {
+            const corr = q.getAttribute('data-ans');
+            const sel = q.querySelector('input:checked');
+            if (sel && sel.value === corr) score++;
+        });
+        const r = document.getElementById('testResult'); r.style.display = 'block';
+        if (score === total) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t(`Идеально! ${score} из ${total}. Материал усвоен.`, `Керемет! ${total} ішінен ${score}. Материал меңгерілді.`);
+        } else {
+            r.style.backgroundColor = 'var(--warning)'; r.style.color = '#fff';
+            r.innerHTML = t(`Ваш результат: ${score} из ${total}. Повторите теорию.`, `Сіздің нәтижеңіз: ${total} ішінен ${score}. Теорияны қайталаңыз.`);
+        }
+    };
+</script>
+</body>
+</html>
