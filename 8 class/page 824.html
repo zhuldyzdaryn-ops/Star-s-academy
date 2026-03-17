@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Работа и мощность тока. Закон Джоуля-Ленца — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fffbeb; /* Светло-янтарный */
+            --text-color: #451a03;
+            --card-bg: #ffffff;
+            --primary: #f59e0b; /* Янтарный */
+            --primary-hover: #d97706;
+            --secondary: #ea580c; /* Оранжево-красный (Тепло) */
+            --hot: #ef4444; 
+            --cold: #0ea5e9; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fde68a;
+            --text-muted: #78350f;
+            --formula-bg: #fef3c7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #2e1005; 
+                --text-color: #fef3c7;
+                --card-bg: #451a03;
+                --border: #92400e;
+                --text-muted: #d4d4d8;
+                --formula-bg: #78350f;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            color: var(--primary-hover);
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+        
+        .highlight-box.heat {
+            border-left-color: var(--hot);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--secondary);
+            display: block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        button.btn-action {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: var(--hot);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.btn-action:hover { background-color: #dc2626; }
+        button.btn-action.active { background-color: var(--primary-hover); }
+
+        button.btn-reset {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: var(--cold);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.btn-reset:hover { background-color: #0284c7; }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.05rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--secondary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); color: #fff;}
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(245, 158, 11, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(245, 158, 11, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--secondary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--secondary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Работа, мощность и тепловое действие тока</span>
+            <span class="lang-kz">Токтың жұмысы, қуаты және жылулық әсері</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему нагревается утюг? Как счетчик в коридоре считает потраченную энергию? Сегодня мы научимся переводить электричество в тепло и ватты!</span>
+            <span class="lang-kz">Үтік неге қызады? Дәліздегі есептегіш жұмсалған энергияны қалай есептейді? Бүгін біз электр тогын жылуға және ваттқа айналдыруды үйренеміз!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Работа и Мощность электрического тока</span>
+            <span class="lang-kz">1. Электр тогының жұмысы мен Қуаты</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Электрическое поле заставляет заряды двигаться, то есть <strong>совершает работу</strong>. Именно эта работа превращается в свет лампы, вращение вентилятора или нагрев воды в чайнике. Работа измеряется в <strong>Джоулях (Дж)</strong>.</span>
+            <span class="lang-kz">Электр өрісі зарядтарды қозғалуға мәжбүр етеді, яғни <strong>жұмыс жасайды</strong>. Дәл осы жұмыс шамның жарығына, желдеткіштің айналуына немесе шәйнектегі судың қызуына айналады. Жұмыс <strong>Джоульмен (Дж)</strong> өлшенеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <div style="text-align: center;">
+                <span class="lang-ru">Формула работы тока (<span class="math-symbol">A</span>):</span>
+                <span class="lang-kz">Ток жұмысының формуласы (<span class="math-symbol">A</span>):</span>
+                <div class="math-formula">A = U &middot; I &middot; t</div>
+            </div>
+            <p style="font-size: 0.9rem; text-align: center; margin-top: 10px;">
+                <span class="lang-ru">(Работа = Напряжение &times; Сила тока &times; Время)</span>
+                <span class="lang-kz">(Жұмыс = Кернеу &times; Ток күші &times; Уақыт)</span>
+            </p>
+        </div>
+
+        <p>
+            <span class="lang-ru">Скорость совершения работы называется <strong>Мощностью (<span class="math-symbol">P</span>)</strong>. Чем мощнее прибор, тем быстрее он выполнит задачу (например, вскипятит воду). Мощность измеряется в <strong>Ваттах (Вт)</strong>.</span>
+            <span class="lang-kz">Жұмыстың орындалу жылдамдығы <strong>Қуат (<span class="math-symbol">P</span>)</strong> деп аталады. Құрал неғұрлым қуатты болса, ол тапсырманы соғұрлым тез орындайды (мысалы, суды қайнатады). Қуат <strong>Ваттпен (Вт)</strong> өлшенеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <div style="text-align: center;">
+                <span class="lang-ru">Формула мощности тока (<span class="math-symbol">P</span>):</span>
+                <span class="lang-kz">Ток қуатының формуласы (<span class="math-symbol">P</span>):</span>
+                <div class="math-formula">P = U &middot; I</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Тепловое действие тока (Закон Джоуля-Ленца)</span>
+            <span class="lang-kz">2. Токтың жылулық әсері (Джоуль-Ленц заңы)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Когда электроны движутся по проводу, они сталкиваются с атомами металла. Часть энергии электронов передается металлу, заставляя атомы колебаться быстрее. В результате <strong>проводник нагревается</strong>!</span>
+            <span class="lang-kz">Электрондар сым бойымен қозғалғанда, олар металл атомдарымен соқтығысады. Электрондар энергиясының бір бөлігі металға беріліп, атомдардың тезірек тербелуіне әкеледі. Нәтижесінде <strong>өткізгіш қызады</strong>!</span>
+        </p>
+        <p>
+            <span class="lang-ru">В 1841 году ученые Джеймс Джоуль и Эмилий Ленц независимо друг от друга вывели закон, по которому можно рассчитать количество выделенного тепла (<span class="math-symbol">Q</span>).</span>
+            <span class="lang-kz">1841 жылы ғалымдар Джеймс Джоуль мен Эмилий Ленц бір-біріне тәуелсіз бөлінген жылу мөлшерін (<span class="math-symbol">Q</span>) есептеуге болатын заңды қорытып шығарды.</span>
+        </p>
+        
+        <div class="highlight-box heat">
+            <div style="text-align: center;">
+                <span class="lang-ru"><strong>Закон Джоуля — Ленца</strong>:</span>
+                <span class="lang-kz"><strong>Джоуль — Ленц заңы</strong>:</span>
+                <div class="math-formula">Q = I<sup>2</sup> &middot; R &middot; t</div>
+            </div>
+            <p style="font-size: 0.9rem; text-align: center; margin-top: 10px;">
+                <span class="lang-ru">Количество теплоты прямо пропорционально <strong>квадрату силы тока</strong>, сопротивлению проводника и времени.</span>
+                <span class="lang-kz">Жылу мөлшері <strong>ток күшінің квадратына</strong>, өткізгіштің кедергісіне және уақытқа тура пропорционал.</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Электрический кипятильник</span>
+            <span class="lang-kz">Симуляция: Электрлік су қайнатқыш</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    <span class="lang-ru">Настройте напряжение и сопротивление спирали. Нажмите «Включить», чтобы начать нагрев воды. Обратите внимание, как быстро растет температура при большой мощности!</span>
+                    <span class="lang-kz">Кернеуді және спиральдің кедергісін реттеңіз. Суды жылытуды бастау үшін «Қосу» түймесін басыңыз. Қуат жоғары болғанда температураның қаншалықты тез көтерілетініне назар аударыңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Напряжение сети (U):</span><span class="lang-kz">Желі кернеуі (U):</span></span>
+                        <span id="uValText">220 В</span>
+                    </label>
+                    <input type="range" id="uSlider" min="0" max="300" step="10" value="220" oninput="updateValues()">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Сопротивление спирали (R):</span><span class="lang-kz">Спираль кедергісі (R):</span></span>
+                        <span id="rValText">48 Ом</span>
+                    </label>
+                    <input type="range" id="rSlider" min="10" max="100" step="2" value="48" oninput="updateValues()">
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top: 10px;">
+                    <button class="btn-action" id="btnHeat" onclick="toggleHeating()">
+                        <span class="lang-ru">🔥 Включить нагрев</span>
+                        <span class="lang-kz">🔥 Қыздыруды қосу</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">❄️ Остудить</span>
+                        <span class="lang-kz">❄️ Суыту</span>
+                    </button>
+                </div>
+
+                <div class="dashboard" style="margin-top: 15px;">
+                    <div>
+                        <span class="lang-ru">Сила тока (I = U/R):</span><span class="lang-kz">Ток күші (I = U/R):</span>
+                        <strong><span id="dashI">4.6</span> А</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Мощность (P = U&middot;I):</span><span class="lang-kz">Қуат (P = U&middot;I):</span>
+                        <strong><span id="dashP">1008</span> Вт</strong>
+                    </div>
+                    <div style="border-top: 2px solid var(--primary); margin-top: 5px; padding-top: 5px;">
+                        <span class="lang-ru">Время нагрева (t):</span><span class="lang-kz">Қыздыру уақыты (t):</span>
+                        <strong style="color: var(--text-color);"><span id="dashT">0</span> сек</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Выделено тепла (Q):</span><span class="lang-kz">Бөлінген жылу (Q):</span>
+                        <strong style="color: var(--hot);"><span id="dashQ">0</span> Дж</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="380"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Чтобы вода закипела быстрее, нужна большая мощность. Для этого в чайниках используют спирали с небольшим сопротивлением (по закону Ома ток будет больше, а так как тепло зависит от квадрата тока — нагрев будет мощным!).</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Су тезірек қайнауы үшін үлкен қуат қажет. Ол үшін шәйнектерде кедергісі аз спиральдарды қолданады (Ом заңы бойынша ток үлкенірек болады, ал жылу токтың квадратына тәуелді болғандықтан — қыздыру қуатты болады!).</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет мощности)</span>
+                <span class="lang-kz">1-тапсырма (Қуатты есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Какова мощность электрической лампы, если при напряжении <strong>220 В</strong> через её спираль течет ток <strong>0.5 А</strong>? <em>(Формула: P = U &middot; I)</em></span>
+                <span class="lang-kz">Егер <strong>220 В</strong> кернеу кезінде оның спиралі арқылы <strong>0.5 А</strong> ток өтетін болса, электр шамының қуаты қандай? <em>(Формула: P = U &middot; I)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Ваттах (Вт)" data-placeholder-kz="Жауап Ваттпен (Вт)" placeholder="Ответ в Ваттах (Вт)">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Закон Джоуля-Ленца)</span>
+                <span class="lang-kz">2-тапсырма (Джоуль-Ленц заңы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Согласно формуле Q = I² &middot; R &middot; t, что произойдет с выделяемым количеством теплоты, если силу тока увеличить <strong>в 2 раза</strong> (при тех же R и t)?</span>
+                <span class="lang-kz">Q = I² &middot; R &middot; t формуласына сәйкес, егер ток күшін <strong>2 есе</strong> арттырса (бірдей R және t кезінде), бөлінетін жылу мөлшерімен не болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Увеличится в 2 раза" data-kz="2 есе артады">Увеличится в 2 раза</option>
+                    <option value="2" data-ru="Увеличится в 4 раза" data-kz="4 есе артады">Увеличится в 4 раза</option>
+                    <option value="3" data-ru="Не изменится" data-kz="Өзгермейді">Не изменится</option>
+                    <option value="4" data-ru="Уменьшится в 2 раза" data-kz="2 есе кемиді">Уменьшится в 2 раза</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео с экспериментами по нагреванию проводников электрическим током. Отличная визуализация закона Джоуля-Ленца в реальной жизни!</span>
+            <span class="lang-kz">Өткізгіштерді электр тогымен қыздыру бойынша тәжірибелері бар бейнероликті қараңыз. Джоуль-Ленц заңын шынайы өмірде тамаша визуализациялау!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0+%D0%B8+%D0%BC%D0%BE%D1%89%D0%BD%D0%BE%D1%81%D1%82%D1%8C+%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B3%D0%BE+%D1%82%D0%BE%D0%BA%D0%B0+%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D0%B4%D0%B6%D0%BE%D1%83%D0%BB%D1%8F+%D0%BB%D0%B5%D0%BD%D1%86%D0%B0" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Работа и мощность. Закон Джоуля-Ленца»</span>
+                  <span class="lang-kz">«Жұмыс және қуат. Джоуль-Ленц заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. По какой формуле рассчитывается мощность электрического тока?</span>
+                <span class="lang-kz">1. Электр тогының қуаты қандай формуламен есептеледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">P = A / t</span><span class="lang-kz">P = A / t</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">P = U &middot; I</span><span class="lang-kz">P = U &middot; I</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">P = I &middot; R</span><span class="lang-kz">P = I &middot; R</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">P = U / R</span><span class="lang-kz">P = U / R</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. В каких единицах измеряется работа электрического тока?</span>
+                <span class="lang-kz">2. Электр тогының жұмысы қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Ваттах (Вт)</span><span class="lang-kz">Ватт (Вт)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Амперах (А)</span><span class="lang-kz">Ампер (А)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Джоулях (Дж)</span><span class="lang-kz">Джоуль (Дж)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Вольтах (В)</span><span class="lang-kz">Вольт (В)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">3. От чего зависит количество теплоты, выделяемое проводником с током (согласно закону Джоуля-Ленца)?</span>
+                <span class="lang-kz">3. Тогы бар өткізгіштен бөлінетін жылу мөлшері неге тәуелді (Джоуль-Ленц заңы бойынша)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Только от времени</span><span class="lang-kz">Тек уақытқа</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">От силы тока и времени</span><span class="lang-kz">Ток күші мен уақытқа</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">От напряжения и сопротивления</span><span class="lang-kz">Кернеу мен кедергіге</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">От квадрата силы тока, сопротивления и времени</span><span class="lang-kz">Ток күшінің квадратына, кедергіге және уақытқа</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Если два проводника с разным сопротивлением соединены ПОСЛЕДОВАТЕЛЬНО (ток в них одинаковый), какой из них нагреется сильнее?</span>
+                <span class="lang-kz">4. Егер кедергісі әртүрлі екі өткізгіш ТІЗБЕКТЕЙ жалғанса (олардағы ток бірдей), олардың қайсысы көбірек қызады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Тот, у которого сопротивление больше (т.к. Q = I²Rt, а I одинаково)</span><span class="lang-kz">Кедергісі үлкенірек өткізгіш (өйткені Q = I²Rt, ал I бірдей)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Тот, у которого сопротивление меньше</span><span class="lang-kz">Кедергісі азырақ өткізгіш</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Они нагреются одинаково</span><span class="lang-kz">Олар бірдей қызады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Электродвигатель совершил работу 600 Дж за 1 минуту (60 секунд). Какова его мощность?</span>
+                <span class="lang-kz">5. Электр қозғалтқышы 1 минут ішінде (60 секунд) 600 Дж жұмыс жасады. Оның қуаты қандай?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">600 Вт</span><span class="lang-kz">600 Вт</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">10 Вт</span><span class="lang-kz">10 Вт</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">36000 Вт</span><span class="lang-kz">36000 Вт</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">60 Вт</span><span class="lang-kz">60 Вт</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! P = U &middot; I = 220 &middot; 0.5 = 110 Вт.",
+            fbA_inc: "Неверно. Просто умножьте напряжение (220) на силу тока (0.5).",
+            fbB_corr: "Абсолютно правильно! В формуле сила тока (I) стоит в квадрате. Значит, увеличение тока в 2 раза приведет к увеличению тепла в 2² = 4 раза!",
+            fbB_inc: "Неверно. Обратите внимание, что в формуле Q = I² &middot; R &middot; t сила тока возведена в квадрат. Возведите двойку в квадрат.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_heat_on: "🔥 Включить нагрев",
+            btn_heat_off: "⏹ Выключить"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! P = U &middot; I = 220 &middot; 0.5 = 110 Вт.",
+            fbA_inc: "Қате. Кернеуді (220) ток күшіне (0.5) көбейтіңіз.",
+            fbB_corr: "Өте дұрыс! Формулада ток күші (I) квадратталған. Демек, токты 2 есе арттыру жылудың 2² = 4 есе артуына әкеледі!",
+            fbB_inc: "Қате. Q = I² &middot; R &middot; t формуласында ток күшінің квадраты тұрғанына назар аударыңыз. Екіні квадраттаңыз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_heat_on: "🔥 Қыздыруды қосу",
+            btn_heat_off: "⏹ Өшіру"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateButtonText();
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Переменные симуляции
+    let isHeating = false;
+    let U = 220; // Напряжение
+    let R = 48; // Сопротивление спирали
+    let I = 0; // Ток
+    let P = 0; // Мощность
+    let Q = 0; // Выделенное тепло (Дж)
+    let timeSec = 0; // Время нагрева
+    
+    // Для анимации
+    let temperature = 20; // Температура воды (max 100)
+    let lastTime = 0;
+    let animFrame = null;
+    let bubbles = [];
+
+    function updateButtonText() {
+        const btn = document.getElementById('btnHeat');
+        if (isHeating) {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_heat_off')}</span>`;
+            btn.classList.add('active');
+        } else {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_heat_on')}</span>`;
+            btn.classList.remove('active');
+        }
+    }
+
+    window.updateValues = function() {
+        U = parseFloat(document.getElementById('uSlider').value);
+        R = parseFloat(document.getElementById('rSlider').value);
+        
+        document.getElementById('uValText').textContent = U + ' В';
+        document.getElementById('rValText').textContent = R + ' Ом';
+        
+        // Математика
+        I = U / R;
+        P = U * I;
+        
+        document.getElementById('dashI').textContent = I.toFixed(1);
+        document.getElementById('dashP').textContent = P.toFixed(0);
+        
+        if (!isHeating) drawScene();
+    }
+
+    window.toggleHeating = function() {
+        isHeating = !isHeating;
+        updateButtonText();
+        
+        if (isHeating) {
+            lastTime = performance.now();
+            if (!animFrame) animate(lastTime);
+        }
+    }
+
+    window.resetSim = function() {
+        isHeating = false;
+        timeSec = 0;
+        Q = 0;
+        temperature = 20;
+        bubbles = [];
+        updateButtonText();
+        
+        document.getElementById('dashT').textContent = '0';
+        document.getElementById('dashQ').textContent = '0';
+        
+        drawScene();
+    }
+
+    function createBubble() {
+        return {
+            x: 230 + Math.random() * 40,
+            y: 300 + Math.random() * 10,
+            radius: Math.random() * 3 + 2,
+            speed: Math.random() * 2 + 1 + (temperature > 90 ? 2 : 0)
+        };
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 1. ПРОВОДА и ИСТОЧНИК (Слева)
+        ctx.strokeStyle = '#64748b';
+        if (isHeating && U > 0) ctx.strokeStyle = '#ea580c'; // Оранжевый, если работает
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        // Верхний провод от источника до кипятильника
+        ctx.moveTo(80, 100); ctx.lineTo(240, 100); ctx.lineTo(240, 200);
+        // Нижний провод
+        ctx.moveTo(80, 140); ctx.lineTo(260, 140); ctx.lineTo(260, 200);
+        ctx.stroke();
+
+        // Источник (розетка)
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(40, 90, 40, 60);
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(60, 100, 4, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(60, 140, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('~220 В', 35, 175);
+
+        // 2. СТАКАН С ВОДОЙ (По центру)
+        // Задняя стенка и вода
+        ctx.fillStyle = 'rgba(14, 165, 233, 0.3)'; // Вода
+        ctx.fillRect(180, 180, 140, 150);
+        
+        // Пар, если кипит (T >= 100)
+        if (temperature >= 100) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.beginPath(); ctx.arc(220, 150, 20 + Math.random()*5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(260, 140, 25 + Math.random()*5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(290, 160, 15 + Math.random()*5, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Пузырьки
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        for(let b of bubbles) {
+            ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Спираль (Кипятильник)
+        ctx.strokeStyle = '#94a3b8';
+        if (isHeating && U > 0) {
+            // Чем больше мощность, тем краснее
+            let heatRatio = Math.min(1, P / 3000); 
+            let r = Math.floor(148 + heatRatio * 107); // от серого до красного
+            let g = Math.floor(163 - heatRatio * 163);
+            let bColor = Math.floor(184 - heatRatio * 184);
+            ctx.strokeStyle = `rgb(${r},${g},${bColor})`;
+        }
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(240, 200);
+        ctx.lineTo(240, 300);
+        ctx.lineTo(250, 310);
+        ctx.lineTo(260, 300);
+        ctx.lineTo(260, 200);
+        ctx.stroke();
+
+        // Стеклянные стенки стакана
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(180, 150); ctx.lineTo(180, 330); ctx.lineTo(320, 330); ctx.lineTo(320, 150);
+        ctx.stroke();
+
+        // 3. ТЕРМОМЕТР (Справа)
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillRect(380, 80, 20, 250); // Шкала
+        ctx.beginPath(); ctx.arc(390, 340, 20, 0, Math.PI*2); ctx.fill(); // Колба
+        
+        // Ртуть / Спирт
+        let tempH = ((temperature - 20) / 80) * 230; // 20C = низ (0px), 100C = верх (230px)
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath(); ctx.arc(390, 340, 15, 0, Math.PI*2); ctx.fill();
+        ctx.fillRect(385, 320 - tempH, 10, tempH + 10);
+
+        // Отметки
+        ctx.fillStyle = '#fff'; ctx.font = '12px sans-serif';
+        ctx.fillText('100°', 410, 95);
+        ctx.fillText('20°', 410, 325);
+        ctx.beginPath(); ctx.moveTo(380, 90); ctx.lineTo(400, 90); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(380, 320); ctx.lineTo(400, 320); ctx.stroke();
+        
+        ctx.fillStyle = '#ef4444'; ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(temperature.toFixed(1) + ' °C', 370, 60);
+
+        // 4. Эффект движения тока
+        if (isHeating && U > 0) {
+            let offset = (performance.now() / 50) % 20;
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 15]);
+            ctx.lineDashOffset = -offset;
+            ctx.beginPath();
+            ctx.moveTo(80, 100); ctx.lineTo(240, 100); ctx.lineTo(240, 200);
+            ctx.stroke();
+            ctx.lineDashOffset = offset;
+            ctx.beginPath();
+            ctx.moveTo(80, 140); ctx.lineTo(260, 140); ctx.lineTo(260, 200);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    }
+
+    function animate(timestamp) {
+        let keepAnimating = false;
+
+        if (isHeating) {
+            let dt = (timestamp - lastTime) / 1000; // секунды
+            lastTime = timestamp;
+            
+            // 1 симуляционная секунда = 1 реальная
+            // Но для ускорения процесса (чтобы не ждать долго), умножим эффект
+            // Скажем, симуляция идет в 5 раз быстрее
+            let simDt = dt * 5; 
+            timeSec += simDt;
+            
+            // Выделенное тепло: dQ = P * dt
+            let dQ = P * simDt;
+            Q += dQ;
+            
+            // Нагрев: dT = dQ / (c * m).
+            // Допустим, у нас 0.5 кг воды (m=0.5). c = 4200 Дж/(кг*С). C_total = 2100 Дж/С.
+            // dT = dQ / 2100.
+            let dT = dQ / 2100;
+            temperature += dT;
+            
+            // Ограничение кипения
+            if (temperature >= 100) {
+                temperature = 100; // Кипит!
+                // При кипении активно создаем пузырьки
+                if (Math.random() < 0.5) bubbles.push(createBubble());
+            } else if (temperature > 50) {
+                // Немного пузырьков перед кипением
+                if (Math.random() < 0.1) bubbles.push(createBubble());
+            }
+
+            // Обновляем пузырьки
+            for (let i = bubbles.length - 1; i >= 0; i--) {
+                bubbles[i].y -= bubbles[i].speed;
+                if (bubbles[i].y < 180) { // достигли поверхности
+                    bubbles.splice(i, 1);
+                }
+            }
+            
+            // Обновляем панель
+            document.getElementById('dashT').textContent = timeSec.toFixed(1);
+            document.getElementById('dashQ').textContent = Math.floor(Q);
+            
+            keepAnimating = true;
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    updateValues();
+
+</script>
+</body>
+</html>

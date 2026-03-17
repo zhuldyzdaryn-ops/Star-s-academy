@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Химическое действие тока. Закон Фарадея — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff; /* Светло-голубой (раствор) */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #0284c7; /* Синий (Электролит) */
+            --primary-hover: #0369a1;
+            --secondary: #b45309; /* Медный/Бронзовый */
+            --secondary-hover: #92400e;
+            --hot: #ef4444; 
+            --cold: #0ea5e9; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #bae6fd;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #082f49; 
+                --text-color: #f8fafc;
+                --card-bg: #0c4a6e;
+                --border: #0369a1;
+                --text-muted: #94a3b8;
+                --formula-bg: #075985;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            color: var(--secondary);
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+        
+        .highlight-box.copper {
+            border-left-color: var(--secondary);
+            background-color: rgba(180, 83, 9, 0.05);
+        }
+
+        .math-formula {
+            font-size: 1.6rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--secondary);
+            display: block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Таблица */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+            background: var(--card-bg);
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+        }
+        .data-table th {
+            background: var(--formula-bg);
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--secondary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        button.btn-action {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: var(--success);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.btn-action:hover { background-color: #059669; }
+        button.btn-action.active { background-color: var(--danger); }
+        button.btn-action.active:hover { background-color: #dc2626; }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--secondary); }
+        .dashboard .accent { color: var(--primary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(180, 83, 9, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--primary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--secondary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--secondary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(2, 132, 199, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(2, 132, 199, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Химическое действие тока. Закон Фарадея</span>
+            <span class="lang-kz">Электр тогының химиялық әсері. Фарадей заңы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как покрыть железный ключ тончайшим слоем настоящего серебра или золота? Как добывают чистый алюминий из руды? Весь секрет кроется в электричестве и растворах солей!</span>
+            <span class="lang-kz">Темір кілтті нағыз күміс немесе алтынның өте жұқа қабатымен қалай қаптауға болады? Кеннен таза алюминий қалай өндіріледі? Барлық құпия электр тогы мен тұз ерітінділерінде!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Электролиты и Электролиз</span>
+            <span class="lang-kz">1. Электролиттер және Электролиз</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Обычная дистиллированная вода не проводит ток. Но если растворить в ней соль, кислоту или щелочь, молекулы распадутся на заряженные частицы — <strong>положительные и отрицательные ионы</strong>. Такие растворы называются <strong>электролитами</strong>.</span>
+            <span class="lang-kz">Кәдімгі тазартылған (дистилденген) су ток өткізбейді. Бірақ оған тұз, қышқыл немесе сілті ерітсе, молекулалар зарядталған бөлшектерге — <strong>оң және теріс иондарға</strong> ыдырайды. Мұндай ерітінділер <strong>электролиттер</strong> деп аталады.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Если в электролит опустить два электрода и подключить их к батарее, то ионы придут в движение:</span>
+            <span class="lang-kz">Егер электролитке екі электродты батырып, оларды батареяға қосса, иондар қозғалысқа түседі:</span>
+        </p>
+        <ul>
+            <li><span class="lang-ru">Положительные ионы металла (например, <span class="math-symbol">Cu<sup>2+</sup></span>) поплывут к <strong>катоду</strong> (минусу). Там они получают недостающие электроны и оседают в виде чистого металла!</span><span class="lang-kz">Оң металл иондары (мысалы, <span class="math-symbol">Cu<sup>2+</sup></span>) <strong>катодқа</strong> (минусқа) қарай жүзеді. Онда олар жетіспейтін электрондарды алып, таза металл түрінде тұнады!</span></li>
+            <li><span class="lang-ru">Отрицательные ионы поплывут к <strong>аноду</strong> (плюсу).</span><span class="lang-kz">Теріс иондар <strong>анодқа</strong> (плюсқа) қарай жүзеді.</span></li>
+        </ul>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Электролиз</strong> — это процесс выделения на электродах веществ, растворенных в электролите, при протекании через него электрического тока.</span>
+            <span class="lang-kz"><strong>Электролиз</strong> — бұл электр тогы өткен кезде электролитте еріген заттардың электродтарда бөліну процесі.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Первый закон Фарадея</span>
+            <span class="lang-kz">2. Фарадейдің бірінші заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Английский физик Майкл Фарадей установил: чем больше электрического заряда прошло через раствор, тем больше атомов металла осядет на электроде.</span>
+            <span class="lang-kz">Ағылшын физигі Майкл Фарадей мынаны анықтады: ерітінді арқылы қаншалықты көп электр заряды өтсе, электродта соншалықты көп металл атомдары тұнады.</span>
+        </p>
+        
+        <div class="highlight-box copper">
+            <span class="lang-ru">Масса вещества (<span class="math-symbol">m</span>), выделившегося на электроде, прямо пропорциональна электрическому заряду (<span class="math-symbol">q</span>), прошедшему через электролит:</span>
+            <span class="lang-kz">Электродта бөлінген заттың массасы (<span class="math-symbol">m</span>) электролит арқылы өткен электр зарядына (<span class="math-symbol">q</span>) тура пропорционал:</span>
+            
+            <div class="math-formula">m = k &middot; q &nbsp;&nbsp; или &nbsp;&nbsp; m = k &middot; I &middot; t</div>
+            
+            <p style="font-size: 0.9rem; margin-top: 10px; text-align: center; color: var(--text-color);">
+                <span class="lang-ru">Где <strong>I</strong> — сила тока (А), <strong>t</strong> — время (с), <strong>k</strong> — электрохимический эквивалент (мг/Кл).</span>
+                <span class="lang-kz">Мұндағы <strong>I</strong> — ток күші (А), <strong>t</strong> — уақыт (с), <strong>k</strong> — электрохимиялық эквивалент (мг/Кл).</span>
+            </p>
+        </div>
+
+        <p>
+            <span class="lang-ru"><strong>Электрохимический эквивалент (<span class="math-symbol">k</span>)</strong> показывает, какая масса вещества выделяется при прохождении заряда в 1 Кулон. У каждого вещества он свой!</span>
+            <span class="lang-kz"><strong>Электрохимиялық эквивалент (<span class="math-symbol">k</span>)</strong> 1 Кулон заряд өткен кезде қанша зат массасы бөлінетінін көрсетеді. Әр зат үшін ол әртүрлі!</span>
+        </p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><span class="lang-ru">Вещество</span><span class="lang-kz">Зат</span></th>
+                    <th><span class="lang-ru">Значение <span class="math-symbol">k</span> (мг/Кл)</span><span class="lang-kz"><span class="math-symbol">k</span> мәні (мг/Кл)</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="lang-ru">Медь (Cu<sup>2+</sup>)</span><span class="lang-kz">Мыс (Cu<sup>2+</sup>)</span></td><td><strong>0,329</strong></td></tr>
+                <tr><td><span class="lang-ru">Серебро (Ag<sup>+</sup>)</span><span class="lang-kz">Күміс (Ag<sup>+</sup>)</span></td><td><strong>1,118</strong></td></tr>
+                <tr><td><span class="lang-ru">Никель (Ni<sup>2+</sup>)</span><span class="lang-kz">Никель (Ni<sup>2+</sup>)</span></td><td><strong>0,304</strong></td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Гальваническая ванна (Покрытие ключа)</span>
+            <span class="lang-kz">Симуляция: Гальваникалық ванна (Кілтті қаптау)</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Выберите металл для покрытия и силу тока. Нажмите "Старт", чтобы запустить электролиз. Ионы поплывут к катоду (железному ключу), покрывая его слоем металла!</span>
+                    <span class="lang-kz">Қаптауға арналған металды және ток күшін таңдаңыз. Электролизді бастау үшін "Старт" түймесін басыңыз. Иондар катодқа (темір кілтке) қарай жүзіп, оны металл қабатымен қаптайды!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Материал Анода и электролита:</span>
+                        <span class="lang-kz">Анод пен электролит материалы:</span>
+                    </label>
+                    <select id="matSelect" onchange="updateSimSettings()">
+                        <option value="cu" data-ru="Медь (k = 0.329)" data-kz="Мыс (k = 0.329)">Медь (k = 0.329)</option>
+                        <option value="ag" data-ru="Серебро (k = 1.118)" data-kz="Күміс (k = 1.118)">Серебро (k = 1.118)</option>
+                        <option value="ni" data-ru="Никель (k = 0.304)" data-kz="Никель (k = 0.304)">Никель (k = 0.304)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-top: 5px;">
+                    <label>
+                        <span><span class="lang-ru">Сила тока (I):</span><span class="lang-kz">Ток күші (I):</span></span>
+                        <span id="iValText" style="font-weight: bold; color: var(--primary);">2.0 А</span>
+                    </label>
+                    <input type="range" id="iSlider" min="0.5" max="5.0" step="0.5" value="2.0" oninput="updateSimSettings()">
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top: 5px;">
+                    <button class="btn-action" id="btnRun" onclick="toggleSim()">
+                        <span class="lang-ru">▶ Старт электролиза</span>
+                        <span class="lang-kz">▶ Электролизді бастау</span>
+                    </button>
+                    <button class="btn-action" style="background-color: var(--text-muted);" onclick="resetSim()">
+                        <span class="lang-ru">Сброс</span>
+                        <span class="lang-kz">Бастапқы күй</span>
+                    </button>
+                </div>
+
+                <div class="dashboard" style="margin-top: 15px;">
+                    <div>
+                        <span class="lang-ru">Время электролиза (t):</span><span class="lang-kz">Электролиз уақыты (t):</span>
+                        <strong><span id="dashT" class="accent">0</span> с</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Прошедший заряд (q = I&middot;t):</span><span class="lang-kz">Өткен заряд (q = I&middot;t):</span>
+                        <strong><span id="dashQ" class="accent">0</span> Кл</strong>
+                    </div>
+                    <div style="border-top: 2px solid var(--secondary); margin-top: 5px; padding-top: 5px;">
+                        <span class="lang-ru">Масса осадка (m = k&middot;I&middot;t):</span><span class="lang-kz">Тұнба массасы (m = k&middot;I&middot;t):</span>
+                        <strong style="font-size: 1.2rem;"><span id="dashM">0.00</span> мг</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Гальваностегия:</strong> Вы сейчас наблюдаете процесс нанесения тонкого слоя металла на изделие. Обратите внимание: серебро оседает быстрее меди при том же токе, так как его <em>k</em> (электрохимический эквивалент) значительно больше!</span>
+                <span class="lang-kz"><strong>Гальваностегия:</strong> Сіз қазір бұйымға жұқа металл қабатын жағу процесін бақылап отырсыз. Назар аударыңыз: бірдей ток кезінде күміс мысқа қарағанда тезірек тұнады, өйткені оның <em>k</em> (электрохимиялық эквиваленті) айтарлықтай үлкен!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет по Закону Фарадея)</span>
+                <span class="lang-kz">1-тапсырма (Фарадей заңы бойынша есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Сколько <strong>миллиграммов</strong> меди осядет на катоде, если через раствор сульфата меди пропускать ток силой <strong>2 А</strong> в течение <strong>100 секунд</strong>? <br><em>(k для меди = 0,329 мг/Кл. Формула: m = k &middot; I &middot; t)</em></span>
+                <span class="lang-kz">Егер мыс сульфаты ерітіндісі арқылы <strong>100 секунд</strong> бойы <strong>2 А</strong> ток өткізсе, катодта қанша <strong>миллиграмм</strong> мыс тұнады? <br><em>(Мыс үшін k = 0,329 мг/Кл. Формула: m = k &middot; I &middot; t)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" step="0.1" id="taskA" data-placeholder-ru="Ответ в мг" data-placeholder-kz="Жауап мг-мен" placeholder="Ответ в мг">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Носители заряда)</span>
+                <span class="lang-kz">2-тапсырма (Заряд тасымалдаушылар)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Что является носителями электрического тока в растворах электролитов? (В отличие от металлов, где это электроны).</span>
+                <span class="lang-kz">Электролит ерітінділерінде электр тогын тасымалдаушылар не болып табылады? (Металдардағыдай электрондар емес).</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Только свободные электроны" data-kz="Тек еркін электрондар">Только свободные электроны</option>
+                    <option value="2" data-ru="Положительные и отрицательные ионы" data-kz="Оң және теріс иондар">Положительные и отрицательные ионы</option>
+                    <option value="3" data-ru="Нейтральные молекулы воды" data-kz="Бейтарап су молекулалары">Нейтральные молекулы воды</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите завораживающие реальные эксперименты по омеднению монет и ключей прямо в школьной лаборатории!</span>
+            <span class="lang-kz">Мектеп зертханасында тиындар мен кілттерді мыспен қаптаудың таңғажайып шынайы эксперименттерін қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BB%D0%B8%D0%B7+%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D1%84%D0%B0%D1%80%D0%B0%D0%B4%D0%B5%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Электролиз. Закон Фарадея»</span>
+                  <span class="lang-kz">«Электролиз. Фарадей заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Какая формула выражает Первый закон Фарадея для электролиза?</span>
+                <span class="lang-kz">1. Электролизге арналған Фарадейдің бірінші заңын қай формула өрнектейді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">I = U / R</span><span class="lang-kz">I = U / R</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Q = I² &middot; R &middot; t</span><span class="lang-kz">Q = I² &middot; R &middot; t</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">m = k &middot; I &middot; t</span><span class="lang-kz">m = k &middot; I &middot; t</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">P = U &middot; I</span><span class="lang-kz">P = U &middot; I</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. К какому электроду (полюсу) движутся положительно заряженные ионы металла (например, Cu²⁺)?</span>
+                <span class="lang-kz">2. Оң зарядталған металл иондары (мысалы, Cu²⁺) қай электродқа (полюске) қарай қозғалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">К аноду (положительному)</span><span class="lang-kz">Анодқа (оң)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">К катоду (отрицательному)</span><span class="lang-kz">Катодқа (теріс)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Они никуда не движутся</span><span class="lang-kz">Олар ешқайда қозғалмайды</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">К обоим электродам одновременно</span><span class="lang-kz">Екі электродқа да бір уақытта</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Что такое электрохимический эквивалент (k)?</span>
+                <span class="lang-kz">3. Электрохимиялық эквивалент (k) дегеніміз не?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Масса вещества, выделяющаяся при прохождении через электролит заряда в 1 Кулон</span><span class="lang-kz">Электролит арқылы 1 Кулон заряд өткен кезде бөлінетін зат массасы</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Количество теплоты, выделяющееся при электролизе</span><span class="lang-kz">Электролиз кезінде бөлінетін жылу мөлшері</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Сопротивление жидкости</span><span class="lang-kz">Сұйықтықтың кедергісі</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Скорость движения ионов</span><span class="lang-kz">Иондардың қозғалыс жылдамдығы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Как называют процесс покрытия деталей слоем другого металла (золочения, хромирования) с помощью электролиза?</span>
+                <span class="lang-kz">4. Бөлшектерді электролиз көмегімен басқа металл қабатымен (алтын жалату, хромдау) қаптау процесі қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Электризация</span><span class="lang-kz">Электрлену</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Ионизация</span><span class="lang-kz">Иондану</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Плавление</span><span class="lang-kz">Еру</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Гальваностегия</span><span class="lang-kz">Гальваностегия</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Если время электролиза увеличить в 3 раза (при неизменном токе), как изменится масса выделившегося металла?</span>
+                <span class="lang-kz">5. Егер электролиз уақытын 3 есе арттырса (тұрақты ток кезінде), бөлінген металдың массасы қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Уменьшится в 3 раза</span><span class="lang-kz">3 есе кемиді</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Увеличится в 3 раза</span><span class="lang-kz">3 есе артады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Увеличится в 9 раз</span><span class="lang-kz">9 есе артады</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! m = k &middot; I &middot; t = 0.329 &middot; 2 &middot; 100 = 65.8 мг.",
+            fbA_inc: "Неверно. Умножьте k (0.329) на ток I (2) и на время t (100).",
+            fbB_corr: "Абсолютно правильно! Соль в воде распадается на положительные катионы и отрицательные анионы, которые и переносят заряд.",
+            fbB_inc: "Неверно. В жидкостях (электролитах) нет свободных электронов. Там молекулы распадаются на заряженные части (ионы).",
+            test_ok: "Отличный результат: {s} из {t}! Теперь вы знаете, как добывают алюминий и золотят украшения.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_start: "▶ Старт электролиза",
+            btn_stop: "⏹ Стоп"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! m = k &middot; I &middot; t = 0.329 &middot; 2 &middot; 100 = 65.8 мг.",
+            fbA_inc: "Қате. k-ны (0.329) I тогына (2) және t уақытқа (100) көбейтіңіз.",
+            fbB_corr: "Өте дұрыс! Судағы тұз оң катиондар мен теріс аниондарға ыдырайды, олар зарядты тасымалдайды.",
+            fbB_inc: "Қате. Сұйықтықтарда (электролиттерде) еркін электрондар жоқ. Онда молекулалар зарядталған бөліктерге (иондарға) ыдырайды.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Енді сіз алюминий қалай өндірілетінін және әшекейлер қалай алтындатылатынын білесіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_start: "▶ Электролизді бастау",
+            btn_stop: "⏹ Тоқтату"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateButtonText();
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Данные материалов
+    const materials = {
+        'cu': { k: 0.329, name: 'Cu', liqColor: 'rgba(14, 165, 233, 0.4)', ionColor: '#38bdf8', plateColor: '#d97706' }, // Синий раствор, медный налет
+        'ag': { k: 1.118, name: 'Ag', liqColor: 'rgba(203, 213, 225, 0.2)', ionColor: '#f1f5f9', plateColor: '#f8fafc' }, // Бесцветный раствор, серебряный налет
+        'ni': { k: 0.304, name: 'Ni', liqColor: 'rgba(34, 197, 94, 0.3)', ionColor: '#86efac', plateColor: '#94a3b8' }    // Зеленый раствор, серый налет
+    };
+
+    let isRunning = false;
+    let matKey = 'cu';
+    let I = 2.0;
+    let timeSec = 0;
+    let chargeQ = 0;
+    let massM = 0;
+    
+    let lastTime = 0;
+    let animFrame = null;
+    let ions = [];
+
+    function updateButtonText() {
+        const btn = document.getElementById('btnRun');
+        if (isRunning) {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_stop')}</span>`;
+            btn.classList.add('active');
+        } else {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_start')}</span>`;
+            btn.classList.remove('active');
+        }
+    }
+
+    window.updateSimSettings = function() {
+        matKey = document.getElementById('matSelect').value;
+        I = parseFloat(document.getElementById('iSlider').value);
+        
+        document.getElementById('iValText').textContent = I.toFixed(1) + ' А';
+        
+        if (!isRunning && timeSec === 0) {
+            drawScene(); // Обновить цвета до старта
+        }
+    }
+
+    window.toggleSim = function() {
+        isRunning = !isRunning;
+        updateButtonText();
+        
+        if (isRunning) {
+            lastTime = performance.now();
+            if (!animFrame) animate(lastTime);
+        }
+    }
+
+    window.resetSim = function() {
+        isRunning = false;
+        timeSec = 0;
+        chargeQ = 0;
+        massM = 0;
+        ions = [];
+        updateButtonText();
+        
+        document.getElementById('dashT').textContent = '0';
+        document.getElementById('dashQ').textContent = '0';
+        document.getElementById('dashM').textContent = '0.00';
+        
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+        drawScene();
+    }
+
+    function createIon() {
+        // Ионы появляются у анода (слева) и плывут к катоду (справа)
+        return {
+            x: 160 + Math.random() * 10,
+            y: 180 + Math.random() * 100,
+            speedX: I * 0.5 + Math.random() * 0.5,
+            speedY: (Math.random() - 0.5) * 0.5
+        };
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const mat = materials[matKey];
+        const cx = canvas.width / 2;
+        
+        // 1. Провода и батарея (Сверху)
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(150, 160); ctx.lineTo(150, 60); ctx.lineTo(cx - 20, 60); // К аноду (+)
+        ctx.moveTo(350, 160); ctx.lineTo(350, 60); ctx.lineTo(cx + 20, 60); // К катоду (-)
+        ctx.stroke();
+
+        // Батарея
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(cx - 20, 50); ctx.lineTo(cx - 20, 70); ctx.stroke(); // Длинный +
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(cx + 20, 55); ctx.lineTo(cx + 20, 65); ctx.stroke(); // Короткий -
+        ctx.fillStyle = '#ef4444'; ctx.fillText('+', cx - 40, 65);
+        ctx.fillStyle = '#0ea5e9'; ctx.fillText('-', cx + 35, 65);
+
+        // 2. Ванна (Емкость)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(80, 120); ctx.lineTo(80, 320); ctx.lineTo(420, 320); ctx.lineTo(420, 120);
+        ctx.stroke();
+
+        // 3. Электролит (Жидкость)
+        ctx.fillStyle = mat.liqColor;
+        ctx.fillRect(82, 140, 336, 178);
+
+        // 4. Анод (Пластина слева, +)
+        ctx.fillStyle = mat.plateColor;
+        // Анод "растворяется" (становится тоньше в зависимости от массы, но ограничим)
+        let anodeShrink = Math.min(10, massM * 0.1); 
+        ctx.fillRect(140 + anodeShrink, 160, 20 - anodeShrink, 120);
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('+', 150 + anodeShrink/2, 150);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillText(mat.name, 150 + anodeShrink/2, 220);
+
+        // 5. Катод (Железный ключ справа, -)
+        // Сначала рисуем слой осадка (толще ключа)
+        let platingThick = Math.min(8, massM * 0.15); // Толщина слоя зависит от осевшей массы
+        if (platingThick > 0) {
+            ctx.fillStyle = mat.plateColor; // Цвет нового металла
+            drawKeyShape(ctx, 350, 160, platingThick);
+        }
+        
+        // Железная основа ключа
+        ctx.fillStyle = '#64748b'; // Железный серый
+        drawKeyShape(ctx, 350, 160, 0);
+        
+        ctx.fillStyle = '#fff'; ctx.fillText('-', 350, 150);
+
+        // 6. Ионы в растворе
+        ctx.fillStyle = mat.ionColor;
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 1;
+        ions.forEach(ion => {
+            ctx.beginPath();
+            ctx.arc(ion.x, ion.y, 4, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // 7. Декоративные метки электродов
+        ctx.fillStyle = '#0f172a'; ctx.font = '12px sans-serif';
+        let lblAnode = currentLang === 'ru' ? 'Анод' : 'Анод';
+        let lblCathode = currentLang === 'ru' ? 'Катод' : 'Катод';
+        ctx.fillText(lblAnode, 150, 340);
+        ctx.fillText(lblCathode, 350, 340);
+    }
+
+    function drawKeyShape(context, x, y, inflate) {
+        context.beginPath();
+        // Ушко ключа (круг)
+        context.arc(x, y + 20, 15 + inflate, 0, Math.PI*2);
+        // Стержень
+        context.rect(x - 5 - inflate, y + 30, 10 + inflate*2, 70 + inflate);
+        // Зубцы
+        context.rect(x - 15 - inflate, y + 70, 10 + inflate, 10 + inflate);
+        context.rect(x - 15 - inflate, y + 90, 10 + inflate, 10 + inflate);
+        context.fill();
+        
+        // Дырка в ушке (всегда просвечивает жидкость)
+        context.fillStyle = materials[matKey].liqColor; // цвет жидкости
+        context.beginPath();
+        context.arc(x, y + 20, Math.max(0, 5 - inflate*0.3), 0, Math.PI*2);
+        context.fill();
+    }
+
+    function animate(timestamp) {
+        let keepAnimating = false;
+
+        if (isRunning) {
+            let dt = (timestamp - lastTime) / 1000; // секунды
+            lastTime = timestamp;
+            
+            // Ускоренное время симуляции (например, 1 реальная секунда = 5 симуляционных)
+            let simDt = dt * 10; 
+            timeSec += simDt;
+            
+            let dQ = I * simDt;
+            chargeQ += dQ;
+            
+            // m = k * I * t (k in mg/C, I in A, t in s => m in mg)
+            massM += materials[matKey].k * dQ;
+
+            // Обновляем панель
+            document.getElementById('dashT').textContent = Math.floor(timeSec);
+            document.getElementById('dashQ').textContent = Math.floor(chargeQ);
+            document.getElementById('dashM').textContent = massM.toFixed(2);
+            
+            // Генерация ионов с анода пропорционально току
+            if (Math.random() < I * 0.2) {
+                ions.push(createIon());
+            }
+            
+            keepAnimating = true;
+        }
+
+        // Движение ионов
+        for (let i = ions.length - 1; i >= 0; i--) {
+            let ion = ions[i];
+            ion.x += ion.speedX;
+            ion.y += ion.speedY;
+            
+            // Если достигли катода (примерно x = 330)
+            if (ion.x > 330 + Math.random()*10) {
+                ions.splice(i, 1);
+            }
+        }
+
+        drawScene();
+
+        // Если работает ИЛИ есть ионы в пути
+        if (keepAnimating || ions.length > 0) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    updateSimSettings();
+
+</script>
+</body>
+</html>

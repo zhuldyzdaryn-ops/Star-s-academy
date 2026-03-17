@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Закон Ома для участка цепи — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff; /* Светло-голубой фон */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #0284c7; /* Синий (Напряжение) */
+            --primary-hover: #0369a1;
+            --secondary: #ea580c; /* Оранжевый (Сопротивление/Ток) */
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #bae6fd;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #082f49; 
+                --text-color: #f8fafc;
+                --card-bg: #0c4a6e;
+                --border: #0369a1;
+                --text-muted: #94a3b8;
+                --formula-bg: #075985;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .math-formula {
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: inline-block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* Треугольник Ома */
+        .ohm-triangle {
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .ohm-top {
+            border-bottom: 2px solid var(--primary);
+            width: 80%;
+            text-align: center;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+        .ohm-bottom {
+            display: flex;
+            justify-content: space-around;
+            width: 70%;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        #rSlider::-webkit-slider-thumb { background: var(--secondary); }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(2, 132, 199, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(2, 132, 199, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Закон Ома для участка цепи</span>
+            <span class="lang-kz">Тізбек бөлігіне арналған Ом заңы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Главный закон электричества! Именно он объясняет, почему при одном и том же напряжении через толстый кабель течет огромный ток, а через тонкую спираль лампы — совсем маленький.</span>
+            <span class="lang-kz">Электрдің басты заңы! Дәл осы заң бірдей кернеу кезінде неліктен қалың кабель арқылы үлкен ток, ал шамның жұқа спиралі арқылы өте аз ток өтетінін түсіндіреді.</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Связь напряжения, сопротивления и тока</span>
+            <span class="lang-kz">1. Кернеу, кедергі және токтың байланысы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В 1827 году немецкий физик Георг Ом экспериментально установил, как сила тока (<span class="math-symbol">I</span>) зависит от напряжения (<span class="math-symbol">U</span>) и сопротивления (<span class="math-symbol">R</span>) на определенном участке цепи.</span>
+            <span class="lang-kz">1827 жылы неміс физигі Георг Ом тізбектің белгілі бір бөлігінде ток күшінің (<span class="math-symbol">I</span>) кернеуге (<span class="math-symbol">U</span>) және кедергіге (<span class="math-symbol">R</span>) қалай тәуелді болатынын тәжірибе жүзінде анықтады.</span>
+        </p>
+        <ul>
+            <li>
+                <span class="lang-ru">Чем сильнее мы "толкаем" электроны (чем <strong>больше напряжение</strong>), тем <strong>больше сила тока</strong>. (Прямая пропорциональность).</span>
+                <span class="lang-kz">Электрондарды неғұрлым қатты "итерсек" (<strong>кернеу үлкен</strong> болған сайын), ток күші соғұрлым <strong>көп болады</strong>. (Тура пропорционалдық).</span>
+            </li>
+            <li>
+                <span class="lang-ru">Чем сильнее проводник мешает движению (чем <strong>больше сопротивление</strong>), тем <strong>меньше сила тока</strong>. (Обратная пропорциональность).</span>
+                <span class="lang-kz">Өткізгіш қозғалысқа неғұрлым көп кедергі келтірсе (<strong>кедергі үлкен</strong> болған сайын), ток күші соғұрлым <strong>аз болады</strong>. (Кері пропорционалдық).</span>
+            </li>
+        </ul>
+        
+        <div class="highlight-box">
+            <div>
+                <p><strong><span class="lang-ru">Закон Ома:</span><span class="lang-kz">Ом заңы:</span></strong></p>
+                <span class="lang-ru">Сила тока в участке цепи прямо пропорциональна напряжению на концах этого участка и обратно пропорциональна его сопротивлению.</span>
+                <span class="lang-kz">Тізбек бөлігіндегі ток күші осы бөліктің ұштарындағы кернеуге тура пропорционал және оның кедергісіне кері пропорционал.</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <div class="math-formula">
+                    I = 
+                    <div class="fraction">
+                        <span>U</span>
+                        <span class="fdn">R</span>
+                    </div>
+                </div>
+                
+                <div class="ohm-triangle">
+                    <div class="ohm-top">U</div>
+                    <div class="ohm-bottom">
+                        <span>I</span>
+                        <span>R</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <p>
+            <span class="lang-ru"><strong>Треугольник Ома</strong> (справа) помогает легко запомнить все три формулы. Закройте пальцем ту букву, которую нужно найти, и вы увидите нужное действие: <br> • Нужно найти <strong>U</strong>? Это <strong>I &times; R</strong>. <br> • Нужно найти <strong>R</strong>? Это <strong>U / I</strong>.</span>
+            <span class="lang-kz"><strong>Ом үшбұрышы</strong> (оң жақта) барлық үш формуланы оңай есте сақтауға көмектеседі. Табу керек әріпті саусағыңызбен жабыңыз, сонда сіз қажетті әрекетті көресіз: <br> • <strong>U</strong> табу керек пе? Бұл <strong>I &times; R</strong>. <br> • <strong>R</strong> табу керек пе? Бұл <strong>U / I</strong>.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Проверка Закона Ома</span>
+            <span class="lang-kz">Симуляция: Ом заңын тексеру</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    <span class="lang-ru">Изменяйте напряжение источника и сопротивление резистора. Следите за показаниями Амперметра (сила тока) и за скоростью движения электронов!</span>
+                    <span class="lang-kz">Көздің кернеуін және резистордың кедергісін өзгертіңіз. Амперметр көрсеткіштерін (ток күшін) және электрондардың қозғалыс жылдамдығын қадағалаңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label style="color: var(--primary);">
+                        <span><span class="lang-ru">Напряжение (U):</span><span class="lang-kz">Кернеу (U):</span></span>
+                        <span id="uValText">12 В</span>
+                    </label>
+                    <input type="range" id="uSlider" min="0" max="24" step="1" value="12" oninput="updateSim()">
+                </div>
+
+                <div class="control-group" style="margin-top: 10px;">
+                    <label style="color: var(--secondary);">
+                        <span><span class="lang-ru">Сопротивление (R):</span><span class="lang-kz">Кедергі (R):</span></span>
+                        <span id="rValText">4 Ом</span>
+                    </label>
+                    <input type="range" id="rSlider" min="1" max="24" step="1" value="4" oninput="updateSim()">
+                </div>
+
+                <div class="dashboard">
+                    <div>
+                        <span class="lang-ru">Сила тока (I = U / R):</span><span class="lang-kz">Ток күші (I = U / R):</span>
+                        <strong style="color:var(--success);"><span id="iMeter">3.00</span> А</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> При увеличении напряжения (U) ток пропорционально растет (электроны ускоряются). При увеличении сопротивления (R) ток падает (препятствий становится больше). Закон Ома работает безупречно!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Кернеуді (U) арттырғанда ток пропорционалды түрде өседі (электрондар үдей түседі). Кедергіні (R) арттырғанда ток төмендейді (кедергілер көбейеді). Ом заңы мінсіз жұмыс істейді!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет силы тока)</span>
+                <span class="lang-kz">1-тапсырма (Ток күшін есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Напряжение в бытовой розетке равно <strong>220 В</strong>. В неё включили электрический утюг, сопротивление спирали которого равно <strong>55 Ом</strong>. Вычислите силу тока, которая потечет через утюг.</span>
+                <span class="lang-kz">Тұрмыстық розеткадағы кернеу <strong>220 В</strong> тең. Оған спираль кедергісі <strong>55 Ом</strong> болатын электр үтігі қосылды. Үтік арқылы өтетін ток күшін есептеңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Амперах (А)" data-placeholder-kz="Жауап Ампермен (А)" placeholder="Ответ в Амперах (А)">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика пропорций)</span>
+                <span class="lang-kz">2-тапсырма (Пропорциялар логикасы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Что произойдет с силой тока в цепи, если напряжение источника увеличить в 2 раза, а сопротивление оставить без изменений?</span>
+                <span class="lang-kz">Тізбектегі ток күшімен не болады, егер көздің кернеуін 2 есе арттырса, ал кедергіні өзгеріссіз қалдырса?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Уменьшится в 2 раза" data-kz="2 есе кемиді">Уменьшится в 2 раза</option>
+                    <option value="2" data-ru="Увеличится в 2 раза" data-kz="2 есе артады">Увеличится в 2 раза</option>
+                    <option value="3" data-ru="Не изменится" data-kz="Өзгермейді">Не изменится</option>
+                    <option value="4" data-ru="Увеличится в 4 раза" data-kz="4 есе артады">Увеличится в 4 раза</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видеоурок, чтобы глубже понять связь между тремя главными электрическими величинами и увидеть интересные эксперименты!</span>
+            <span class="lang-kz">Үш негізгі электрлік шама арасындағы байланысты тереңірек түсіну және қызықты тәжірибелерді көру үшін бейнесабақты қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%97%D0%B0%D0%BA%D0%BE%D0%BD+%D0%9E%D0%BC%D0%B0+%D0%B4%D0%BB%D1%8F+%D1%83%D1%87%D0%B0%D1%81%D1%82%D0%BA%D0%B0+%D1%86%D0%B5%D0%BF%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Закон Ома для участка цепи»</span>
+                  <span class="lang-kz">«Тізбек бөлігіне арналған Ом заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Формула закона Ома для участка цепи имеет вид:</span>
+                <span class="lang-kz">1. Тізбек бөлігіне арналған Ом заңының формуласы қандай:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">I = U / R</span><span class="lang-kz">I = U / R</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">I = U &middot; R</span><span class="lang-kz">I = U &middot; R</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">I = R / U</span><span class="lang-kz">I = R / U</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">U = I / R</span><span class="lang-kz">U = I / R</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Как зависит сила тока от сопротивления при постоянном напряжении?</span>
+                <span class="lang-kz">2. Тұрақты кернеу кезінде ток күші кедергіге қалай тәуелді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Прямо пропорционально (чем больше R, тем больше I)</span><span class="lang-kz">Тура пропорционал (R үлкен болған сайын I үлкен)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Не зависит вообще</span><span class="lang-kz">Мүлдем тәуелді емес</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Обратно пропорционально (чем больше R, тем меньше I)</span><span class="lang-kz">Кері пропорционал (R үлкен болған сайын I аз)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Зависимость хаотичная</span><span class="lang-kz">Тәуелділік хаосты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">3. Исходя из закона Ома, как выразить электрическое сопротивление (R)?</span>
+                <span class="lang-kz">3. Ом заңына сүйене отырып, электр кедергісін (R) қалай өрнектеуге болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">R = I / U</span><span class="lang-kz">R = I / U</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">R = U / I</span><span class="lang-kz">R = U / I</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">R = U &middot; I</span><span class="lang-kz">R = U &middot; I</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">R = I &middot; t</span><span class="lang-kz">R = I &middot; t</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Вычислите напряжение на резисторе сопротивлением 10 Ом, если по нему течет ток 2 А.</span>
+                <span class="lang-kz">4. Кедергісі 10 Ом резистордағы кернеуді есептеңіз, егер одан 2 А ток өтетін болса.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">20 В</span><span class="lang-kz">20 В</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">5 В</span><span class="lang-kz">5 В</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">0.2 В</span><span class="lang-kz">0.2 В</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">12 В</span><span class="lang-kz">12 В</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Если сопротивление участка цепи уменьшить в 3 раза (при неизменном напряжении), сила тока:</span>
+                <span class="lang-kz">5. Егер тізбек бөлігінің кедергісін 3 есе азайтса (тұрақты кернеу кезінде), ток күші:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Уменьшится в 3 раза</span><span class="lang-kz">3 есе кемиді</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Увеличится в 3 раза</span><span class="lang-kz">3 есе артады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Станет равной нулю</span><span class="lang-kz">Нөлге тең болады</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! По закону Ома: I = U / R = 220 / 55 = 4 Ампера.",
+            fbA_inc: "Неверно. Используйте закон Ома: I = U / R. Разделите напряжение (220) на сопротивление (55).",
+            fbB_corr: "Абсолютно правильно! Сила тока прямо пропорциональна напряжению. Напряжение выросло в 2 раза — ток тоже вырос в 2 раза.",
+            fbB_inc: "Неверно. Посмотрите на формулу I = U / R. Если U (числитель) увеличить в 2 раза, то и результат I увеличится в 2 раза (прямая пропорциональность).",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно освоили закон Ома.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Ом заңы бойынша: I = U / R = 220 / 55 = 4 Ампер.",
+            fbA_inc: "Қате. Ом заңын қолданыңыз: I = U / R. Кернеуді (220) кедергіге (55) бөліңіз.",
+            fbB_corr: "Өте дұрыс! Ток күші кернеуге тура пропорционал. Кернеу 2 есе өсті — ток та 2 есе өседі.",
+            fbB_inc: "Қате. I = U / R формуласына қараңыз. Егер U (алым) 2 есе артса, онда I нәтижесі де 2 есе артады (тура пропорционалдық).",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз Ом заңын өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateSim();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Переменные симуляции
+    let voltageU = 12; // Напряжение
+    let resistanceR = 4; // Сопротивление
+    let currentI = 0; // Ток
+    
+    // Анимация
+    let animFrame = null;
+    let electrons = [];
+    const pathLen = 1000;
+    
+    // Инициализация частиц
+    for(let i=0; i<30; i++) {
+        electrons.push((i * (pathLen / 30)));
+    }
+
+    window.updateSim = function() {
+        voltageU = parseFloat(document.getElementById('uSlider').value);
+        resistanceR = parseFloat(document.getElementById('rSlider').value);
+        
+        document.getElementById('uValText').textContent = voltageU + ' В';
+        document.getElementById('rValText').textContent = resistanceR + ' Ом';
+        
+        // Математика: Закон Ома
+        currentI = voltageU / resistanceR;
+        
+        document.getElementById('iMeter').textContent = currentI.toFixed(2);
+        
+        if (!animFrame && voltageU > 0) {
+            animate();
+        } else if (voltageU === 0) {
+            drawScene(); // Обновить, чтобы остановить электроны визуально
+        }
+    }
+
+    function getPathCoord(p) {
+        // Прямоугольник схемы
+        // Верхний левый: (100, 80), Батарея на левой стенке (100, 175)
+        // Верх: 100,80 -> 400,80 (Амперметр в центре)
+        // Право: 400,80 -> 400,270 (Резистор в центре)
+        // Низ: 400,270 -> 100,270
+        // Лево: 100,270 -> 100,80
+        // Итого: 300 + 190 + 300 + 190 = 980. Масштабируем 1000 -> 980.
+        
+        let d = (p / 1000) * 980;
+        
+        if (d <= 300) {
+            return {x: 100 + d, y: 80}; // Верхний провод
+        } else if (d <= 490) {
+            return {x: 400, y: 80 + (d - 300)}; // Правый провод
+        } else if (d <= 790) {
+            return {x: 400 - (d - 490), y: 270}; // Нижний провод
+        } else {
+            return {x: 100, y: 270 - (d - 790)}; // Левый провод
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // --- 1. ПРОВОДА ОСНОВНЫЕ ---
+        ctx.strokeStyle = '#475569';
+        if (voltageU > 0) ctx.strokeStyle = '#0284c7'; // Синий цвет активной цепи
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        ctx.moveTo(100, 140); ctx.lineTo(100, 80); ctx.lineTo(220, 80); // Лево и до Амперметра
+        ctx.moveTo(280, 80); ctx.lineTo(400, 80); ctx.lineTo(400, 145); // От Амперметра до Резистора
+        ctx.moveTo(400, 205); ctx.lineTo(400, 270); ctx.lineTo(100, 270); ctx.lineTo(100, 210); // Низ
+        ctx.stroke();
+
+        // --- 2. БАТАРЕЯ (Слева) ---
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(80, 140); ctx.lineTo(120, 140); ctx.stroke(); // длинный +
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(90, 210); ctx.lineTo(110, 210); ctx.stroke(); // короткий -
+        ctx.lineWidth = 2; ctx.setLineDash([4,4]);
+        ctx.beginPath(); ctx.moveTo(100, 140); ctx.lineTo(100, 210); ctx.stroke(); // пунктир (элементы)
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#ef4444'; ctx.fillText('+', 65, 145);
+        ctx.fillStyle = '#3b82f6'; ctx.fillText('-', 75, 215);
+        
+        ctx.fillStyle = '#0284c7'; ctx.font = 'bold 14px sans-serif';
+        ctx.fillText('U = ' + voltageU + ' В', 30, 180);
+
+        // --- 3. АМПЕРМЕТР (Сверху) ---
+        ctx.strokeStyle = '#10b981'; ctx.fillStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(250, 80, 25, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#10b981'; ctx.font = 'bold 20px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('A', 250, 80);
+        ctx.fillStyle = '#10b981'; ctx.font = '14px sans-serif';
+        ctx.fillText(currentI.toFixed(1) + ' А', 250, 45);
+
+        // --- 4. РЕЗИСТОР (Справа) ---
+        // Визуализируем сопротивление: чем больше R, тем "плотнее" зигзаги
+        ctx.strokeStyle = '#ea580c';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        let startY = 145;
+        let endY = 205;
+        let numZigs = Math.max(3, Math.floor(resistanceR / 2)); // От 3 до 12 зигзагов
+        let step = (endY - startY) / numZigs;
+        
+        ctx.moveTo(400, startY);
+        for(let i=0; i<numZigs; i++) {
+            let midY = startY + step*i + step/2;
+            let targetY = startY + step*(i+1);
+            ctx.lineTo(i%2 === 0 ? 385 : 415, midY);
+            ctx.lineTo(400, targetY);
+        }
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ea580c'; ctx.font = 'bold 14px sans-serif';
+        ctx.fillText('R = ' + resistanceR + ' Ом', 460, 175);
+
+        // Вольтметр параллельно резистору (Для визуальной полноты)
+        ctx.strokeStyle = '#ec4899'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(400, 130); ctx.lineTo(340, 130); ctx.lineTo(340, 155); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(400, 220); ctx.lineTo(340, 220); ctx.lineTo(340, 195); ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(340, 175, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ec4899'; ctx.font = 'bold 16px sans-serif'; ctx.fillText('V', 340, 175);
+
+        // --- 5. ЭЛЕКТРОНЫ ---
+        if (voltageU > 0) {
+            // Электроны идут от Минуса (снизу слева) к Плюсу (сверху слева) по длинному пути
+            // По часовой стрелке. В нашем getPathCoord(p) p увеличивается = по часовой стрелке.
+            ctx.fillStyle = '#60a5fa'; // Голубые электроны
+            for(let i=0; i<electrons.length; i++) {
+                let pos = getPathCoord(electrons[i]);
+                // Не рисуем поверх компонентов
+                if ((pos.x === 100 && pos.y > 140 && pos.y < 210) || 
+                    (pos.x === 400 && pos.y > 145 && pos.y < 205) ||
+                    (pos.y === 80 && pos.x > 220 && pos.x < 280)) {
+                    continue; 
+                }
+                
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Стрелка I (Ток) от + к - (Против часовой)
+            // Рисуем на верхнем проводе стрелку, указывающую ВПРАВО
+            ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(130, 60); ctx.lineTo(160, 60); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(150, 50); ctx.lineTo(160, 60); ctx.lineTo(150, 70); ctx.stroke();
+            ctx.fillStyle = '#ef4444'; ctx.fillText('I', 145, 45);
+        }
+    }
+
+    function animate() {
+        let keepAnimating = false;
+
+        if (voltageU > 0) {
+            // Электроны идут ПО часовой стрелке.
+            // Скорость пропорциональна току. Макс ток 24/1 = 24. Мин ток 1/24 ≈ 0.04.
+            let speed = currentI * 0.8; 
+            // Установим минимальную скорость, чтобы было видно движение даже при маленьком токе
+            if (speed < 0.2 && speed > 0) speed = 0.2; 
+            
+            for(let i=0; i<electrons.length; i++) {
+                electrons[i] -= speed; // Движение против часовой в координатах p (от минуса к плюсу)
+                if (electrons[i] < 0) electrons[i] += pathLen;
+            }
+            keepAnimating = true;
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    updateSim();
+
+</script>
+</body>
+</html>

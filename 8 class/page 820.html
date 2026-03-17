@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электрическая цепь. Ток и Напряжение — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #faf5ff; /* Светло-фиолетовый */
+            --text-color: #1e1b4b;
+            --card-bg: #ffffff;
+            --primary: #9333ea; /* Фиолетовый */
+            --primary-hover: #7e22ce;
+            --secondary: #ec4899; /* Розовый (акценты) */
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e9d5ff;
+            --text-muted: #6b7280;
+            --formula-bg: #f3e8ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e1b4b;
+                --border: #6b21a8;
+                --text-muted: #94a3b8;
+                --formula-bg: #3b0764;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- Таблица символов --- */
+        .symbol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: var(--card-bg);
+        }
+        .symbol-table th, .symbol-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .symbol-table th {
+            background-color: rgba(147, 51, 234, 0.1);
+            color: var(--primary);
+        }
+        .symbol-svg {
+            display: block;
+            margin: 0 auto;
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        button.btn-switch {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: var(--danger);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.btn-switch.on { background-color: var(--success); }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(147, 51, 234, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(147, 51, 234, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(147, 51, 234, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(147, 51, 234, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Электрическая цепь. Сила тока и напряжение</span>
+            <span class="lang-kz">Электр тізбегі. Ток күші және кернеу</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Любой прибор работает только тогда, когда он является частью замкнутой электрической цепи. Как правильно читать схемы и измерять "пульс" электричества?</span>
+            <span class="lang-kz">Кез келген құрылғы тұйық электр тізбегінің бөлігі болғанда ғана жұмыс істейді. Схемаларды қалай дұрыс оқуға және электрдің "пульсін" қалай өлшеуге болады?</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Электрическая цепь и схемы</span>
+            <span class="lang-kz">1. Электр тізбегі және схемалар</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Электрическая цепь</strong> — это соединенные между собой проводами источник тока, потребители (лампы, двигатели) и замыкающие устройства (выключатели). Чтобы физикам всего мира было легко понимать друг друга, цепи рисуют в виде <strong>схем</strong> с помощью общепринятых условных обозначений.</span>
+            <span class="lang-kz"><strong>Электр тізбегі</strong> — бұл сымдармен өзара жалғанған ток көзі, тұтынушылар (шамдар, қозғалтқыштар) және тұйықтаушы құрылғылар (ажыратқыштар). Бүкіл әлем физиктері бір-бірін оңай түсінуі үшін тізбектерді жалпыға бірдей шартты белгілердің көмегімен <strong>схема</strong> түрінде сызады.</span>
+        </p>
+        
+        <table class="symbol-table">
+            <tr>
+                <th><span class="lang-ru">Прибор / Элемент</span><span class="lang-kz">Құрал / Элемент</span></th>
+                <th><span class="lang-ru">Условное обозначение</span><span class="lang-kz">Шартты белгісі</span></th>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Источник тока (гальванический элемент)</span><span class="lang-kz">Ток көзі (гальваникалық элемент)</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="25" y2="15" />
+                        <line x1="25" y1="5" x2="25" y2="25" stroke-width="4" />
+                        <line x1="35" y1="0" x2="35" y2="30" />
+                        <line x1="35" y1="15" x2="60" y2="15" />
+                        <text x="16" y="10" font-size="12" stroke="none" fill="currentColor" font-weight="bold">-</text>
+                        <text x="40" y="10" font-size="12" stroke="none" fill="currentColor" font-weight="bold">+</text>
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Электрическая лампа</span><span class="lang-kz">Электр шамы</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="15" y2="15" />
+                        <circle cx="30" cy="15" r="10" />
+                        <line x1="23" y1="8" x2="37" y2="22" />
+                        <line x1="23" y1="22" x2="37" y2="8" />
+                        <line x1="45" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Ключ (выключатель)</span><span class="lang-kz">Кілт (ажыратқыш)</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="20" x2="20" y2="20" />
+                        <line x1="20" y1="20" x2="35" y2="5" />
+                        <line x1="40" y1="20" x2="60" y2="20" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Соединительный провод</span><span class="lang-kz">Жалғағыш сым</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Пересечение проводов (соединение)</span><span class="lang-kz">Сымдардың қиылысуы (қосылыс)</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="25" x2="60" y2="25" />
+                        <line x1="30" y1="5" x2="30" y2="25" />
+                        <circle cx="30" cy="25" r="3" fill="currentColor" stroke="none" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Резистор (проводник)</span><span class="lang-kz">Резистор (өткізгіш)</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="15" y2="15" />
+                        <rect x="15" y="10" width="30" height="10" />
+                        <line x1="45" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Амперметр</span><span class="lang-kz">Амперметр</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="15" y2="15" />
+                        <circle cx="30" cy="15" r="12" />
+                        <text x="30" y="19" font-size="12" font-family="sans-serif" text-anchor="middle" stroke="none" fill="currentColor">A</text>
+                        <line x1="45" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Вольтметр</span><span class="lang-kz">Вольтметр</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="15" y2="15" />
+                        <circle cx="30" cy="15" r="12" />
+                        <text x="30" y="19" font-size="12" font-family="sans-serif" text-anchor="middle" stroke="none" fill="currentColor">V</text>
+                        <line x1="45" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="lang-ru">Конденсатор</span><span class="lang-kz">Конденсатор</span></td>
+                <td>
+                    <svg class="symbol-svg" width="60" height="30" viewBox="0 0 60 30" stroke="currentColor" fill="none" stroke-width="2">
+                        <line x1="0" y1="15" x2="25" y2="15" />
+                        <line x1="25" y1="5" x2="25" y2="25" />
+                        <line x1="35" y1="5" x2="35" y2="25" />
+                        <line x1="35" y1="15" x2="60" y2="15" />
+                    </svg>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Сила тока (I) и Амперметр</span>
+            <span class="lang-kz">2. Ток күші (I) және Амперметр</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Количество зарядов, пробегающих по проводу, может быть разным. Величина, показывающая, какой заряд (<span class="math-symbol">q</span>) проходит через поперечное сечение проводника за 1 секунду (<span class="math-symbol">t</span>), называется <strong>силой тока</strong>.</span>
+            <span class="lang-kz">Сым бойымен өтетін зарядтардың мөлшері әртүрлі болуы мүмкін. Өткізгіштің көлденең қимасы арқылы 1 секундта (<span class="math-symbol">t</span>) қандай заряд (<span class="math-symbol">q</span>) өтетінін көрсететін шама <strong>ток күші</strong> деп аталады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <div class="math-formula">
+                I = 
+                <div class="fraction">
+                    <span>q</span>
+                    <span class="fdn">t</span>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Сила тока измеряется в <strong>Амперах (А)</strong>. <br>Измеряют ее прибором <strong>Амперметром ( &mdash;&#9398;&mdash; )</strong>, который всегда подключается в цепь <strong>ПОСЛЕДОВАТЕЛЬНО</strong> (в разрыв провода).</span>
+                <span class="lang-kz">Ток күші <strong>Ампермен (А)</strong> өлшенеді. <br>Оны <strong>Амперметр ( &mdash;&#9398;&mdash; )</strong> құралымен өлшейді, ол тізбекке әрқашан <strong>ТІЗБЕКТЕЙ</strong> (сымның үзілісіне) жалғанады.</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">3. Напряжение (U) и Вольтметр</span>
+            <span class="lang-kz">3. Кернеу (U) және Вольтметр</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Чтобы заряды двигались, электрическое поле должно совершать работу. <strong>Напряжение</strong> показывает, какую работу (<span class="math-symbol">A</span>) совершает электрическое поле по перемещению единичного заряда (<span class="math-symbol">q</span>).</span>
+            <span class="lang-kz">Зарядтар қозғалуы үшін электр өрісі жұмыс жасауы керек. <strong>Кернеу</strong> электр өрісінің бірлік зарядты (<span class="math-symbol">q</span>) орын ауыстыру бойынша қандай жұмыс (<span class="math-symbol">A</span>) жасайтынын көрсетеді.</span>
+        </p>
+        
+        <div class="highlight-box" style="border-left-color: var(--secondary); background-color: rgba(236, 72, 153, 0.05);">
+            <div class="math-formula" style="color: var(--secondary);">
+                U = 
+                <div class="fraction">
+                    <span>A</span>
+                    <span class="fdn" style="border-color: var(--secondary);">q</span>
+                </div>
+            </div>
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Напряжение измеряется в <strong>Вольтах (В)</strong>. <br>Измеряют его прибором <strong>Вольтметром ( &mdash;&#9419;&mdash; )</strong>, который подключается <strong>ПАРАЛЛЕЛЬНО</strong> тому участку, где нужно узнать напряжение.</span>
+                <span class="lang-kz">Кернеу <strong>Вольтпен (В)</strong> өлшенеді. <br>Оны <strong>Вольтметр ( &mdash;&#9419;&mdash; )</strong> құралымен өлшейді, ол кернеуді білу қажет бөлікке <strong>ПАРАЛЛЕЛЬ</strong> жалғанады.</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Схема с приборами</span>
+            <span class="lang-kz">Симуляция: Құралдары бар схема</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    <span class="lang-ru">Соберите и запустите цепь! Меняйте напряжение батарейки. Обратите внимание: Амперметр (А) стоит в общей линии (последовательно), а Вольтметр (V) обхватывает лампу с двух сторон (параллельно).</span>
+                    <span class="lang-kz">Тізбекті жинап, іске қосыңыз! Батареяның кернеуін өзгертіңіз. Назар аударыңыз: Амперметр (А) жалпы желіде (тізбектей) тұр, ал Вольтметр (V) шамды екі жағынан қамтиды (параллель).</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Напряжение батареи (U):</span><span class="lang-kz">Батарея кернеуі (U):</span></span>
+                        <span id="uValText">12 В</span>
+                    </label>
+                    <input type="range" id="uSlider" min="0" max="24" step="1" value="12" oninput="updateSim()">
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <button class="btn-switch" id="btnSwitch" onclick="toggleSwitch()">
+                        <span class="lang-ru">Замкнуть ключ</span>
+                        <span class="lang-kz">Кілтті тұйықтау</span>
+                    </button>
+                </div>
+
+                <div class="dashboard">
+                    <div>
+                        <span class="lang-ru">Показания Амперметра (I):</span><span class="lang-kz">Амперметр көрсеткіші (I):</span>
+                        <strong><span id="iMeter">0.0</span> А</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Показания Вольтметра (U):</span><span class="lang-kz">Вольтметр көрсеткіші (U):</span>
+                        <strong style="color:var(--secondary);"><span id="vMeter">0</span> В</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="380"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> При увеличении напряжения источника (U), электроны бегут быстрее — сила тока (I) растет, а лампа светит ярче. Вольтметр измеряет "напор" на лампе, а Амперметр — "скорость потока" во всей цепи.</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Көздің кернеуін (U) арттырғанда, электрондар тезірек жүгіреді — ток күші (I) өседі, ал шам жарығырақ yanaды. Вольтметр шамдағы "қысымды", ал Амперметр бүкіл тізбектегі "ағын жылдамдығын" өлшейді.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет заряда)</span>
+                <span class="lang-kz">1-тапсырма (Зарядты есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Сила тока в цепи равна <strong>2 А</strong> (<span class="math-symbol">I</span>). Какой электрический заряд (<span class="math-symbol">q</span>) пройдет через поперечное сечение проводника за <strong>10 секунд</strong> (<span class="math-symbol">t</span>)? <br><em>(Подсказка: выразите q из формулы I = q/t)</em></span>
+                <span class="lang-kz">Тізбектегі ток күші <strong>2 А</strong> (<span class="math-symbol">I</span>) тең. Өткізгіштің көлденең қимасы арқылы <strong>10 секундта</strong> (<span class="math-symbol">t</span>) қандай электр заряды (<span class="math-symbol">q</span>) өтеді? <br><em>(Көмек: I = q/t формуласынан q-ді өрнектеңіз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Кулонах (Кл)" data-placeholder-kz="Жауап Кулонмен (Кл)" placeholder="Ответ в Кулонах (Кл)">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Подключение приборов)</span>
+                <span class="lang-kz">2-тапсырма (Құралдарды жалғау)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Ученик хочет измерить напряжение на лампочке. Как он должен подключить вольтметр?</span>
+                <span class="lang-kz">Оқушы шамдағы кернеуді өлшегісі келеді. Ол вольтметрді қалай жалғауы керек?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Последовательно с лампочкой" data-kz="Шаммен тізбектей">Последовательно с лампочкой</option>
+                    <option value="2" data-ru="Параллельно лампочке (к ее концам)" data-kz="Шамға параллель (оның ұштарына)">Параллельно лампочке (к ее концам)</option>
+                    <option value="3" data-ru="Вместо лампочки" data-kz="Шамның орнына">Вместо лампочки</option>
+                    <option value="4" data-ru="Прямо к батарейке" data-kz="Тікелей батареяға">Прямо к батарейке</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите, как правильно собирать электрические цепи на практике и подключать измерительные приборы!</span>
+            <span class="lang-kz">Іс жүзінде электр тізбектерін қалай дұрыс жинауды және өлшеу құралдарын жалғауды қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F+%D1%86%D0%B5%D0%BF%D1%8C+%D1%81%D0%B8%D0%BB%D0%B0+%D1%82%D0%BE%D0%BA%D0%B0+%D0%BD%D0%B0%D0%BF%D1%80%D1%8F%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Электрическая цепь. Сила тока и напряжение»</span>
+                  <span class="lang-kz">«Электр тізбегі. Ток күші және кернеу» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Сила тока показывает...</span>
+                <span class="lang-kz">1. Ток күші нені көрсетеді...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Какую работу совершает поле</span><span class="lang-kz">Өріс қандай жұмыс жасайтынын</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Какой заряд проходит через сечение проводника за 1 секунду</span><span class="lang-kz">1 секундта өткізгіш қимасы арқылы қандай заряд өтетінін</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Какое сопротивление оказывает провод</span><span class="lang-kz">Сым қандай кедергі жасайтынын</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Сколько вольт в батарейке</span><span class="lang-kz">Батареяда қанша вольт бар екенін</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">2. В каких единицах измеряется напряжение (U)?</span>
+                <span class="lang-kz">2. Кернеу (U) қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Амперах (А)</span><span class="lang-kz">Ампер (А)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Кулонах (Кл)</span><span class="lang-kz">Кулон (Кл)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Джоулях (Дж)</span><span class="lang-kz">Джоуль (Дж)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Вольтах (В)</span><span class="lang-kz">Вольт (В)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Как в электрическую цепь подключается амперметр?</span>
+                <span class="lang-kz">3. Электр тізбегіне амперметр қалай жалғанады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Последовательно (в разрыв цепи)</span><span class="lang-kz">Тізбектей (тізбек үзілісіне)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Параллельно источнику</span><span class="lang-kz">Көзге параллель</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Параллельно потребителю</span><span class="lang-kz">Тұтынушыға параллель</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Любым способом</span><span class="lang-kz">Кез келген тәсілмен</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">4. Выберите правильную формулу для напряжения:</span>
+                <span class="lang-kz">4. Кернеу үшін дұрыс формуланы таңдаңыз:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">U = q / t</span><span class="lang-kz">U = q / t</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">U = q &middot; A</span><span class="lang-kz">U = q &middot; A</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">U = A / q</span><span class="lang-kz">U = A / q</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">U = I &middot; t</span><span class="lang-kz">U = I &middot; t</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Каким условным знаком обозначается лампа накаливания на электрических схемах?</span>
+                <span class="lang-kz">5. Электр схемаларында қыздыру шамы қандай шартты белгімен белгіленеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Круг с буквой А</span><span class="lang-kz">А әрпі бар дөңгелек</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Круг с крестиком внутри</span><span class="lang-kz">Ішінде кресті бар дөңгелек</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Прямоугольник</span><span class="lang-kz">Тіктөртбұрыш</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Две параллельные линии разной длины</span><span class="lang-kz">Ұзындығы әртүрлі екі параллель сызық</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Из формулы I = q/t выражаем заряд: q = I &middot; t = 2 &middot; 10 = 20 Кл.",
+            fbA_inc: "Неверно. Посмотрите на формулу I = q/t. Чтобы найти q, нужно силу тока умножить на время.",
+            fbB_corr: "Абсолютно правильно! Вольтметр всегда подключается параллельно к тому прибору, напряжение на котором мы хотим измерить.",
+            fbB_inc: "Неверно. Вольтметр измеряет разность потенциалов между двумя точками, поэтому он должен обхватывать лампочку с двух сторон (параллельно).",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили правила цепей.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_on: "Разомкнуть ключ",
+            btn_off: "Замкнуть ключ",
+            lbl_batt: "Источник",
+            lbl_lamp: "Лампа"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! I = q/t формуласынан зарядты өрнектейміз: q = I &middot; t = 2 &middot; 10 = 20 Кл.",
+            fbA_inc: "Қате. I = q/t формуласына қараңыз. q табу үшін ток күшін уақытқа көбейту керек.",
+            fbB_corr: "Өте дұрыс! Вольтметр біз кернеуді өлшегіміз келетін құрылғыға әрқашан параллель жалғанады.",
+            fbB_inc: "Қате. Вольтметр екі нүкте арасындағы потенциалдар айырымын өлшейді, сондықтан ол шамды екі жағынан қамтуы керек (параллель).",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тізбек ережелерін өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_on: "Кілтті ажырату",
+            btn_off: "Кілтті тұйықтау",
+            lbl_batt: "Көз",
+            lbl_lamp: "Шам"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateButtonText();
+        drawScene(); // Update text labels on canvas
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let isClosed = false;
+    let voltageU = 12; // от 0 до 24
+    let resistanceR = 10; // Фиксированное сопротивление лампы
+    let currentI = 0;
+    
+    // Анимация
+    let animFrame = null;
+    let electrons = [];
+    const pathLen = 1000;
+    
+    // Инициализация частиц
+    for(let i=0; i<30; i++) {
+        electrons.push((i * (pathLen / 30)));
+    }
+
+    function updateButtonText() {
+        const btn = document.getElementById('btnSwitch');
+        if (isClosed) {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_on')}</span>`;
+            btn.classList.add('on');
+        } else {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_off')}</span>`;
+            btn.classList.remove('on');
+        }
+    }
+
+    window.updateSim = function() {
+        voltageU = parseInt(document.getElementById('uSlider').value);
+        document.getElementById('uValText').textContent = voltageU + ' В';
+        calcValues();
+        if (!isClosed && voltageU > 0) drawScene();
+    }
+
+    window.toggleSwitch = function() {
+        isClosed = !isClosed;
+        updateButtonText();
+        calcValues();
+        if (isClosed && !animFrame) {
+            animate();
+        } else if (!isClosed) {
+            drawScene(); // отрисовать разомкнутое состояние
+        }
+    }
+
+    function calcValues() {
+        if (isClosed) {
+            currentI = voltageU / resistanceR;
+        } else {
+            currentI = 0;
+        }
+        document.getElementById('iMeter').textContent = currentI.toFixed(1);
+        document.getElementById('vMeter').textContent = isClosed ? voltageU : 0;
+    }
+
+    function getPathCoord(p) {
+        // Координаты углов: 
+        // Батарея (250, 80) наверху по центру.
+        // Верхний провод: 100,80 -> 400,80 (длина 300)
+        // Правый провод: 400,80 -> 400,250 (длина 170)
+        // Нижний провод: 400,250 -> 100,250 (длина 300)
+        // Левый провод: 100,250 -> 100,80 (длина 170)
+        // Итого 940. Масштабируем 1000 -> 940.
+        
+        let d = (p / 1000) * 940;
+        
+        if (d <= 300) {
+            return {x: 100 + d, y: 80};
+        } else if (d <= 470) {
+            return {x: 400, y: 80 + (d - 300)};
+        } else if (d <= 770) {
+            return {x: 400 - (d - 470), y: 250};
+        } else {
+            return {x: 100, y: 250 - (d - 770)};
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#94a3b8';
+        if (isClosed && voltageU > 0) ctx.strokeStyle = '#9333ea'; // Подсветка активной цепи
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        // 1. ПРОВОДА ОСНОВНЫЕ
+        ctx.beginPath();
+        // Левый и нижний до лампы
+        ctx.moveTo(220, 80); ctx.lineTo(100, 80); ctx.lineTo(100, 250); ctx.lineTo(210, 250);
+        // Нижний от лампы до Амперметра
+        ctx.moveTo(290, 250); ctx.lineTo(310, 250);
+        // От Амперметра направо и вверх до ключа
+        ctx.moveTo(350, 250); ctx.lineTo(400, 250); ctx.lineTo(400, 160);
+        // От ключа до батареи
+        ctx.moveTo(400, 120); ctx.lineTo(400, 80); ctx.lineTo(280, 80);
+        ctx.stroke();
+
+        // 2. БАТАРЕЯ (наверху)
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(220, 60); ctx.lineTo(220, 100); ctx.stroke(); // длинный +
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(280, 70); ctx.lineTo(280, 90); ctx.stroke(); // короткий -
+        ctx.beginPath(); ctx.moveTo(220, 80); ctx.lineTo(230, 80); ctx.stroke(); // соед
+        ctx.beginPath(); ctx.moveTo(270, 80); ctx.lineTo(280, 80); ctx.stroke(); // соед
+        // пунктир между ячейками (условная батарея из элементов)
+        ctx.lineWidth = 2; ctx.setLineDash([4,4]);
+        ctx.beginPath(); ctx.moveTo(235, 80); ctx.lineTo(265, 80); ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = '#ef4444'; ctx.fillText('+', 210, 50);
+        ctx.fillStyle = '#3b82f6'; ctx.fillText('-', 290, 50);
+        
+        // 3. КЛЮЧ (справа)
+        ctx.fillStyle = '#cbd5e1';
+        ctx.beginPath(); ctx.arc(400, 160, 5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(400, 120, 5, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(400, 160);
+        if (isClosed) {
+            ctx.lineTo(400, 120);
+        } else {
+            ctx.lineTo(370, 130);
+        }
+        ctx.stroke();
+
+        // 4. ЛАМПА (снизу)
+        ctx.strokeStyle = '#cbd5e1';
+        if (isClosed && voltageU > 0) ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(250, 250, 20, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(235, 235); ctx.lineTo(265, 265); ctx.stroke(); // Крестик X
+        ctx.beginPath(); ctx.moveTo(265, 235); ctx.lineTo(235, 265); ctx.stroke();
+        
+        // Свечение лампы
+        if (isClosed && voltageU > 0) {
+            let b = voltageU / 24; // Яркость
+            let glow = ctx.createRadialGradient(250, 250, 20, 250, 250, 60);
+            glow.addColorStop(0, `rgba(250, 204, 21, ${b})`);
+            glow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath(); ctx.arc(250, 250, 60, 0, Math.PI*2); ctx.fill();
+        }
+
+        // 5. АМПЕРМЕТР (снизу, последовательно)
+        ctx.strokeStyle = '#10b981'; ctx.fillStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(330, 250, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#10b981'; ctx.font = 'bold 20px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('A', 330, 252);
+
+        // 6. ВОЛЬТМЕТР (параллельно лампе)
+        ctx.strokeStyle = '#ec4899'; // Розовый
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(210, 250); ctx.lineTo(210, 320); ctx.lineTo(230, 320); ctx.stroke(); // левая нога
+        ctx.beginPath(); ctx.moveTo(290, 250); ctx.lineTo(290, 320); ctx.lineTo(270, 320); ctx.stroke(); // правая нога
+        
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(250, 320, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ec4899'; ctx.fillText('V', 250, 322);
+
+        // 7. ПОТОК ЭЛЕКТРОНОВ И ТОК
+        if (isClosed && voltageU > 0) {
+            // Ток (условно от плюса к минусу, значит по часовой стрелке)
+            // Плюс батареи у нас слева (220, 80), минус справа (280, 80).
+            // Значит ток идет ВЛЕВО, потом ВНИЗ, потом ВПРАВО, потом ВВЕРХ. (Против часовой!)
+            // Подождите: длинная черта это плюс. Плюс на (220,80).
+            // Значит ток от (220,80) идет влево по контуру. Да, ПРОТИВ ЧАСОВОЙ.
+            // Электроны идут ОТ МИНУСА к ПЛЮСУ. То есть от (280,80) вправо. ПО ЧАСОВОЙ.
+            
+            ctx.fillStyle = '#60a5fa'; // Голубые электроны
+            for(let i=0; i<electrons.length; i++) {
+                let pos = getPathCoord(electrons[i]);
+                // Не рисуем электроны поверх приборов
+                if ((pos.y === 80 && pos.x > 210 && pos.x < 290) || 
+                    (pos.x === 400 && pos.y > 110 && pos.y < 170) ||
+                    (pos.y === 250 && pos.x > 230 && pos.x < 270) ||
+                    (pos.y === 250 && pos.x > 310 && pos.x < 350)) {
+                    continue; 
+                }
+                
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2); ctx.fill();
+            }
+
+            // Стрелка направления тока (I)
+            // Ток идет ПРОТИВ ЧАСОВОЙ. Нарисуем стрелку на левом проводе.
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(100, 150); ctx.lineTo(100, 180); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(95, 175); ctx.lineTo(100, 180); ctx.lineTo(105, 175); ctx.stroke();
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText('I', 80, 165);
+        }
+    }
+
+    function animate() {
+        let keepAnimating = false;
+
+        if (isClosed && voltageU > 0) {
+            // Электроны идут по часовой стрелке (вправо -> вниз -> влево -> вверх)
+            // В нашем getPathCoord(p) увеличение p дает по часовой стрелке.
+            let speed = currentI * 0.8; // Зависит от силы тока
+            
+            for(let i=0; i<electrons.length; i++) {
+                electrons[i] += speed;
+                if (electrons[i] > pathLen) electrons[i] -= pathLen;
+            }
+            keepAnimating = true;
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    updateButtonText();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // q = I * t = 2 * 10 = 20
+        if (val === 20) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

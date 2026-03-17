@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Первый закон термодинамики — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fffbeb; /* Светло-желтый/янтарный (энергия) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #d97706; /* Янтарный/Оранжевый */
+            --primary-hover: #b45309;
+            --hot: #ef4444; /* Красный */
+            --cold: #0ea5e9; /* Голубой */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fde68a;
+            --text-muted: #64748b;
+            --formula-bg: #fef3c7;
+            --piston-color: #64748b;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1e1e24; /* Темно-серый с теплым оттенком */
+                --text-color: #f1f5f9;
+                --card-bg: #2a2a35;
+                --border: #474759;
+                --text-muted: #94a3b8;
+                --formula-bg: #3f3f4e;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 0.5rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-heat { background-color: var(--hot); }
+        button.btn-heat:hover { background-color: #b91c1c; }
+        button.btn-cool { background-color: var(--cold); }
+        button.btn-cool:hover { background-color: #0369a1; }
+        button.btn-reset { grid-column: span 2; background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary);
+            padding: 10px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+        
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(217, 119, 6, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(217, 119, 6, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(217, 119, 6, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(217, 119, 6, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Первый закон термодинамики. Работа газа</span>
+            <span class="lang-kz">Термодинамиканың бірінші заңы. Газдың жұмысы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как заставить тепло выполнять механическую работу? Именно на этом принципе основаны двигатели внутреннего сгорания и паровые турбины! Узнаем, куда исчезает тепловая энергия.</span>
+            <span class="lang-kz">Жылуды механикалық жұмыс істеуге қалай мәжбүрлеуге болады? Дәл осы принципке іштен жану қозғалтқыштары мен бу турбиналары негізделген! Жылу энергиясының қайда кететінін білейік.</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Работа газа (<span class="math-symbol">A</span>)</span>
+            <span class="lang-kz">1. Газдың жұмысы (<span class="math-symbol">A</span>)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если газ нагревать в цилиндре под подвижным поршнем, он начнет расширяться и толкать поршень вверх. В этот момент <strong>газ совершает механическую работу</strong> против внешних сил.</span>
+            <span class="lang-kz">Егер газды жылжымалы поршень астындағы цилиндрде қыздырса, ол кеңейіп, поршеньді жоғары қарай итере бастайды. Бұл кезде <strong>газ сыртқы күштерге қарсы механикалық жұмыс атқарады</strong>.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Работа газа при постоянном давлении рассчитывается по формуле:</span>
+            <span class="lang-kz">Тұрақты қысым кезіндегі газдың жұмысы келесі формуламен есептеледі:</span>
+            <span class="math-formula">A = p &middot; &Delta;V = p &middot; (V<sub>2</sub> - V<sub>1</sub>)</span>
+            <span class="lang-ru" style="font-size:0.9rem;">Где: <strong>p</strong> — давление газа (Па), <strong>&Delta;V</strong> — изменение объема (м<sup>3</sup>). Если газ расширяется, работа положительна (<span class="math-symbol">A > 0</span>). Если газ сжимают внешние силы, работа газа отрицательна.</span>
+            <span class="lang-kz" style="font-size:0.9rem;">Мұндағы: <strong>p</strong> — газ қысымы (Па), <strong>&Delta;V</strong> — көлемнің өзгеруі (м<sup>3</sup>). Егер газ кеңейсе, жұмыс оң болады (<span class="math-symbol">A > 0</span>). Егер газды сыртқы күштер сықса, газдың жұмысы теріс болады.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Первый закон термодинамики</span>
+            <span class="lang-kz">2. Термодинамиканың бірінші заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Куда уходит количество теплоты (<span class="math-symbol">Q</span>), переданное системе? Закон сохранения энергии гласит: энергия не берется из ниоткуда и не исчезает в никуда.</span>
+            <span class="lang-kz">Жүйеге берілген жылу мөлшері (<span class="math-symbol">Q</span>) қайда кетеді? Энергияның сақталу заңы былай дейді: энергия жоқтан пайда болмайды және ізім-ғайым жоғалып кетпейді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Первый закон термодинамики:</strong> Количество теплоты, переданное системе, идет на изменение ее внутренней энергии (<span class="math-symbol">&Delta;U</span>) и на совершение системой работы (<span class="math-symbol">A</span>) над внешними телами.</span>
+            <span class="lang-kz"><strong>Термодинамиканың бірінші заңы:</strong> Жүйеге берілген жылу мөлшері оның ішкі энергиясын (<span class="math-symbol">&Delta;U</span>) өзгертуге және жүйенің сыртқы денелермен жұмыс (<span class="math-symbol">A</span>) жасауына жұмсалады.</span>
+            
+            <span class="math-formula">Q = &Delta;U + A</span>
+        </div>
+
+        <p>
+            <span class="lang-ru"><strong>Важный случай (Изохорный процесс):</strong> Если объем газа не меняется (например, поршень закреплен намертво, <span class="math-symbol">&Delta;V = 0</span>), то газ не может совершить работу (<span class="math-symbol">A = 0</span>). Тогда <strong>всё подведенное тепло идет только на нагрев газа: <span class="math-symbol">Q = &Delta;U</span></strong>.</span>
+            <span class="lang-kz"><strong>Маңызды жағдай (Изохоралық процесс):</strong> Егер газ көлемі өзгермесе (мысалы, поршень мықтап бекітілген, <span class="math-symbol">&Delta;V = 0</span>), онда газ жұмыс жасай алмайды (<span class="math-symbol">A = 0</span>). Онда <strong>берілген жылудың барлығы тек газды қыздыруға кетеді: <span class="math-symbol">Q = &Delta;U</span></strong>.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Газовый цилиндр</span>
+            <span class="lang-kz">Симуляция: Газ цилиндрі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.95rem; margin-bottom: 10px;">
+                    <span class="lang-ru">Подводите тепло к газу и смотрите на табло! Обратите внимание, что происходит, когда поршень зафиксирован (работа A = 0).</span>
+                    <span class="lang-kz">Газға жылу беріп, таблоға қараңыз! Поршень бекітілген кезде (жұмыс A = 0) не болатынына назар аударыңыз.</span>
+                </p>
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" id="lockPiston" onchange="toggleLock()">
+                    <span class="lang-ru">Зафиксировать поршень (V = const)</span>
+                    <span class="lang-kz">Поршеньді бекіту (V = const)</span>
+                </label>
+
+                <div class="buttons">
+                    <button class="btn-heat" onmousedown="applyHeat(1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#128293; Подводить тепло (+Q)</span>
+                        <span class="lang-kz">&#128293; Жылу беру (+Q)</span>
+                    </button>
+                    <button class="btn-cool" onmousedown="applyHeat(-1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(-1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#10052; Забирать тепло (-Q)</span>
+                        <span class="lang-kz">&#10052; Жылуды алу (-Q)</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">Сбросить значения</span>
+                        <span class="lang-kz">Мәндерді бастапқы күйге келтіру</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+            <canvas id="simCanvas" width="550" height="400"></canvas>
+        </div>
+    </div>
+    <div class="observation">
+        <span id="obsText">
+            <span class="lang-ru"><strong>Формула в действии:</strong> Если поршень может двигаться, часть тепла (<span class="math-symbol">Q</span>) тратится на разгон молекул (<span class="math-symbol">&Delta;U</span>), а часть — на подъем поршня (<span class="math-symbol">A</span>). Если поршень заперт, работа не совершается, и газ нагревается гораздо быстрее!</span>
+            <span class="lang-kz"><strong>Формула іс жүзінде:</strong> Егер поршень қозғала алатын болса, жылудың (<span class="math-symbol">Q</span>) бір бөлігі молекулаларды үдетуге (<span class="math-symbol">&Delta;U</span>), ал бір бөлігі поршеньді көтеруге (<span class="math-symbol">A</span>) жұмсалады. Егер поршень бекітілсе, жұмыс жасалмайды, ал газ әлдеқайда тез қызады!</span>
+        </span>
+    </div>
+</section>
+
+<!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет)</span>
+                <span class="lang-kz">1-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Газ получил количество теплоты <strong>500 Дж</strong>. При этом он совершил работу <strong>200 Дж</strong>. На сколько увеличилась внутренняя энергия газа? <br><em>(Подсказка: Q = &Delta;U + A)</em></span>
+                <span class="lang-kz">Газ <strong>500 Дж</strong> жылу мөлшерін алды. Бұл ретте ол <strong>200 Дж</strong> жұмыс жасады. Газдың ішкі энергиясы қаншаға артты? <br><em>(Көмек: Q = &Delta;U + A)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Джоулях (Дж)" data-placeholder-kz="Жауап Джоульмен (Дж)" placeholder="Ответ в Джоулях (Дж)">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Газ находится в стальном баллоне (его объем нельзя изменить). Мы нагрели этот баллон, передав ему 1000 Дж тепла. Чему равна работа газа?</span>
+                <span class="lang-kz">Газ болат баллонда орналасқан (оның көлемін өзгерту мүмкін емес). Біз бұл баллонды қыздырып, оған 1000 Дж жылу бердік. Газдың жұмысы неге тең?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="1000 Дж" data-kz="1000 Дж">1000 Дж</option>
+                    <option value="2" data-ru="500 Дж" data-kz="500 Дж">500 Дж</option>
+                    <option value="3" data-ru="0 Дж (работа не совершается, если объем не меняется)" data-kz="0 Дж (көлем өзгермесе, жұмыс жасалмайды)">0 Дж (работа не совершается, если объем не меняется)</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы закрепить понимание Первого закона термодинамики и научиться решать сложные задачи!</span>
+            <span class="lang-kz">Термодинамиканың бірінші заңын түсінуді бекіту және күрделі есептерді шығаруды үйрену үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BF%D0%B5%D1%80%D0%B2%D1%8B%D0%B9+%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D0%BA%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Первый закон термодинамики»</span>
+                  <span class="lang-kz">«Термодинамиканың бірінші заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Формула Первого закона термодинамики:</span>
+                <span class="lang-kz">1. Термодинамиканың бірінші заңының формуласы:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Q = &Delta;U + A</span><span class="lang-kz">Q = &Delta;U + A</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">A = F &middot; s</span><span class="lang-kz">A = F &middot; s</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Q = cm&Delta;t</span><span class="lang-kz">Q = cm&Delta;t</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Q = &lambda;m</span><span class="lang-kz">Q = &lambda;m</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Как рассчитать работу газа (A) при постоянном давлении?</span>
+                <span class="lang-kz">2. Тұрақты қысымда газдың жұмысын (A) қалай есептеуге болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">A = m &middot; g &middot; h</span><span class="lang-kz">A = m &middot; g &middot; h</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">A = p &middot; &Delta;V</span><span class="lang-kz">A = p &middot; &Delta;V</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">A = Q / &Delta;U</span><span class="lang-kz">A = Q / &Delta;U</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">A = p / V</span><span class="lang-kz">A = p / V</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Газ изохорно нагревают (объем не меняется, &Delta;V = 0). Чему равна работа газа?</span>
+                <span class="lang-kz">3. Газды изохоралы түрде қыздырады (көлем өзгермейді, &Delta;V = 0). Газдың жұмысы неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Работа равна количеству теплоты</span><span class="lang-kz">Жұмыс жылу мөлшеріне тең</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Работа максимальна</span><span class="lang-kz">Жұмыс максималды</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Работа равна нулю (A = 0)</span><span class="lang-kz">Жұмыс нөлге тең (A = 0)</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Работа отрицательна</span><span class="lang-kz">Жұмыс теріс</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Газу передали 100 Дж теплоты, и внешние силы сжали газ, совершив работу 50 Дж. На сколько изменилась внутренняя энергия газа?</span>
+                <span class="lang-kz">4. Газға 100 Дж жылу берілді және сыртқы күштер 50 Дж жұмыс жасап, газды сықты. Газдың ішкі энергиясы қаншаға өзгерді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Увеличилась на 150 Дж (и тепло, и сжатие нагрели газ)</span><span class="lang-kz">150 Дж-ға артты (жылу да, сығылу да газды қыздырды)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Увеличилась на 50 Дж</span><span class="lang-kz">50 Дж-ға артты</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Осталась неизменной</span><span class="lang-kz">Өзгеріссіз қалды</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Уменьшилась на 50 Дж</span><span class="lang-kz">50 Дж-ға төмендеді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Куда тратится количество теплоты, переданное системе, согласно 1-му закону термодинамики?</span>
+                <span class="lang-kz">5. Термодинамиканың 1-ші заңына сәйкес жүйеге берілген жылу мөлшері қайда жұмсалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Только на нагревание газа</span><span class="lang-kz">Тек газды қыздыруға</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">На изменение внутренней энергии и на совершение работы</span><span class="lang-kz">Ішкі энергияны өзгертуге және жұмыс жасауға</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Только на совершение работы</span><span class="lang-kz">Тек жұмыс жасауға</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Оно исчезает бесследно</span><span class="lang-kz">Ол ізім-ғайым жоғалады</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Отлично! Q = &Delta;U + A  =>  &Delta;U = Q - A = 500 - 200 = 300 Дж.",
+            fbA_inc: "Неверно. Вспомните формулу Q = &Delta;U + A. Чтобы найти &Delta;U, нужно из полученного тепла (500) вычесть совершенную работу (200).",
+            fbB_corr: "Верно! В стальном баллоне объем постоянный (&Delta;V = 0), значит газ не может расширяться. Работа газа A = 0.",
+            fbB_inc: "Неверно. Вспомните: чтобы совершалась механическая работа, поршень (границы сосуда) должен двигаться. Если сосуд жесткий, &Delta;V = 0.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_q: "Тепло (Q)",
+            lbl_u: "Внутр. эн. (\u0394U)",
+            lbl_a: "Работа (A)",
+            lbl_lock: "ЗАФИКСИРОВАНО",
+            lbl_free: "СВОБОДЕН"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Жарайсыз! Q = &Delta;U + A  =>  &Delta;U = Q - A = 500 - 200 = 300 Дж.",
+            fbA_inc: "Қате. Q = &Delta;U + A формуласын есіңізге түсіріңіз. &Delta;U табу үшін алынған жылудан (500) жасалған жұмысты (200) азайту керек.",
+            fbB_corr: "Дұрыс! Болат баллонда көлем тұрақты (&Delta;V = 0), яғни газ кеңейе алмайды. Газдың жұмысы A = 0.",
+            fbB_inc: "Қате. Есіңізге түсіріңіз: механикалық жұмыс жасалуы үшін поршень (ыдыстың шекаралары) қозғалуы керек. Егер ыдыс қатты болса, &Delta;V = 0.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_q: "Жылу (Q)",
+            lbl_u: "Ішкі эн. (\u0394U)",
+            lbl_a: "Жұмыс (A)",
+            lbl_lock: "БЕКІТІЛДІ",
+            lbl_free: "ЕРКІН"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Энергетические переменные
+    let Q_total = 0; // Дж
+    let U_total = 0; // Дж
+    let A_total = 0; // Дж
+
+    // Состояние
+    let isLocked = false;
+    let isHeating = 0; // 1: heat, -1: cool, 0: stop
+    let animFrame = null;
+    let particles = [];
+    
+    // Границы цилиндра
+    const cylX = 350;
+    const cylY = 280; // дно
+    const cylW = 120;
+    const cylH = 200; // макс. высота стенок
+    
+    // Поршень
+    let pistonY = cylY - 100; // Исходная высота
+    let pistonTargetY = pistonY;
+    
+    // Инициализация частиц
+    function initParticles() {
+        particles = [];
+        for(let i=0; i<40; i++) {
+            particles.push({
+                x: cylX - cylW/2 + 10 + Math.random()*(cylW - 20),
+                y: pistonY + 10 + Math.random()*(cylY - pistonY - 20),
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4
+            });
+        }
+    }
+
+    window.toggleLock = function() {
+        isLocked = document.getElementById('lockPiston').checked;
+        drawScene();
+    }
+
+    window.applyHeat = function(dir) {
+        isHeating = dir;
+        if (!animFrame) animate();
+    };
+
+    window.stopHeat = function() {
+        isHeating = 0;
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+    };
+
+    window.resetSim = function() {
+        Q_total = 0;
+        U_total = 0;
+        A_total = 0;
+        isHeating = 0;
+        pistonY = cylY - 100;
+        pistonTargetY = pistonY;
+        
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+        initParticles();
+        drawScene();
+    };
+
+    // Рисование электронного табло
+    function drawDigitalBoard() {
+        const bx = 20;
+        const by = 20;
+        const bw = 250;
+        const bh = 140;
+
+        ctx.fillStyle = '#0f172a'; // Экран
+        ctx.fillRect(bx, by, bw, bh);
+        
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(bx, by, bw, bh);
+
+        ctx.fillStyle = '#10b981'; // Зеленый текст
+        ctx.font = '14px monospace';
+        ctx.textAlign = 'left';
+
+        // Q = U + A
+        ctx.fillText(`${t('lbl_q')}:`, bx + 15, by + 30);
+        ctx.fillText(`${t('lbl_u')}:`, bx + 15, by + 65);
+        ctx.fillText(`${t('lbl_a')}:`, bx + 15, by + 100);
+
+        ctx.font = 'bold 20px monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(`${Math.round(Q_total)} Дж`, bx + bw - 15, by + 30);
+        
+        ctx.fillStyle = '#f59e0b'; // Оранжевый для U
+        ctx.fillText(`${Math.round(U_total)} Дж`, bx + bw - 15, by + 65);
+        
+        ctx.fillStyle = '#0ea5e9'; // Синий для A
+        ctx.fillText(`${Math.round(A_total)} Дж`, bx + bw - 15, by + 100);
+
+        // Уравнение внизу табло
+        ctx.fillStyle = '#f8fafc';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px monospace';
+        ctx.fillText(`Q = \u0394U + A`, bx + bw/2, by + 125);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        drawDigitalBoard();
+
+        // Статус поршня (текст)
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        let lockText = isLocked ? t('lbl_lock') : t('lbl_free');
+        ctx.fillStyle = isLocked ? '#ef4444' : '#10b981';
+        ctx.fillText(lockText, cylX, cylY - cylH - 20);
+
+        // Огонь / Лед
+        if (isHeating > 0) {
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(cylX - 40, cylY);
+            ctx.lineTo(cylX - 25, cylY + 30);
+            ctx.lineTo(cylX - 10, cylY);
+            ctx.lineTo(cylX + 5, cylY + 35);
+            ctx.lineTo(cylX + 20, cylY);
+            ctx.lineTo(cylX + 40, cylY + 30);
+            ctx.fill();
+        } else if (isHeating < 0) {
+            ctx.fillStyle = '#0ea5e9';
+            ctx.fillRect(cylX - 50, cylY, 100, 20);
+        }
+
+        // Газ (фон внутри)
+        // Цвет зависит от U_total
+        let tempHeat = U_total / 2000; // от -1 до 1 примерно
+        if (tempHeat > 1) tempHeat = 1;
+        if (tempHeat < -1) tempHeat = -1;
+        
+        let r = 250, g = 250, b = 250;
+        if (tempHeat > 0) {
+            g = 250 - tempHeat*150;
+            b = 250 - tempHeat*200;
+        } else {
+            r = 250 + tempHeat*150;
+            g = 250 + tempHeat*50;
+        }
+        ctx.fillStyle = `rgba(${r},${g},${b}, 0.2)`;
+        ctx.fillRect(cylX - cylW/2, pistonY, cylW, cylY - pistonY);
+
+        // Цилиндр (Стенки)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cylX - cylW/2, cylY - cylH);
+        ctx.lineTo(cylX - cylW/2, cylY);
+        ctx.lineTo(cylX + cylW/2, cylY);
+        ctx.lineTo(cylX + cylW/2, cylY - cylH);
+        ctx.stroke();
+
+        // Частицы газа
+        let speedMult = 1 + (U_total / 1000);
+        if (speedMult < 0.2) speedMult = 0.2; // не замерзают полностью
+        
+        ctx.fillStyle = '#f59e0b';
+        particles.forEach(p => {
+            // Обновление позиций
+            p.x += p.vx * speedMult;
+            p.y += p.vy * speedMult;
+            
+            // Столкновения со стенками
+            if (p.x < cylX - cylW/2 + 5) { p.x = cylX - cylW/2 + 5; p.vx *= -1; }
+            if (p.x > cylX + cylW/2 - 5) { p.x = cylX + cylW/2 - 5; p.vx *= -1; }
+            if (p.y > cylY - 5) { p.y = cylY - 5; p.vy *= -1; }
+            if (p.y < pistonY + 5) { p.y = pistonY + 5; p.vy *= -1; }
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        // Поршень
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(cylX - cylW/2 + 2, pistonY - 20, cylW - 4, 20); // Сам поршень
+        ctx.fillRect(cylX - 5, pistonY - 80, 10, 60); // Шток
+
+        // Если зафиксирован - рисуем красные "замки"
+        if (isLocked) {
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(cylX - cylW/2 - 10, pistonY - 15, 12, 10);
+            ctx.fillRect(cylX + cylW/2 - 2, pistonY - 15, 12, 10);
+        }
+    }
+
+    function animate() {
+        const power = 10; // Дж за кадр (скорость подвода тепла)
+        
+        if (isHeating !== 0) {
+            let dQ = isHeating * power;
+            
+            // Если охлаждаем, и газ уже холодный/сжат, лимитируем
+            if (isHeating < 0 && Q_total < -2000) {
+                dQ = 0; // Достигли предела охлаждения
+            }
+            if (isHeating > 0 && Q_total > 4000) {
+                dQ = 0; // Достигли предела нагрева
+            }
+
+            Q_total += dQ;
+
+            // Распределение тепла согласно 1-му закону
+            if (isLocked) {
+                // Изохорный процесс A = 0
+                // Все dQ идет в dU
+                U_total += dQ;
+            } else {
+                // Изобарный процесс (условно). 
+                // Пусть 60% идет на внутреннюю энергию, 40% на работу (расширение)
+                let dU = dQ * 0.6;
+                let dA = dQ * 0.4;
+                
+                U_total += dU;
+                A_total += dA;
+
+                // Изменяем высоту поршня в зависимости от A
+                // A = p * dV. Т.к. p=const, dV пропорционально A.
+                // Поршень двигается.
+                pistonTargetY = (cylY - 100) - (A_total * 0.05); // Коэффициент визуального сдвига
+            }
+        }
+
+        // Плавное движение поршня к targetY (если не залочен)
+        if (!isLocked) {
+            pistonY += (pistonTargetY - pistonY) * 0.1;
+            // Границы поршня
+            if (pistonY > cylY - 40) pistonY = cylY - 40;
+            if (pistonY < cylY - cylH + 20) pistonY = cylY - cylH + 20;
+        } else {
+            // Если поршень залочили, targetY должен сравняться с текущим Y,
+            // чтобы при разлочке он не "прыгнул".
+            // То есть A_total фиксируется.
+            // При разлочке он останется на месте, пока мы не продолжим греть.
+            pistonTargetY = pistonY;
+            // Но чтобы формула Q=U+A работала честно, мы не меняем A_total пока он залочен.
+        }
+
+        drawScene();
+
+        if (isHeating !== 0 || Math.abs(pistonTargetY - pistonY) > 1) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    initParticles();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value.replace(/\s/g, ''));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 300) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

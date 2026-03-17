@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виды теплопередачи — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fffbeb; /* Светло-желтый (тепло) */
+            --text-color: #334155;
+            --card-bg: #ffffff;
+            --primary: #ea580c; /* Оранжевый (огонь/тепло) */
+            --primary-hover: #c2410c;
+            --secondary: #3b82f6; /* Синий (холод/вода) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fef08a;
+            --text-muted: #64748b;
+            --formula-bg: #ffedd5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #431407;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box strong {
+            color: var(--primary);
+        }
+
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        button.outline:hover {
+            background-color: var(--formula-bg);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: #1e293b; /* Темный фон для контраста с огнем */
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(234, 88, 12, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(234, 88, 12, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Виды теплопередачи — 8 класс</span>
+            <span class="lang-kz">Жылу берілу түрлері — 8 сынып</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему металлическая ложка в горячем чае обжигает пальцы, а деревянная — нет? Как тепло от Солнца доходит до Земли через пустой космос? Изучаем 3 способа передачи энергии!</span>
+            <span class="lang-kz">Неліктен ыстық шайдағы металл қасық саусақты күйдіреді, ал ағаш қасық күйдірмейді? Күннің жылуы Жерге бос ғарыш арқылы қалай жетеді? Энергия берудің 3 тәсілін зерттейміз!</span>
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ: Введение -->
+    <section>
+        <h2>
+            <span class="lang-ru">Что такое теплопередача?</span>
+            <span class="lang-kz">Жылу берілу дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Мы знаем, что внутреннюю энергию тела можно изменить двумя путями: совершив работу (например, потерев ладони) или путем <strong>теплопередачи</strong>.</span>
+            <span class="lang-kz">Дененің ішкі энергиясын екі жолмен өзгертуге болатынын білеміз: жұмыс істеу арқылы (мысалы, алақанды ысқылау) немесе <strong>жылу берілу</strong> арқылы.</span>
+        </p>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Теплопередача</strong> — это процесс изменения внутренней энергии без совершения работы над телом или самим телом. Энергия всегда передается <strong>от более нагретого тела к менее нагретому</strong>.</span>
+            <span class="lang-kz"><strong>Жылу берілу</strong> — бұл денеге немесе дененің өзімен жұмыс жасамай-ақ ішкі энергияның өзгеру процесі. Энергия әрқашан <strong>қаттырақ қызған денеден азырақ қызған денеге</strong> беріледі.</span>
+        </div>
+    </section>
+
+    <!-- ТЕОРИЯ: Три вида -->
+    <section>
+        <h2>
+            <span class="lang-ru">Три вида теплопередачи</span>
+            <span class="lang-kz">Жылу берілудің үш түрі</span>
+        </h2>
+        
+        <h3>
+            <span class="lang-ru">1. Теплопроводность (в твердых телах)</span>
+            <span class="lang-kz">1. Жылуөткізгіштік (қатты денелерде)</span>
+        </h3>
+        <p>
+            <span class="lang-ru">Явление передачи внутренней энергии от одной части тела к другой или от одного тела к другому при их <strong>непосредственном контакте</strong>. При этом само вещество <strong>не перемещается</strong>. Металлы — отличные проводники тепла, а дерево, пластик и воздух — плохие (теплоизоляторы).</span>
+            <span class="lang-kz">Ішкі энергияның дененің бір бөлігінен екіншісіне немесе бір денеден екінші денеге олардың <strong>тікелей жанасуы</strong> кезінде берілу құбылысы. Бұл ретте заттың өзі <strong>орын ауыстырмайды</strong>. Металдар — жылуды өте жақсы өткізеді, ал ағаш, пластик және ауа — нашар өткізеді (жылу оқшаулағыштар).</span>
+        </p>
+        <br>
+
+        <h3>
+            <span class="lang-ru">2. Конвекция (в жидкостях и газах)</span>
+            <span class="lang-kz">2. Конвекция (сұйықтықтар мен газдарда)</span>
+        </h3>
+        <p>
+            <span class="lang-ru">Это вид теплопередачи, при котором энергия переносится <strong>самими струями газа или жидкости</strong>. Нагретая жидкость (или газ) становится легче и поднимается вверх (сила Архимеда), а холодная опускается вниз. Именно так закипает вода в кастрюле и работают батареи отопления. <em>(В твердых телах конвекция невозможна!)</em></span>
+            <span class="lang-kz">Бұл энергияның <strong>газ немесе сұйықтық ағындарының өзімен</strong> тасымалданатын жылу берілу түрі. Қызған сұйықтық (немесе газ) жеңілдеп, жоғары көтеріледі (Архимед күші), ал салқыны төмен түседі. Кәстрөлдегі су дәл осылай қайнайды және жылыту батареялары осылай жұмыс істейді. <em>(Қатты денелерде конвекция болуы мүмкін емес!)</em></span>
+        </p>
+        <br>
+
+        <h3>
+            <span class="lang-ru">3. Излучение (даже в вакууме)</span>
+            <span class="lang-kz">3. Сәулелену (тіпті вакуумде де)</span>
+        </h3>
+        <p>
+            <span class="lang-ru">Это передача энергии с помощью электромагнитных волн. Это <strong>единственный</strong> способ теплопередачи, который может происходить в <strong>полном вакууме</strong> (пустоте). Так тепло от Солнца доходит до Земли. Темные тела лучше поглощают и излучают энергию, чем светлые и блестящие.</span>
+            <span class="lang-kz">Бұл электромагниттік толқындардың көмегімен энергия беру. Бұл <strong>толық вакуумде</strong> (бос кеңістікте) жүре алатын <strong>жалғыз</strong> жылу берілу тәсілі. Күннің жылуы Жерге осылай жетеді. Қараңғы денелер жарық және жылтыр денелерге қарағанда энергияны жақсы жұтады және шығарады.</span>
+        </p>
+    </section>
+
+    <!-- СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Котелок на костре</span>
+            <span class="lang-kz">Симуляция: Оттағы қазан</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="fireSlider" style="color: var(--primary)">
+                        <span class="lang-ru">Интенсивность огня:</span>
+                        <span class="lang-kz">Оттың қарқындылығы:</span>
+                        <span id="fireVal">0</span>%
+                    </label>
+                    <input type="range" id="fireSlider" min="0" max="100" step="1" value="0">
+                </div>
+                <div class="buttons">
+                    <button id="btnPlayPause">
+                        <span class="lang-ru">Запустить время</span><span class="lang-kz">Уақытты қосу</span>
+                    </button>
+                    <button id="btnReset" class="outline">
+                        <span class="lang-ru">Остудить всё</span><span class="lang-kz">Бәрін суыту</span>
+                    </button>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-muted);">
+                    <span class="lang-ru"><strong>Показатели:</strong><br>Температура воды: <span id="waterTempVal">20</span>°C<br>Температура ручки: <span id="handleTempVal">20</span>°C</span>
+                    <span class="lang-kz"><strong>Көрсеткіштер:</strong><br>Судың температурасы: <span id="waterTempVal-kz">20</span>°C<br>Тұтқаның температурасы: <span id="handleTempVal-kz">20</span>°C</span>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="600" height="450"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Обратите внимание:</strong> <br>1. Жар от костра греет руки вокруг — это <strong>Излучение</strong>.<br>2. Синие и красные стрелки в котелке показывают перемешивание воды — это <strong>Конвекция</strong>.<br>3. Железная ручка постепенно нагревается (краснеет) от котелка — это <strong>Теплопроводность</strong>.</span>
+                <span class="lang-kz"><strong>Назар аударыңыз:</strong> <br>1. Оттың қызуы айналадағы қолды жылытады — бұл <strong>Сәулелену</strong>.<br>2. Қазандағы көк және қызыл көрсеткіштер судың араласуын көрсетеді — бұл <strong>Конвекция</strong>.<br>3. Темір тұтқа қазаннан біртіндеп қызады (қызарады) — бұл <strong>Жылуөткізгіштік</strong>.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень A (Базовый)</span>
+                <span class="lang-kz">А деңгейі (Базалық)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему в космосе (где нет воздуха) передача тепла от Солнца к планетам возможна только одним способом? Каким именно?</span>
+                <span class="lang-kz">Неліктен ғарышта (ауа жоқ жерде) Күннен планеталарға жылу беру тек бір жолмен ғана мүмкін болады? Нақты қайсысымен?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Теплопроводностью" data-kz="Жылуөткізгіштікпен">Теплопроводностью</option>
+                    <option value="2" data-ru="Конвекцией" data-kz="Конвекциямен">Конвекцией</option>
+                    <option value="3" data-ru="Излучением" data-kz="Сәулеленумен">Излучением</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Уровень B (Средний)</span>
+                <span class="lang-kz">B деңгейі (Орташа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему форточки для проветривания делают в верхней части окна, а батареи отопления ставят внизу (около пола)?</span>
+                <span class="lang-kz">Неліктен желдетуге арналған терезе көздерін терезенің жоғарғы бөлігінде жасайды, ал жылыту батареяларын төменде (еденге жақын) орнатады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Чтобы лучше происходила теплопроводность" data-kz="Жылуөткізгіштік жақсы жүруі үшін">Чтобы лучше происходила теплопроводность</option>
+                    <option value="2" data-ru="Чтобы холодный воздух опускался, а теплый поднимался (Конвекция)" data-kz="Салқын ауа төмен түсіп, жылы ауа көтерілуі үшін (Конвекция)">Чтобы холодный воздух опускался, а теплый поднимался (Конвекция)</option>
+                    <option value="3" data-ru="Для красоты интерьера" data-kz="Интерьер әдемілігі үшін">Для красоты интерьера</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите эксперименты с нагреванием различных металлов и демонстрацию конвекции в жидкости с марганцовкой.</span>
+            <span class="lang-kz">Түрлі металдарды қыздыру тәжірибелерін және марганцовкасы бар сұйықтықтағы конвекцияның көрсетілімін қараңыз.</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B2%D0%B8%D0%B4%D1%8B+%D1%82%D0%B5%D0%BF%D0%BB%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B4%D0%B0%D1%87%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Виды теплопередачи» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Жылу берілу түрлері» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. В каких средах возможна конвекция?</span>
+                <span class="lang-kz">1. Конвекция қандай орталарда болуы мүмкін?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Только в жидкостях и газах</span><span class="lang-kz">Тек сұйықтықтар мен газдарда</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Только в твердых телах</span><span class="lang-kz">Тек қатты денелерде</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">В твердых телах, жидкостях и газах</span><span class="lang-kz">Қатты денелерде, сұйықтықтар мен газдарда</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Только в вакууме</span><span class="lang-kz">Тек вакуумде</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Как называется процесс передачи энергии от одного тела к другому при их непосредственном контакте?</span>
+                <span class="lang-kz">2. Энергияның бір денеден екінші денеге тікелей жанасу арқылы берілу процесі қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Конвекция</span><span class="lang-kz">Конвекция</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Излучение</span><span class="lang-kz">Сәулелену</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Теплопроводность</span><span class="lang-kz">Жылуөткізгіштік</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Работа</span><span class="lang-kz">Жұмыс</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">3. Какие поверхности лучше всего поглощают тепловое излучение?</span>
+                <span class="lang-kz">3. Жылулық сәулеленуді қандай беттер ең жақсы жұтады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Светлые и гладкие</span><span class="lang-kz">Ашық және тегіс</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Блестящие (зеркальные)</span><span class="lang-kz">Жылтыр (айналы)</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Белые и матовые</span><span class="lang-kz">Ақ және күңгірт</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Темные и шероховатые</span><span class="lang-kz">Қараңғы және бұдыр</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Вы сидите у костра. Лицо чувствует сильный жар, хотя воздух холодный. Какой способ теплопередачи здесь основной?</span>
+                <span class="lang-kz">4. Сіз оттың жанында отырсыз. Ауа салқын болса да, бетіңіз қатты қызуды сезеді. Мұнда жылу берілудің қай тәсілі негізгі болып табылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Теплопроводность</span><span class="lang-kz">Жылуөткізгіштік</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Излучение</span><span class="lang-kz">Сәулелену</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Конвекция</span><span class="lang-kz">Конвекция</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Нагревание трением</span><span class="lang-kz">Үйкеліс арқылы қызу</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Какое вещество из перечисленных обладает наихудшей теплопроводностью (является хорошим теплоизолятором)?</span>
+                <span class="lang-kz">5. Төменде аталған заттардың қайсысы ең нашар жылуөткізгіштікке ие (жақсы жылу оқшаулағыш болып табылады)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Медь</span><span class="lang-kz">Мыс</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Сталь</span><span class="lang-kz">Болат</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Воздух</span><span class="lang-kz">Ауа</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Алюминий</span><span class="lang-kz">Алюминий</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Правильно! В вакууме нет частиц (ни атомов, ни молекул), поэтому теплопроводность и конвекция невозможны. Остается только Излучение (электромагнитные волны).",
+            fbA_inc: "Неверно. Подумайте: для теплопроводности и конвекции нужно вещество (частицы). А в космосе вакуум.",
+            fbB_corr: "Верно! Холодный воздух тяжелее и опускается вниз из форточки, а горячий от батареи поднимается вверх, создавая непрерывную конвекцию (перемешивание) в комнате.",
+            fbB_inc: "Неверно. Вспомните, как движутся теплые и холодные потоки газов.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_play: "Запустить время",
+            btn_pause: "Пауза",
+            lbl_cond: "Теплопроводность",
+            lbl_conv: "Конвекция",
+            lbl_rad: "Излучение"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Вакуумде бөлшектер (атомдар да, молекулалар да) жоқ, сондықтан жылуөткізгіштік пен конвекция мүмкін емес. Тек Сәулелену (электромагниттік толқындар) ғана қалады.",
+            fbA_inc: "Қате. Ойланыңыз: жылуөткізгіштік пен конвекция үшін зат (бөлшектер) қажет. Ал ғарышта вакуум.",
+            fbB_corr: "Дұрыс! Салқын ауа ауырлау және терезеден төмен түседі, ал батареядан шыққан ыстық ауа жоғары көтеріліп, бөлмеде үздіксіз конвекция (араласу) тудырады.",
+            fbB_inc: "Қате. Газдардың жылы және салқын ағындары қалай қозғалатынын есіңізге түсіріңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_play: "Уақытты қосу",
+            btn_pause: "Кідірту",
+            lbl_cond: "Жылуөткізгіштік",
+            lbl_conv: "Конвекция",
+            lbl_rad: "Сәулелену"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updatePlayBtnText();
+        updateHUD(); // Обновляем текст на казахском в DOM
+        if(!isPlaying) drawScene(); // Перерисовка холста для текста
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const fireSlider = document.getElementById('fireSlider');
+    const fireVal = document.getElementById('fireVal');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnReset = document.getElementById('btnReset');
+    
+    // Температуры
+    let fireIntensity = 0; // 0 to 1
+    let waterTemp = 20; // 20 to 100
+    let handleTemp = 20; // 20 to 100
+    
+    let isPlaying = false;
+    let animFrame;
+    let time = 0;
+
+    // Частицы огня
+    const fireParticles = [];
+    for(let i=0; i<30; i++) {
+        fireParticles.push({
+            x: Math.random() * 60 - 30, // относительное положение
+            y: Math.random() * 40,
+            size: Math.random() * 15 + 10,
+            speedY: Math.random() * 2 + 1,
+            life: Math.random()
+        });
+    }
+
+    function updatePlayBtnText() {
+        if(isPlaying) {
+            btnPlayPause.innerHTML = `<span class="lang-${currentLang}">${t('btn_pause')}</span>`;
+        } else {
+            btnPlayPause.innerHTML = `<span class="lang-${currentLang}">${t('btn_play')}</span>`;
+        }
+    }
+
+    function updateHUD() {
+        document.getElementById('waterTempVal').textContent = Math.round(waterTemp);
+        document.getElementById('handleTempVal').textContent = Math.round(handleTemp);
+        document.getElementById('waterTempVal-kz').textContent = Math.round(waterTemp);
+        document.getElementById('handleTempVal-kz').textContent = Math.round(handleTemp);
+    }
+
+    fireSlider.addEventListener('input', () => {
+        fireVal.textContent = fireSlider.value;
+        fireIntensity = fireSlider.value / 100;
+        if(!isPlaying && fireIntensity > 0) {
+            // Auto-start if fire is turned on and was paused
+            btnPlayPause.click();
+        }
+        if(!isPlaying) drawScene();
+    });
+
+    btnPlayPause.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        updatePlayBtnText();
+        if(isPlaying) animateScene();
+        else cancelAnimationFrame(animFrame);
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        cancelAnimationFrame(animFrame);
+        fireSlider.value = 0;
+        fireVal.textContent = 0;
+        fireIntensity = 0;
+        waterTemp = 20;
+        handleTemp = 20;
+        updatePlayBtnText();
+        updateHUD();
+        drawScene();
+    });
+
+    // Функция цвета ручки (от серого до красного)
+    function getHandleColor(temp) {
+        // temp: 20 -> 100
+        // rgb(148, 163, 184) -> rgb(239, 68, 68)
+        let ratio = (temp - 20) / 80;
+        if (ratio < 0) ratio = 0;
+        if (ratio > 1) ratio = 1;
+        
+        let r = Math.round(148 + (239 - 148) * ratio);
+        let g = Math.round(163 + (68 - 163) * ratio);
+        let b = Math.round(184 + (68 - 184) * ratio);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    // Функция цвета воды (от синего до светло-голубого/кипящего)
+    function getWaterColor(temp) {
+        let ratio = (temp - 20) / 80;
+        if(ratio < 0) ratio = 0;
+        if(ratio > 1) ratio = 1;
+        
+        let r = Math.round(59 + (186 - 59) * ratio);
+        let g = Math.round(130 + (230 - 130) * ratio);
+        let b = Math.round(246 + (253 - 246) * ratio);
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2 + 50; // Центр костра
+        
+        // 1. ИЗЛУЧЕНИЕ (Волны тепла)
+        if (fireIntensity > 0) {
+            ctx.strokeStyle = `rgba(234, 88, 12, ${fireIntensity * 0.4})`;
+            ctx.lineWidth = 2;
+            for(let i=1; i<=3; i++) {
+                let r = 80 + (time * 20 % 40) + i*40;
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, Math.PI, Math.PI*2);
+                ctx.stroke();
+            }
+            
+            // Текст: Излучение
+            ctx.fillStyle = '#f97316';
+            ctx.font = '14px sans-serif';
+            ctx.fillText(t('lbl_rad'), cx - 120, cy - 30);
+        }
+
+        // 2. ДРОВА (Земля)
+        ctx.fillStyle = '#451a03'; // Темное дерево
+        ctx.fillRect(cx - 40, cy, 80, 15);
+        ctx.beginPath();
+        ctx.moveTo(cx - 30, cy + 15); ctx.lineTo(cx + 30, cy + 15);
+        ctx.lineTo(cx + 40, cy + 30); ctx.lineTo(cx - 40, cy + 30);
+        ctx.fill();
+
+        // 3. ОГОНЬ
+        if (fireIntensity > 0) {
+            ctx.globalCompositeOperation = 'screen';
+            fireParticles.forEach(p => {
+                let alpha = (1 - p.life) * fireIntensity;
+                let gradient = ctx.createRadialGradient(cx + p.x, cy - p.y, 0, cx + p.x, cy - p.y, p.size);
+                gradient.addColorStop(0, `rgba(253, 224, 71, ${alpha})`); // желтый
+                gradient.addColorStop(0.5, `rgba(234, 88, 12, ${alpha * 0.8})`); // оранжевый
+                gradient.addColorStop(1, 'rgba(239, 68, 68, 0)'); // красный, прозрачный
+                
+                ctx.beginPath();
+                ctx.arc(cx + p.x, cy - p.y, p.size, 0, Math.PI*2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+            });
+            ctx.globalCompositeOperation = 'source-over';
+        }
+
+        // 4. КОТЕЛОК И ВОДА
+        const potWidth = 120;
+        const potHeight = 90;
+        const potY = cy - 110;
+        
+        // Ручка (Теплопроводность)
+        ctx.strokeStyle = getHandleColor(handleTemp);
+        ctx.lineWidth = 12;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx + potWidth/2 - 10, potY + 40);
+        ctx.lineTo(cx + potWidth/2 + 80, potY - 20); // Ручка вправо вверх
+        ctx.stroke();
+
+        // Текст: Теплопроводность
+        ctx.fillStyle = handleTemp > 50 ? '#ef4444' : '#94a3b8';
+        ctx.fillText(t('lbl_cond'), cx + potWidth/2 + 30, potY + 20);
+
+        // Сам Котелок (задняя стенка/дно)
+        ctx.fillStyle = '#334155';
+        ctx.beginPath();
+        ctx.roundRect(cx - potWidth/2, potY, potWidth, potHeight, [0, 0, 20, 20]);
+        ctx.fill();
+
+        // Вода
+        let waterLevel = 20; // отступ сверху котелка
+        ctx.fillStyle = getWaterColor(waterTemp);
+        ctx.beginPath();
+        ctx.roundRect(cx - potWidth/2 + 4, potY + waterLevel, potWidth - 8, potHeight - waterLevel - 4, [0, 0, 16, 16]);
+        ctx.fill();
+
+        // 5. КОНВЕКЦИЯ (Стрелочки в воде)
+        if (waterTemp > 30) {
+            let convSpeed = (waterTemp - 20) / 80; // 0 to 1
+            let offset = (time * 30 * convSpeed) % 40;
+            
+            ctx.lineWidth = 2;
+            
+            // Восходящий (горячий) поток - красный
+            ctx.strokeStyle = `rgba(239, 68, 68, ${convSpeed})`;
+            ctx.beginPath();
+            ctx.moveTo(cx - 10, potY + 80 - offset);
+            ctx.lineTo(cx - 10, potY + 40 - offset);
+            ctx.lineTo(cx - 15, potY + 45 - offset);
+            ctx.moveTo(cx - 10, potY + 40 - offset);
+            ctx.lineTo(cx - 5, potY + 45 - offset);
+            ctx.stroke();
+
+            // Нисходящий (холодный) поток - синий
+            ctx.strokeStyle = `rgba(59, 130, 246, ${convSpeed})`;
+            ctx.beginPath();
+            ctx.moveTo(cx + 10, potY + 30 + offset);
+            ctx.lineTo(cx + 10, potY + 70 + offset);
+            ctx.lineTo(cx + 5, potY + 65 + offset);
+            ctx.moveTo(cx + 10, potY + 70 + offset);
+            ctx.lineTo(cx + 15, potY + 65 + offset);
+            ctx.stroke();
+            
+            // Текст: Конвекция
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fillText(t('lbl_conv'), cx - 35, potY + 15);
+        }
+
+        // Блики на котелке (для объема)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.beginPath();
+        ctx.roundRect(cx - potWidth/2 + 5, potY + 5, 10, potHeight - 20, 5);
+        ctx.fill();
+    }
+
+    function animateScene() {
+        if (!isPlaying) return;
+        
+        time += 0.05;
+
+        // Физика (упрощенная)
+        // Нагрев воды зависит от огня
+        if (fireIntensity > 0) {
+            if (waterTemp < 100) {
+                waterTemp += fireIntensity * 0.1; 
+            }
+        } else {
+            // Остывание воды
+            if (waterTemp > 20) {
+                waterTemp -= 0.05;
+            }
+        }
+
+        // Нагрев ручки (теплопроводность от воды)
+        let deltaHandle = (waterTemp - handleTemp) * 0.01;
+        handleTemp += deltaHandle;
+
+        // Остывание ручки об воздух (если огонь выключен и вода холодная)
+        if (fireIntensity === 0 && handleTemp > 20) {
+            handleTemp -= 0.02;
+        }
+
+        updateHUD();
+
+        // Обновление частиц огня
+        fireParticles.forEach(p => {
+            p.y += p.speedY * (0.5 + fireIntensity);
+            p.life += 0.02 + Math.random() * 0.03;
+            if(p.life >= 1) {
+                p.life = 0;
+                p.y = 0;
+                p.x = Math.random() * 60 - 30;
+                p.size = (Math.random() * 15 + 10) * (0.5 + fireIntensity*0.5); // Больше огонь = больше частицы
+            }
+        });
+
+        drawScene();
+        animFrame = requestAnimationFrame(animateScene);
+    }
+
+    // Инициализация
+    updateHUD();
+    updatePlayBtnText();
+    
+    window.onload = function() {
+        drawScene(); // Initial render
+    };
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

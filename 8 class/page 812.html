@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Второй закон термодинамики — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f5f3ff; /* Светло-фиолетовый */
+            --text-color: #1e1b4b;
+            --card-bg: #ffffff;
+            --primary: #6366f1; /* Индиго */
+            --primary-hover: #4f46e5;
+            --hot: #ef4444; /* Красный */
+            --cold: #0ea5e9; /* Голубой */
+            --mixed: #a855f7; /* Фиолетовый (смешанный) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #ddd6fe;
+            --text-muted: #6b7280;
+            --formula-bg: #ede9fe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f0e17;
+                --text-color: #f1f5f9;
+                --card-bg: #1e1b4b;
+                --border: #312e81;
+                --text-muted: #94a3b8;
+                --formula-bg: #312e81;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-connect { background-color: var(--primary); }
+        button.btn-connect:hover { background-color: var(--primary-hover); }
+        button.btn-reverse { background-color: var(--danger); }
+        button.btn-reverse:hover { background-color: #b91c1c; }
+        button.btn-reset { background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(99, 102, 241, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(99, 102, 241, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(99, 102, 241, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Необратимость процессов и Второй закон термодинамики</span>
+            <span class="lang-kz">Процестердің қайтымсыздығы және Термодинамиканың екінші заңы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Если бросить камень в воду, пойдут круги. Но почему круги никогда не собираются вместе, чтобы выбросить камень из воды обратно в руку? Почему разбитая чашка не склеивается сама? Узнаем главную тайну времени!</span>
+            <span class="lang-kz">Егер тасты суға лақтырсаңыз, шеңберлер пайда болады. Бірақ неліктен сол шеңберлер тасты судан қайтадан қолға лақтыру үшін ешқашан жиналмайды? Неліктен сынған кесе өздігінен желімделмейді? Уақыттың басты құпиясын білейік!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Обратимые и необратимые процессы</span>
+            <span class="lang-kz">1. Қайтымды және қайтымсыз процестер</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В механике многие процессы обратимы: маятник качается влево-вправо, планеты вращаются по орбитам, и если мы "перемотаем время назад", это не нарушит законов физики.</span>
+            <span class="lang-kz">Механикада көптеген процестер қайтымды: маятник солға-оңға тербеледі, планеталар орбита бойымен айналады, және егер біз "уақытты кері айналдырсақ", бұл физика заңдарын бұзбайды.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Но в макромире, где триллионы молекул хаотично движутся, все процессы <strong>необратимы</strong>. Тепло всегда переходит от горячего чая к холодному воздуху комнаты. Холодный воздух никогда <em>самопроизвольно</em> не отдаст свое тепло чаю, чтобы тот снова закипел.</span>
+            <span class="lang-kz">Бірақ триллиондаған молекулалар хаосты түрде қозғалатын макроәлемде барлық процестер <strong>қайтымсыз</strong>. Жылу әрқашан ыстық шайдан бөлменің салқын ауасына ауысады. Салқын ауа шай қайтадан қайнап кетуі үшін ешқашан өз жылуын <em>өздігінен</em> оған бермейді.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Второй закон термодинамики</span>
+            <span class="lang-kz">2. Термодинамиканың екінші заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Первый закон термодинамики говорит нам, что энергия сохраняется. Но он ничего не говорит о том, в каком направлении она движется! Эту задачу решает Второй закон термодинамики (формулировка Р. Клаузиуса):</span>
+            <span class="lang-kz">Термодинамиканың бірінші заңы энергияның сақталатынын айтады. Бірақ ол оның қандай бағытта қозғалатыны туралы ештеңе айтпайды! Бұл мәселені Термодинамиканың екінші заңы (Р. Клаузиус тұжырымдамасы) шешеді:</span>
+        </p>
+        
+        <div class="highlight-box">
+            <strong>
+                <span class="lang-ru">Невозможен процесс, единственным результатом которого является передача теплоты от менее нагретого тела к более нагретому.</span>
+                <span class="lang-kz">Жалғыз нәтижесі жылудың азырақ қызған денеден көбірек қызған денеге берілуі болатын процесс мүмкін емес.</span>
+            </strong>
+        </div>
+
+        <p>
+            <span class="lang-ru">Это значит, что природа стремится к <strong>равновесию и хаосу (энтропии)</strong>. Холодильник может охлаждать продукты (передавать тепло от холодного к горячей комнате), но для этого он потребляет электричество (совершает работу). <em>Самопроизвольно</em> это невозможно.</span>
+            <span class="lang-kz">Бұл табиғаттың <strong>тепе-теңдікке және хаосқа (энтропияға)</strong> ұмтылатынын білдіреді. Тоңазытқыш өнімдерді салқындата алады (жылуды салқыннан ыстық бөлмеге береді), бірақ ол үшін ол электр қуатын тұтынады (жұмыс жасайды). <em>Өздігінен</em> бұл мүмкін емес.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Стрела времени</span>
+            <span class="lang-kz">Симуляция: Уақыт жебесі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.95rem; margin-bottom: 10px;">
+                    <span class="lang-ru">Нажмите «Соединить блоки», чтобы увидеть передачу тепла. После наступления равновесия попробуйте заставить тепло вернуться обратно!</span>
+                    <span class="lang-kz">Жылу берілуін көру үшін «Блоктарды қосу» түймесін басыңыз. Тепе-теңдік орнағаннан кейін жылуды кері қайтаруға тырысыңыз!</span>
+                </p>
+
+                <div class="buttons">
+                    <button class="btn-connect" id="btnConnect" onclick="connectBlocks()">
+                        <span class="lang-ru">Соединить блоки (Контакт)</span>
+                        <span class="lang-kz">Блоктарды қосу (Контакт)</span>
+                    </button>
+                    <button class="btn-reverse" id="btnReverse" onclick="tryReverseTime()" disabled>
+                        <span class="lang-ru">&#8986; Обратить время (Вернуть тепло)</span>
+                        <span class="lang-kz">&#8986; Уақытты кері бұру (Жылуды қайтару)</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">Начать заново</span>
+                        <span class="lang-kz">Қайта бастау</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="550" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Тепло всегда перетекает от горячего тела (красное) к холодному (синее), пока их температуры не сравняются. Обратный процесс самопроизвольно невозможен — это и есть суть Второго закона термодинамики!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Олардың температуралары теңелгенше жылу әрқашан ыстық денеден (қызыл) салқын денеге (көк) ағады. Кері процесс өздігінен жүруі мүмкін емес — бұл Термодинамиканың екінші заңының мәні!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Логика)</span>
+                <span class="lang-kz">1-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Внутри холодильника температура +4 &deg;C, а на кухне +25 &deg;C. Холодильник забирает тепло у холодных продуктов и отдает его горячей кухне (через радиатор сзади). Нарушает ли холодильник Второй закон термодинамики?</span>
+                <span class="lang-kz">Тоңазытқыштың ішіндегі температура +4 &deg;C, ал асүйде +25 &deg;C. Тоңазытқыш салқын өнімдерден жылуды алып, оны ыстық асүйге (артқы жағындағы радиатор арқылы) береді. Тоңазытқыш Термодинамиканың екінші заңын бұза ма?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Да, нарушает, поэтому старые холодильники ломаются" data-kz="Иә, бұзады, сондықтан ескі тоңазытқыштар сынып қалады">Да, нарушает, поэтому старые холодильники ломаются</option>
+                    <option value="2" data-ru="Нет. Процесс идет не самопроизвольно, а за счет работы компрессора (затрат электроэнергии)" data-kz="Жоқ. Процесс өздігінен емес, компрессордың жұмысы (электр энергиясының шығыны) есебінен жүреді">Нет. Процесс идет не самопроизвольно, а за счет работы компрессора (затрат электроэнергии)</option>
+                    <option value="3" data-ru="Нарушает, но в технике это разрешено" data-kz="Бұзады, бірақ техникада бұған рұқсат етілген">Нарушает, но в технике это разрешено</option>
+                </select>
+                <button class="btn-connect" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересное видео о том, что такое энтропия, почему время идет только вперед и как Вселенная медленно, но верно движется к хаосу!</span>
+            <span class="lang-kz">Энтропия деген не екені, уақыттың неліктен тек алға жылжитыны және Ғаламның хаосқа қалай баяу, бірақ сенімді түрде бет алғаны туралы қызықты бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B2%D1%82%D0%BE%D1%80%D0%BE%D0%B9+%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D1%82%D0%B5%D1%80%D0%BC%D0%BE%D0%B4%D0%B8%D0%BD%D0%B0%D0%BC%D0%B8%D0%BA%D0%B8+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81+%D1%8D%D0%BD%D1%82%D1%80%D0%BE%D0%BF%D0%B8%D1%8F" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Второй закон термодинамики»</span>
+                  <span class="lang-kz">«Термодинамиканың екінші заңы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что утверждает Второй закон термодинамики (по Клаузиусу)?</span>
+                <span class="lang-kz">1. Термодинамиканың екінші заңы нені растайды (Клаузиус бойынша)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Энергия не создается и не уничтожается</span><span class="lang-kz">Энергия жасалмайды және жойылмайды</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Теплота не может самопроизвольно переходить от холодного тела к горячему</span><span class="lang-kz">Жылу салқын денеден ыстық денеге өздігінен өте алмайды</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Вся теплота может быть полностью превращена в работу</span><span class="lang-kz">Барлық жылу толығымен жұмысқа айналуы мүмкін</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">При абсолютном нуле движение молекул останавливается</span><span class="lang-kz">Абсолют нөлде молекулалардың қозғалысы тоқтайды</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Какой из этих процессов является полностью необратимым?</span>
+                <span class="lang-kz">2. Осы процестердің қайсысы толығымен қайтымсыз болып табылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Остывание горячего чая в комнате</span><span class="lang-kz">Бөлмедегі ыстық шайдың сууы</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Колебания идеального маятника в вакууме</span><span class="lang-kz">Вакуумдегі идеал маятниктің тербелістері</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Движение планет вокруг Солнца</span><span class="lang-kz">Планеталардың Күнді айнала қозғалуы</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Столкновение двух абсолютно упругих бильярдных шаров</span><span class="lang-kz">Екі абсолют серпімді бильярд шарларының соқтығысуы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Если открыть флакон духов, запах распространится по всей комнате. Смогут ли молекулы духов самопроизвольно собраться обратно во флакон?</span>
+                <span class="lang-kz">3. Егер әтір құтысын ашсаңыз, иіс бүкіл бөлмеге тарайды. Әтір молекулалары өздігінен құтыға қайта жинала ала ма?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Да, если подождать достаточно долго</span><span class="lang-kz">Иә, егер жеткілікті ұзақ күтсеңіз</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Да, если понизить температуру в комнате</span><span class="lang-kz">Иә, егер бөлмедегі температураны төмендетсеңіз</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Нет, этот процесс необратим (вероятность этого равна нулю)</span><span class="lang-kz">Жоқ, бұл процесс қайтымсыз (мұның ықтималдығы нөлге тең)</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Да, если включить вентилятор</span><span class="lang-kz">Иә, егер желдеткішті қоссаңыз</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Какое физическое понятие тесно связано со Вторым законом термодинамики и мерой "хаоса" или беспорядка в системе?</span>
+                <span class="lang-kz">4. Қандай физикалық ұғым Термодинамиканың екінші заңымен және жүйедегі "хаос" немесе ретсіздік өлшемімен тығыз байланысты?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Мощность</span><span class="lang-kz">Қуат</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Ускорение</span><span class="lang-kz">Үдеу</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Плотность</span><span class="lang-kz">Тығыздық</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Энтропия</span><span class="lang-kz">Энтропия</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Почему механические часы с маятником в конце концов останавливаются, если их не заводить?</span>
+                <span class="lang-kz">5. Неліктен маятнигі бар механикалық сағаттар бұралмаса, ақырында тоқтап қалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Потому что энергия исчезает (нарушается Первый закон)</span><span class="lang-kz">Өйткені энергия жоғалады (Бірінші заң бұзылады)</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Из-за трения механическая энергия необратимо превращается во внутреннюю (тепловую)</span><span class="lang-kz">Үйкеліс салдарынан механикалық энергия қайтымсыз түрде ішкі (жылу) энергиясына айналады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Потому что теплота переходит от холодного маятника к теплому воздуху</span><span class="lang-kz">Өйткені жылу салқын маятниктен жылы ауаға өтеді</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Гравитация перестает действовать со временем</span><span class="lang-kz">Гравитация уақыт өте келе әсер етуін тоқтатады</span></label>
+            </div>
+        </div>
+
+        <button class="btn-connect" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Верно! Ключевое слово — <em>самопроизвольно</em>. Холодильник использует внешнюю энергию (работу электрического тока), чтобы заставить тепло двигаться «в гору». Без электричества он этого сделать не сможет.",
+            fbA_inc: "Неверно. Подумайте, работает ли холодильник без электричества? Второй закон запрещает именно <em>самопроизвольный</em> переход тепла.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили суть.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            sim_warn: "ВТОРОЙ ЗАКОН ЗАПРЕЩАЕТ!",
+            sim_warn_sub: "Тепло не может самопроизвольно вернуться обратно."
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Негізгі сөз — <em>өздігінен</em>. Тоңазытқыш жылуды «тауға» жылжыту үшін сыртқы энергияны (электр тогының жұмысын) пайдаланады. Электр қуатынсыз ол мұны істей алмайды.",
+            fbA_inc: "Қате. Ойланыңыз, тоңазытқыш электр қуатынсыз жұмыс істей ме? Екінші заң жылудың дәл <em>өздігінен</em> өтуіне тыйым салады.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз мәнін өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            sim_warn: "ЕКІНШІ ЗАҢ ТЫЙЫМ САЛАДЫ!",
+            sim_warn_sub: "Жылу өздігінен кері қайта алмайды."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        if (showWarningTimer > 0) {
+            // Force redraw to update warning language
+            drawScene();
+        }
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let tLeft = 100;
+    let tRight = 0;
+    let isConnected = false;
+    let isReversing = false;
+    let showWarningTimer = 0;
+    let animFrame = null;
+    let particlesLeft = [];
+    let particlesRight = [];
+
+    const boxW = 160;
+    const boxH = 160;
+    const boxY = 100;
+    const leftX = 100;
+    const rightX = 290; // Если соединять, будем сдвигать
+
+    let currentRightX = 290;
+    
+    function initParticles() {
+        particlesLeft = [];
+        particlesRight = [];
+        for(let i=0; i<30; i++) {
+            particlesLeft.push({
+                x: leftX + 10 + Math.random()*(boxW - 20),
+                y: boxY + 10 + Math.random()*(boxH - 20),
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6
+            });
+            particlesRight.push({
+                x: rightX + 10 + Math.random()*(boxW - 20),
+                y: boxY + 10 + Math.random()*(boxH - 20),
+                vx: (Math.random() - 0.5) * 1,
+                vy: (Math.random() - 0.5) * 1
+            });
+        }
+    }
+
+    window.connectBlocks = function() {
+        isConnected = true;
+        document.getElementById('btnConnect').disabled = true;
+        document.getElementById('btnReverse').disabled = false;
+        if (!animFrame) animate();
+    }
+
+    window.tryReverseTime = function() {
+        // Попытка обернуть процесс
+        showWarningTimer = 180; // 3 секунды при 60 fps
+        // Добавим эффект тряски
+        isReversing = true;
+        setTimeout(() => isReversing = false, 500);
+        if (!animFrame) animate();
+    }
+
+    window.resetSim = function() {
+        tLeft = 100;
+        tRight = 0;
+        isConnected = false;
+        currentRightX = 290;
+        showWarningTimer = 0;
+        document.getElementById('btnConnect').disabled = false;
+        document.getElementById('btnReverse').disabled = true;
+        
+        initParticles();
+        if (!animFrame) drawScene();
+    }
+
+    function getColor(temp) {
+        // temp от 0 до 100
+        // 100 = Red (239, 68, 68)
+        // 0 = Blue (14, 165, 233)
+        let r = Math.round(14 + (temp/100) * (239 - 14));
+        let g = Math.round(165 + (temp/100) * (68 - 165));
+        let b = Math.round(233 + (temp/100) * (68 - 233));
+        return `rgb(${r},${g},${b})`;
+    }
+
+    function drawScene() {
+        // Эффект тряски экрана при ошибке 2-го закона
+        let shakeX = 0, shakeY = 0;
+        if (isReversing) {
+            shakeX = (Math.random() - 0.5) * 10;
+            shakeY = (Math.random() - 0.5) * 10;
+        }
+
+        ctx.save();
+        ctx.translate(shakeX, shakeY);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Блок 1 (Левый)
+        ctx.fillStyle = getColor(tLeft);
+        ctx.globalAlpha = 0.8;
+        ctx.fillRect(leftX, boxY, boxW, boxH);
+        
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(leftX, boxY, boxW, boxH);
+        
+        // Термометр левый
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 20px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.round(tLeft)}°C`, leftX + boxW/2, boxY - 15);
+
+        // Блок 2 (Правый)
+        ctx.fillStyle = getColor(tRight);
+        ctx.globalAlpha = 0.8;
+        ctx.fillRect(currentRightX, boxY, boxW, boxH);
+        
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(currentRightX, boxY, boxW, boxH);
+        
+        // Термометр правый
+        ctx.globalAlpha = 1.0;
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 20px monospace';
+        ctx.fillText(`${Math.round(tRight)}°C`, currentRightX + boxW/2, boxY - 15);
+
+        // Отрисовка частиц
+        ctx.fillStyle = '#ffffff';
+        particlesLeft.forEach(p => {
+            let speedMult = 0.2 + (tLeft/100)*1.5;
+            p.x += p.vx * speedMult;
+            p.y += p.vy * speedMult;
+            if(p.x < leftX+5) {p.x = leftX+5; p.vx*=-1;}
+            if(p.x > leftX+boxW-5) {p.x = leftX+boxW-5; p.vx*=-1;}
+            if(p.y < boxY+5) {p.y = boxY+5; p.vy*=-1;}
+            if(p.y > boxY+boxH-5) {p.y = boxY+boxH-5; p.vy*=-1;}
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+        });
+
+        particlesRight.forEach(p => {
+            let speedMult = 0.2 + (tRight/100)*1.5;
+            p.x += p.vx * speedMult;
+            p.y += p.vy * speedMult;
+            if(p.x < currentRightX+5) {p.x = currentRightX+5; p.vx*=-1;}
+            if(p.x > currentRightX+boxW-5) {p.x = currentRightX+boxW-5; p.vx*=-1;}
+            if(p.y < boxY+5) {p.y = boxY+5; p.vy*=-1;}
+            if(p.y > boxY+boxH-5) {p.y = boxY+boxH-5; p.vy*=-1;}
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill();
+        });
+
+        // Стрелки теплопередачи, если соединены
+        if (isConnected && Math.abs(tLeft - tRight) > 1) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            // Рисуем стрелки от левого к правому (т.к. левый горячее)
+            let arrowX = leftX + boxW - 10;
+            ctx.beginPath();
+            ctx.moveTo(arrowX, boxY + boxH/2 - 15);
+            ctx.lineTo(arrowX + 30, boxY + boxH/2);
+            ctx.lineTo(arrowX, boxY + boxH/2 + 15);
+            ctx.fill();
+            
+            // "Energy flow" text
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Q', arrowX + 15, boxY + boxH/2 - 20);
+        }
+
+        // Предупреждение 2-го закона
+        if (showWarningTimer > 0) {
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.9)'; // Красная плашка
+            ctx.fillRect(canvas.width/2 - 200, canvas.height - 70, 400, 60);
+            
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(canvas.width/2 - 200, canvas.height - 70, 400, 60);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px monospace';
+            ctx.fillText(t('sim_warn'), canvas.width/2, canvas.height - 45);
+            
+            ctx.font = '12px sans-serif';
+            ctx.fillText(t('sim_warn_sub'), canvas.width/2, canvas.height - 25);
+        }
+
+        ctx.restore();
+    }
+
+    function animate() {
+        // Сближение блоков
+        if (isConnected && currentRightX > leftX + boxW) {
+            currentRightX -= 2;
+            // Двигаем частицы правого блока вместе с коробкой
+            particlesRight.forEach(p => p.x -= 2);
+        }
+
+        // Теплопередача (закон Ньютона-Рихмана)
+        if (isConnected && currentRightX <= leftX + boxW) {
+            let diff = tLeft - tRight;
+            if (diff > 0.1) {
+                let transfer = diff * 0.02; // Скорость передачи
+                tLeft -= transfer;
+                tRight += transfer;
+            }
+        }
+
+        if (showWarningTimer > 0) {
+            showWarningTimer--;
+        }
+
+        drawScene();
+
+        // Условие продолжения анимации: не достигнуто равновесие, или идет сближение, или висит варнинг
+        if (isConnected && (Math.abs(tLeft - tRight) > 0.1 || currentRightX > leftX + boxW) || showWarningTimer > 0 || isReversing) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = requestAnimationFrame(animate); // Keep particles moving
+        }
+    }
+
+    // Инициализация
+    initParticles();
+    drawScene();
+    animFrame = requestAnimationFrame(animate); // Старт для движения частиц в покое
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

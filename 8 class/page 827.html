@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Постоянные магниты. Магнитное поле — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #3b82f6; /* Синий (Северный полюс N) */
+            --primary-hover: #2563eb;
+            --secondary: #ef4444; /* Красный (Южный полюс S) */
+            --secondary-hover: #dc2626;
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #f1f5f9;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0f172a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .pole-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .pole-n {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .pole-s {
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .toggle-switch input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        button.btn-flip {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button.btn-flip:hover { opacity: 0.9; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #f1f5f9; /* Светлый фон для контраста с темными опилками и синими линиями */
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 420px;
+            cursor: crosshair;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .instruction-badge {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.8);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--text-color); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(59, 130, 246, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(59, 130, 246, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Постоянные магниты. Магнитное поле</span>
+            <span class="lang-kz">Тұрақты магниттер. Магнит өрісі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему компас всегда показывает на север? Как работают магнитики на холодильнике? Невидимое, но очень мощное поле окружает нас повсюду!</span>
+            <span class="lang-kz">Компастың неліктен үнемі солтүстікті көрсететінін білесіз бе? Тоңазытқыштағы магниттер қалай жұмыс істейді? Бізді көзге көрінбейтін, бірақ өте қуатты өріс қоршап тұр!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое постоянный магнит?</span>
+            <span class="lang-kz">1. Тұрақты магнит дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Постоянные магниты</strong> — это тела, длительное время сохраняющие свою намагниченность. Они притягивают к себе железные предметы (а также сталь, никель, кобальт).</span>
+            <span class="lang-kz"><strong>Тұрақты магниттер</strong> — өзінің магниттелуін ұзақ уақыт сақтайтын денелер. Олар өздеріне темір заттарды (сондай-ақ болат, никель, кобальт) тартады.</span>
+        </p>
+        
+        <p>
+            <span class="lang-ru">У любого магнита есть два полюса — места, где магнитное действие проявляется сильнее всего:</span>
+            <span class="lang-kz">Кез келген магниттің екі полюсі болады — бұл магниттік әрекет ең күшті білінетін орындар:</span>
+        </p>
+
+        <div class="pole-box">
+            <div class="pole-n">N</div>
+            <div>
+                <span class="lang-ru"><strong>Северный полюс (North)</strong>. По традиции в школах его окрашивают в <strong>синий</strong> цвет.</span>
+                <span class="lang-kz"><strong>Солтүстік полюс (North)</strong>. Дәстүр бойынша мектептерде оны <strong>көк</strong> түске бояйды.</span>
+            </div>
+        </div>
+
+        <div class="pole-box" style="border-color: var(--secondary);">
+            <div class="pole-s">S</div>
+            <div>
+                <span class="lang-ru"><strong>Южный полюс (South)</strong>. Его окрашивают в <strong>красный</strong> цвет.</span>
+                <span class="lang-kz"><strong>Оңтүстік полюс (South)</strong>. Оны <strong>қызыл</strong> түске бояйды.</span>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Правило взаимодействия полюсов:</strong> Разноименные полюса (N и S) — <strong>притягиваются</strong>. Одноименные (N-N или S-S) — <strong>отталкиваются</strong>.</span>
+            <span class="lang-kz"><strong>Полюстердің өзара әрекеттесу ережесі:</strong> Әраттас полюстер (N және S) — <strong>тартылады</strong>. Аттас полюстер (N-N немесе S-S) — <strong>тебіледі</strong>.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Магнитное поле и его линии</span>
+            <span class="lang-kz">2. Магнит өрісі және оның сызықтары</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Магниты действуют друг на друга на расстоянии. Это происходит потому, что вокруг любого магнита существует особый вид материи — <strong>магнитное поле</strong>.</span>
+            <span class="lang-kz">Магниттер бір-біріне қашықтықтан әсер етеді. Бұл кез келген магниттің айналасында материяның ерекше түрі — <strong>магнит өрісі</strong> болатындықтан орын алады.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Чтобы увидеть это невидимое поле, Майкл Фарадей предложил использовать <strong>магнитные силовые линии</strong>. Если насыпать вокруг магнита железные опилки, они выстроятся вдоль этих линий!</span>
+            <span class="lang-kz">Осы көрінбейтін өрісті көру үшін Майкл Фарадей <strong>магниттік күш сызықтарын</strong> пайдалануды ұсынды. Егер магниттің айналасына темір ұнтақтарын сепсе, олар осы сызықтардың бойымен орналасады!</span>
+        </p>
+        <div class="highlight-box" style="background-color: rgba(59, 130, 246, 0.05);">
+            <span class="lang-ru"><strong>Важное правило:</strong> Магнитные линии всегда <strong>выходят из Северного полюса (N)</strong> и <strong>входят в Южный полюс (S)</strong>. Они непрерывны и замкнуты (внутри магнита они идут от S к N).</span>
+            <span class="lang-kz"><strong>Маңызды ереже:</strong> Магниттік сызықтар әрқашан <strong>Солтүстік полюстен (N) шығып</strong>, <strong>Оңтүстік полюске (S) кіреді</strong>. Олар үзіліссіз және тұйықталған (магниттің ішінде олар S-тен N-ге қарай жүреді).</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Исследование магнитного поля</span>
+            <span class="lang-kz">Симуляция: Магнит өрісін зерттеу</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Водите мышкой по экрану, чтобы перемещать огромный компас. Обратите внимание на то, как линии магнитного поля выходят из Севера!</span>
+                    <span class="lang-kz">Алып компасты жылжыту үшін экран бойынша тінтуірді жүргізіңіз. Магнит өрісінің сызықтары Солтүстіктен қалай шығатынына назар аударыңыз!</span>
+                </p>
+
+                <label class="toggle-switch">
+                    <input type="checkbox" id="cbGrid" onchange="drawScene()" checked>
+                    <span>
+                        <span class="lang-ru">Железные опилки (уплотнения)</span>
+                        <span class="lang-kz">Темір ұнтақтары (тығыздалулар)</span>
+                    </span>
+                </label>
+
+                <label class="toggle-switch">
+                    <input type="checkbox" id="cbContinuous" onchange="drawScene()" checked>
+                    <span>
+                        <span class="lang-ru">Непрерывные линии из Севера</span>
+                        <span class="lang-kz">Солтүстіктен шығатын үздіксіз сызықтар</span>
+                    </span>
+                </label>
+
+                <label class="toggle-switch">
+                    <input type="checkbox" id="cbArrows" onchange="drawScene()" checked>
+                    <span>
+                        <span class="lang-ru">Стрелки направления</span>
+                        <span class="lang-kz">Бағыт көрсеткіштері</span>
+                    </span>
+                </label>
+
+                <button class="btn-flip" onclick="flipMagnet()">
+                    <span class="lang-ru">🔄 Поменять полюса (N ↔ S)</span>
+                    <span class="lang-kz">🔄 Полюстерді ауыстыру (N ↔ S)</span>
+                </button>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <div class="instruction-badge">
+                    <span class="lang-ru">Водите мышкой по экрану!</span>
+                    <span class="lang-kz">Экран бойынша тінтуірді жүргізіңіз!</span>
+                </div>
+                <canvas id="simCanvas" width="550" height="420"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Линии поля гуще всего у полюсов магнита (где поле самое сильное). Они образуют замкнутые кривые, направленные от Северного (синего) полюса к Южному (красному). Компас всегда выстраивается по касательной к этим линиям!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Өріс сызықтары магнит полюстерінде ең қалың болады (мұнда өріс ең күшті). Олар Солтүстік (көк) полюстен Оңтүстікке (қызылға) бағытталған тұйық қисықтарды құрайды. Компас әрқашан осы сызықтарға жанама бойымен орналасады!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Взаимодействие компаса)</span>
+                <span class="lang-kz">1-тапсырма (Компастың өзара әрекеттесуі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Если вы поднесете <strong>Северный</strong> (синий) полюс полосового магнита к компасу, куда повернется его стрелка?</span>
+                <span class="lang-kz">Егер сіз жолақ магниттің <strong>Солтүстік</strong> (көк) полюсін компасқа жақындатсаңыз, оның тілі қайда бұрылады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="К магниту повернется Северный (синий) конец стрелки" data-kz="Магнитке тілдің Солтүстік (көк) ұшы бұрылады">К магниту повернется Северный (синий) конец стрелки</option>
+                    <option value="2" data-ru="К магниту повернется Южный (красный) конец стрелки" data-kz="Магнитке тілдің Оңтүстік (қызыл) ұшы бұрылады">К магниту повернется Южный (красный) конец стрелки</option>
+                    <option value="3" data-ru="Стрелка компаса будет вращаться бесконечно" data-kz="Компас тілі шексіз айналатын болады">Стрелка компаса будет вращаться бесконечно</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Земля как магнит)</span>
+                <span class="lang-kz">2-тапсырма (Жер магнит ретінде)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Стрелка компаса (ее северный синий конец) всегда показывает на Северный географический полюс Земли. Что находится там с точки зрения магнитных полей?</span>
+                <span class="lang-kz">Компас тілі (оның солтүстік көк ұшы) үнемі Жердің Солтүстік географиялық полюсін көрсетеді. Магнит өрістері тұрғысынан алғанда онда не орналасқан?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Магнитный Северный полюс Земли" data-kz="Жердің магниттік Солтүстік полюсі">Магнитный Северный полюс Земли</option>
+                    <option value="2" data-ru="Магнитный Южный полюс Земли (он притягивает синюю стрелку компаса)" data-kz="Жердің магниттік Оңтүстік полюсі (ол компастың көк тілін тартады)">Магнитный Южный полюс Земли (он притягивает синюю стрелку компаса)</option>
+                    <option value="3" data-ru="Огромный железный метеорит" data-kz="Орасан зор темір метеорит">Огромный железный метеорит</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите, как красиво выстраиваются реальные металлические опилки вокруг мощных неодимовых магнитов!</span>
+            <span class="lang-kz">Қуатты неодим магниттерінің айналасында нақты металл ұнтақтарының қандай әдемі орналасатынын қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BC%D0%B0%D0%B3%D0%BD%D0%B8%D1%82%D0%BD%D0%BE%D0%B5+%D0%BF%D0%BE%D0%BB%D0%B5+%D0%BF%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%BD%D1%8B%D1%85+%D0%BC%D0%B0%D0%B3%D0%BD%D0%B8%D1%82%D0%BE%D0%B2+%D0%BE%D0%BF%D1%8B%D1%82" target="_blank">
+                ▶ <span class="lang-ru">Найти видео «Опыты с магнитными полями»</span>
+                  <span class="lang-kz">«Магнит өрістерімен тәжірибелер» бейнесін табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Как направлены магнитные линии постоянного магнита вне его тела?</span>
+                <span class="lang-kz">1. Тұрақты магниттің магниттік сызықтары оның денесінен тыс қалай бағытталған?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Выходят из Южного полюса и входят в Северный</span><span class="lang-kz">Оңтүстік полюстен шығып, Солтүстік полюске кіреді</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Выходят из Северного полюса (N) и входят в Южный (S)</span><span class="lang-kz">Солтүстік полюстен (N) шығып, Оңтүстік полюске (S) кіреді</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Они никуда не направлены, просто висят в пространстве</span><span class="lang-kz">Олар ешқайда бағытталмаған, кеңістікте жай ілініп тұрады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Что произойдет, если поднести друг к другу два магнита Северными (синими) полюсами?</span>
+                <span class="lang-kz">2. Екі магнитті Солтүстік (көк) полюстерімен бір-біріне жақындатса не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Они оттолкнутся (одноименные полюса отталкиваются)</span><span class="lang-kz">Олар тебіледі (аттас полюстер тебіледі)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Они притянутся</span><span class="lang-kz">Олар тартылады</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Ничего не произойдет</span><span class="lang-kz">Ештеңе болмайды</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Если сломать полосовой магнит пополам, что получится?</span>
+                <span class="lang-kz">3. Егер жолақ магнитті қақ бөлсе, не шығады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Один кусок будет только Северным полюсом, другой — только Южным</span><span class="lang-kz">Бір бөлігі тек Солтүстік полюс, екіншісі — тек Оңтүстік болады</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Оба куска потеряют магнитные свойства</span><span class="lang-kz">Екі бөлігі де магниттік қасиеттерін жоғалтады</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Получатся два новых магнита, у каждого будет и Северный, и Южный полюс</span><span class="lang-kz">Екі жаңа магнит шығады, әрқайсысында Солтүстік және Оңтүстік полюс болады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Какие вещества лучше всего притягиваются магнитом?</span>
+                <span class="lang-kz">4. Магнитке қандай заттар ең жақсы тартылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Алюминий, медь, золото</span><span class="lang-kz">Алюминий, мыс, алтын</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Железо, сталь, никель, кобальт</span><span class="lang-kz">Темір, болат, никель, кобальт</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Пластик, дерево, стекло</span><span class="lang-kz">Пластик, ағаш, шыны</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Каким полюсом магнита является Географический Северный полюс Земли?</span>
+                <span class="lang-kz">5. Жердің Географиялық Солтүстік полюсі магниттің қай полюсі болып табылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Магнитным Южным полюсом (поэтому он притягивает к себе северную стрелку компаса)</span><span class="lang-kz">Магниттік Оңтүстік полюс (сондықтан ол компастың солтүстік тілін өзіне тартады)</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Магнитным Северным полюсом</span><span class="lang-kz">Магниттік Солтүстік полюс</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Там нет магнитного поля</span><span class="lang-kz">Онда магнит өрісі жоқ</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Верно! Противоположности притягиваются. Синий (Северный) полюс магнита притянет к себе Красный (Южный) конец стрелки компаса.",
+            fbA_inc: "Неверно. Вспомните правило: одноименные полюса отталкиваются, а разноименные притягиваются. К синему (N) потянется красный (S).",
+            fbB_corr: "Абсолютно правильно! Раз синяя (Северная) стрелка компаса тянется туда, значит на севере планеты находится гигантский Южный магнитный полюс Земли. Они перевернуты!",
+            fbB_inc: "Неверно. Северная стрелка компаса может притягиваться только к Южному полюсу магнита. Земля — это магнит, перевернутый «вверх ногами» относительно географии.",
+            test_ok: "Отличный результат: {s} из {t}! Теперь вы знаете все тайны магнитных полей.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_n: "N",
+            lbl_s: "S"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Қарама-қарсы полюстер тартылады. Магниттің көк (Солтүстік) полюсі компас тілінің қызыл (Оңтүстік) ұшын өзіне тартады.",
+            fbA_inc: "Қате. Ережені есіңізге түсіріңіз: аттас полюстер тебіледі, ал әраттас полюстер тартылады. Көкке (N) қызыл (S) тартылады.",
+            fbB_corr: "Өте дұрыс! Компастың көк (Солтүстік) тілі сол жаққа тартылып тұрса, демек планетаның солтүстігінде Жердің орасан зор Оңтүстік магниттік полюсі орналасқан. Олар төңкерілген!",
+            fbB_inc: "Қате. Компастың солтүстік тілі тек магниттің Оңтүстік полюсіне ғана тартыла алады. Жер — географияға қатысты «бас төмен» төңкерілген магнит.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Енді сіз магнит өрістерінің барлық құпияларын білесіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_n: "N",
+            lbl_s: "S"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние симуляции
+    let isFlipped = false; // N слева (false) или справа (true)
+    let mouseX = 275;
+    let mouseY = 80; // Начальная позиция компаса сверху
+    
+    // Размеры магнита
+    const magW = 180;
+    const magH = 46;
+    
+    // Сетка опилок (железные опилки с сильным уплотнением у полюсов)
+    let gridParticles = [];
+    const cx_mag = 275;
+    const cy_mag = 210;
+    const poleD = magW / 2 - 5;
+    
+    // 1. Легкий фон (разреженные опилки вдалеке от магнита)
+    for(let i=0; i<600; i++) {
+        gridParticles.push({
+            x: Math.random() * 550,
+            y: Math.random() * 420
+        });
+    }
+    
+    // 2. Сверхсильное уплотнение у левого и правого полюсов (эффект густой "бороды")
+    for (let i = 0; i < 1200; i++) {
+        let angle1 = Math.random() * Math.PI * 2;
+        let rad1 = Math.pow(Math.random(), 3) * 180; 
+        gridParticles.push({
+            x: (cx_mag - poleD) + Math.cos(angle1) * rad1,
+            y: cy_mag + Math.sin(angle1) * rad1
+        });
+        
+        let angle2 = Math.random() * Math.PI * 2;
+        let rad2 = Math.pow(Math.random(), 3) * 180;
+        gridParticles.push({
+            x: (cx_mag + poleD) + Math.cos(angle2) * rad2,
+            y: cy_mag + Math.sin(angle2) * rad2
+        });
+    }
+
+    // 3. Небольшое уплотнение вдоль тела магнита (показываем огибающие линии)
+    for (let i = 0; i < 400; i++) {
+        let x = cx_mag + (Math.random() - 0.5) * magW;
+        let yOffset = Math.pow(Math.random(), 2) * 90;
+        gridParticles.push({
+            x: x,
+            y: cy_mag + (Math.random() > 0.5 ? 1 : -1) * (magH/2 + yOffset)
+        });
+    }
+
+    // Слушатели мыши
+    function updateMousePos(evt) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        let clientX = evt.clientX;
+        let clientY = evt.clientY;
+        
+        if (evt.touches && evt.touches.length > 0) {
+            clientX = evt.touches[0].clientX;
+            clientY = evt.touches[0].clientY;
+            evt.preventDefault(); 
+        }
+
+        mouseX = (clientX - rect.left) * scaleX;
+        mouseY = (clientY - rect.top) * scaleY;
+        
+        // Скрываем бейдж подсказки при первом движении
+        const badge = document.querySelector('.instruction-badge');
+        if (badge && badge.style.display !== 'none') {
+            badge.style.display = 'none';
+        }
+
+        drawScene();
+    }
+
+    canvas.addEventListener('mousemove', updateMousePos);
+    canvas.addEventListener('touchmove', updateMousePos, {passive: false});
+    canvas.addEventListener('touchstart', updateMousePos, {passive: false});
+
+    window.flipMagnet = function() {
+        isFlipped = !isFlipped;
+        drawScene();
+    }
+
+    // Физика магнитного диполя
+    function getBField(x, y) {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        let pDist = magW / 2 - 10;
+        let pN = { x: isFlipped ? cx + pDist : cx - pDist, y: cy };
+        let pS = { x: isFlipped ? cx - pDist : cx + pDist, y: cy };
+
+        let dxN = x - pN.x;
+        let dyN = y - pN.y;
+        let rN = Math.sqrt(dxN*dxN + dyN*dyN);
+        if(rN < 5) rN = 5;
+
+        let dxS = x - pS.x;
+        let dyS = y - pS.y;
+        let rS = Math.sqrt(dxS*dxS + dyS*dyS);
+        if(rS < 5) rS = 5;
+
+        let magN = 1000 / Math.pow(rN, 1.8);
+        let vn_x = (dxN / rN) * magN;
+        let vn_y = (dyN / rN) * magN;
+
+        let magS = 1000 / Math.pow(rS, 1.8);
+        let vs_x = (-dxS / rS) * magS;
+        let vs_y = (-dyS / rS) * magS;
+
+        return {
+            x: vn_x + vs_x,
+            y: vn_y + vs_y
+        };
+    }
+
+    function drawContinuousLines(context, cx, cy, flipped) {
+        let pDist = magW / 2 - 10;
+        let pN = { x: flipped ? cx + pDist : cx - pDist, y: cy };
+        let pS = { x: flipped ? cx - pDist : cx + pDist, y: cy };
+
+        context.lineWidth = 2.5;
+        context.strokeStyle = 'rgba(2, 132, 199, 0.75)'; // Голубой (как на фото)
+        let arrowColor = '#0f172a'; // Темно-серый для стрелок
+
+        let numLines = 22; // Количество выходящих линий
+        let step = 4;
+        let maxSteps = 400;
+
+        for (let i = 0; i < numLines; i++) {
+            let angle = (i / numLines) * Math.PI * 2;
+            let startX = pN.x + Math.cos(angle) * 15;
+            let startY = pN.y + Math.sin(angle) * 15;
+
+            // Пропускаем линии, которые уходят сразу внутрь магнита
+            if (!flipped && startX > pN.x + 5) continue;
+            if (flipped && startX < pN.x - 5) continue;
+
+            context.beginPath();
+            context.moveTo(startX, startY);
+
+            let x = startX;
+            let y = startY;
+
+            for (let s = 0; s < maxSteps; s++) {
+                let B = getBField(x, y);
+                let Bmag = Math.sqrt(B.x*B.x + B.y*B.y);
+                if (Bmag < 0.0001) break;
+
+                x += (B.x / Bmag) * step;
+                y += (B.y / Bmag) * step;
+
+                context.lineTo(x, y);
+
+                // Рисуем стрелки-указатели на линии
+                if (document.getElementById('cbArrows').checked) {
+                    if (s === 15 || s === 60 || s === 150 || s === 280) {
+                        context.stroke(); // Сбрасываем путь до стрелки
+                        
+                        context.save();
+                        context.translate(x, y);
+                        context.rotate(Math.atan2(B.y, B.x));
+                        context.fillStyle = arrowColor;
+                        context.beginPath();
+                        context.moveTo(0, 0);
+                        context.lineTo(-9, -5);
+                        context.lineTo(-9, 5);
+                        context.fill();
+                        context.restore();
+                        
+                        context.beginPath();
+                        context.moveTo(x, y); // Возобновляем линию
+                    }
+                }
+
+                // Достигли южного полюса - прекращаем
+                let distToS = Math.sqrt((x - pS.x)**2 + (y - pS.y)**2);
+                if (distToS < 15) break; 
+
+                // Вышли за пределы экрана - прекращаем
+                if (x < -200 || x > canvas.width + 200 || y < -200 || y > canvas.height + 200) break;
+            }
+            context.stroke();
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        
+        let showGrid = document.getElementById('cbGrid').checked;
+        let showContinuous = document.getElementById('cbContinuous').checked;
+        let showArrows = document.getElementById('cbArrows').checked;
+
+        // 1. Рисуем непрерывные силовые линии
+        if (showContinuous) {
+            drawContinuousLines(ctx, cx, cy, isFlipped);
+        }
+
+        // 2. Рисуем сетку опилок/штрихов
+        if (showGrid) {
+            gridParticles.forEach(p => {
+                if (Math.abs(p.x - cx) < magW/2 && Math.abs(p.y - cy) < magH/2) return;
+
+                let B = getBField(p.x, p.y);
+                let angle = Math.atan2(B.y, B.x);
+                let mag = Math.sqrt(B.x*B.x + B.y*B.y);
+                
+                let len = Math.min(24, Math.max(6, mag * 2.2));
+                
+                ctx.translate(p.x, p.y);
+                ctx.rotate(angle);
+                
+                let alpha = Math.min(0.85, mag * 0.15 + 0.1);
+                let thickness = Math.min(4, Math.max(1, mag * 0.6));
+                ctx.strokeStyle = `rgba(15, 23, 42, ${alpha})`;
+                ctx.lineWidth = thickness;
+                
+                ctx.beginPath();
+                ctx.moveTo(-len/2, 0);
+                ctx.lineTo(len/2, 0);
+                ctx.stroke();
+
+                if (showArrows && mag > 0.6 && !showContinuous) {
+                    ctx.beginPath();
+                    ctx.moveTo(len/2, 0);
+                    ctx.lineTo(len/2 - 4, -3);
+                    ctx.lineTo(len/2 - 4, 3);
+                    ctx.fillStyle = `rgba(15, 23, 42, ${alpha})`;
+                    ctx.fill();
+                }
+
+                ctx.rotate(-angle);
+                ctx.translate(-p.x, -p.y);
+            });
+        }
+
+        // 3. Рисуем полосовой магнит
+        ctx.save();
+        ctx.translate(cx, cy);
+        
+        let colorLeft = isFlipped ? '#ef4444' : '#3b82f6';
+        let colorRight = isFlipped ? '#3b82f6' : '#ef4444';
+        let lblLeft = isFlipped ? 'S' : 'N';
+        let lblRight = isFlipped ? 'N' : 'S';
+
+        ctx.fillStyle = colorLeft;
+        ctx.fillRect(-magW/2, -magH/2, magW/2, magH);
+        
+        ctx.fillStyle = colorRight;
+        ctx.fillRect(0, -magH/2, magW/2, magH);
+
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-magW/2, -magH/2, magW, magH);
+
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(lblLeft, -magW/4, 0);
+        ctx.fillText(lblRight, magW/4, 0);
+
+        ctx.restore();
+
+        // 4. Рисуем интерактивный компас в позиции мыши
+        let B_mouse = getBField(mouseX, mouseY);
+        let compassAngle = Math.atan2(B_mouse.y, B_mouse.x);
+        
+        ctx.save();
+        ctx.translate(mouseX, mouseY);
+        
+        // Корпус компаса (УВЕЛИЧЕН ДО 36px)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, 36, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.rotate(compassAngle);
+        
+        // Южный (красный) конец стрелки (левая часть)
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(0, -7);
+        ctx.lineTo(-28, 0);
+        ctx.lineTo(0, 7);
+        ctx.fill();
+
+        // Северный (синий) конец стрелки (правая часть)
+        ctx.fillStyle = '#3b82f6';
+        ctx.beginPath();
+        ctx.moveTo(0, -7);
+        ctx.lineTo(28, 0);
+        ctx.lineTo(0, 7);
+        ctx.fill();
+        
+        // Центральная ось
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(0, 0, 5, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    // Инициализация
+    setTimeout(drawScene, 100);
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

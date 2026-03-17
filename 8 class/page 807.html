@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уравнение теплового баланса — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f3f4f6; /* Светло-серый (баланс/смешивание) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #8b5cf6; /* Фиолетовый (смесь красного и синего) */
+            --primary-hover: #7c3aed;
+            --hot: #ef4444; /* Красный (горячее) */
+            --cold: #3b82f6; /* Синий (холодное) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #ddd6fe;
+            --text-muted: #64748b;
+            --formula-bg: #f5f3ff;
+            --metal-color: #94a3b8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #2e1065;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .color-hot { color: var(--hot); font-weight: bold; }
+        .color-cold { color: var(--cold); font-weight: bold; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="range"] {
+            padding: 8px 0;
+            accent-color: var(--primary);
+        }
+        
+        #waterTemp { accent-color: var(--cold); }
+        #metalTemp { accent-color: var(--hot); }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+        button:active { transform: scale(0.97); }
+        button.btn-reset { background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #1e293b; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(139, 92, 246, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(139, 92, 246, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Применение уравнения теплового баланса</span>
+            <span class="lang-kz">Жылулық баланс теңдеуін қолдану</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Что будет, если в холодную воду бросить раскаленную железную подкову? Одно тело нагреется, другое остынет, и их температуры сравняются. Закон сохранения энергии в действии!</span>
+            <span class="lang-kz">Суық суға қызып тұрған темір тағаны салса не болады? Бір дене қызады, екіншісі суиды және олардың температуралары теңеседі. Энергияның сақталу заңы іс жүзінде!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Тепловое равновесие</span>
+            <span class="lang-kz">1. Жылулық тепе-теңдік</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если два тела с разной температурой привести в контакт (например, смешать горячую и холодную воду), то начнется процесс теплопередачи. Он будет идти до тех пор, пока температуры тел не станут одинаковыми. Это состояние называется <strong>тепловым равновесием</strong>.</span>
+            <span class="lang-kz">Егер температурасы әртүрлі екі денені жанастырсақ (мысалы, ыстық және суық суды араластыру), жылу берілу процесі басталады. Ол денелердің температуралары бірдей болғанша жалғасады. Бұл күй <strong>жылулық тепе-теңдік</strong> деп аталады.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Общую температуру смеси принято обозначать как <span class="math-symbol">t<sub>см</sub></span>.</span>
+            <span class="lang-kz">Қоспаның жалпы температурасын <span class="math-symbol">t<sub>қос</sub></span> деп белгілеу қабылданған.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Уравнение теплового баланса</span>
+            <span class="lang-kz">2. Жылулық баланс теңдеуі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">По закону сохранения энергии, в изолированной системе (где тепло не уходит в окружающую среду) количество теплоты, отданное горячими телами, в точности равно количеству теплоты, полученному холодными телами.</span>
+            <span class="lang-kz">Энергияның сақталу заңы бойынша оқшауланған жүйеде (жылу қоршаған ортаға кетпейтін жерде) ыстық денелер берген жылу мөлшері салқын денелер алған жылу мөлшеріне дәл тең болады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="math-formula">Q<sub class="color-hot">отданное</sub> = Q<sub class="color-cold">полученное</sub></span>
+            
+            <span class="lang-ru">Или в развернутом виде для двух тел:</span>
+            <span class="lang-kz">Немесе екі дене үшін толық түрде:</span>
+            
+            <span class="math-formula">c<sub>1</sub>m<sub>1</sub>(t<sub>1</sub> - t<sub>см</sub>) = c<sub>2</sub>m<sub>2</sub>(t<sub>см</sub> - t<sub>2</sub>)</span>
+            
+            <span class="lang-ru" style="font-size:0.9rem;">Где индекс 1 относится к <span class="color-hot">горячему</span> телу, а индекс 2 — к <span class="color-cold">холодному</span>. Мы всегда вычитаем из большей температуры меньшую, чтобы Q было положительным.</span>
+            <span class="lang-kz" style="font-size:0.9rem;">Мұндағы 1 индексі <span class="color-hot">ыстық</span> денеге, ал 2 индексі <span class="color-cold">салқын</span> денеге қатысты. Q оң болуы үшін біз әрқашан үлкен температурадан кіші температураны азайтамыз.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Виртуальный калориметр</span>
+            <span class="lang-kz">Симуляция: Виртуалды калориметр</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru color-cold">💧 Вода (Холодное тело):</span>
+                        <span class="lang-kz color-cold">💧 Су (Салқын дене):</span>
+                    </label>
+                    <div style="display:flex; justify-content:space-between; font-size: 0.9rem;">
+                        <span><span class="lang-ru">Масса: </span><span class="lang-kz">Масса: </span><span id="wmVal">1</span> кг</span>
+                    </div>
+                    <input type="range" id="waterMass" min="0.5" max="3" step="0.5" value="1">
+                    
+                    <div style="display:flex; justify-content:space-between; font-size: 0.9rem; margin-top:5px;">
+                        <span><span class="lang-ru">Температура: </span><span class="lang-kz">Температура: </span><span id="wtVal">20</span> &deg;C</span>
+                    </div>
+                    <input type="range" id="waterTemp" min="0" max="40" step="5" value="20">
+                </div>
+
+                <hr style="border-color: var(--border);">
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru color-hot">🧱 Железо (Горячее тело):</span>
+                        <span class="lang-kz color-hot">🧱 Темір (Ыстық дене):</span>
+                    </label>
+                    <div style="display:flex; justify-content:space-between; font-size: 0.9rem;">
+                        <span><span class="lang-ru">Масса: </span><span class="lang-kz">Масса: </span><span id="mmVal">2</span> кг</span>
+                    </div>
+                    <input type="range" id="metalMass" min="1" max="5" step="0.5" value="2">
+                    
+                    <div style="display:flex; justify-content:space-between; font-size: 0.9rem; margin-top:5px;">
+                        <span><span class="lang-ru">Температура: </span><span class="lang-kz">Температура: </span><span id="mtVal">200</span> &deg;C</span>
+                    </div>
+                    <input type="range" id="metalTemp" min="50" max="300" step="10" value="200">
+                </div>
+
+                <div class="buttons">
+                    <button id="btnDrop" onclick="startMixing()">
+                        <span class="lang-ru">Опустить железо в воду</span>
+                        <span class="lang-kz">Темірді суға салу</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()" style="width: auto;">
+                        &#8634;
+                    </button>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Наблюдение:</strong> Теплоемкость воды (4200) почти в 10 раз больше железа (460). Поэтому даже тяжелый раскаленный кусок железа нагреет воду совсем немного. Убедитесь в этом с помощью симуляции!</span>
+                <span class="lang-kz"><strong>Бақылау:</strong> Судың жылусыйымдылығы (4200) темірден (460) 10 еседей үлкен. Сондықтан тіпті ауыр қызған темір кесегі де суды өте аз қыздырады. Бұған симуляция арқылы көз жеткізіңіз!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Смесь)</span>
+                <span class="lang-kz">1-тапсырма (Қоспа)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В ванну налили <strong>100 кг холодной воды</strong> при 10 &deg;C и добавили <strong>100 кг горячей воды</strong> при 50 &deg;C. Какая температура установится в ванне? <br><em>(Подсказка: если смешать одинаковые массы одного и того же вещества, температура будет ровно посередине).</em></span>
+                <span class="lang-kz">Ваннаға 10 &deg;C-та <strong>100 кг салқын су</strong> және 50 &deg;C-та <strong>100 кг ыстық су</strong> құйды. Ваннада қандай температура орнайды? <br><em>(Көмек: бірдей заттың бірдей массаларын араластырсақ, температура дәл ортасында болады).</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в &deg;C" data-placeholder-kz="Жауап &deg;C-пен" placeholder="Ответ в &deg;C">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">В реальном эксперименте количество теплоты, полученное холодной водой, всегда <strong>чуть меньше</strong> количества теплоты, отданного горячим телом. Почему?</span>
+                <span class="lang-kz">Нақты экспериментте салқын су алған жылу мөлшері әрқашан ыстық дене берген жылу мөлшерінен <strong>сәл аз</strong> болады. Неліктен?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Часть тепла уходит на нагрев сосуда (калориметра) и окружающего воздуха" data-kz="Жылудың бір бөлігі ыдысты (калориметрді) және қоршаған ауаны жылытуға кетеді">Часть тепла уходит на нагрев сосуда (калориметра) и окружающего воздуха</option>
+                    <option value="2" data-ru="Закон сохранения энергии работает не всегда" data-kz="Энергияның сақталу заңы әрқашан жұмыс істей бермейді">Закон сохранения энергии работает не всегда</option>
+                    <option value="3" data-ru="Горячее тело остывает быстрее, чем нагревается вода" data-kz="Ыстық дене су қызғанға қарағанда тезірек суиды">Горячее тело остывает быстрее, чем нагревается вода</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы научиться оформлять и решать задачи на уравнение теплового баланса шаг за шагом!</span>
+            <span class="lang-kz">Жылулық баланс теңдеуіне есептерді кезең-кезеңімен ресімдеуді және шығаруды үйрену үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%83%D1%80%D0%B0%D0%B2%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5+%D1%82%D0%B5%D0%BF%D0%BB%D0%BE%D0%B2%D0%BE%D0%B3%D0%BE+%D0%B1%D0%B0%D0%BB%D0%B0%D0%BD%D1%81%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Уравнение теплового баланса»</span>
+                  <span class="lang-kz">«Жылулық баланс теңдеуі» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Что утверждает уравнение теплового баланса для изолированной системы?</span>
+                <span class="lang-kz">1. Оқшауланған жүйе үшін жылулық баланс теңдеуі нені тұжырымдайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Количество отданной теплоты равно количеству полученной теплоты</span><span class="lang-kz">Берілген жылу мөлшері алынған жылу мөлшеріне тең</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Внутренняя энергия всех тел всегда равна нулю</span><span class="lang-kz">Барлық денелердің ішкі энергиясы әрқашан нөлге тең</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Температура всех тел сохраняется постоянной</span><span class="lang-kz">Барлық денелердің температурасы тұрақты сақталады</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Горячее тело отдает больше энергии, чем получает холодное</span><span class="lang-kz">Ыстық дене салқын дене алатын энергиядан көбірек энергия береді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Как называется состояние, при котором температуры соприкасающихся тел становятся равными?</span>
+                <span class="lang-kz">2. Жанасатын денелердің температуралары тең болатын күй қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Химическое равновесие</span><span class="lang-kz">Химиялық тепе-теңдік</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Тепловое равновесие</span><span class="lang-kz">Жылулық тепе-теңдік</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Механическое равновесие</span><span class="lang-kz">Механикалық тепе-теңдік</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Абсолютный ноль</span><span class="lang-kz">Абсолют нөл</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Как называется прибор, применяемый на уроках физики для изоляции тел от окружающей среды при измерении теплоемкости?</span>
+                <span class="lang-kz">3. Жылусыйымдылықты өлшеу кезінде денелерді қоршаған ортадан оқшаулау үшін физика сабақтарында қолданылатын құрал қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Термометр</span><span class="lang-kz">Термометр</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Барометр</span><span class="lang-kz">Барометр</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Калориметр</span><span class="lang-kz">Калориметр</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Динамометр</span><span class="lang-kz">Динамометр</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Смешали 1 кг воды при 20 °C и 1 кг воды при 80 °C. Какая установится температура (потерь нет)?</span>
+                <span class="lang-kz">4. 20 °C-тағы 1 кг суды және 80 °C-тағы 1 кг суды араластырды. Қандай температура орнайды (шығындар жоқ)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">100 °C</span><span class="lang-kz">100 °C</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">40 °C</span><span class="lang-kz">40 °C</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">60 °C</span><span class="lang-kz">60 °C</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">50 °C</span><span class="lang-kz">50 °C</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Кусок железа (c=460) и кусок алюминия (c=920) одинаковой массы охладили на одинаковое число градусов. Кто из них отдал больше тепла?</span>
+                <span class="lang-kz">5. Массалары бірдей темір кесегі (c=460) мен алюминий кесегін (c=920) бірдей градусқа суытты. Олардың қайсысы көбірек жылу берді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Железо</span><span class="lang-kz">Темір</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Алюминий</span><span class="lang-kz">Алюминий</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Одинаково</span><span class="lang-kz">Бірдей</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Зависит от начальной температуры</span><span class="lang-kz">Бастапқы температураға байланысты</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! (10 + 50) / 2 = 30 &deg;C. Это работает так просто только для равных масс одного вещества.",
+            fbA_inc: "Неверно. Поскольку массы равны и вещество одно и то же (вода), температура установится ровно посередине между 10 и 50.",
+            fbB_corr: "Верно! Сосуд, в котором происходит смешивание, тоже нагревается и забирает часть энергии горячего тела.",
+            fbB_inc: "Неверно. Подумайте: вода же находится в чем-то? Этот стакан или калориметр тоже меняет свою температуру.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_drop: "Опустить железо в воду",
+            btn_mixing: "Смешивание...",
+            lbl_water: "Вода",
+            lbl_metal: "Железо",
+            lbl_mix: "Смесь"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! (10 + 50) / 2 = 30 &deg;C. Бұл бір заттың бірдей массалары үшін ғана осылай оңай жұмыс істейді.",
+            fbA_inc: "Қате. Массалары тең және зат бірдей (су) болғандықтан, температура 10 мен 50-дің дәл ортасында орнайды.",
+            fbB_corr: "Дұрыс! Араластыру жүретін ыдыс та қызады және ыстық дененің энергиясының бір бөлігін алады.",
+            fbB_inc: "Қате. Ойланыңыз: су бірдеңенің ішінде ғой? Бұл стақан немесе калориметр де өзінің температурасын өзгертеді.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_drop: "Темірді суға салу",
+            btn_mixing: "Араласу...",
+            lbl_water: "Су",
+            lbl_metal: "Темір",
+            lbl_mix: "Қоспа"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        if (!isMixing) {
+            document.getElementById('btnDrop').innerHTML = t('btn_drop');
+        } else {
+            document.getElementById('btnDrop').innerHTML = t('btn_mixing');
+        }
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Inputs
+    const uiWm = document.getElementById('waterMass');
+    const uiWt = document.getElementById('waterTemp');
+    const uiMm = document.getElementById('metalMass');
+    const uiMt = document.getElementById('metalTemp');
+    const btnDrop = document.getElementById('btnDrop');
+
+    // State
+    let isMixing = false;
+    let animFrame;
+    let blockY = 50; // Starting Y of metal block
+    let blockTargetY = 220;
+    
+    // Physical constants
+    const cWater = 4200;
+    const cMetal = 460;
+    
+    // Dynamic values
+    let currentWt = 20;
+    let currentMt = 200;
+    let targetTmix = 0;
+    let mixProgress = 0; // 0 to 1
+
+    function updateLabels() {
+        if (isMixing) return;
+        document.getElementById('wmVal').textContent = uiWm.value;
+        document.getElementById('wtVal').textContent = uiWt.value;
+        document.getElementById('mmVal').textContent = uiMm.value;
+        document.getElementById('mtVal').textContent = uiMt.value;
+        currentWt = parseFloat(uiWt.value);
+        currentMt = parseFloat(uiMt.value);
+        drawScene();
+    }
+
+    uiWm.addEventListener('input', updateLabels);
+    uiWt.addEventListener('input', updateLabels);
+    uiMm.addEventListener('input', updateLabels);
+    uiMt.addEventListener('input', updateLabels);
+
+    window.startMixing = function() {
+        if (isMixing) return;
+        
+        let mw = parseFloat(uiWm.value);
+        let tw = parseFloat(uiWt.value);
+        let mm = parseFloat(uiMm.value);
+        let tm = parseFloat(uiMt.value);
+        
+        // Heat balance equation to find Tmix
+        // cW * mW * (Tmix - tw) = cM * mM * (tm - Tmix)
+        targetTmix = (cWater * mw * tw + cMetal * mm * tm) / (cWater * mw + cMetal * mm);
+        
+        isMixing = true;
+        mixProgress = 0;
+        blockY = 50;
+        btnDrop.disabled = true;
+        btnDrop.innerHTML = t('btn_mixing');
+        uiWm.disabled = true;
+        uiWt.disabled = true;
+        uiMm.disabled = true;
+        uiMt.disabled = true;
+        
+        animate();
+    };
+
+    window.resetSim = function() {
+        cancelAnimationFrame(animFrame);
+        isMixing = false;
+        mixProgress = 0;
+        blockY = 50;
+        
+        currentWt = parseFloat(uiWt.value);
+        currentMt = parseFloat(uiMt.value);
+        
+        btnDrop.disabled = false;
+        btnDrop.innerHTML = t('btn_drop');
+        uiWm.disabled = false;
+        uiWt.disabled = false;
+        uiMm.disabled = false;
+        uiMt.disabled = false;
+        
+        drawScene();
+    };
+
+    function getTempColor(t) {
+        // t max 300, min 0
+        let ratio = t / 300;
+        if (ratio > 1) ratio = 1;
+        if (ratio < 0) ratio = 0;
+        
+        let r = Math.round(59 + (239-59)*ratio);
+        let g = Math.round(130 + (68-130)*ratio);
+        let b = Math.round(246 + (68-246)*ratio);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    function drawThermometer(x, y, w, h, temp, label) {
+        const pad = 8;
+        const barW = w - pad*2;
+        const maxH = h - pad*2;
+        
+        // Frame
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(x+pad, y+pad, barW, maxH);
+        
+        // Fill (max temp 300)
+        let ratio = temp / 300;
+        if (ratio > 1) ratio = 1;
+        if (ratio < 0) ratio = 0;
+        let fillH = ratio * maxH;
+        
+        ctx.fillStyle = getTempColor(temp);
+        ctx.fillRect(x+pad, y+pad + maxH - fillH, barW, fillH);
+        
+        // Text
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, x+w/2, y - 25);
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = getTempColor(temp);
+        ctx.fillText(`${Math.round(temp)}°C`, x+w/2, y - 5);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = 250; // Beaker bottom
+        
+        // 1. Thermometers
+        drawThermometer(80, 100, 25, 200, currentWt, isMixing && mixProgress >= 1 ? t('lbl_mix') : t('lbl_water'));
+        drawThermometer(canvas.width - 105, 100, 25, 200, currentMt, t('lbl_metal'));
+        
+        // 2. Beaker
+        const bw = 160;
+        const bh = 150;
+        
+        // Water level based on mass (0.5 to 3)
+        let mw = parseFloat(uiWm.value);
+        let waterLevel = (mw / 3) * 100 + 30; // 30 to 130
+        
+        ctx.fillStyle = getTempColor(currentWt);
+        ctx.globalAlpha = 0.7;
+        ctx.fillRect(cx - bw/2 + 5, cy - waterLevel, bw - 10, waterLevel - 5);
+        ctx.globalAlpha = 1.0;
+        
+        // Beaker Outline
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx - bw/2, cy - bh);
+        ctx.lineTo(cx - bw/2, cy);
+        ctx.lineTo(cx + bw/2, cy);
+        ctx.lineTo(cx + bw/2, cy - bh);
+        ctx.stroke();
+
+        // 3. Metal Block
+        // Size based on mass (1 to 5)
+        let mm = parseFloat(uiMm.value);
+        let bSize = 30 + (mm / 5) * 40; 
+        
+        ctx.fillStyle = getTempColor(currentMt);
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 2;
+        ctx.fillRect(cx - bSize/2, blockY - bSize, bSize, bSize);
+        ctx.strokeRect(cx - bSize/2, blockY - bSize, bSize, bSize);
+    }
+
+    function animate() {
+        if (!isMixing) return;
+        
+        // Phase 1: Block falls
+        if (blockY < blockTargetY) {
+            blockY += 8;
+            if (blockY > blockTargetY) blockY = blockTargetY;
+        } 
+        // Phase 2: Heat transfer
+        else if (mixProgress < 1) {
+            mixProgress += 0.005; // speed of mixing
+            if (mixProgress > 1) mixProgress = 1;
+            
+            // Interpolate temperatures towards Tmix
+            let twStart = parseFloat(uiWt.value);
+            let tmStart = parseFloat(uiMt.value);
+            
+            // Easing function for smooth temp change
+            let ease = 1 - Math.pow(1 - mixProgress, 3);
+            
+            currentWt = twStart + (targetTmix - twStart) * ease;
+            currentMt = tmStart + (targetTmix - tmStart) * ease;
+        }
+
+        drawScene();
+
+        if (mixProgress >= 1) {
+            btnDrop.disabled = false;
+            btnDrop.innerHTML = t('btn_drop');
+            // We keep it in 'mixed' state until reset
+        } else {
+            animFrame = requestAnimationFrame(animate);
+        }
+    }
+
+    // Init
+    updateLabels();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value.replace(/\s/g, ''));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 30) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

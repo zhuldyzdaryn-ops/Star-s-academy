@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сферические зеркала — 8 класс</title>
+    <style>
+        :root {
+            /* Синяя тема для стеклянной/оптической тематики */
+            --bg-color: #eff6ff; 
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #bfdbfe;
+            --text-muted: #64748b;
+            --formula-bg: #dbeafe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e293b;
+                --primary: #60a5fa;
+                --primary-hover: #3b82f6;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, #1d4ed8 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+        @media (min-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+
+        .mirror-type {
+            background: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .mirror-type h3 { color: var(--primary); margin-bottom: 10px; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: column; }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between;}
+        
+        select, input[type="range"] {
+            width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);
+            background-color: var(--card-bg); color: var(--text-color);
+        }
+        input[type="range"] { accent-color: var(--primary); padding: 0; cursor: pointer; }
+
+        .canvas-container {
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .status-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .status-item {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* --- ТЕСТ --- */
+        .test-question { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+        .test-options label {
+            display: flex; align-items: center; gap: 10px; padding: 0.75rem;
+            background-color: var(--bg-color); border: 1px solid var(--border);
+            border-radius: 6px; cursor: pointer; transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(37, 99, 235, 0.05); }
+        #testResult { margin-top: 1.5rem; padding: 1.5rem; border-radius: 8px; font-weight: 600; display: none; }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        /* --- Языковой переключатель --- */
+        .lang-toggle-container {
+            position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px;
+            background: var(--card-bg); padding: 8px 16px; border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 1000; border: 1px solid var(--border);
+        }
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Сферические зеркала. Построение изображений</span>
+            <span class="lang-kz">Сфералық айналар. Кескіндерді тұрғызу</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему в ложке наше лицо может перевернуться? Как работают зеркала в телескопах и автомобилях? Разберем магию кривых зеркал!</span>
+            <span class="lang-kz">Неліктен қасықта бетіміз төңкеріліп көрінуі мүмкін? Телескоптар мен көліктердегі айналар қалай жұмыс істейді? Қисық айналардың сиқырын талдайық!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Виды сферических зеркал</span>
+            <span class="lang-kz">1. Сфералық айналардың түрлері</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Сферическое зеркало — это зеркало, отражающая поверхность которого является частью сферы. В зависимости от того, какая сторона сферы отражает свет, зеркала делятся на два типа:</span>
+            <span class="lang-kz">Сфералық айна — шағылдыратын беті сфераның бір бөлігі болып табылатын айна. Сфераның қай жағы жарықты шағылдыратынына байланысты айналар екі түрге бөлінеді:</span>
+        </p>
+        
+        <div class="grid-2">
+            <div class="mirror-type">
+                <h3>
+                    <span class="lang-ru">Вогнутые зеркала</span>
+                    <span class="lang-kz">Ойыс айналар</span>
+                </h3>
+                <p>
+                    <span class="lang-ru">Отражает <strong>внутренняя</strong> часть сферы. Они <strong>собирают</strong> параллельные лучи в одну точку (фокус).<br><br><em>Пример: косметическое зеркало, рефлектор фары, стоматологическое зеркальце.</em></span>
+                    <span class="lang-kz">Сфераның <strong>ішкі</strong> бөлігі шағылдырады. Олар параллель сәулелерді бір нүктеге (фокусқа) <strong>жинақтайды</strong>.<br><br><em>Мысал: косметикалық айна, фара рефлекторы, тіс дәрігерінің айнасы.</em></span>
+                </p>
+            </div>
+            <div class="mirror-type">
+                <h3>
+                    <span class="lang-ru">Выпуклые зеркала</span>
+                    <span class="lang-kz">Дөңес айналар</span>
+                </h3>
+                <p>
+                    <span class="lang-ru">Отражает <strong>внешняя</strong> часть сферы. Они <strong>рассеивают</strong> лучи, расширяя поле зрения.<br><br><em>Пример: боковые зеркала автомобиля, зеркала наблюдения в магазинах.</em></span>
+                    <span class="lang-kz">Сфераның <strong>сыртқы</strong> бөлігі шағылдырады. Олар көру аймағын кеңейте отырып, сәулелерді <strong>шашыратады</strong>.<br><br><em>Мысал: автокөліктің бүйірлік айналары, дүкендердегі бақылау айналары.</em></span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Главные точки и линии</span>
+            <span class="lang-kz">2. Негізгі нүктелер мен сызықтар</span>
+        </h2>
+        <div class="highlight-box">
+            <ul>
+                <li><strong><span class="lang-ru">Полюс зеркала (P)</span><span class="lang-kz">Айна полюсі (P)</span></strong> — <span class="lang-ru">вершина сферического сегмента.</span><span class="lang-kz">сфералық сегменттің төбесі.</span></li>
+                <li><strong><span class="lang-ru">Оптический центр (C)</span><span class="lang-kz">Оптикалық центр (C)</span></strong> — <span class="lang-ru">центр сферы, из которой вырезано зеркало.</span><span class="lang-kz">айна қиып алынған сфераның центрі.</span></li>
+                <li><strong><span class="lang-ru">Главная оптическая ось</span><span class="lang-kz">Бас оптикалық ось</span></strong> — <span class="lang-ru">прямая, проходящая через полюс (P) и центр (C).</span><span class="lang-kz">полюс (P) және центр (C) арқылы өтетін түзу.</span></li>
+                <li><strong><span class="lang-ru">Главный фокус (F)</span><span class="lang-kz">Бас фокус (F)</span></strong> — <span class="lang-ru">точка, где собираются лучи (или их продолжения), падающие параллельно главной оси. Фокусное расстояние равно половине радиуса сферы: <strong>F = R/2</strong>.</span><span class="lang-kz">бас оське параллель түсетін сәулелер (немесе олардың жалғастары) жиналатын нүкте. Фокустық қашықтық сфера радиусының жартысына тең: <strong>F = R/2</strong>.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Интерактивная лаборатория: Сферические зеркала</span>
+            <span class="lang-kz">Интерактивті зертхана: Сфералық айналар</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.9rem; color: var(--text-muted);">
+                    <span class="lang-ru">Переключайте тип зеркала и двигайте предмет по оптической оси. Обратите внимание, как расходятся отраженные лучи у выпуклого зеркала!</span>
+                    <span class="lang-kz">Айна түрін ауыстырып, затты оптикалық ось бойымен жылжытыңыз. Дөңес айнада шағылған сәулелер қалай тарайтынына назар аударыңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Тип зеркала:</span><span class="lang-kz">Айна түрі:</span></span>
+                    </label>
+                    <select id="mirrorType" onchange="updateSim()">
+                        <option value="concave" data-ru="Вогнутое (собирающее)" data-kz="Ойыс (жинақтағыш)">Вогнутое (собирающее)</option>
+                        <option value="convex" data-ru="Выпуклое (рассеивающее)" data-kz="Дөңес (шашыратқыш)">Выпуклое (рассеивающее)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Расстояние до предмета (d):</span><span class="lang-kz">Затқа дейінгі қашықтық (d):</span></span>
+                        <span id="distVal" style="color: var(--primary);">250 у.е.</span>
+                    </label>
+                    <input type="range" id="distSlider" min="20" max="380" step="1" value="250" oninput="updateSim()">
+                </div>
+                
+                <div class="status-panel">
+                    <div class="status-item" id="statusType">Действительное</div>
+                    <div class="status-item" id="statusOrientation">Перевернутое</div>
+                    <div class="status-item" id="statusSize">Уменьшенное</div>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="mirrorCanvas" width="800" height="400"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Как отразится луч от вогнутого зеркала, если он падает параллельно главной оптической оси?</span>
+                <span class="lang-kz">1. Ойыс айнаға бас оптикалық оське параллель түскен сәуле қалай шағылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Пройдет через оптический центр (С)</span><span class="lang-kz">Оптикалық центр (С) арқылы өтеді</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Пройдет через главный фокус (F)</span><span class="lang-kz">Бас фокус (F) арқылы өтеді</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Отразится параллельно оси</span><span class="lang-kz">Оське параллель шағылады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Если радиус кривизны зеркала R = 40 см, то его фокусное расстояние F равно:</span>
+                <span class="lang-kz">2. Егер айнаның қисықтық радиусы R = 40 см болса, оның фокустық қашықтығы F неге тең:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">20 см</span><span class="lang-kz">20 см</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">40 см</span><span class="lang-kz">40 см</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">80 см</span><span class="lang-kz">80 см</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Предмет находится между фокусом (F) и полюсом (P) вогнутого зеркала. Какое получится изображение? (Проверьте на симуляторе!)</span>
+                <span class="lang-kz">3. Зат ойыс айнаның фокусы (F) мен полюсі (P) арасында орналасқан. Қандай кескін пайда болады? (Симуляторда тексеріңіз!)</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Действительное, перевернутое</span><span class="lang-kz">Шын, төңкерілген</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Изображения не будет</span><span class="lang-kz">Кескін болмайды</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Мнимое, прямое, увеличенное</span><span class="lang-kz">Жалған, тура, үлкейтілген</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. В каком зеркале можно получить ДЕЙСТВИТЕЛЬНОЕ изображение?</span>
+                <span class="lang-kz">4. Қандай айнада ШЫН кескін алуға болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Только в плоском</span><span class="lang-kz">Тек жазық айнада</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Только в вогнутом</span><span class="lang-kz">Тек ойыс айнада</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">В любом сферическом</span><span class="lang-kz">Кез келген сфералық айнада</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Для чего используют выпуклые зеркала на опасных поворотах дорог или в магазинах?</span>
+                <span class="lang-kz">5. Қауіпті жол бұрылыстарында немесе дүкендерде дөңес айналарды не үшін қолданады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Чтобы увеличить изображение объектов</span><span class="lang-kz">Объектілердің кескінін үлкейту үшін</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Чтобы сфокусировать свет</span><span class="lang-kz">Жарықты фокустау үшін</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Чтобы расширить поле зрения</span><span class="lang-kz">Көру өрісін кеңейту үшін</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            test_ok: "Отличный результат: {s} из {t}! Сферические зеркала вам покорились.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            s_real: "Действительное", s_virtual: "Мнимое", s_no: "Нет изображения",
+            s_up: "Прямое", s_inv: "Перевернутое", s_none: "—",
+            s_mag: "Увеличенное", s_dim: "Уменьшенное", s_same: "Равное"
+        },
+        kz: {
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сфералық айналар сізге бағынды.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            s_real: "Шын", s_virtual: "Жалған", s_no: "Кескін жоқ",
+            s_up: "Тура", s_inv: "Төңкерілген", s_none: "—",
+            s_mag: "Үлкейтілген", s_dim: "Кішірейтілген", s_same: "Тең"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        updateSim();
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    // --- СИМУЛЯЦИЯ ОПТИКИ ---
+    const canvas = document.getElementById('mirrorCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const poleX = 550; // Положение полюса
+    const axisY = 200; // Положение главной оси
+    const objH = 60;   // Высота предмета
+
+    window.updateSim = function() {
+        const d = parseInt(document.getElementById('distSlider').value);
+        document.getElementById('distVal').textContent = d;
+        drawSimulation(d);
+    }
+
+    function drawSimulation(d) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const isConcave = document.getElementById('mirrorType').value === 'concave';
+        const F_val = isConcave ? 100 : -100; 
+        const R_val = Math.abs(2 * F_val);
+
+        // 1. Главная оптическая ось
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, axisY);
+        ctx.lineTo(canvas.width, axisY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Зеркало
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        if (isConcave) {
+            ctx.arc(poleX - R_val, axisY, R_val, -Math.PI/4, Math.PI/4);
+        } else {
+            ctx.arc(poleX + R_val, axisY, R_val, Math.PI - Math.PI/4, Math.PI + Math.PI/4);
+        }
+        ctx.stroke();
+        
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        if (isConcave) {
+            for(let a = -Math.PI/4 + 0.05; a < Math.PI/4; a += 0.1) {
+                let sx = (poleX - R_val) + R_val * Math.cos(a);
+                let sy = axisY + R_val * Math.sin(a);
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx + 10, sy + 5);
+            }
+        } else {
+            for(let a = Math.PI - Math.PI/4 + 0.05; a < Math.PI + Math.PI/4; a += 0.1) {
+                let sx = (poleX + R_val) + R_val * Math.cos(a);
+                let sy = axisY + R_val * Math.sin(a);
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx + 10, sy + 5);
+            }
+        }
+        ctx.stroke();
+
+        // 3. Точки F и C
+        const fX = poleX - F_val;
+        const cX = poleX - 2 * F_val;
+        
+        drawPoint(fX, axisY, 'F');
+        drawPoint(cX, axisY, 'C');
+        drawPoint(poleX, axisY, 'P');
+
+        const objX = poleX - d;
+        const tipY = axisY - objH;
+
+        let f_img = 0;
+        let imgH = 0;
+        let hasImage = true;
+
+        if (d === F_val) {
+            hasImage = false; 
+        } else {
+            f_img = (d * F_val) / (d - F_val); 
+            let k = -f_img / d; 
+            imgH = objH * k; 
+        }
+
+        const imgX = poleX - f_img;
+        const canvasImgTipY = axisY - (objH * (-f_img / d));
+
+        // Универсальная функция построения лучей
+        function drawRay(startX, startY, hitX, hitY, color, isParallel) {
+            // Падающий луч
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(hitX, hitY);
+            ctx.stroke();
+
+            if (!hasImage) {
+                // Случай, когда предмет в фокусе
+                ctx.beginPath();
+                ctx.moveTo(hitX, hitY);
+                if (isParallel) {
+                    const dx = fX - hitX;
+                    const dy = axisY - hitY;
+                    ctx.lineTo(hitX + dx * 20, hitY + dy * 20);
+                } else {
+                    const dx = -(hitX - startX);
+                    const dy = hitY - startY;
+                    ctx.lineTo(hitX + dx * 20, hitY + dy * 20);
+                }
+                ctx.stroke();
+                return;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(hitX, hitY);
+
+            if (f_img > 0) { 
+                // Действительное изображение
+                ctx.lineTo(imgX, canvasImgTipY);
+                const dx = imgX - hitX;
+                const dy = canvasImgTipY - hitY;
+                ctx.lineTo(imgX + dx * 10, canvasImgTipY + dy * 10);
+                ctx.stroke();
+            } else { 
+                // Мнимое изображение (отраженные лучи расходятся)
+                const dx = hitX - imgX;
+                const dy = hitY - canvasImgTipY;
+                const len = Math.sqrt(dx*dx + dy*dy);
+                
+                // Реальная отраженная часть (идет ВЛЕВО от зеркала)
+                ctx.lineTo(hitX + (dx/len) * 800, hitY + (dy/len) * 800);
+                ctx.stroke();
+
+                // Мнимое продолжение (идет ВПРАВО за зеркало пунктиром)
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(hitX, hitY);
+                if (isParallel && !isConcave) {
+                    ctx.lineTo(fX, axisY); // У выпуклого параллельный луч идет строго в фокус
+                } else {
+                    ctx.lineTo(imgX, canvasImgTipY); // Остальные идут к мнимому изображению
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        // 4. Отрисовка лучей
+        if (d > 0) {
+            let mirrorHitX = poleX;
+            const dy = -objH;
+            if (Math.abs(dy) <= R_val) {
+                const dx_arc = Math.sqrt(R_val*R_val - dy*dy);
+                mirrorHitX = isConcave ? (poleX - R_val + dx_arc) : (poleX + R_val - dx_arc);
+            }
+
+            // Луч 1 (Красный): Параллельно оси
+            drawRay(objX, tipY, mirrorHitX, tipY, '#ef4444', true);
+            // Луч 2 (Зеленый): В полюс зеркала
+            drawRay(objX, tipY, poleX, axisY, '#10b981', false);
+        }
+
+        // 5. Рисуем предмет
+        drawArrow(objX, axisY, objX, tipY, '#3b82f6', 4);
+
+        // 6. Рисуем изображение
+        if (hasImage) {
+            const isVirtual = f_img < 0;
+            ctx.setLineDash(isVirtual ? [5, 5] : []);
+            drawArrow(imgX, axisY, imgX, canvasImgTipY, isVirtual ? '#94a3b8' : '#ea580c', 4);
+            ctx.setLineDash([]);
+        }
+
+        updateStatus(d, f_img, hasImage);
+    }
+
+    function drawPoint(x, y, label) {
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI*2);
+        ctx.fill();
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(label, x - 5, y + 20);
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, color, width) {
+        const headlen = 10;
+        const angle = Math.atan2(toY - fromY, toX - fromX);
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        ctx.moveTo(fromX, fromY);
+        ctx.lineTo(toX, toY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(toX, toY);
+        ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+    }
+
+    function updateStatus(d, f_img, hasImage) {
+        const typeEl = document.getElementById('statusType');
+        const oriEl = document.getElementById('statusOrientation');
+        const sizeEl = document.getElementById('statusSize');
+
+        if (!hasImage) {
+            typeEl.textContent = t('s_no'); oriEl.textContent = t('s_none'); sizeEl.textContent = t('s_none');
+            typeEl.style.borderColor = 'var(--text-muted)';
+            return;
+        }
+
+        const k = Math.abs(f_img / d);
+
+        if (f_img > 0) {
+            typeEl.textContent = t('s_real');
+            typeEl.style.borderColor = 'var(--primary)';
+            oriEl.textContent = t('s_inv');
+        } else {
+            typeEl.textContent = t('s_virtual');
+            typeEl.style.borderColor = '#94a3b8';
+            oriEl.textContent = t('s_up');
+        }
+
+        if (Math.abs(k - 1) < 0.05) { 
+            sizeEl.textContent = t('s_same');
+        } else if (k > 1) {
+            sizeEl.textContent = t('s_mag');
+        } else {
+            sizeEl.textContent = t('s_dim');
+        }
+    }
+
+    window.onload = () => { updateSim(); };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5; 
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => { if (r.checked) selected = r.value; });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

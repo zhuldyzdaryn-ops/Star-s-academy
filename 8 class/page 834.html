@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Глаз как оптическая система. Оптические приборы</title>
+    <style>
+        :root {
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --border-color: #e5e7eb;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* --- ШАПКА И ПЕРЕКЛЮЧАТЕЛЬ ЯЗЫКОВ --- */
+        .top-header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-end;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .lang-toggle {
+            display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem;
+        }
+        .lang-toggle span { cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        .lang-toggle span.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); border-radius: 20px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: .4s; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        /* --- ОСНОВНОЙ МАКЕТ --- */
+        .container {
+            max-width: 1200px; margin: 20px auto; padding: 0 15px;
+            display: flex; gap: 20px; align-items: flex-start;
+        }
+
+        .main-content {
+            flex: 1; background-color: var(--bg-card); border-radius: 8px;
+            padding: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); min-width: 0;
+        }
+
+        .sidebar {
+            width: 280px; background-color: var(--bg-card); border-radius: 8px;
+            padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky;
+            top: 60px; flex-shrink: 0;
+        }
+
+        /* --- ХЛЕБНЫЕ КРОШКИ И ЗАГОЛОВКИ --- */
+        .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .breadcrumbs a { color: var(--primary); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+
+        h1 { font-size: 2rem; margin-bottom: 20px; color: #111827; line-height: 1.2;}
+        h2 { font-size: 1.5rem; margin-top: 30px; margin-bottom: 15px; color: #1f2937; border-bottom: 2px solid var(--primary-light); padding-bottom: 5px; }
+        h3 { font-size: 1.2rem; margin-bottom: 10px; color: var(--primary); }
+
+        /* --- ИЛЛЮСТРАЦИИ --- */
+        .lesson-image-container {
+            text-align: center;
+            margin: 25px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .lesson-image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .image-caption {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* --- БЛОКИ ИНФОРМАЦИИ --- */
+        .alert-box {
+            background-color: var(--primary-light); border-left: 4px solid var(--primary);
+            padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0;
+        }
+        
+        .formula-text {
+            display: block; text-align: center; font-size: 1.5rem; font-weight: bold;
+            font-family: 'Times New Roman', Times, serif; color: var(--primary); margin: 15px 0;
+        }
+
+        .grid-2 {
+            display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 15px;
+        }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        .info-card {
+            border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; background: #fafafa;
+        }
+
+        /* --- САЙДБАР (СОДЕРЖАНИЕ) --- */
+        .toc-title { font-size: 0.9rem; text-transform: uppercase; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 0.5px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 5px; }
+        .toc-list a {
+            text-decoration: none; color: var(--text-main); display: block;
+            padding: 8px 12px; border-radius: 6px; transition: background 0.2s, color 0.2s; font-size: 0.95rem;
+        }
+        .toc-list a:hover { background-color: var(--bg-body); }
+        .toc-list a.active { background-color: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+        /* --- ЗАДАЧА (ПРИМЕР) --- */
+        .solved-task { border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+        .solved-header { background: #f8fafc; padding: 10px 15px; font-weight: bold; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
+        .badge { background: var(--primary); color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; }
+        .solved-body { display: grid; grid-template-columns: 1fr; }
+        @media (min-width: 600px) { .solved-body { grid-template-columns: 1fr 2fr; } }
+        .solved-dano { padding: 15px; border-right: 1px solid var(--border-color); background: #fafafa; }
+        .solved-solution { padding: 15px; }
+
+        /* --- ПРАКТИКА (ВЫПАДАЮЩИЕ СПИСКИ) --- */
+        .practice-item { margin-bottom: 15px; font-size: 1.05rem; line-height: 1.8; }
+        select.dropdown-select {
+            padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px;
+            font-size: 1rem; color: var(--primary); font-weight: bold; outline: none; background: #fff;
+        }
+        .correct { border-color: var(--success) !important; background-color: var(--success-light) !important; color: var(--success) !important; }
+        .wrong { border-color: var(--danger) !important; background-color: var(--danger-light) !important; color: var(--danger) !important; }
+
+        /* --- ТЕСТ --- */
+        .test-q { margin-bottom: 20px; }
+        .test-q h4 { margin-bottom: 10px; font-size: 1.05rem; }
+        .test-options { display: flex; flex-direction: column; gap: 8px; }
+        .test-options label {
+            display: flex; align-items: center; gap: 10px; background: #fafafa; padding: 10px 15px;
+            border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; transition: background 0.2s;
+        }
+        .test-options label:hover { background: var(--primary-light); }
+
+        /* --- КНОПКИ И РЕЗУЛЬТАТЫ --- */
+        .btn {
+            background-color: var(--primary); color: white; border: none; padding: 10px 20px;
+            border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .result-box { margin-top: 15px; padding: 15px; border-radius: 6px; font-weight: bold; display: none; }
+
+        /* --- ВИДЕО --- */
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .sim-container { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; background: #fafafa; }
+        .sim-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .sim-control-group { display: flex; flex-direction: column; gap: 5px; }
+        .sim-control-group label { font-size: 0.9rem; font-weight: bold; color: var(--text-muted); }
+        .sim-canvas-wrapper { background: #0f172a; border-radius: 8px; padding: 10px; display: flex; justify-content: center;}
+        canvas { max-width: 100%; height: auto; background: #0f172a; border-radius: 4px; border: 1px solid #334155;}
+        .sim-status { display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.9rem; font-weight: bold; }
+        .sim-status span { background: #fff; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-color); }
+
+        /* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; position: static; margin-bottom: 20px; }
+            .sim-controls { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-header">
+    <div class="lang-toggle">
+        <span id="label-ru" class="active" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+        <label class="switch">
+            <input type="checkbox" id="langToggle" onchange="toggleLang()">
+            <span class="slider"></span>
+        </label>
+        <span id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+    </div>
+</header>
+
+<div class="container">
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <span class="lang-ru"><a href="#">Главная</a> > <a href="#">Физика</a> > <a href="#">8 класс</a> > <a href="#">Оптика</a> > Глаз и оптические приборы</span>
+            <span class="lang-kz"><a href="#">Басты бет</a> > <a href="#">Физика</a> > <a href="#">8 сынып</a> > <a href="#">Оптика</a> > Көз және оптикалық құралдар</span>
+        </div>
+
+        <h1>
+            <span class="lang-ru">Глаз как оптическая система. Оптические приборы</span>
+            <span class="lang-kz">Көз оптикалық жүйе ретінде. Оптикалық құралдар</span>
+        </h1>
+
+        <!-- 1. ТЕОРИЯ -->
+        <section id="theory" class="content-section">
+            <h2>
+                <span class="lang-ru">Теория</span>
+                <span class="lang-kz">Теория</span>
+            </h2>
+            <p>
+                <span class="lang-ru"><strong>Глаз человека</strong> представляет собой сложную оптическую систему. Основные преломляющие элементы глаза — роговица и <strong>хрусталик</strong> (двояковыпуклая линза). Изображение формируется на <strong>сетчатке</strong> — светочувствительной оболочке, выстилающей глазное дно.</span>
+                <span class="lang-kz"><strong>Адам көзі</strong> күрделі оптикалық жүйе болып табылады. Көздің негізгі сыну элементтері — қасаң қабық және <strong>көз бұршағы</strong> (екі жақты дөңес линза). Кескін көз түбін жауып тұратын жарық сезгіш қабықша — <strong>торлы қабықта</strong> қалыптасады.</span>
+            </p>
+
+            <!-- ВСТАВЛЕННЫЙ РИСУНОК -->
+            <div class="lesson-image-container">
+                <img src="image_1395fc.jpg" alt="Строение глаза">
+                <p class="image-caption">
+                    <span class="lang-ru">Рис 1. Строение глаза человека. Хрусталик работает как собирающая линза, проецируя уменьшенное и перевернутое изображение объекта на сетчатку.</span>
+                    <span class="lang-kz">1-сурет. Адам көзінің құрылысы. Көз бұршағы жинақтағыш линза ретінде жұмыс істейді, нысанның кішірейтілген және төңкерілген кескінін торлы қабыққа түсіреді.</span>
+                </p>
+            </div>
+            
+            <div class="alert-box" style="background: #f8fafc; border-color: #64748b;">
+                <strong><span class="lang-ru">Аккомодация</span><span class="lang-kz">Аккомодация</span></strong>
+                — 
+                <span class="lang-ru">способность глаза приспосабливаться к четкому видению предметов, находящихся на разных расстояниях, за счет изменения кривизны хрусталика.</span>
+                <span class="lang-kz">көз бұршағының қисықтығын өзгерту арқылы әртүрлі қашықтықтағы заттарды анық көруге бейімделу қабілеті.</span>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-card">
+                    <h3 style="color: var(--danger);">
+                        <span class="lang-ru">Близорукость (Миопия)</span>
+                        <span class="lang-kz">Алыстан көрмеушілік (Миопия)</span>
+                    </h3>
+                    <p>
+                        <span class="lang-ru">Изображение удаленных предметов формируется <strong>перед сетчаткой</strong>. Человек плохо видит вдаль.</span>
+                        <span class="lang-kz">Алыстағы заттардың кескіні <strong>торлы қабықтың алдында</strong> пайда болады. Адам алысты нашар көреді.</span>
+                    </p>
+                    <p style="margin-top: 10px; font-weight: bold; color: var(--primary);">
+                        <span class="lang-ru">Коррекция: Рассеивающие линзы</span>
+                        <span class="lang-kz">Түзету: Шашыратқыш линзалар</span>
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h3 style="color: var(--warning);">
+                        <span class="lang-ru">Дальнозоркость (Гиперметропия)</span>
+                        <span class="lang-kz">Жақыннан көрмеушілік (Гиперметропия)</span>
+                    </h3>
+                    <p>
+                        <span class="lang-ru">Изображение близких предметов формируется <strong>за сетчаткой</strong>. Человек плохо видит вблизи.</span>
+                        <span class="lang-kz">Жақындағы заттардың кескіні <strong>торлы қабықтың артында</strong> пайда болады. Адам жақынды нашар көреді.</span>
+                    </p>
+                    <p style="margin-top: 10px; font-weight: bold; color: var(--primary);">
+                        <span class="lang-ru">Коррекция: Собирающие линзы</span>
+                        <span class="lang-kz">Түзету: Жинақтағыш линзалар</span>
+                    </p>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 25px;">
+                <span class="lang-ru">Оптические приборы</span>
+                <span class="lang-kz">Оптикалық құралдар</span>
+            </h3>
+            <ul style="margin-left: 20px;">
+                <li><strong><span class="lang-ru">Лупа</span><span class="lang-kz">Ұлғайтқыш әйнек (Лупа)</span></strong> — <span class="lang-ru">собирающая линза для рассматривания мелких деталей вблизи.</span><span class="lang-kz">ұсақ бөлшектерді жақыннан қарауға арналған жинақтағыш линза.</span></li>
+                <li><strong><span class="lang-ru">Микроскоп</span><span class="lang-kz">Микроскоп</span></strong> — <span class="lang-ru">система линз (объектив и окуляр) для получения больших увеличений микрообъектов.</span><span class="lang-kz">микронысандардың үлкен ұлғаюын алуға арналған линзалар жүйесі (объектив және окуляр).</span></li>
+                <li><strong><span class="lang-ru">Телескоп</span><span class="lang-kz">Телескоп</span></strong> — <span class="lang-ru">прибор для наблюдения удаленных объектов (звезд, планет).</span><span class="lang-kz">алыстағы нысандарды (жұлдыздар, ғаламшарлар) бақылауға арналған құрал.</span></li>
+            </ul>
+        </section>
+
+        <!-- 2. ФОРМУЛА -->
+        <section id="formula" class="content-section">
+            <h2>
+                <span class="lang-ru">Формулы и важные величины</span>
+                <span class="lang-kz">Формулалар және маңызды шамалар</span>
+            </h2>
+            
+            <div class="alert-box">
+                <p>
+                    <span class="lang-ru"><strong>Расстояние наилучшего зрения (d₀)</strong> — расстояние, на котором нормальный глаз испытывает наименьшее напряжение при чтении.</span>
+                    <span class="lang-kz"><strong>Ең жақсы көру қашықтығы (d₀)</strong> — оқу кезінде қалыпты көздің ең аз кернеуді сезінетін қашықтығы.</span>
+                </p>
+                <span class="formula-text">d₀ = 25 см = 0.25 м</span>
+            </div>
+
+            <div class="alert-box" style="border-left-color: var(--success); background-color: var(--success-light);">
+                <p>
+                    <span class="lang-ru"><strong>Увеличение лупы (Г):</strong></span>
+                    <span class="lang-kz"><strong>Лупаның ұлғаюы (Г):</strong></span>
+                </p>
+                <span class="formula-text" style="color: var(--success);">Г = d₀ / F</span>
+                <ul style="margin-left: 20px; font-size: 0.95rem; color: var(--text-main);">
+                    <li><span class="lang-ru"><strong>d₀</strong> — расстояние наилучшего зрения (25 см)</span><span class="lang-kz"><strong>d₀</strong> — ең жақсы көру қашықтығы (25 см)</span></li>
+                    <li><span class="lang-ru"><strong>F</strong> — фокусное расстояние лупы</span><span class="lang-kz"><strong>F</strong> — лупаның фокустық қашықтығы</span></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. СИМУЛЯЦИЯ -->
+        <section id="simulation" class="content-section">
+            <h2>
+                <span class="lang-ru">3D Симуляция дефектов зрения</span>
+                <span class="lang-kz">Көру ақауларының 3D симуляциясы</span>
+            </h2>
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label>
+                            <span class="lang-ru">Состояние глаза</span><span class="lang-kz">Көздің жағдайы</span>
+                        </label>
+                        <select id="eyeDefect" onchange="updateSim()" style="padding: 6px; border-radius: 4px; border: 1px solid var(--border-color);">
+                            <option value="normal" data-ru="Нормальное зрение" data-kz="Қалыпты көру">Нормальное зрение</option>
+                            <option value="myopia" data-ru="Близорукость" data-kz="Алыстан көрмеушілік">Близорукость</option>
+                            <option value="hyperopia" data-ru="Дальнозоркость" data-kz="Жақыннан көрмеушілік">Дальнозоркость</option>
+                        </select>
+                    </div>
+                    <div class="sim-control-group" style="justify-content: center; align-items: flex-start;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-main); font-weight: bold; margin-top: 15px;">
+                            <input type="checkbox" id="glassesToggle" onchange="updateSim()" style="width: 18px; height: 18px;">
+                            <span class="lang-ru">Надеть очки (Коррекция)</span>
+                            <span class="lang-kz">Көзілдірік кию (Түзету)</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="sim-canvas-wrapper">
+                    <canvas id="eyeCanvas" width="700" height="320"></canvas>
+                </div>
+                
+                <div class="sim-status">
+                    <span id="statusFocusPos" style="color: var(--warning);">Фокус на сетчатке</span>
+                    <span id="statusLens" style="color: var(--primary);">Линза: -</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ПРИМЕР ЗАДАЧИ -->
+        <section id="example" class="content-section">
+            <h2>
+                <span class="lang-ru">Пример решения задачи</span>
+                <span class="lang-kz">Есепті шығару мысалы</span>
+            </h2>
+            <div class="solved-task">
+                <div class="solved-header">
+                    <span class="badge">
+                        <span class="lang-ru">Пример</span><span class="lang-kz">Мысал</span>
+                    </span>
+                    <span>
+                        <span class="lang-ru">Подбор очков</span>
+                        <span class="lang-kz">Көзілдірік таңдау</span>
+                    </span>
+                </div>
+                <div style="padding: 15px; border-bottom: 1px solid var(--border-color);">
+                    <span class="lang-ru"><strong>Условие:</strong> Человек страдает дальнозоркостью. Расстояние наилучшего зрения для него составляет 50 см (он может читать книгу только отодвинув её на полметра). Какова должна быть оптическая сила очков, чтобы он мог читать книгу на нормальном расстоянии 25 см?</span>
+                    <span class="lang-kz"><strong>Есеп:</strong> Адам жақыннан көрмеушілікпен ауырады. Ол үшін ең жақсы көру қашықтығы 50 см (ол кітапты жарты метрге жылжытып қана оқи алады). Кітапты қалыпты 25 см қашықтықта оқу үшін көзілдіріктің оптикалық күші қандай болуы керек?</span>
+                </div>
+                <div class="solved-body">
+                    <div class="solved-dano">
+                        <p><strong><span class="lang-ru">Дано:</span><span class="lang-kz">Берілгені:</span></strong></p>
+                        <p>d = 25 см = 0.25 м <span style="font-size:0.8rem; color:gray;">(где книга)</span></p>
+                        <p>f = -50 см = -0.5 м <span style="font-size:0.8rem; color:gray;">(мнимое изобр.)</span></p>
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid var(--border-color);">
+                        <p><strong><span class="lang-ru">Найти:</span><span class="lang-kz">Табу керек:</span></strong> D - ?</p>
+                    </div>
+                    <div class="solved-solution">
+                        <p><strong><span class="lang-ru">Решение:</span><span class="lang-kz">Шешуі:</span></strong></p>
+                        <p><span class="lang-ru">Используем формулу тонкой линзы:</span><span class="lang-kz">Жұқа линза формуласын қолданамыз:</span><br> D = 1/F = 1/d + 1/f</p>
+                        <p style="margin-top: 10px;"><span class="lang-ru">Поскольку изображение мнимое (формируется перед глазом, чтобы человек его увидел), берем <strong>f</strong> со знаком минус.</span><span class="lang-kz">Кескін жалған болғандықтан (адам оны көруі үшін көздің алдында қалыптасады), <strong>f</strong>-ті минус таңбасымен аламыз.</span></p>
+                        <p style="margin-top: 10px; background: #f3f4f6; padding: 10px; border-radius: 4px;">
+                            D = 1 / 0.25 + 1 / (-0.5) <br>
+                            D = 4 - 2 = +2 дптр
+                        </p>
+                        <p style="margin-top: 10px;"><strong><span class="lang-ru">Ответ:</span><span class="lang-kz">Жауабы:</span> D = +2 дптр (собирающие линзы).</strong></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ПРАКТИЧЕСКИЕ ЗАДАНИЯ -->
+        <section id="practice" class="content-section">
+            <h2>
+                <span class="lang-ru">Практические задания</span>
+                <span class="lang-kz">Практикалық тапсырмалар</span>
+            </h2>
+            <div class="alert-box" style="background: #fafafa; border-left-color: #9ca3af; margin-bottom: 20px;">
+                <span class="lang-ru">Выберите правильный вариант из выпадающего списка, чтобы дополнить утверждения.</span>
+                <span class="lang-kz">Тұжырымдарды толықтыру үшін ашылмалы тізімнен дұрыс нұсқаны таңдаңыз.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">1. При близорукости изображение формируется</span>
+                <span class="lang-kz">1. Алыстан көрмеушілік кезінде кескін</span>
+                <select class="dropdown-select" id="dd1">
+                    <option value="none">...</option>
+                    <option value="before" data-ru="перед сетчаткой" data-kz="торлы қабықтың алдында">перед сетчаткой</option>
+                    <option value="behind" data-ru="за сетчаткой" data-kz="торлы қабықтың артында">за сетчаткой</option>
+                </select>
+                <span class="lang-ru">.</span><span class="lang-kz">қалыптасады.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">2. Дальнозоркость корректируется с помощью</span>
+                <span class="lang-kz">2. Жақыннан көрмеушілік</span>
+                <select class="dropdown-select" id="dd2">
+                    <option value="none">...</option>
+                    <option value="diverging" data-ru="рассеивающих линз" data-kz="шашыратқыш линзалармен">рассеивающих линз</option>
+                    <option value="converging" data-ru="собирающих линз" data-kz="жинақтағыш линзалармен">собирающих линз</option>
+                </select>
+                <span class="lang-ru">.</span><span class="lang-kz">түзетіледі.</span>
+            </div>
+
+            <div class="practice-item">
+                <span class="lang-ru">3. Способность глаза изменять фокусное расстояние хрусталика называется</span>
+                <span class="lang-kz">3. Көздің көз бұршағының фокустық қашықтығын өзгерту қабілеті</span>
+                <select class="dropdown-select" id="dd3">
+                    <option value="none">...</option>
+                    <option value="adaptation" data-ru="адаптацией" data-kz="адаптация">адаптацией</option>
+                    <option value="accommodation" data-ru="аккомодацией" data-kz="аккомодация">аккомодацией</option>
+                </select>
+                <span class="lang-ru">.</span><span class="lang-kz">деп аталады.</span>
+            </div>
+
+            <button class="btn" onclick="checkPractice()">
+                <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+            </button>
+            <div id="practiceResult" class="result-box"></div>
+        </section>
+
+        <!-- 6. ВИДЕО МАТЕРИАЛ -->
+        <section id="video" class="content-section">
+            <h2>
+                <span class="lang-ru">Видео материал</span>
+                <span class="lang-kz">Бейне материал</span>
+            </h2>
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/5U9N5X-vM7w" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- 7. ТЕСТОВЫЕ ВОПРОСЫ -->
+        <section id="test" class="content-section">
+            <h2>
+                <span class="lang-ru">Тест</span>
+                <span class="lang-kz">Тест</span>
+            </h2>
+            
+            <div class="test-q" data-ans="3">
+                <h4>
+                    <span class="lang-ru">1. Какая часть глаза выполняет роль линзы с изменяющимся фокусным расстоянием?</span>
+                    <span class="lang-kz">1. Көздің қай бөлігі фокустық қашықтығы өзгеретін линзаның рөлін атқарады?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Роговица</span><span class="lang-kz">Қасаң қабық</span></label>
+                    <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Сетчатка</span><span class="lang-kz">Торлы қабық</span></label>
+                    <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Хрусталик</span><span class="lang-kz">Көз бұршағы</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="1">
+                <h4>
+                    <span class="lang-ru">2. Как называется дефект зрения, при котором фокус лучей оказывается перед сетчаткой?</span>
+                    <span class="lang-kz">2. Сәулелердің фокусы торлы қабықтың алдында болатын көру ақауы қалай аталады?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Близорукость</span><span class="lang-kz">Алыстан көрмеушілік</span></label>
+                    <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Дальнозоркость</span><span class="lang-kz">Жақыннан көрмеушілік</span></label>
+                    <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Астигматизм</span><span class="lang-kz">Астигматизм</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="2">
+                <h4>
+                    <span class="lang-ru">3. Оптическая сила очков человека равна -2.5 дптр. Какой дефект зрения у этого человека?</span>
+                    <span class="lang-kz">3. Адамның көзілдірігінің оптикалық күші -2.5 дптр тең. Бұл адамда қандай көру ақауы бар?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Дальнозоркость</span><span class="lang-kz">Жақыннан көрмеушілік</span></label>
+                    <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Близорукость</span><span class="lang-kz">Алыстан көрмеушілік</span></label>
+                    <label><input type="radio" name="q3" value="3"> <span class="lang-ru">У него идеальное зрение</span><span class="lang-kz">Оның көру қабілеті мінсіз</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="3">
+                <h4>
+                    <span class="lang-ru">4. Чему равно расстояние наилучшего зрения для нормального глаза?</span>
+                    <span class="lang-kz">4. Қалыпты көз үшін ең жақсы көру қашықтығы неге тең?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q4" value="1"> <span class="lang-ru">10 см</span><span class="lang-kz">10 см</span></label>
+                    <label><input type="radio" name="q4" value="2"> <span class="lang-ru">50 см</span><span class="lang-kz">50 см</span></label>
+                    <label><input type="radio" name="q4" value="3"> <span class="lang-ru">25 см</span><span class="lang-kz">25 см</span></label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="checkTest()">
+                <span class="lang-ru">Завершить тест</span><span class="lang-kz">Тестті аяқтау</span>
+            </button>
+            <div id="testResult" class="result-box"></div>
+        </section>
+
+    </main>
+
+    <!-- САЙДБАР (ПРАВАЯ ПАНЕЛЬ) -->
+    <aside class="sidebar">
+        <div class="toc-title">
+            <span class="lang-ru">Содержание</span>
+            <span class="lang-kz">Мазмұны</span>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#theory" class="nav-link"><span class="lang-ru">Теория</span><span class="lang-kz">Теория</span></a></li>
+            <li><a href="#formula" class="nav-link"><span class="lang-ru">Формулы</span><span class="lang-kz">Формулалар</span></a></li>
+            <li><a href="#simulation" class="nav-link"><span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span></a></li>
+            <li><a href="#example" class="nav-link"><span class="lang-ru">Пример задачи</span><span class="lang-kz">Есеп мысалы</span></a></li>
+            <li><a href="#practice" class="nav-link"><span class="lang-ru">Практика</span><span class="lang-kz">Практика</span></a></li>
+            <li><a href="#video" class="nav-link"><span class="lang-ru">Видео</span><span class="lang-kz">Бейне</span></a></li>
+            <li><a href="#test" class="nav-link"><span class="lang-ru">Тест</span><span class="lang-kz">Тест</span></a></li>
+        </ul>
+    </aside>
+</div>
+
+<script>
+    // --- ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ ---
+    let currentLang = 'ru';
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+        updateSim();
+        document.getElementById('practiceResult').style.display = 'none';
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    // --- ПОДСВЕТКА СОДЕРЖАНИЯ ---
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            if (scrollY >= section.offsetTop - 100) current = section.getAttribute('id');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) link.classList.add('active');
+        });
+    });
+
+    // --- 3D СИМУЛЯЦИЯ ГЛАЗА ---
+    const canvas = document.getElementById('eyeCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Координаты и архитектура 3D-глаза
+    const cx = canvas.width / 2 + 50;  
+    const cy = canvas.height / 2;      
+    const eyeRadius = 90;              
+    
+    // Новые точные анатомические позиции для сечения:
+    const retinaX = cx + eyeRadius - 4;      // Задняя стенка (сетчатка)
+    const corneaCenterX = cx - eyeRadius + 15; // Центр роговицы (выпуклость спереди)
+    const lensX = cx - eyeRadius + 30;       // Хрусталик вынесен в ПЕРЕДНЮЮ ЧАСТЬ яблока
+    
+    // Оптическая математика
+    const normalFocus = retinaX - lensX; // Расстояние, требуемое для идеального фокуса
+
+    function t(ruText, kzText) { return currentLang === 'ru' ? ruText : kzText; }
+
+    // Рисование подложки для текста
+    function drawLabel(text, x, y, color = '#f8fafc') {
+        ctx.font = 'bold 12px sans-serif';
+        const m = ctx.measureText(text);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.7)'; // Темная подложка
+        ctx.fillRect(x - 4, y - 12, m.width + 8, 18);
+        ctx.fillStyle = color;
+        ctx.fillText(text, x, y);
+    }
+
+    window.updateSim = function() {
+        const defect = document.getElementById('eyeDefect').value;
+        const glasses = document.getElementById('glassesToggle').checked;
+        
+        let focusDist = normalFocus; 
+        if (defect === 'myopia') focusDist = normalFocus - 35; // Фокус ПЕРЕД сетчаткой
+        if (defect === 'hyperopia') focusDist = normalFocus + 35; // Фокус ЗА сетчаткой
+        
+        let actualFocus = focusDist;
+        let lensType = 'none';
+
+        if (glasses) {
+            if (defect === 'myopia') { actualFocus = normalFocus; lensType = 'diverging'; }
+            else if (defect === 'hyperopia') { actualFocus = normalFocus; lensType = 'converging'; }
+            else { document.getElementById('glassesToggle').checked = false; } 
+        }
+
+        // Статусы
+        const statusPos = document.getElementById('statusFocusPos');
+        const statusLens = document.getElementById('statusLens');
+
+        if (actualFocus === normalFocus) {
+            statusPos.textContent = t("Фокус на сетчатке (четко)", "Фокус торлы қабықта (анық)");
+            statusPos.style.color = 'var(--success)';
+        } else if (actualFocus < normalFocus) {
+            statusPos.textContent = t("Фокус ПЕРЕД сетчаткой", "Фокус торлы қабықтың АЛДЫНДА");
+            statusPos.style.color = 'var(--danger)';
+        } else {
+            statusPos.textContent = t("Фокус ЗА сетчаткой", "Фокус торлы қабықтың АРТЫНДА");
+            statusPos.style.color = 'var(--warning)';
+        }
+
+        if (lensType === 'none') statusLens.textContent = t("Очки: Нет", "Көзілдірік: Жоқ");
+        else if (lensType === 'diverging') statusLens.textContent = t("Очки: Рассеивающие (-)", "Көзілдірік: Шашыратқыш (-)");
+        else if (lensType === 'converging') statusLens.textContent = t("Очки: Собирающие (+)", "Көзілдірік: Жинақтағыш (+)");
+
+        drawEye3D(lensType, actualFocus);
+    }
+
+    function drawEye3D(lensType, focusPoint) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // --- 1. ОПТИЧЕСКАЯ ОСЬ ---
+        ctx.strokeStyle = '#334155'; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy); ctx.stroke(); ctx.setLineDash([]);
+
+        // --- 2. ЗРИТЕЛЬНЫЙ НЕРВ (справа сзади) ---
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.moveTo(cx + eyeRadius * 0.8, cy - 15);
+        ctx.lineTo(cx + eyeRadius + 40, cy - 25);
+        ctx.lineTo(cx + eyeRadius + 40, cy + 25);
+        ctx.lineTo(cx + eyeRadius * 0.8, cy + 15);
+        ctx.fill();
+
+        // --- 3. ВНУТРЕННЯЯ ПОЛОСТЬ ГЛАЗА (3D эффект глазного дна) ---
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx, cy, eyeRadius, 0, Math.PI*2); ctx.clip();
+        
+        let cavityGrad = ctx.createRadialGradient(cx + 40, cy, 10, cx, cy, eyeRadius);
+        cavityGrad.addColorStop(0, '#fde047');  // Желтое пятно (яркое)
+        cavityGrad.addColorStop(0.3, '#ea580c'); // Оранжевая сетчатка
+        cavityGrad.addColorStop(0.8, '#9a3412'); // Темные края (создают объем)
+        cavityGrad.addColorStop(1, '#431407');
+        ctx.fillStyle = cavityGrad;
+        ctx.fillRect(cx - eyeRadius, cy - eyeRadius, eyeRadius * 2, eyeRadius * 2);
+
+        // Кровеносные сосуды на сетчатке (добавляют реализм)
+        ctx.strokeStyle = '#7f1d1d'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(cx + 80, cy); ctx.quadraticCurveTo(cx, cy - 40, cx - 20, cy - 60); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 80, cy); ctx.quadraticCurveTo(cx, cy + 40, cx - 10, cy + 70); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 80, cy); ctx.quadraticCurveTo(cx + 20, cy - 30, cx + 10, cy - 80); ctx.stroke();
+        ctx.restore();
+
+        // --- 4. СТЕНКИ ГЛАЗА (Склера и Сетчатка в разрезе) ---
+        // Склера (белая внешняя оболочка)
+        ctx.strokeStyle = '#f8fafc'; ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.arc(cx, cy, eyeRadius, Math.PI * 0.65, Math.PI * 1.35, true); // Рисуем заднюю часть, вырезая перед
+        ctx.stroke();
+        
+        // Сетчатка (внутренняя оранжевая граница разреза)
+        ctx.strokeStyle = '#f97316'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, eyeRadius - 4, Math.PI * 0.65, Math.PI * 1.35, true);
+        ctx.stroke();
+
+        // --- 5. РОГОВИЦА (выпуклость спереди) ---
+        ctx.beginPath();
+        ctx.arc(corneaCenterX, cy, 45, Math.PI * 1.3, Math.PI * 0.7, true);
+        let corneaGrad = ctx.createLinearGradient(corneaCenterX - 45, cy - 45, corneaCenterX, cy + 45);
+        corneaGrad.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+        corneaGrad.addColorStop(0.5, 'rgba(255, 255, 255, 0.05)');
+        corneaGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+        ctx.fillStyle = corneaGrad; ctx.fill();
+        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2; ctx.stroke();
+
+        // --- 6. РАДУЖКА (Iris) ---
+        ctx.fillStyle = '#0284c7'; // Синий цвет глаз
+        // Верхняя часть
+        ctx.beginPath(); ctx.moveTo(corneaCenterX, cy - 43); ctx.lineTo(lensX + 2, cy - 18); ctx.lineTo(lensX - 4, cy - 18); ctx.fill();
+        // Нижняя часть
+        ctx.beginPath(); ctx.moveTo(corneaCenterX, cy + 43); ctx.lineTo(lensX + 2, cy + 18); ctx.lineTo(lensX - 4, cy + 18); ctx.fill();
+
+        // --- 7. ХРУСТАЛИК (3D линза в ПЕРЕДНЕЙ части яблока) ---
+        ctx.beginPath();
+        ctx.ellipse(lensX, cy, 12, 36, 0, 0, Math.PI*2);
+        let lensGrad = ctx.createRadialGradient(lensX - 4, cy - 10, 2, lensX, cy, 35);
+        lensGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+        lensGrad.addColorStop(0.4, 'rgba(186, 230, 253, 0.6)');
+        lensGrad.addColorStop(1, 'rgba(56, 189, 248, 0.2)');
+        ctx.fillStyle = lensGrad; ctx.fill();
+        ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        // --- 8. ОЧКИ (если выбраны) ---
+        const glassesX = lensX - 65;
+        if (lensType !== 'none') {
+            ctx.fillStyle = 'rgba(56, 189, 248, 0.2)'; ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (lensType === 'converging') {
+                ctx.moveTo(glassesX, cy - 40); ctx.lineTo(glassesX - 6, cy); ctx.lineTo(glassesX, cy + 40);
+                ctx.lineTo(glassesX + 6, cy); ctx.closePath();
+            } else { // diverging
+                ctx.moveTo(glassesX - 5, cy - 40); ctx.lineTo(glassesX + 5, cy - 40);
+                ctx.lineTo(glassesX + 2, cy); ctx.lineTo(glassesX + 5, cy + 40);
+                ctx.lineTo(glassesX - 5, cy + 40); ctx.lineTo(glassesX - 2, cy); ctx.closePath();
+            }
+            ctx.fill(); ctx.stroke();
+            // Дужка
+            ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(glassesX, cy - 35); ctx.lineTo(corneaCenterX - 10, cy - 35); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(glassesX, cy + 35); ctx.lineTo(corneaCenterX - 10, cy + 35); ctx.stroke();
+        }
+
+        // --- 9. ЛУЧИ СВЕТА (Эффект свечения) ---
+        const rayY = 32; 
+        
+        ctx.shadowColor = '#06b6d4'; // Голубоватое свечение (лазер)
+        ctx.shadowBlur = 8;
+        ctx.strokeStyle = '#cffafe'; 
+        ctx.lineWidth = 2.5;
+
+        function drawRay(isTop) {
+            let startY = isTop ? cy - rayY : cy + rayY;
+            let yAtLens = startY;
+
+            ctx.beginPath(); ctx.moveTo(0, startY);
+
+            // Преломление в очках
+            if (lensType !== 'none') {
+                ctx.lineTo(glassesX, startY);
+                yAtLens = isTop 
+                    ? (lensType === 'converging' ? startY + 6 : startY - 6)
+                    : (lensType === 'converging' ? startY - 6 : startY + 6);
+                ctx.lineTo(lensX, yAtLens);
+            } else {
+                ctx.lineTo(lensX, startY);
+            }
+
+            // Внутри глаза
+            if (focusPoint > normalFocus) {
+                // ДАЛЬНОЗОРКОСТЬ: фокус за глазом
+                let ratio = (retinaX - lensX) / focusPoint;
+                let yAtRetina = yAtLens + (cy - yAtLens) * ratio;
+                
+                ctx.lineTo(retinaX, yAtRetina); ctx.stroke();
+
+                // Пунктир за глазом
+                ctx.save();
+                ctx.beginPath(); ctx.setLineDash([4, 4]); ctx.globalAlpha = 0.5;
+                ctx.moveTo(retinaX, yAtRetina); ctx.lineTo(lensX + focusPoint, cy);
+                ctx.stroke(); ctx.restore();
+
+                // Размытое пятно на сетчатке
+                ctx.fillStyle = '#cffafe';
+                ctx.beginPath(); ctx.arc(retinaX, yAtRetina, 4, 0, Math.PI*2); ctx.fill();
+            } else {
+                // НОРМА ИЛИ БЛИЗОРУКОСТЬ
+                ctx.lineTo(lensX + focusPoint, cy); ctx.stroke();
+
+                if (focusPoint < normalFocus) {
+                    // Пересечение до сетчатки и расхождение
+                    ctx.beginPath(); ctx.moveTo(lensX + focusPoint, cy);
+                    let ratio = (retinaX - (lensX + focusPoint)) / focusPoint;
+                    let yAtRetina = cy + (cy - yAtLens) * ratio; 
+                    
+                    ctx.globalAlpha = 0.6; ctx.lineTo(retinaX, yAtRetina); ctx.stroke(); ctx.globalAlpha = 1.0;
+                    
+                    // Размытое пятно
+                    ctx.fillStyle = '#cffafe';
+                    ctx.beginPath(); ctx.arc(retinaX, yAtRetina, 4, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        }
+
+        drawRay(true);  // Верхний луч
+        drawRay(false); // Нижний луч
+
+        // Центральная точка фокуса (самая яркая)
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ffffff'; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.arc(lensX + focusPoint, cy, 3.5, 0, Math.PI*2); ctx.fill();
+        
+        // Сброс теней
+        ctx.shadowBlur = 0;
+
+        // --- 10. ПОДПИСИ ---
+        drawLabel(t("Роговица", "Қасаң қабық"), corneaCenterX - 25, cy - 55);
+        drawLabel(t("Хрусталик", "Көз бұршағы"), lensX - 25, cy + 60);
+        drawLabel(t("Сетчатка", "Торлы қабық"), retinaX - 45, cy + 60);
+    }
+
+    // --- ПРОВЕРКА ПРАКТИКИ И ТЕСТОВ (БЕЗ ИЗМЕНЕНИЙ) ---
+    window.checkPractice = function() {
+        const ans = { dd1: 'before', dd2: 'converging', dd3: 'accommodation' };
+        let c = 0;
+        for(let id in ans) {
+            const el = document.getElementById(id);
+            el.classList.remove('correct', 'wrong');
+            if(el.value === ans[id]) { el.classList.add('correct'); c++; } 
+            else if (el.value !== 'none') el.classList.add('wrong');
+        }
+        const r = document.getElementById('practiceResult');
+        r.style.display = 'block';
+        if(c === 3) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t("Все верно! Отлично.", "Барлығы дұрыс! Тамаша.");
+        } else {
+            r.style.backgroundColor = 'var(--danger-light)'; r.style.color = 'var(--danger)';
+            r.innerHTML = t("Есть ошибки. Исправьте их.", "Қателер бар. Оларды түзеңіз.");
+        }
+    }
+
+    window.checkTest = function() {
+        let score = 0; const total = 5;
+        document.querySelectorAll('.test-q').forEach((q) => {
+            const corr = q.getAttribute('data-ans');
+            const sel = q.querySelector('input:checked');
+            if (sel && sel.value === corr) score++;
+        });
+        const r = document.getElementById('testResult'); r.style.display = 'block';
+        if (score === total) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t(`Идеально! ${score} из ${total}.`, `Керемет! ${total} ішінен ${score}.`);
+        } else {
+            r.style.backgroundColor = 'var(--warning)'; r.style.color = '#fff';
+            r.innerHTML = t(`Ваш результат: ${score} из ${total}. Повторите материал.`, `Сіздің нәтижеңіз: ${total} ішінен ${score}. Материалды қайталаңыз.`);
+        }
+    };
+
+    window.onload = () => updateSim();
+</script>
+</body>
+</html>

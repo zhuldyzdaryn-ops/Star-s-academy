@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Количество теплоты и Удельная теплоемкость — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fff7ed; /* Светло-оранжевый (тепло) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #ea580c; /* Оранжевый */
+            --primary-hover: #c2410c;
+            --secondary: #0ea5e9; /* Синий (вода) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fed7aa;
+            --text-muted: #64748b;
+            --formula-bg: #ffedd5;
+            --metal-color: #94a3b8;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #431407;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box strong {
+            color: var(--primary);
+        }
+
+        .math-formula {
+            font-size: 1.6rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Таблица */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+        }
+        .data-table th {
+            background: var(--formula-bg);
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: column; /* Вертикальная компоновка для широкого холста */
+            }
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        .buttons {
+            grid-column: span 2;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 150px;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+        
+        button.btn-reset {
+            background-color: var(--text-muted);
+        }
+        button.btn-reset:hover {
+            background-color: #475569;
+        }
+
+        .canvas-container {
+            background-color: #1e293b; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            padding: 10px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(234, 88, 12, 0.2);
+        }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(234, 88, 12, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Количество теплоты. Удельная теплоемкость</span>
+            <span class="lang-kz">Жылу мөлшері. Меншікті жылусыйымдылық</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему в жаркий день песок на пляже обжигает ноги, а вода в море остается прохладной? Хотя Солнце греет их одинаково! Разгадка — в особом свойстве каждого вещества.</span>
+            <span class="lang-kz">Неліктен ыстық күні жағажайдағы құм аяқты күйдіреді, ал теңіздегі су салқын күйінде қалады? Күн оларды бірдей қыздырса да! Мұның сыры — әр заттың ерекше қасиетінде.</span>
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ 1: Количество теплоты -->
+    <section>
+        <h2>
+            <span class="lang-ru">1. Количество теплоты (<span class="math-symbol">Q</span>)</span>
+            <span class="lang-kz">1. Жылу мөлшері (<span class="math-symbol">Q</span>)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Мы уже знаем, что внутреннюю энергию можно изменить путем теплопередачи (без совершения работы).</span>
+            <span class="lang-kz">Ішкі энергияны жылу берілу арқылы (жұмыс істемей-ақ) өзгертуге болатынын білеміз.</span>
+        </p>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Количество теплоты (<span class="math-symbol">Q</span>)</strong> — это энергия, которую тело получает или отдает в процессе теплопередачи. Как и любая энергия, она измеряется в <strong>Джоулях (Дж)</strong>.</span>
+            <span class="lang-kz"><strong>Жылу мөлшері (<span class="math-symbol">Q</span>)</strong> — бұл жылу берілу процесінде дененің алатын немесе беретін энергиясы. Кез келген энергия сияқты ол да <strong>Джоульмен (Дж)</strong> өлшенеді.</span>
+        </div>
+        <p>
+            <span class="lang-ru">От чего зависит, сколько теплоты нужно для нагревания? Во-первых, от <strong>массы</strong> тела (вскипятить чайник дольше, чем кружку воды). Во-вторых, от разности температур (нагреть воду от 20&deg;C до 100&deg;C требует больше энергии, чем до 40&deg;C). И в-третьих, от <strong>рода вещества</strong>!</span>
+            <span class="lang-kz">Қыздыру үшін қанша жылу қажет екені неге байланысты? Біріншіден, дененің <strong>массасына</strong> (бір шыныаяқ суға қарағанда шайнекті қайнату ұзағырақ). Екіншіден, температура айырмасына (суды 20&deg;C-тан 100&deg;C-қа дейін қыздыру 40&deg;C-қа дейін қыздыруға қарағанда көбірек энергияны қажет етеді). Үшіншіден, <strong>заттың тегіне</strong>!</span>
+        </p>
+    </section>
+
+    <!-- ТЕОРИЯ 2: Удельная теплоемкость -->
+    <section>
+        <h2>
+            <span class="lang-ru">2. Удельная теплоемкость (<span class="math-symbol">c</span>) и Главная формула</span>
+            <span class="lang-kz">2. Меншікті жылусыйымдылық (<span class="math-symbol">c</span>) және Негізгі формула</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Каждое вещество по-разному "впитывает" тепло. Эта способность называется удельной теплоемкостью.</span>
+            <span class="lang-kz">Әр зат жылуды әртүрлі "сіңіреді". Бұл қасиет меншікті жылусыйымдылық деп аталады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Удельная теплоемкость (<span class="math-symbol">c</span>)</strong> — это физическая величина, показывающая, какое количество теплоты требуется для изменения температуры вещества массой 1 кг на 1 &deg;C. Единица измерения: <strong>Дж / (кг &middot; &deg;C)</strong>.</span>
+            <span class="lang-kz"><strong>Меншікті жылусыйымдылық (<span class="math-symbol">c</span>)</strong> — массасы 1 кг заттың температурасын 1 &deg;C-қа өзгерту үшін қанша жылу мөлшері қажет екенін көрсететін физикалық шама. Өлшем бірлігі: <strong>Дж / (кг &middot; &deg;C)</strong>.</span>
+            
+            <span class="math-formula">Q = c &middot; m &middot; (t<sub>2</sub> - t<sub>1</sub>)</span>
+            
+            <span class="lang-ru" style="font-size:0.9rem;">Где: <strong>m</strong> — масса (кг), <strong>t<sub>1</sub></strong> — начальная температура, <strong>t<sub>2</sub></strong> — конечная температура.</span>
+            <span class="lang-kz" style="font-size:0.9rem;">Мұндағы: <strong>m</strong> — масса (кг), <strong>t<sub>1</sub></strong> — бастапқы температура, <strong>t<sub>2</sub></strong> — соңғы температура.</span>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><span class="lang-ru">Вещество</span><span class="lang-kz">Зат</span></th>
+                    <th><span class="lang-ru">Уд. теплоемкость <span class="math-symbol">c</span>, Дж/(кг&middot;&deg;C)</span><span class="lang-kz">Менш. жылусыйымдылық <span class="math-symbol">c</span>, Дж/(кг&middot;&deg;C)</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="lang-ru">Вода (самая большая!)</span><span class="lang-kz">Су (ең үлкені!)</span></td><td><strong>4200</strong></td></tr>
+                <tr><td><span class="lang-ru">Лед</span><span class="lang-kz">Мұз</span></td><td>2100</td></tr>
+                <tr><td><span class="lang-ru">Алюминий</span><span class="lang-kz">Алюминий</span></td><td>920</td></tr>
+                <tr><td><span class="lang-ru">Медь</span><span class="lang-kz">Мыс</span></td><td>400</td></tr>
+                <tr><td><span class="lang-ru">Золото</span><span class="lang-kz">Алтын</span></td><td>130</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+            <span class="lang-ru"><em>* Обратите внимание: вода нагревается очень долго (ей нужно 4200 Дж на каждый градус), а золото нагревается мгновенно (всего 130 Дж). Но и остывает вода так же долго, поэтому ее используют в батареях отопления!</em></span>
+            <span class="lang-kz"><em>* Назар аударыңыз: су өте ұзақ қызады (оған әр градусқа 4200 Дж қажет), ал алтын лезде қызады (небәрі 130 Дж). Бірақ су да ұзақ суиды, сондықтан оны жылыту батареяларында пайдаланады!</em></span>
+        </p>
+    </section>
+
+    <!-- СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Гонка нагревания</span>
+            <span class="lang-kz">Симуляция: Қыздыру жарысы</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Левая горелка (Тело 1):</span>
+                        <span class="lang-kz">Сол жақ оттық (1-дене):</span>
+                    </label>
+                    <select id="mat1">
+                        <option value="4200" data-color="#0ea5e9" data-ru="Вода (c = 4200)" data-kz="Су (c = 4200)">Вода (c = 4200)</option>
+                        <option value="920" data-color="#94a3b8" data-ru="Алюминий (c = 920)" data-kz="Алюминий (c = 920)">Алюминий (c = 920)</option>
+                        <option value="400" data-color="#d97706" data-ru="Медь (c = 400)" data-kz="Мыс (c = 400)">Медь (c = 400)</option>
+                        <option value="130" data-color="#eab308" data-ru="Золото (c = 130)" data-kz="Алтын (c = 130)">Золото (c = 130)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Правая горелка (Тело 2):</span>
+                        <span class="lang-kz">Оң жақ оттық (2-дене):</span>
+                    </label>
+                    <select id="mat2">
+                        <option value="4200" data-color="#0ea5e9" data-ru="Вода (c = 4200)" data-kz="Су (c = 4200)">Вода (c = 4200)</option>
+                        <option value="920" data-color="#94a3b8" data-ru="Алюминий (c = 920)" data-kz="Алюминий (c = 920)">Алюминий (c = 920)</option>
+                        <option value="400" data-color="#d97706" data-ru="Медь (c = 400)" data-kz="Мыс (c = 400)" selected>Медь (c = 400)</option>
+                        <option value="130" data-color="#eab308" data-ru="Золото (c = 130)" data-kz="Алтын (c = 130)">Золото (c = 130)</option>
+                    </select>
+                </div>
+
+                <div class="buttons">
+                    <button id="btnHeat" onclick="startHeating()">
+                        <span class="lang-ru">&#128293; Включить горелки</span>
+                        <span class="lang-kz">&#128293; Оттықтарды қосу</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetHeating()">
+                        <span class="lang-ru">Сброс</span>
+                        <span class="lang-kz">Қалпына келтіру</span>
+                    </button>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="700" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Эксперимент:</strong> Горелки отдают одинаковое количество теплоты (Q) в секунду. Масса тел одинакова (1 кг). Посмотрите, кто быстрее нагреется до 100 &deg;C! Вещество с меньшей теплоемкостью (<span class="math-symbol">c</span>) нагревается быстрее.</span>
+                <span class="lang-kz"><strong>Эксперимент:</strong> Оттықтар секундына бірдей жылу мөлшерін (Q) береді. Денелердің массасы бірдей (1 кг). 100 &deg;C-қа дейін қайсысы тезірек қызатынын көріңіз! Жылусыйымдылығы (<span class="math-symbol">c</span>) аз зат тезірек қызады.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет)</span>
+                <span class="lang-kz">1-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Рассчитайте, какое количество теплоты потребуется, чтобы нагреть <strong>2 кг воды</strong> от 20 &deg;C до 30 &deg;C? <br><em>(Подсказка: c = 4200 Дж/(кг&middot;&deg;C), Q = c &middot; m &middot; (t<sub>2</sub> - t<sub>1</sub>))</em></span>
+                <span class="lang-kz"><strong>2 кг суды</strong> 20 &deg;C-тан 30 &deg;C-қа дейін қыздыру үшін қанша жылу мөлшері қажет екенін есептеңіз? <br><em>(Көмек: c = 4200 Дж/(кг&middot;&deg;C), Q = c &middot; m &middot; (t<sub>2</sub> - t<sub>1</sub>))</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Джоулях (например, 50000)" data-placeholder-kz="Жауап Джоульмен (мысалы, 50000)" placeholder="Ответ в Джоулях (например, 50000)">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему в системах отопления домов по трубам пускают именно горячую воду, а не масло или другую жидкость?</span>
+                <span class="lang-kz">Неліктен үйлерді жылыту жүйелерінде құбырлар арқылы май немесе басқа сұйықтық емес, дәл ыстық су жіберіледі?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вода дешевая" data-kz="Су арзан">Вода дешевая</option>
+                    <option value="2" data-ru="У воды самая большая удельная теплоемкость (остывая, она отдает много тепла комнате)" data-kz="Судың меншікті жылусыйымдылығы ең үлкен (суи отырып, ол бөлмеге көп жылу береді)">У воды самая большая удельная теплоемкость (остывая, она отдает много тепла комнате)</option>
+                    <option value="3" data-ru="Вода быстрее других жидкостей нагревается в котле" data-kz="Су қазанда басқа сұйықтықтарға қарағанда тезірек қызады">Вода быстрее других жидкостей нагревается в котле</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видеоуроки с наглядным решением задач на количество теплоты и теплоемкость!</span>
+            <span class="lang-kz">Жылу мөлшері мен жылусыйымдылыққа есептер шығарудың көрнекі бейнесабақтарын қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BA%D0%BE%D0%BB%D0%B8%D1%87%D0%B5%D1%81%D1%82%D0%B2%D0%BE+%D1%82%D0%B5%D0%BF%D0%BB%D0%BE%D1%82%D1%8B+%D1%83%D0%B4%D0%B5%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F+%D1%82%D0%B5%D0%BF%D0%BB%D0%BE%D0%B5%D0%BC%D0%BA%D0%BE%D1%81%D1%82%D1%8C+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Количество теплоты» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Жылу мөлшері» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. В каких единицах измеряется количество теплоты (Q)?</span>
+                <span class="lang-kz">1. Жылу мөлшері (Q) қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Ньютон (Н)</span><span class="lang-kz">Ньютон (Н)</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Ватт (Вт)</span><span class="lang-kz">Ватт (Вт)</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Джоуль (Дж)</span><span class="lang-kz">Джоуль (Дж)</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Градус Цельсия (&deg;C)</span><span class="lang-kz">Цельсий градусы (&deg;C)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Что показывает удельная теплоемкость вещества?</span>
+                <span class="lang-kz">2. Заттың меншікті жылусыйымдылығы нені көрсетеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Массу тела при его нагревании</span><span class="lang-kz">Қыздырған кездегі дененің массасын</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Количество теплоты, необходимое для нагревания 1 кг вещества на 1 &deg;C</span><span class="lang-kz">1 кг затты 1 &deg;C-қа қыздыруға қажетті жылу мөлшерін</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Время, за которое остынет 1 кг воды</span><span class="lang-kz">1 кг судың суыту уақытын</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Температуру плавления вещества</span><span class="lang-kz">Заттың балқу температурасын</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. По какой формуле вычисляется количество теплоты при нагревании?</span>
+                <span class="lang-kz">3. Қыздыру кезіндегі жылу мөлшері қандай формуламен есептеледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span><span class="lang-kz">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Q = m/V</span><span class="lang-kz">Q = m/V</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Q = Fs</span><span class="lang-kz">Q = Fs</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Q = cm</span><span class="lang-kz">Q = cm</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. На солнце лежат два куска равной массы: золотой (c=130) и алюминиевый (c=920). Какой из них нагреется быстрее?</span>
+                <span class="lang-kz">4. Күн астында массалары бірдей екі кесек жатыр: алтын (c=130) және алюминий (c=920). Олардың қайсысы тезірек қызады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Оба нагреются одновременно</span><span class="lang-kz">Екеуі де бір уақытта қызады</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Алюминиевый</span><span class="lang-kz">Алюминий</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Зависит от времени года</span><span class="lang-kz">Жыл мезгіліне байланысты</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Золотой</span><span class="lang-kz">Алтын</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Какое вещество из перечисленных имеет самую большую удельную теплоемкость?</span>
+                <span class="lang-kz">5. Аталған заттардың ішінде қайсысының меншікті жылусыйымдылығы ең үлкен?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Медь</span><span class="lang-kz">Мыс</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Вода</span><span class="lang-kz">Су</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Лед</span><span class="lang-kz">Мұз</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Золото</span><span class="lang-kz">Алтын</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Q = 4200 * 2 * (30 - 20) = 4200 * 2 * 10 = 84000 Дж.",
+            fbA_inc: "Неверно. Умножьте удельную теплоемкость (4200) на массу (2) и на разность температур (10).",
+            fbB_corr: "Верно! Вода долго нагревается, но и очень долго остывает. Отдавая 1 градус, 1 кг воды выделяет целых 4200 Дж теплоты для комнаты!",
+            fbB_inc: "Неверно. Вспомните, какое вещество имеет максимальную удельную теплоемкость (впитает много энергии в котле и отдаст ее в комнате).",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_start: "&#128293; Включить горелки",
+            btn_stop: "Остановить",
+            txt_win: "НАГРЕЛСЯ!",
+            txt_temp: "Темп: "
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Q = 4200 * 2 * (30 - 20) = 4200 * 2 * 10 = 84000 Дж.",
+            fbA_inc: "Қате. Меншікті жылусыйымдылықты (4200) массаға (2) және температура айырмасына (10) көбейтіңіз.",
+            fbB_corr: "Дұрыс! Су ұзақ қызады, бірақ өте ұзақ суиды. 1 градусқа төмендегенде, 1 кг су бөлмеге 4200 Дж жылу бөледі!",
+            fbB_inc: "Қате. Қай заттың меншікті жылусыйымдылығы ең жоғары екенін есіңізге түсіріңіз (ол қазанда көп энергияны сіңіріп, оны бөлмеге береді).",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_start: "&#128293; Оттықтарды қосу",
+            btn_stop: "Тоқтату",
+            txt_win: "ҚЫЗДЫ!",
+            txt_temp: "Темп: "
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        if (!isHeating) {
+            document.getElementById('btnHeat').innerHTML = t('btn_start');
+        } else {
+            document.getElementById('btnHeat').innerHTML = t('btn_stop');
+        }
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let isHeating = false;
+    let animFrame;
+    
+    // Начальные параметры
+    const startTemp = 20;
+    const maxTemp = 100;
+    const power = 1000; // Условная мощность горелки (Дж/кадр)
+    const mass = 1; // 1 кг
+    
+    let obj1 = { temp: startTemp, c: 4200, color: '#0ea5e9', name: 'Вода' };
+    let obj2 = { temp: startTemp, c: 400, color: '#d97706', name: 'Медь' };
+    
+    let fireFrame = 0;
+
+    function getSelectedData(selectId) {
+        const sel = document.getElementById(selectId);
+        const opt = sel.options[sel.selectedIndex];
+        return {
+            c: parseInt(opt.value),
+            color: opt.getAttribute('data-color'),
+            name: opt.getAttribute(`data-${currentLang}`) // Для отрисовки
+        };
+    }
+
+    function updateObjParams() {
+        if (isHeating) return; // Не меняем во время гонки
+        let d1 = getSelectedData('mat1');
+        let d2 = getSelectedData('mat2');
+        obj1.c = d1.c; obj1.color = d1.color; obj1.name = d1.name;
+        obj2.c = d2.c; obj2.color = d2.color; obj2.name = d2.name;
+    }
+
+    document.getElementById('mat1').addEventListener('change', () => { updateObjParams(); drawScene(); });
+    document.getElementById('mat2').addEventListener('change', () => { updateObjParams(); drawScene(); });
+
+    window.startHeating = function() {
+        if (isHeating) {
+            isHeating = false;
+            document.getElementById('btnHeat').innerHTML = t('btn_start');
+            cancelAnimationFrame(animFrame);
+            drawScene();
+            return;
+        }
+        
+        // Если уже кто-то нагрелся до 100, сбрасываем перед стартом
+        if (obj1.temp >= maxTemp || obj2.temp >= maxTemp) {
+            obj1.temp = startTemp;
+            obj2.temp = startTemp;
+        }
+        
+        updateObjParams();
+        isHeating = true;
+        document.getElementById('btnHeat').innerHTML = t('btn_stop');
+        animate();
+    };
+
+    window.resetHeating = function() {
+        isHeating = false;
+        document.getElementById('btnHeat').innerHTML = t('btn_start');
+        cancelAnimationFrame(animFrame);
+        obj1.temp = startTemp;
+        obj2.temp = startTemp;
+        drawScene();
+    };
+
+    function drawThermometer(x, y, w, h, currentTemp) {
+        const pad = 10;
+        const barW = w - pad*2;
+        const maxH = h - pad*2;
+        
+        // Рамка термометра
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(x, y, w, h);
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(x+pad, y+pad, barW, maxH);
+        
+        // Столбик
+        let ratio = (currentTemp - startTemp) / (maxTemp - startTemp);
+        if (ratio > 1) ratio = 1;
+        let fillH = ratio * maxH;
+        
+        // Цвет от синего к красному
+        let r = Math.round(59 + (239-59)*ratio);
+        let g = Math.round(130 + (68-130)*ratio);
+        let b = Math.round(246 + (68-246)*ratio);
+        
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(x+pad, y+pad + maxH - fillH, barW, fillH);
+        
+        // Текст темп.
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${Math.round(currentTemp)}°C`, x+w/2, y - 10);
+        
+        if (currentTemp >= maxTemp) {
+            ctx.fillStyle = '#10b981';
+            ctx.fillText(t('txt_win'), x+w/2, y + h + 20);
+        }
+    }
+
+    function drawBurner(x, y, isOn) {
+        ctx.fillStyle = '#475569';
+        ctx.fillRect(x-40, y, 80, 20);
+        
+        if (isOn) {
+            ctx.fillStyle = '#ef4444';
+            for(let i=-2; i<=2; i++) {
+                let fh = 15 + Math.sin(fireFrame + i)*10;
+                ctx.beginPath();
+                ctx.moveTo(x + i*15 - 5, y);
+                ctx.lineTo(x + i*15 + 5, y);
+                ctx.lineTo(x + i*15, y - fh);
+                ctx.fill();
+            }
+        }
+    }
+
+    function drawBlock(x, y, size, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(x - size/2, y - size, size, size);
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - size/2, y - size, size, size);
+        
+        // Текст массы
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("1 кг", x, y - size/2 + 5);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cy = 230; // Уровень горелок
+        
+        // Объект 1 (Левый)
+        const x1 = 200;
+        drawThermometer(x1 - 100, 40, 30, 150, obj1.temp);
+        drawBlock(x1, cy, 60, obj1.color);
+        drawBurner(x1, cy, isHeating);
+        
+        // Название 1
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`c = ${obj1.c}`, x1, cy + 40);
+
+        // Объект 2 (Правый)
+        const x2 = 500;
+        drawThermometer(x2 + 70, 40, 30, 150, obj2.temp);
+        drawBlock(x2, cy, 60, obj2.color);
+        drawBurner(x2, cy, isHeating);
+        
+        // Название 2
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`c = ${obj2.c}`, x2, cy + 40);
+    }
+
+    function animate() {
+        if (!isHeating) return;
+        
+        fireFrame += 0.2;
+        
+        // Q = c * m * dT => dT = Q / (c * m)
+        // В кадр поступает 'power' Джоулей
+        
+        if (obj1.temp < maxTemp) {
+            obj1.temp += power / (obj1.c * mass);
+        }
+        if (obj2.temp < maxTemp) {
+            obj2.temp += power / (obj2.c * mass);
+        }
+        
+        drawScene();
+        
+        if (obj1.temp >= maxTemp || obj2.temp >= maxTemp) {
+            // Кто-то достиг 100, останавливаем
+            isHeating = false;
+            document.getElementById('btnHeat').innerHTML = t('btn_start');
+        } else {
+            animFrame = requestAnimationFrame(animate);
+        }
+    }
+
+    // Инициализация
+    updateObjParams();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value.replace(/\s/g, ''));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 84000) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

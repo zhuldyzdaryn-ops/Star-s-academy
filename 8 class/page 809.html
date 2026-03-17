@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Парообразование и конденсация — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc; /* Светло-серо-голубой (пар) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #0ea5e9; /* Голубой (вода/пар) */
+            --primary-hover: #0284c7;
+            --hot: #ef4444; /* Красный (нагрев) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e0f2fe;
+            --text-muted: #64748b;
+            --formula-bg: #f0f9ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #082f49;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Таблица */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+        }
+        .data-table th {
+            background: var(--formula-bg);
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-heat { background-color: var(--hot); }
+        button.btn-heat:hover { background-color: #b91c1c; }
+        button.btn-lid { background-color: #64748b; }
+        button.btn-lid:hover { background-color: #475569; }
+        button.btn-reset { background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #1e293b; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            background-color: #475569;
+            border: 2px solid #94a3b8;
+        }
+        .status-badge.saturated {
+            background-color: #10b981;
+            border-color: #059669;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(14, 165, 233, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(14, 165, 233, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Парообразование и конденсация. Кипение</span>
+            <span class="lang-kz">Булану және конденсация. Қайнау</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему вода в закрытой кастрюле выкипает намного медленнее, чем в открытой? Почему лужи высыхают даже в прохладный день? Физика пара скрывает много интересного!</span>
+            <span class="lang-kz">Неліктен жабық қазандағы су ашық қазанға қарағанда әлдеқайда баяу қайнап сарқылады? Неліктен шалшық сулар тіпті салқын күні де кеуіп кетеді? Бу физикасы көптеген қызықтарды жасырады!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Два вида парообразования</span>
+            <span class="lang-kz">1. Буланудың екі түрі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Переход вещества из жидкого состояния в газообразное называется <strong>парообразованием</strong>. Существует два способа превратить воду в пар:</span>
+            <span class="lang-kz">Заттың сұйық күйден газ күйіне өтуі <strong>булану</strong> деп аталады. Суды буға айналдырудың екі тәсілі бар:</span>
+        </p>
+        
+        <div class="highlight-box">
+            <ul>
+                <li><span class="lang-ru"><strong>Испарение</strong> — парообразование, происходящее <em>только со свободной поверхности</em> жидкости. Оно происходит при любой температуре (даже лед испаряется!).</span><span class="lang-kz"><strong>Кебу</strong> — сұйықтықтың <em>тек еркін бетінен</em> ғана жүретін булану. Ол кез келген температурада жүреді (тіпті мұз да кебеді!).</span></li>
+                <li><span class="lang-ru"><strong>Кипение</strong> — интенсивное парообразование, которое происходит <em>по всему объему</em> жидкости (внутрь пузырьков пара). Происходит строго при определенной температуре (температуре кипения).</span><span class="lang-kz"><strong>Қайнау</strong> — сұйықтықтың <em>барлық көлемінде</em> (бу көпіршіктерінің ішіне) жүретін қарқынды булану. Ол қатаң белгіленген температурада (қайнау температурасында) жүреді.</span></li>
+            </ul>
+        </div>
+        
+        <p>
+            <span class="lang-ru">Обратный процесс — превращение пара в жидкость — называется <strong>конденсацией</strong> (роса на траве, запотевшие окна).</span>
+            <span class="lang-kz">Кері процесс — будың сұйықтыққа айналуы — <strong>конденсация</strong> деп аталады (шөптегі шық, терлеген терезелер).</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Насыщенный и ненасыщенный пар</span>
+            <span class="lang-kz">2. Қаныққан және қанықпаған бу</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если оставить стакан с водой на столе, вода со временем исчезнет — молекулы вылетят (испарятся) и разлетятся по комнате. Это <strong>ненасыщенный пар</strong>.</span>
+            <span class="lang-kz">Егер үстелде суы бар стақанды қалдырсақ, уақыт өте келе су жоғалады — молекулалар ұшып шығып (кеуіп), бөлмеге тарап кетеді. Бұл <strong>қанықпаған бу</strong>.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Но что будет, если плотно закрыть стакан крышкой? Молекулы начнут вылетать из воды, ударяться о крышку и возвращаться обратно (конденсироваться). Когда число вылетающих молекул станет равно числу возвращающихся, наступит <strong>динамическое равновесие</strong>.</span>
+            <span class="lang-kz">Ал стақанды қақпақпен мықтап жапсақ не болады? Молекулалар судан ұшып шығып, қақпаққа соғылып, қайта орала бастайды (конденсацияланады). Ұшып шығатын молекулалар саны қайтып оралатындар санына тең болған кезде, <strong>динамикалық тепе-теңдік</strong> орнайды.</span>
+        </p>
+        <div class="highlight-box">
+            <span class="lang-ru">Пар, находящийся в динамическом равновесии со своей жидкостью, называется <strong>насыщенным</strong>. В закрытом сосуде жидкость никогда не испарится до конца!</span>
+            <span class="lang-kz">Өзінің сұйықтығымен динамикалық тепе-теңдікте болатын бу <strong>қаныққан</strong> деп аталады. Жабық ыдыста сұйықтық ешқашан соңына дейін кеуіп кетпейді!</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">3. Удельная теплота парообразования (<span class="math-symbol">L</span>)</span>
+            <span class="lang-kz">3. Меншікті булану жылуы (<span class="math-symbol">L</span>)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Чтобы превратить жидкость в пар при температуре кипения, нужно затратить энергию. Эту энергию можно рассчитать по формуле:</span>
+            <span class="lang-kz">Сұйықтықты қайнау температурасында буға айналдыру үшін энергия жұмсау керек. Бұл энергияны келесі формула бойынша есептеуге болады:</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="math-formula">Q = L &middot; m</span>
+            
+            <span class="lang-ru" style="font-size:0.9rem;">Где: <strong>m</strong> — масса жидкости, <strong>L</strong> — удельная теплота парообразования (иногда обозначается как <strong>r</strong>).</span>
+            <span class="lang-kz" style="font-size:0.9rem;">Мұндағы: <strong>m</strong> — сұйықтық массасы, <strong>L</strong> — меншікті булану жылуы (кейде <strong>r</strong> деп белгіленеді).</span>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><span class="lang-ru">Вещество</span><span class="lang-kz">Зат</span></th>
+                    <th><span class="lang-ru">Уд. теплота <span class="math-symbol">L</span>, Дж/кг</span><span class="lang-kz">Менш. жылу <span class="math-symbol">L</span>, Дж/кг</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="lang-ru">Вода (100 &deg;C)</span><span class="lang-kz">Су (100 &deg;C)</span></td><td><strong>2,3 &middot; 10<sup>6</sup></strong> (2,3 МДж/кг)</td></tr>
+                <tr><td><span class="lang-ru">Спирт эфирный (35 &deg;C)</span><span class="lang-kz">Эфир спирті (35 &deg;C)</span></td><td><strong>0,4 &middot; 10<sup>6</sup></strong> (0,4 МДж/кг)</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Чайник с крышкой</span>
+            <span class="lang-kz">Симуляция: Қақпағы бар шәйнек</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.95rem; margin-bottom: 5px;">
+                    <span class="lang-ru">1. Удерживайте кнопку "Нагревать", чтобы довести воду до 100 &deg;C.</span>
+                    <span class="lang-kz">1. Суды 100 &deg;C-қа жеткізу үшін "Қыздыру" түймесін басып тұрыңыз.</span>
+                </p>
+                <p style="font-size: 0.95rem; margin-bottom: 10px;">
+                    <span class="lang-ru">2. Попробуйте закрыть крышку и посмотрите, что станет с паром.</span>
+                    <span class="lang-kz">2. Қақпақты жауып, бумен не болатынын көріңіз.</span>
+                </p>
+                <div class="buttons">
+                    <button class="btn-heat" onmousedown="applyHeat(1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#128293; Нагревать</span>
+                        <span class="lang-kz">&#128293; Қыздыру</span>
+                    </button>
+                    <button class="btn-lid" id="btnToggleLid" onclick="toggleLid()">
+                        <span class="lang-ru">Закрыть крышку</span>
+                        <span class="lang-kz">Қақпақты жабу</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">Сбросить</span>
+                        <span class="lang-kz">Бастапқы күй</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <div id="vaporStatus" class="status-badge">
+                    <span class="lang-ru">Ненасыщенный пар</span>
+                    <span class="lang-kz">Қанықпаған бу</span>
+                </div>
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Заметили?</strong> При кипении пузырьки образуются прямо <strong>внутри</strong> жидкости и поднимаются наверх. Если закрыть крышку, пар перестанет улетать, его плотность достигнет максимума — он станет <strong>насыщенным</strong>, и уровень воды перестанет быстро падать.</span>
+                <span class="lang-kz"><strong>Байқадыңыз ба?</strong> Қайнау кезінде көпіршіктер сұйықтықтың дәл <strong>ішінде</strong> пайда болып, жоғары көтеріледі. Егер қақпақты жапсаңыз, бу ұшуын тоқтатады, оның тығыздығы максимумға жетеді — ол <strong>қаныққан</strong> болады және су деңгейінің тез төмендеуі тоқтайды.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет)</span>
+                <span class="lang-kz">1-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Какое количество теплоты потребуется, чтобы полностью выкипятить (испарить) <strong>2 кг воды</strong>, уже взятой при температуре кипения (100 &deg;C)? <br><em>(Подсказка: Q = L &middot; m, для воды L = 2,3 &middot; 10<sup>6</sup> Дж/кг). Впишите ответ в Мегаджоулях (МДж).</em></span>
+                <span class="lang-kz">Қайнау температурасында (100 &deg;C) алынған <strong>2 кг суды</strong> толығымен қайнатып (буландырып) жіберу үшін қанша жылу мөлшері қажет? <br><em>(Көмек: Q = L &middot; m, су үшін L = 2,3 &middot; 10<sup>6</sup> Дж/кг). Жауапты Мегаджоульмен (МДж) жазыңыз.</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" step="0.1" id="taskA" data-placeholder-ru="Например, 4.6" data-placeholder-kz="Мысалы, 4.6" placeholder="Например, 4.6">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему после купания в водоеме (даже в жаркий ветреный день) человеку на берегу становится прохладно?</span>
+                <span class="lang-kz">Неліктен суқоймасында шомылғаннан кейін (тіпті ыстық желді күні де) жағадағы адам тоңа бастайды?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Ветер всегда имеет отрицательную температуру" data-kz="Желдің температурасы әрқашан теріс болады">Ветер всегда имеет отрицательную температуру</option>
+                    <option value="2" data-ru="Вода интенсивно испаряется с кожи. При испарении самые быстрые молекулы вылетают, унося с собой внутреннюю энергию тела (мы охлаждаемся)" data-kz="Су теріден қарқынды кебеді. Кебу кезінде ең жылдам молекулалар ұшып шығып, дененің ішкі энергиясын өздерімен бірге алып кетеді (біз суимыз)">Вода интенсивно испаряется с кожи. При испарении самые быстрые молекулы вылетают, унося с собой внутреннюю энергию тела (мы охлаждаемся)</option>
+                    <option value="3" data-ru="Влага на теле отражает солнечное тепло" data-kz="Денедегі ылғал күн жылуын шағылыстырады">Влага на теле отражает солнечное тепло</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы глубже понять разницу между кипением и испарением, а также узнать, почему в горах вода кипит при температуре ниже 100 градусов!</span>
+            <span class="lang-kz">Қайнау мен кебу арасындағы айырмашылықты тереңірек түсіну үшін, сондай-ақ тауда су неліктен 100 градустан төмен температурада қайнайтынын білу үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BF%D0%B0%D1%80%D0%BE%D0%BE%D0%B1%D1%80%D0%B0%D0%B7%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5+%D0%B8+%D0%BA%D0%BE%D0%BD%D0%B4%D0%B5%D0%BD%D1%81%D0%B0%D1%86%D0%B8%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Парообразование и конденсация»</span>
+                  <span class="lang-kz">«Булану және конденсация» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. В чем главное отличие кипения от испарения?</span>
+                <span class="lang-kz">1. Қайнаудың кебуден басты айырмашылығы неде?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Испарение происходит быстрее</span><span class="lang-kz">Кебу тезірек жүреді</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Кипение происходит по всему объему жидкости, а испарение — только с поверхности</span><span class="lang-kz">Қайнау сұйықтықтың барлық көлемінде, ал кебу — тек бетінде жүреді</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Кипение поглощает тепло, а испарение выделяет</span><span class="lang-kz">Қайнау жылуды жұтады, ал кебу бөледі</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Разницы нет, это одно и то же</span><span class="lang-kz">Ешқандай айырмашылық жоқ, бұл бірдей ұғым</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Какой пар называется насыщенным?</span>
+                <span class="lang-kz">2. Қандай бу қаныққан деп аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Пар, находящийся в динамическом равновесии со своей жидкостью</span><span class="lang-kz">Өзінің сұйықтығымен динамикалық тепе-теңдікте болатын бу</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Очень горячий пар (выше 100 °C)</span><span class="lang-kz">Өте ыстық бу (100 °C-тан жоғары)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Пар, который быстро улетучивается в атмосферу</span><span class="lang-kz">Атмосфераға тез ұшып кететін бу</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Пар, образующийся только при кипении</span><span class="lang-kz">Тек қайнау кезінде пайда болатын бу</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Что происходит с температурой кипящей воды, пока она вся не превратится в пар?</span>
+                <span class="lang-kz">3. Қайнап жатқан су толығымен буға айналғанша оның температурасы не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Она постоянно повышается</span><span class="lang-kz">Ол үнемі көтеріледі</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Она немного падает из-за потерь тепла</span><span class="lang-kz">Жылу жоғалтуына байланысты ол сәл төмендейді</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Она остается неизменной (постоянной)</span><span class="lang-kz">Ол өзгеріссіз (тұрақты) қалады</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Она скачет вверх и вниз</span><span class="lang-kz">Ол жоғары-төмен секіреді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. По какой формуле рассчитывают количество теплоты при парообразовании (или конденсации)?</span>
+                <span class="lang-kz">4. Булану (немесе конденсация) кезіндегі жылу мөлшері қандай формуламен есептеледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span><span class="lang-kz">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Q = &lambda;m</span><span class="lang-kz">Q = &lambda;m</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Q = qm</span><span class="lang-kz">Q = qm</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Q = Lm</span><span class="lang-kz">Q = Lm</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Конденсация — это процесс перехода вещества...</span>
+                <span class="lang-kz">5. Конденсация — бұл заттың...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Из твердого состояния в жидкое</span><span class="lang-kz">Қатты күйден сұйық күйге өту процесі</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Из газообразного состояния в жидкое</span><span class="lang-kz">Газ күйінен сұйық күйге өту процесі</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Из жидкого состояния в газообразное</span><span class="lang-kz">Сұйық күйден газ күйіне өту процесі</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Из жидкого в твердое</span><span class="lang-kz">Сұйық күйден қатты күйге өту процесі</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Q = L &middot; m = 2.3 &middot; 2 = 4.6 МДж.",
+            fbA_inc: "Неверно. Умножьте массу (2) на удельную теплоту парообразования в мегаджоулях (2.3).",
+            fbB_corr: "Верно! Испарение — это процесс, при котором самые «энергичные» молекулы покидают жидкость, забирая с собой энергию. В результате оставшаяся вода и тело охлаждаются.",
+            fbB_inc: "Неверно. Дело не в температуре ветра, а в физическом процессе испарения влаги с поверхности кожи.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_lid_close: "Закрыть крышку",
+            btn_lid_open: "Открыть крышку",
+            stat_unsat: "Ненасыщенный пар",
+            stat_sat: "Насыщенный пар"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Q = L &middot; m = 2.3 &middot; 2 = 4.6 МДж.",
+            fbA_inc: "Қате. Массаны (2) мегаджоульмен берілген меншікті булану жылуына (2.3) көбейтіңіз.",
+            fbB_corr: "Дұрыс! Кебу — бұл ең «энергиясы көп» молекулалардың сұйықтықтан ұшып шығып, өздерімен бірге энергияны алып кету процесі. Нәтижесінде қалған су мен дене салқындайды.",
+            fbB_inc: "Қате. Мәселе желдің температурасында емес, тері бетінен ылғалдың кебуінің физикалық процесінде.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_lid_close: "Қақпақты жабу",
+            btn_lid_open: "Қақпақты ашу",
+            stat_unsat: "Қанықпаған бу",
+            stat_sat: "Қаныққан бу"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateUIElements();
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let temp = 20; // 20 to 100
+    let isHeating = false;
+    let isLidClosed = false;
+    let liquidLvl = 100; // %
+    let vaporParticles = [];
+    let bubbles = [];
+    let animFrame = null;
+
+    const potW = 160;
+    const potH = 140;
+    const maxVaporParticles = 100; // Лимит для насыщенного пара
+
+    function updateUIElements() {
+        const btnLid = document.getElementById('btnToggleLid');
+        const badge = document.getElementById('vaporStatus');
+        
+        // Кнопка крышки
+        btnLid.querySelector('.lang-ru').textContent = isLidClosed ? i18n.ru.btn_lid_open : i18n.ru.btn_lid_close;
+        btnLid.querySelector('.lang-kz').textContent = isLidClosed ? i18n.kz.btn_lid_open : i18n.kz.btn_lid_close;
+        
+        // Бейдж статуса пара
+        let isSaturated = isLidClosed && vaporParticles.length > 50;
+        
+        badge.querySelector('.lang-ru').textContent = isSaturated ? i18n.ru.stat_sat : i18n.ru.stat_unsat;
+        badge.querySelector('.lang-kz').textContent = isSaturated ? i18n.kz.stat_sat : i18n.kz.stat_unsat;
+        
+        if (isSaturated) badge.classList.add('saturated');
+        else badge.classList.remove('saturated');
+    }
+
+    window.toggleLid = function() {
+        isLidClosed = !isLidClosed;
+        updateUIElements();
+        if (!animFrame) drawScene();
+    }
+
+    window.applyHeat = function(dir) {
+        if (dir > 0) isHeating = true;
+        if (!animFrame) animate();
+    };
+
+    window.stopHeat = function() {
+        isHeating = false;
+    };
+
+    window.resetSim = function() {
+        temp = 20;
+        isHeating = false;
+        isLidClosed = false;
+        liquidLvl = 100;
+        vaporParticles = [];
+        bubbles = [];
+        
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+        updateUIElements();
+        drawScene();
+    };
+
+    function spawnVapor(x, y) {
+        // Если крышка закрыта и пар насыщен (много частиц), новые не добавляем (динамическое равновесие)
+        if (isLidClosed && vaporParticles.length >= maxVaporParticles) return;
+        
+        vaporParticles.push({
+            x: x + (Math.random() - 0.5) * (potW - 20),
+            y: y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -Math.random() * 2 - 0.5,
+            life: 1.0
+        });
+        
+        // Жидкость уменьшается при образовании пара
+        if (liquidLvl > 0) {
+            // Если крышка открыта, жидкость уходит быстрее
+            liquidLvl -= (isLidClosed ? 0.01 : 0.05);
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height - 40; // дно кастрюли
+        
+        // 1. Огонь
+        if (isHeating) {
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(cx - 60, cy);
+            ctx.lineTo(cx - 40, cy + 30);
+            ctx.lineTo(cx - 20, cy);
+            ctx.lineTo(cx, cy + 35);
+            ctx.lineTo(cx + 20, cy);
+            ctx.lineTo(cx + 40, cy + 30);
+            ctx.lineTo(cx + 60, cy);
+            ctx.fill();
+        }
+
+        // 2. Вода
+        let actualWaterH = (potH - 20) * (liquidLvl / 100);
+        let waterY = cy - actualWaterH;
+        
+        if (liquidLvl > 0) {
+            ctx.fillStyle = 'rgba(14, 165, 233, 0.6)';
+            ctx.fillRect(cx - potW/2 + 4, waterY, potW - 8, actualWaterH);
+        }
+
+        // 3. Пузырьки (кипение)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        bubbles.forEach(b => {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // 4. Пар
+        ctx.fillStyle = 'rgba(224, 242, 254, 0.6)'; // светло-светло-голубой
+        vaporParticles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
+            ctx.fill();
+        });
+
+        // 5. Кастрюля (прозрачная стенка)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx - potW/2, cy - potH);
+        ctx.lineTo(cx - potW/2, cy);
+        ctx.lineTo(cx + potW/2, cy);
+        ctx.lineTo(cx + potW/2, cy - potH);
+        ctx.stroke();
+
+        // 6. Крышка
+        if (isLidClosed) {
+            ctx.fillStyle = '#64748b';
+            ctx.fillRect(cx - potW/2 - 10, cy - potH - 10, potW + 20, 10);
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(cx - 15, cy - potH - 25, 30, 15); // Ручка крышки
+        }
+
+        // 7. Термометр
+        drawThermometer(cx + potW/2 + 30, cy - potH + 20, 20, potH - 20, temp);
+    }
+
+    function drawThermometer(x, y, w, h, tval) {
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(x, y, w, h);
+        
+        const pad = 6;
+        const maxH = h - pad*2;
+        const maxT = 120; // шкала до 120
+        
+        let ratio = tval / maxT;
+        if (ratio > 1) ratio = 1;
+        
+        let fillH = ratio * maxH;
+        let color = tval >= 100 ? '#ef4444' : '#0ea5e9';
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(x+pad, y+pad, w-pad*2, maxH);
+        ctx.fillStyle = color;
+        ctx.fillRect(x+pad, y+pad + maxH - fillH, w-pad*2, fillH);
+        
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${Math.floor(tval)}°C`, x+w+10, y + h/2);
+    }
+
+    function animate() {
+        // Физика
+        const cx = canvas.width / 2;
+        const cy = canvas.height - 40;
+        let waterY = cy - (potH - 20) * (liquidLvl / 100);
+
+        // Нагрев
+        if (isHeating) {
+            if (liquidLvl > 0) {
+                if (temp < 100) {
+                    temp += 0.2; // Нагрев воды
+                } else {
+                    temp = 100; // Кипение: температура не растет!
+                }
+            } else {
+                // Если вода выкипела, может греться пар/воздух
+                if (temp < 120) temp += 0.5;
+            }
+        } else {
+            // Остывание
+            if (temp > 20) temp -= 0.1;
+        }
+
+        // Испарение (происходит всегда, но быстрее при высокой температуре)
+        if (liquidLvl > 0) {
+            let evapChance = temp / 200; // 0.1 at 20C, 0.5 at 100C
+            if (Math.random() < evapChance) {
+                spawnVapor(cx, waterY);
+            }
+        }
+
+        // Кипение (появление пузырьков ВНУТРИ воды)
+        if (temp >= 100 && liquidLvl > 0 && isHeating) {
+            if (Math.random() < 0.6) {
+                bubbles.push({
+                    x: cx + (Math.random() - 0.5) * (potW - 20),
+                    y: cy - Math.random() * 10, // У дна
+                    size: Math.random() * 3 + 2,
+                    speed: Math.random() * 2 + 1
+                });
+            }
+        }
+
+        // Движение пузырьков
+        for (let i = bubbles.length - 1; i >= 0; i--) {
+            let b = bubbles[i];
+            b.y -= b.speed;
+            b.x += (Math.random() - 0.5); // Виляние
+            
+            // Если пузырек достиг поверхности, он лопается и становится паром
+            if (b.y <= waterY) {
+                spawnVapor(b.x, waterY);
+                bubbles.splice(i, 1);
+            }
+        }
+
+        // Движение пара
+        let lidY = cy - potH - 5;
+        for (let i = vaporParticles.length - 1; i >= 0; i--) {
+            let p = vaporParticles[i];
+            p.y += p.vy;
+            p.x += p.vx;
+            
+            if (isLidClosed) {
+                // Отскок от крышки и стенок
+                if (p.y < lidY) { p.y = lidY; p.vy *= -0.5; }
+                if (Math.abs(p.x - cx) > potW/2) { p.vx *= -1; }
+                
+                // Конденсация (возврат в воду)
+                if (p.y > waterY && p.vy > 0) {
+                    vaporParticles.splice(i, 1);
+                    // Часть пара возвращается (равновесие)
+                    continue;
+                }
+            } else {
+                // Пар улетает
+                p.life -= 0.01; // Постепенно исчезает в воздухе
+                if (p.y < 0 || p.life <= 0) {
+                    vaporParticles.splice(i, 1);
+                    continue;
+                }
+            }
+        }
+
+        updateUIElements();
+        drawScene();
+
+        // Продолжать анимацию, если есть изменения
+        if (isHeating || temp > 20 || vaporParticles.length > 0 || bubbles.length > 0) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null; // Полный покой
+        }
+    }
+
+    // Инициализация
+    updateUIElements();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value.replace(',', '.'));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // Возможны небольшие погрешности при вводе
+        if (Math.abs(val - 4.6) < 0.01) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

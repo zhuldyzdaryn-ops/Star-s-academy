@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Плавление и кристаллизация — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0f9ff; /* Светло-голубой (лед/вода) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #0284c7; /* Синий (вода) */
+            --primary-hover: #0369a1;
+            --hot: #ef4444; /* Красный (нагрев) */
+            --cold: #0ea5e9; /* Голубой (охлаждение/лед) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #bae6fd;
+            --text-muted: #64748b;
+            --formula-bg: #e0f2fe;
+            --ice-color: #7dd3fc;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0c4a6e;
+                --ice-color: #0284c7;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Таблица */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+        }
+        .data-table th {
+            background: var(--formula-bg);
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 0.75rem 0.5rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-heat { background-color: var(--hot); }
+        button.btn-heat:hover { background-color: #b91c1c; }
+        button.btn-cool { background-color: var(--cold); }
+        button.btn-cool:hover { background-color: #0369a1; }
+        button.btn-reset { grid-column: span 2; background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .canvas-container {
+            flex: 2;
+            background-color: #1e293b; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(2, 132, 199, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(2, 132, 199, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(2, 132, 199, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Плавление и кристаллизация</span>
+            <span class="lang-kz">Балқу және кристалдану</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему весной снег не тает мгновенно при первом плюсе? И почему брошенный в чай лед так долго охлаждает напиток? Раскрываем тайны перехода из твердого состояния в жидкое!</span>
+            <span class="lang-kz">Неліктен көктемде алғашқы күн жылынғанда қар бірден еріп кетпейді? Және шайға салынған мұз сусынды неге сонша ұзақ салқындатады? Қатты күйден сұйық күйге өтудің құпияларын ашамыз!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое плавление и кристаллизация?</span>
+            <span class="lang-kz">1. Балқу және кристалдану дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В природе вещества могут находиться в трех состояниях: твердом, жидком и газообразном. Переход между ними требует огромных затрат (или выделения) энергии.</span>
+            <span class="lang-kz">Табиғатта заттар үш күйде бола алады: қатты, сұйық және газ тәрізді. Олардың арасындағы ауысу орасан зор энергия жұмсауды (немесе бөлуді) талап етеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <ul style="margin-bottom: 0;">
+                <li><span class="lang-ru"><strong>Плавление</strong> — переход вещества из твердого состояния в жидкое.</span><span class="lang-kz"><strong>Балқу</strong> — заттың қатты күйден сұйық күйге өтуі.</span></li>
+                <li><span class="lang-ru"><strong>Кристаллизация (отвердевание)</strong> — переход вещества из жидкого состояния в твердое.</span><span class="lang-kz"><strong>Кристалдану (қатаю)</strong> — заттың сұйық күйден қатты күйге өтуі.</span></li>
+            </ul>
+        </div>
+        
+        <p>
+            <span class="lang-ru"><strong>Самое важное правило:</strong> Плавление и кристаллизация происходят при <em>одной и той же, строго определенной температуре</em> (температуре плавления). Пока весь лед не растает, температура смеси льда и воды не поднимется выше 0 &deg;C! Энергия идет не на увеличение скорости молекул (нагрев), а на <strong>разрушение кристаллической решетки</strong>.</span>
+            <span class="lang-kz"><strong>Ең маңызды ереже:</strong> Балқу және кристалдану <em>бірдей, қатаң белгіленген температурада</em> (балқу температурасында) жүреді. Барлық мұз еріп бітпейінше, мұз бен су қоспасының температурасы 0 &deg;C-тан көтерілмейді! Энергия молекулалардың жылдамдығын арттыруға (қыздыруға) емес, <strong>кристалдық торды бұзуға</strong> жұмсалады.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Удельная теплота плавления (<span class="math-symbol">&lambda;</span>)</span>
+            <span class="lang-kz">2. Меншікті балқу жылуы (<span class="math-symbol">&lambda;</span>)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Чтобы расплавить разные вещества, нужно разное количество теплоты. Эта характеристика называется удельной теплотой плавления, обозначается греческой буквой лямбда (<span class="math-symbol">&lambda;</span>).</span>
+            <span class="lang-kz">Әртүрлі заттарды балқыту үшін әртүрлі жылу мөлшері қажет. Бұл сипаттама меншікті балқу жылуы деп аталады, ол гректің лямбда (<span class="math-symbol">&lambda;</span>) әрпімен белгіленеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Удельная теплота плавления (<span class="math-symbol">&lambda;</span>)</strong> — физическая величина, показывающая, какое количество теплоты необходимо сообщить 1 кг вещества, взятому при температуре плавления, чтобы перевести его в жидкое состояние.<br>Единица измерения: <strong>Дж/кг</strong>.</span>
+            <span class="lang-kz"><strong>Меншікті балқу жылуы (<span class="math-symbol">&lambda;</span>)</strong> — балқу температурасында алынған 1 кг затты сұйық күйге айналдыру үшін оған қанша жылу мөлшерін беру керектігін көрсететін физикалық шама.<br>Өлшем бірлігі: <strong>Дж/кг</strong>.</span>
+            
+            <span class="math-formula">Q = &lambda; &middot; m</span>
+            
+            <span class="lang-ru" style="font-size:0.9rem;"><em>Примечание:</em> При кристаллизации выделяется точно такое же количество теплоты (Q = -&lambda;m).</span>
+            <span class="lang-kz" style="font-size:0.9rem;"><em>Ескерту:</em> Кристалдану кезінде дәл осындай жылу мөлшері бөлінеді (Q = -&lambda;m).</span>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><span class="lang-ru">Вещество</span><span class="lang-kz">Зат</span></th>
+                    <th><span class="lang-ru">Темп. плавления, &deg;C</span><span class="lang-kz">Балқу темп., &deg;C</span></th>
+                    <th><span class="lang-ru">Уд. теплота <span class="math-symbol">&lambda;</span>, Дж/кг</span><span class="lang-kz">Менш. жылу <span class="math-symbol">&lambda;</span>, Дж/кг</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="lang-ru">Лед</span><span class="lang-kz">Мұз</span></td><td>0</td><td><strong>3,4 &middot; 10<sup>5</sup></strong> (340 кДж/кг)</td></tr>
+                <tr><td><span class="lang-ru">Свинец</span><span class="lang-kz">Қорғасын</span></td><td>327</td><td><strong>0,25 &middot; 10<sup>5</sup></strong> (25 кДж/кг)</td></tr>
+                <tr><td><span class="lang-ru">Железо</span><span class="lang-kz">Темір</span></td><td>1539</td><td><strong>2,7 &middot; 10<sup>5</sup></strong> (270 кДж/кг)</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: График плавления и кристаллизации льда</span>
+            <span class="lang-kz">Симуляция: Мұздың балқу және кристалдану графигі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.95rem; margin-bottom: 10px;">
+                    <span class="lang-ru">Удерживайте кнопки, чтобы подводить или забирать тепло (энергию) у стакана со льдом/водой. Следите за графиком!</span>
+                    <span class="lang-kz">Мұз/су бар стақанға жылу (энергия) беру немесе одан алу үшін түймелерді басып тұрыңыз. Графикті бақылаңыз!</span>
+                </p>
+                <div class="buttons">
+                    <button class="btn-heat" onmousedown="applyHeat(1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#128293; Нагревать</span>
+                        <span class="lang-kz">&#128293; Қыздыру</span>
+                    </button>
+                    <button class="btn-cool" onmousedown="applyHeat(-1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(-1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#10052; Охлаждать</span>
+                        <span class="lang-kz">&#10052; Суыту</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">Сбросить эксперимент</span>
+                        <span class="lang-kz">Экспериментті бастапқы күйге келтіру</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="600" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Обратите внимание на "ступеньку" при 0 &deg;C!</strong> В этот момент тепло подводится, но температура не растет. Лед плавится. Только когда исчезнет последний кусочек льда, температура воды начнет расти.</span>
+                <span class="lang-kz"><strong>0 &deg;C-тағы "баспалдаққа" назар аударыңыз!</strong> Бұл кезде жылу беріліп жатыр, бірақ температура өспейді. Мұз балқиды. Мұздың соңғы түйіршігі жоғалған кезде ғана судың температурасы өсе бастайды.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет)</span>
+                <span class="lang-kz">1-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Какое количество теплоты потребуется, чтобы расплавить кусок льда массой <strong>2 кг</strong>, взятый при температуре 0 &deg;C? <br><em>(Подсказка: Q = &lambda;m, для льда &lambda; = 340 000 Дж/кг). Впишите ответ в Джоулях.</em></span>
+                <span class="lang-kz">0 &deg;C температурада алынған массасы <strong>2 кг</strong> мұз кесегін балқыту үшін қанша жылу мөлшері қажет? <br><em>(Көмек: Q = &lambda;m, мұз үшін &lambda; = 340 000 Дж/кг). Жауапты Джоульмен жазыңыз.</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Например, 100000" data-placeholder-kz="Мысалы, 100000" placeholder="Например, 100000">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему во время ледохода на реке (когда лед массово тает) около воды всегда становится заметно холоднее?</span>
+                <span class="lang-kz">Неліктен өзенде мұз жүрген кезде (мұз жаппай ерігенде) судың жанында әрқашан айтарлықтай суық болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Лед забирает огромное количество тепла (энергии) из окружающего воздуха для своего плавления" data-kz="Мұз балқуы үшін қоршаған ауадан орасан зор жылу (энергия) мөлшерін алады">Лед забирает огромное количество тепла (энергии) из окружающего воздуха для своего плавления</option>
+                    <option value="2" data-ru="Лед выделяет холод в воздух" data-kz="Мұз ауаға суық бөледі">Лед выделяет холод в воздух</option>
+                    <option value="3" data-ru="Вода отражает солнечные лучи" data-kz="Су күн сәулесін шағылыстырады">Вода отражает солнечные лучи</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы закрепить понимание графиков плавления и решения задач!</span>
+            <span class="lang-kz">Балқу графиктерін түсінуді және есептер шығаруды бекіту үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BF%D0%BB%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5+%D0%B8+%D0%BA%D1%80%D0%B8%D1%81%D1%82%D0%B0%D0%BB%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F+%D1%83%D0%B4%D0%B5%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F+%D1%82%D0%B5%D0%BF%D0%BB%D0%BE%D1%82%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Плавление и кристаллизация»</span>
+                  <span class="lang-kz">«Балқу және кристалдану» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что происходит с температурой льда в процессе его плавления (при нормальном давлении)?</span>
+                <span class="lang-kz">1. Мұздың балқу процесі кезінде оның температурасы не болады (қалыпты қысымда)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Постоянно повышается</span><span class="lang-kz">Үнемі көтеріледі</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Остается неизменной (0 °C), пока весь лед не растает</span><span class="lang-kz">Барлық мұз еріп біткенше өзгеріссіз қалады (0 °C)</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Понижается</span><span class="lang-kz">Төмендейді</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Зависит от мощности нагревателя</span><span class="lang-kz">Қыздырғыштың қуатына байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. По какой формуле рассчитывается количество теплоты, необходимое для плавления вещества при температуре плавления?</span>
+                <span class="lang-kz">2. Балқу температурасында затты балқытуға қажетті жылу мөлшері қандай формуламен есептеледі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span><span class="lang-kz">Q = cm(t<sub>2</sub> - t<sub>1</sub>)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Q = qm</span><span class="lang-kz">Q = qm</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Q = &lambda;m</span><span class="lang-kz">Q = &lambda;m</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Q = m/V</span><span class="lang-kz">Q = m/V</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. На что расходуется энергия, подводимая к кристаллическому телу во время его плавления?</span>
+                <span class="lang-kz">3. Кристалл дене балқыған кезде оған берілетін энергия неге жұмсалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">На разрушение кристаллической решетки (преодоление связей между молекулами)</span><span class="lang-kz">Кристалдық торды бұзуға (молекулалар арасындағы байланыстарды жеңуге)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">На увеличение скорости движения молекул</span><span class="lang-kz">Молекулалардың қозғалыс жылдамдығын арттыруға</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">На увеличение размера самих молекул</span><span class="lang-kz">Молекулалардың өз өлшемін ұлғайтуға</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Эта энергия исчезает бесследно</span><span class="lang-kz">Бұл энергия із-түссіз жоғалады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Если удельная теплота плавления свинца равна 25 000 Дж/кг, то при отвердевании (кристаллизации) 1 кг жидкого свинца при температуре 327 °C...</span>
+                <span class="lang-kz">4. Егер қорғасынның меншікті балқу жылуы 25 000 Дж/кг болса, онда 327 °C температурада 1 кг сұйық қорғасын қатайғанда (кристалданғанда)...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Свинец поглотит 25 000 Дж энергии</span><span class="lang-kz">Қорғасын 25 000 Дж энергияны жұтады</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Свинец поглотит 327 Дж энергии</span><span class="lang-kz">Қорғасын 327 Дж энергияны жұтады</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Свинец выделит 327 Дж энергии</span><span class="lang-kz">Қорғасын 327 Дж энергия бөледі</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Свинец выделит в окружающую среду 25 000 Дж энергии</span><span class="lang-kz">Қорғасын қоршаған ортаға 25 000 Дж энергия бөледі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Каков физический смысл выражения "удельная теплота плавления льда равна 3,4·10⁵ Дж/кг"?</span>
+                <span class="lang-kz">5. "Мұздың меншікті балқу жылуы 3,4·10⁵ Дж/кг тең" деген сөздің физикалық мағынасы қандай?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Для плавления 1 кг льда, взятого при 0 °C, требуется 340 000 Дж теплоты</span><span class="lang-kz">0 °C-та алынған 1 кг мұзды балқыту үшін 340 000 Дж жылу қажет</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">1 кг льда при плавлении выделяет 340 000 Дж теплоты</span><span class="lang-kz">1 кг мұз балқығанда 340 000 Дж жылу бөледі</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Чтобы нагреть 1 кг льда на 1 °C, нужно 340 000 Дж</span><span class="lang-kz">1 кг мұзды 1 °C-қа қыздыру үшін 340 000 Дж қажет</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Температура льда при плавлении равна 340 000 °C</span><span class="lang-kz">Балқу кезіндегі мұздың температурасы 340 000 °C-қа тең</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! Q = &lambda;m = 340 000 * 2 = 680 000 Дж.",
+            fbA_inc: "Неверно. Умножьте массу (2) на удельную теплоту плавления льда (340 000).",
+            fbB_corr: "Верно! Плавление — это процесс, ПОГЛОЩАЮЩИЙ энергию. Чтобы растаять, лед забирает огромное количество тепла у воздуха вокруг реки, охлаждая его.",
+            fbB_inc: "Неверно. Холод (как сущность) не выделяется. Просто лед забирает тепло из воздуха для изменения своего агрегатного состояния.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_time: "Время",
+            lbl_temp: "T, °C",
+            lbl_state_ice: "ЛЕД",
+            lbl_state_mix: "ЛЕД + ВОДА",
+            lbl_state_water: "ВОДА",
+            lbl_burner: "ГОРЕЛКА",
+            lbl_icebath: "ЛЕДЯНАЯ БАНЯ"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Q = &lambda;m = 340 000 * 2 = 680 000 Дж.",
+            fbA_inc: "Қате. Массаны (2) мұздың меншікті балқу жылуына (340 000) көбейтіңіз.",
+            fbB_corr: "Дұрыс! Балқу — бұл энергияны ЖҰТАТЫН процесс. Еру үшін мұз өзен айналасындағы ауадан орасан зор жылуды алып, оны салқындатады.",
+            fbB_inc: "Қате. Суық (зат ретінде) бөлінбейді. Мұз жай ғана агрегаттық күйін өзгерту үшін ауадан жылу алады.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_time: "Уақыт",
+            lbl_temp: "T, °C",
+            lbl_state_ice: "МҰЗ",
+            lbl_state_mix: "МҰЗ + СУ",
+            lbl_state_water: "СУ",
+            lbl_burner: "ОТТЫҚ",
+            lbl_icebath: "МҰЗДЫ МОНША"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Абстрактная физика симуляции
+    // Шкала энергии E от -40 (Лед -20C) до 140 (Вода +15C)
+    // -40 <= E < 0: Лед нагревается (T = E/2)
+    // 0 <= E <= 80: Плавление (T = 0)
+    // E > 80: Вода нагревается (T = (E-80)/4)
+    
+    let E = -40; 
+    let time = 0;
+    let history = []; // {time, E, T}
+    
+    let heatingDir = 0; // 1 = нагрев, -1 = охлаждение, 0 = стоп
+    let animFrame;
+
+    function getTemp(e) {
+        if (e < 0) return e / 2;
+        if (e <= 80) return 0;
+        return (e - 80) / 4;
+    }
+
+    function getStateLbl(e) {
+        if (e < 0) return t('lbl_state_ice');
+        if (e <= 80) return t('lbl_state_mix');
+        return t('lbl_state_water');
+    }
+
+    function getWaterFraction(e) {
+        if (e < 0) return 0;
+        if (e > 80) return 1;
+        return e / 80;
+    }
+
+    window.applyHeat = function(dir) {
+        heatingDir = dir;
+        if (!animFrame) animate();
+    };
+
+    window.stopHeat = function() {
+        heatingDir = 0;
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+    };
+
+    window.resetSim = function() {
+        E = -40;
+        time = 0;
+        history = [];
+        heatingDir = 0;
+        if (animFrame) cancelAnimationFrame(animFrame);
+        animFrame = null;
+        history.push({time: time, E: E, T: getTemp(E)});
+        drawScene();
+    };
+
+    function drawBeaker(cx, cy, fraction, temp) {
+        const bw = 100;
+        const bh = 120;
+        
+        // Рисуем стакан
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cx - bw/2, cy - bh);
+        ctx.lineTo(cx - bw/2, cy);
+        ctx.lineTo(cx + bw/2, cy);
+        ctx.lineTo(cx + bw/2, cy - bh);
+        ctx.stroke();
+
+        // Рисуем воду (доля fraction)
+        // Высота воды пусть всегда будет bh - 20, но плотность цвета меняется? 
+        // Нет, лед занимает тот же объем (условно).
+        // Пусть вода заполняет снизу вверх, а лед плавает.
+        
+        let contentH = bh - 20;
+        let waterH = contentH * fraction;
+        let iceH = contentH * (1 - fraction);
+
+        // Вода
+        if (waterH > 0) {
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.6)'; // Синяя вода
+            ctx.fillRect(cx - bw/2 + 2, cy - waterH, bw - 4, waterH);
+        }
+
+        // Лед (кубик, который уменьшается)
+        if (iceH > 0) {
+            let iceW = (bw - 20) * (1 - fraction*0.5); // Лед становится тоньше
+            let iy = cy - waterH - iceH;
+            // Если воды много, лед всплывает
+            if (waterH > contentH/2) {
+                iy = cy - contentH + 10; 
+                iceH = contentH * (1 - fraction); 
+            }
+
+            ctx.fillStyle = '#7dd3fc'; // Голубой лед
+            ctx.strokeStyle = '#e0f2fe';
+            ctx.lineWidth = 2;
+            ctx.fillRect(cx - iceW/2, iy, iceW, iceH);
+            ctx.strokeRect(cx - iceW/2, iy, iceW, iceH);
+        }
+
+        // Термометр
+        drawThermometer(cx + bw/2 + 20, cy - bh, 20, bh, temp);
+    }
+
+    function drawThermometer(x, y, w, h, temp) {
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(x, y, w, h);
+        
+        const pad = 6;
+        const maxH = h - pad*2;
+        const maxT = 20;
+        const minT = -20;
+        
+        let ratio = (temp - minT) / (maxT - minT);
+        if (ratio > 1) ratio = 1;
+        if (ratio < 0) ratio = 0;
+        
+        let fillH = ratio * maxH;
+        let color = temp > 0 ? '#ef4444' : '#0ea5e9';
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(x+pad, y+pad, w-pad*2, maxH);
+        ctx.fillStyle = color;
+        ctx.fillRect(x+pad, y+pad + maxH - fillH, w-pad*2, fillH);
+        
+        // Text
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${Math.round(temp)}°C`, x+w+10, y + h/2);
+    }
+
+    function drawGraph(x, y, w, h) {
+        // Оси
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        // Ось Y (Температура)
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + h);
+        // Ось X (Время/Теплота)
+        ctx.lineTo(x + w, y + h);
+        ctx.stroke();
+        
+        // Подписи
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(t('lbl_temp'), x - 10, y + 10);
+        ctx.textAlign = 'left';
+        ctx.fillText(t('lbl_time'), x + w + 10, y + h + 5);
+
+        // Метки 0 градусов
+        const y0 = y + h/2; // 0 C посередине
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.3)';
+        ctx.beginPath();
+        ctx.moveTo(x, y0);
+        ctx.lineTo(x + w, y0);
+        ctx.stroke();
+        ctx.textAlign = 'right';
+        ctx.fillText("0 °C", x - 10, y0 + 5);
+
+        // Данные
+        if (history.length < 2) return;
+
+        // Нормализация координат
+        // Время: 0 -> maxTime. Если maxTime > w, двигаем график.
+        let maxTime = Math.max(history[history.length-1].time, 100); 
+        let scaleX = w / maxTime;
+        if (scaleX > 1) scaleX = 1; // не растягиваем слишком сильно в начале
+
+        // Температура: от -20 до +20
+        const minT = -20;
+        const maxT = 20;
+        
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        
+        for (let i=0; i<history.length; i++) {
+            let pt = history[i];
+            let px = x + pt.time * scaleX;
+            let py = y + h - ((pt.T - minT)/(maxT - minT)) * h;
+            
+            if (i===0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Текущее состояние над графиком
+        let lastPt = history[history.length-1];
+        let px = x + lastPt.time * scaleX;
+        let py = y + h - ((lastPt.T - minT)/(maxT - minT)) * h;
+        
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(px, py, 5, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.textAlign = 'center';
+        let stateText = "";
+        if (lastPt.E < 0) stateText = t('lbl_state_ice');
+        else if (lastPt.E <= 80) stateText = t('lbl_state_mix');
+        else stateText = t('lbl_state_water');
+        
+        ctx.fillText(stateText, x + w/2, y + 20);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let temp = getTemp(E);
+        let wFrac = getWaterFraction(E);
+
+        // Рисуем стакан слева
+        drawBeaker(150, 300, wFrac, temp);
+
+        // Рисуем график справа
+        drawGraph(320, 50, 240, 200);
+
+        // Огонь / Холод (индикатор под стаканом)
+        if (heatingDir > 0) {
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(100, 310, 100, 20);
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center';
+            ctx.font = '12px sans-serif';
+            ctx.fillText(t('lbl_burner'), 150, 325);
+        } else if (heatingDir < 0) {
+            ctx.fillStyle = '#0ea5e9';
+            ctx.fillRect(100, 310, 100, 20);
+            ctx.fillStyle = '#f8fafc';
+            ctx.textAlign = 'center';
+            ctx.font = '12px sans-serif';
+            ctx.fillText(t('lbl_icebath'), 150, 325);
+        }
+    }
+
+    function animate() {
+        if (heatingDir === 0) return;
+
+        time += 1;
+        E += heatingDir * 1; // Скорость нагрева/охлаждения
+
+        // Ограничения симуляции (-40 до 160)
+        if (E < -40) E = -40;
+        if (E > 160) E = 160;
+
+        let temp = getTemp(E);
+        
+        // Запись в историю для графика
+        if (history.length === 0 || Math.abs(history[history.length-1].time - time) >= 1) {
+            history.push({time: time, E: E, T: temp});
+            // Ограничение истории, чтобы график не уезжал бесконечно
+            if (history.length > 500) history.shift();
+        }
+
+        drawScene();
+
+        // Если не уперлись в границы - продолжаем
+        if (E > -40 && E < 160) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            heatingDir = 0; // Стоп, достигли лимита симуляции
+            animFrame = null;
+        }
+    }
+
+    // Init
+    history.push({time: 0, E: E, T: getTemp(E)});
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value.replace(/\s/g, ''));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 680000) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

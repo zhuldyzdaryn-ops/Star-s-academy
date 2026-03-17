@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зависимость температуры кипения от давления — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdfa; /* Светло-бирюзовый */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #0d9488; /* Изумрудный/Бирюзовый */
+            --primary-hover: #0f766e;
+            --hot: #ef4444; /* Красный */
+            --cold: #0284c7; /* Синий */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #99f6e4;
+            --text-muted: #475569;
+            --formula-bg: #ccfbf1;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #042f2e;
+                --text-color: #f1f5f9;
+                --card-bg: #134e4a;
+                --border: #115e59;
+                --text-muted: #94a3b8;
+                --formula-bg: #0f766e;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            padding: 8px 0;
+            accent-color: var(--primary);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 0.5rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-heat { background-color: var(--hot); }
+        button.btn-heat:hover { background-color: #b91c1c; }
+        button.btn-cool { background-color: var(--cold); }
+        button.btn-cool:hover { background-color: #0369a1; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #1e293b; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(71, 85, 105, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(71, 85, 105, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(71, 85, 105, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(71, 85, 105, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Зависимость температуры кипения от внешнего давления</span>
+            <span class="lang-kz">Қайнау температурасының сыртқы қысымға тәуелділігі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему альпинисты на горе Эверест не могут сварить обычное мясо? И почему в медицинской скороварке (автоклаве) суп готовится в два раза быстрее? Секрет кроется в атмосферном давлении!</span>
+            <span class="lang-kz">Неліктен альпинистер Эверест тауында кәдімгі етті асып пісіре алмайды? Және неліктен медициналық қысымды қазанда (автоклавта) сорпа екі есе тез дайындалады? Мұның сыры атмосфералық қысымда!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Условие начала кипения</span>
+            <span class="lang-kz">1. Қайнаудың басталу шарты</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Мы уже знаем, что кипение — это процесс образования пузырьков пара <strong>внутри</strong> жидкости. Но почему эти пузырьки начинают расти и всплывать только при достижении 100 &deg;C (для воды)?</span>
+            <span class="lang-kz">Қайнау — бұл сұйықтықтың <strong>ішінде</strong> бу көпіршіктерінің пайда болу процесі екенін білеміз. Бірақ неліктен бұл көпіршіктер тек 100 &deg;C-қа жеткенде ғана (су үшін) өсіп, жоғары көтеріле бастайды?</span>
+        </p>
+        <p>
+            <span class="lang-ru">Снаружи на жидкость давит атмосферный воздух. Пузырек пара внутри воды сможет расширяться только в том случае, если давление пара внутри него станет <strong>равным или чуть больше внешнего давления</strong>. Чем сильнее мы нагреваем воду, тем больше давление насыщенного пара внутри пузырьков.</span>
+            <span class="lang-kz">Сыртынан сұйықтыққа атмосфералық ауа қысым жасайды. Су ішіндегі бу көпіршігі оның ішіндегі бу қысымы <strong>сыртқы қысымға тең немесе сәл үлкен</strong> болған жағдайда ғана кеңейе алады. Суды неғұрлым қатты қыздырсақ, көпіршіктер ішіндегі қаныққан бу қысымы соғұрлым жоғары болады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Главное правило:</strong> Жидкость закипает тогда, когда давление насыщенного пара внутри нее становится равным внешнему (атмосферному) давлению.</span>
+            <span class="lang-kz"><strong>Басты ереже:</strong> Сұйықтықтың ішіндегі қаныққан будың қысымы сыртқы (атмосфералық) қысымға тең болған кезде сұйықтық қайнай бастайды.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Как давление влияет на кипение?</span>
+            <span class="lang-kz">2. Қысым қайнауға қалай әсер етеді?</span>
+        </h2>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Низкое давление (в горах):</strong> Атмосферный слой там тоньше, воздух давит слабее. Значит, пузырьку нужно меньше давления, чтобы начать расти. Вода закипает при <strong>более низкой температуре</strong> (например, при 80-90 &deg;C). Варить продукты в такой воде приходится очень долго, так как выше этой температуры вода не нагреется!</span>
+                <span class="lang-kz"><strong>Төмен қысым (тауда):</strong> Онда атмосфералық қабат жұқа, ауа әлсіз қысым жасайды. Демек, көпіршік өсе бастауы үшін оған азырақ қысым қажет. Су <strong>төменірек температурада</strong> қайнайды (мысалы, 80-90 &deg;C-та). Мұндай суда тағамды өте ұзақ пісіруге тура келеді, өйткені су бұл температурадан ары қызбайды!</span>
+            </li>
+            <li style="margin-top: 10px;">
+                <span class="lang-ru"><strong>Высокое давление (в скороварке):</strong> Если плотно закрыть крышку сосуда, накапливающийся пар создаст огромное внешнее давление на воду. Чтобы пузырек смог преодолеть это давление, воду нужно нагреть сильнее. Вода закипает при <strong>более высокой температуре</strong> (110-120 &deg;C). При такой температуре мясо сварится за считанные минуты!</span>
+                <span class="lang-kz"><strong>Жоғары қысым (қысымды қазанда):</strong> Егер ыдыстың қақпағын мықтап жапсақ, жиналған бу суға орасан зор сыртқы қысым жасайды. Көпіршік бұл қысымды жеңе алуы үшін суды қаттырақ қыздыру керек. Су <strong>жоғарырақ температурада</strong> қайнайды (110-120 &deg;C). Мұндай температурада ет санаулы минуттарда пісіп шығады!</span>
+            </li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Барокамера (Изменение давления)</span>
+            <span class="lang-kz">Симуляция: Барокамера (Қысымды өзгерту)</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="control-group">
+                    <label>
+                        <span>
+                            <span class="lang-ru">Внешнее давление:</span>
+                            <span class="lang-kz">Сыртқы қысым:</span>
+                        </span>
+                        <span id="pressureVal" style="font-weight: bold; color: var(--text-color);">1.0 атм</span>
+                    </label>
+                    <input type="range" id="pressureSlider" min="0.5" max="2.0" step="0.1" value="1.0" oninput="updatePressure()">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted);">
+                        <span><span class="lang-ru">Горы</span><span class="lang-kz">Тау</span></span>
+                        <span><span class="lang-ru">Норма</span><span class="lang-kz">Қалыпты</span></span>
+                        <span><span class="lang-ru">Скороварка</span><span class="lang-kz">Қысымды қазан</span></span>
+                    </div>
+                </div>
+
+                <div class="buttons">
+                    <button class="btn-heat" onmousedown="applyHeat(1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#128293; Нагревать</span>
+                        <span class="lang-kz">&#128293; Қыздыру</span>
+                    </button>
+                    <button class="btn-cool" onmousedown="applyHeat(-1)" onmouseup="stopHeat()" onmouseleave="stopHeat()" ontouchstart="applyHeat(-1)" ontouchend="stopHeat()">
+                        <span class="lang-ru">&#10052; Охлаждать</span>
+                        <span class="lang-kz">&#10052; Суыту</span>
+                    </button>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Поэкспериментируйте!</strong> Сдвиньте ползунок давления влево (в горы) — вода закипит уже при 81 &deg;C. А если сдвинуть вправо (в автоклав), то кипение прекратится, пока вы не нагреете воду до 120 &deg;C! На термометре красной линией показана граница закипания.</span>
+                <span class="lang-kz"><strong>Тәжірибе жасап көріңіз!</strong> Қысым сырғытпасын солға (тауға) жылжытыңыз — су 81 &deg;C-та қайнай бастайды. Ал оңға (автоклавқа) жылжытсаңыз, суды 120 &deg;C-қа дейін қыздырмайынша қайнау тоқтайды! Термометрде қызыл сызықпен қайнау шекарасы көрсетілген.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Логика)</span>
+                <span class="lang-kz">1-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Альпинисты на высоте 5000 метров пытаются сварить картофель в кипящей воде. Почему он останется жестким даже через час?</span>
+                <span class="lang-kz">Альпинистер 5000 метр биіктікте қайнап жатқан суда картоп пісіруге тырысуда. Неліктен ол бір сағаттан кейін де қатты болып қалады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="В горах холодно, поэтому вода быстро остывает" data-kz="Тауда суық, сондықтан су тез суиды">В горах холодно, поэтому вода быстро остывает</option>
+                    <option value="2" data-ru="Из-за низкого давления вода кипит при ~85 °C. Температура кипящей воды не повышается, и этой температуры недостаточно для размягчения картофеля" data-kz="Төмен қысымға байланысты су ~85 °C-та қайнайды. Қайнап жатқан судың температурасы көтерілмейді, ал бұл температура картопты жұмсартуға жеткіліксіз">Из-за низкого давления вода кипит при ~85 °C. Температура кипящей воды не повышается, и этой температуры недостаточно для размягчения картофеля</option>
+                    <option value="3" data-ru="Ветер задувает огонь горелки" data-kz="Жел оттықтың отын сөндіріп тастайды">Ветер задувает огонь горелки</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Анализ)</span>
+                <span class="lang-kz">2-тапсырма (Анализ)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Вода кипит в открытой кастрюле при 100 &deg;C. Вы плотно закрыли ее тяжелой крышкой (превратили в скороварку). Что произойдет с кипением в первые секунды?</span>
+                <span class="lang-kz">Су ашық қазанда 100 &deg;C-та қайнап жатыр. Сіз оны ауыр қақпақпен мықтап жаптыңыз (қысымды қазанға айналдырдыңыз). Алғашқы секундтарда қайнаумен не болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вода закипит еще сильнее" data-kz="Су одан бетер қатты қайнайды">Вода закипит еще сильнее</option>
+                    <option value="2" data-ru="Вода мгновенно испарится" data-kz="Су лезде кеуіп кетеді">Вода мгновенно испарится</option>
+                    <option value="3" data-ru="Кипение на время прекратится, так как давление пара под крышкой возрастет, и воде потребуется нагреться до более высокой температуры (например, 110 °C), чтобы снова закипеть" data-kz="Қайнау уақытша тоқтайды, өйткені қақпақ астындағы бу қысымы артады, және қайта қайнау үшін судың жоғарырақ температураға (мысалы, 110 °C) дейін қызуы қажет болады">Кипение на время прекратится, так как давление пара под крышкой возрастет, и воде потребуется нагреться до более высокой температуры (например, 110 °C), чтобы снова закипеть</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите увлекательные эксперименты, где воду заставляют кипеть при комнатной температуре, откачивая воздух из колбы!</span>
+            <span class="lang-kz">Колбадан ауаны сорып шығару арқылы суды бөлме температурасында қайнатуға мәжбүрлейтін қызықты эксперименттерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C+%D1%82%D0%B5%D0%BC%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D1%83%D1%80%D1%8B+%D0%BA%D0%B8%D0%BF%D0%B5%D0%BD%D0%B8%D1%8F+%D0%BE%D1%82+%D0%B4%D0%B0%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Кипение и давление»</span>
+                  <span class="lang-kz">«Қайнау және қысым» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Как зависит температура кипения воды от внешнего давления?</span>
+                <span class="lang-kz">1. Судың қайнау температурасы сыртқы қысымға қалай тәуелді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Чем выше давление, тем ниже температура кипения</span><span class="lang-kz">Қысым неғұрлым жоғары болса, қайнау температурасы соғұрлым төмен болады</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Чем выше давление, тем выше температура кипения</span><span class="lang-kz">Қысым неғұрлым жоғары болса, қайнау температурасы соғұрлым жоғары болады</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Температура кипения не зависит от давления</span><span class="lang-kz">Қайнау температурасы қысымға тәуелді емес</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">При любом давлении вода кипит строго при 100 °C</span><span class="lang-kz">Кез келген қысымда су қатаң түрде 100 °C-та қайнайды</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Каково главное условие начала кипения жидкости?</span>
+                <span class="lang-kz">2. Сұйықтықтың қайнай бастауының басты шарты қандай?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Давление пара внутри пузырьков становится равным внешнему давлению</span><span class="lang-kz">Көпіршіктер ішіндегі бу қысымы сыртқы қысымға тең болады</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Жидкость достигает температуры ровно 100 °C</span><span class="lang-kz">Сұйықтық дәл 100 °C температураға жетеді</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Плотность жидкости становится равна плотности пара</span><span class="lang-kz">Сұйықтықтың тығыздығы будың тығыздығына тең болады</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">В воде заканчивается растворенный воздух</span><span class="lang-kz">Судағы еріген ауа таусылады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Зачем используют медицинские автоклавы и бытовые скороварки (сосуды с плотно закрытой крышкой)?</span>
+                <span class="lang-kz">3. Медициналық автоклавтар мен тұрмыстық қысымды қазандар (қақпағы мықтап жабылған ыдыстар) не үшін қолданылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Чтобы вода закипела при более низкой температуре и не обожгла</span><span class="lang-kz">Су төменірек температурада қайнап, күйдіріп кетпеуі үшін</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Чтобы пар не портил потолок на кухне</span><span class="lang-kz">Бу асүйдегі төбені бүлдірмеуі үшін</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Чтобы создать повышенное давление, повысить температуру кипения воды (до 120 °C) и ускорить приготовление (или стерилизацию)</span><span class="lang-kz">Жоғары қысым жасап, судың қайнау температурасын (120 °C-қа дейін) арттырып, дайындауды (немесе стерилизацияны) тездету үшін</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Для красоты</span><span class="lang-kz">Әдемілік үшін</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Если из колбы с теплой водой (около 30 °C) насосом откачать воздух (уменьшить давление), что произойдет?</span>
+                <span class="lang-kz">4. Егер жылы суы (шамамен 30 °C) бар колбадан сорғымен ауаны сорып алса (қысымды азайтса), не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Вода мгновенно замерзнет</span><span class="lang-kz">Су лезде қатып қалады</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Ничего не изменится</span><span class="lang-kz">Ештеңе өзгермейді</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Вода нагреется до 100 °C</span><span class="lang-kz">Су 100 °C-қа дейін қызады</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Вода закипит прямо при 30 °C</span><span class="lang-kz">Су дәл 30 °C-та қайнай бастайды</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Что происходит с температурой воды В ПРОЦЕССЕ ее кипения (пока она не выкипит полностью)?</span>
+                <span class="lang-kz">5. Қайнау ПРОЦЕСІ КЕЗІНДЕ (ол толық қайнап біткенше) судың температурасымен не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Постепенно растет</span><span class="lang-kz">Біртіндеп өседі</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Остается постоянной</span><span class="lang-kz">Тұрақты болып қалады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Медленно снижается</span><span class="lang-kz">Баяу төмендейді</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Сначала растет, потом падает</span><span class="lang-kz">Алдымен өседі, сосын төмендейді</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Правильно! Температура кипения в горах падает из-за низкого давления атмосферы. При 85 °C химические процессы приготовления пищи (размягчение волокон) идут крайне медленно.",
+            fbA_inc: "Неверно. Проблема не в остывании от холода (ведь вода кипит!), а в том, что максимальная температура кипящей воды слишком низкая для приготовления пищи.",
+            fbB_corr: "Верно! Как только мы закрываем крышку, пар перестает улетать, давление растет, и текущей температуры (100 °C) становится недостаточно для кипения при новом давлении. Кипение замирает, пока мы не догреем воду.",
+            fbB_inc: "Неверно. Подумайте: если давление снаружи увеличилось, пузырькам пара сложнее расти. Поэтому кипение временно подавляется.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_atm: "атм",
+            lbl_pressure: "Давление (P)"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Таудағы қайнау температурасы атмосфераның төмен қысымына байланысты төмендейді. 85 °C-та тамақ пісірудің химиялық процестері (талшықтардың жұмсаруы) өте баяу жүреді.",
+            fbA_inc: "Қате. Мәселе суықтан суып кетуде емес (су қайнап жатыр ғой!), қайнап жатқан судың максималды температурасы тамақ пісіру үшін тым төмен болуында.",
+            fbB_corr: "Дұрыс! Қақпақты жапқан бойда бу ұшуын тоқтатады, қысым артады, және жаңа қысымда қайнау үшін ағымдағы температура (100 °C) жеткіліксіз болады. Біз суды әрі қарай қыздырмайынша қайнау тоқтайды.",
+            fbB_inc: "Қате. Ойланыңыз: егер сыртқы қысым артса, бу көпіршіктерінің өсуі қиындайды. Сондықтан қайнау уақытша басылады.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_atm: "атм",
+            lbl_pressure: "Қысым (P)"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updatePressureValText();
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let pressure = 1.0; // от 0.5 до 2.0
+    let temp = 20; // текущая температура воды
+    let isHeating = 0; // 1: heat, -1: cool, 0: stop
+    let animFrame = null;
+    let bubbles = [];
+
+    // Аппроксимация температуры кипения в зависимости от давления
+    // Данные: 0.5 атм -> ~81 C, 1.0 атм -> 100 C, 1.5 атм -> 111 C, 2.0 атм -> 120 C
+    function getBoilingPoint(p) {
+        if (p < 1.0) {
+            // Линейная интерполяция между 0.5 (81) и 1.0 (100)
+            return 81 + ((p - 0.5) / 0.5) * 19;
+        } else {
+            // Линейная интерполяция между 1.0 (100) и 2.0 (120)
+            return 100 + ((p - 1.0) / 1.0) * 20;
+        }
+    }
+
+    function updatePressureValText() {
+        document.getElementById('pressureVal').textContent = pressure.toFixed(1) + ' ' + t('lbl_atm');
+    }
+
+    window.updatePressure = function() {
+        pressure = parseFloat(document.getElementById('pressureSlider').value);
+        updatePressureValText();
+        
+        // Если при новом давлении температура оказалась выше точки кипения, 
+        // вода "мгновенно" выкипает/остывает до новой точки кипения (упрощение для симуляции)
+        let bp = getBoilingPoint(pressure);
+        if (temp > bp) {
+            temp = bp;
+        }
+        
+        if (!animFrame) drawScene();
+    }
+
+    window.applyHeat = function(dir) {
+        isHeating = dir;
+        if (!animFrame) animate();
+    };
+
+    window.stopHeat = function() {
+        isHeating = 0;
+        if (animFrame) {
+            cancelAnimationFrame(animFrame);
+            animFrame = null;
+        }
+    };
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = 200; // Центр колбы
+        const cy = 280; // Дно колбы
+        const potW = 140;
+        const potH = 160;
+        const waterH = 100;
+
+        let bp = getBoilingPoint(pressure);
+
+        // 1. Огонь / Лед
+        if (isHeating > 0) {
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(cx - 50, cy);
+            ctx.lineTo(cx - 30, cy + 30);
+            ctx.lineTo(cx - 10, cy);
+            ctx.lineTo(cx + 10, cy + 35);
+            ctx.lineTo(cx + 30, cy);
+            ctx.lineTo(cx + 50, cy + 30);
+            ctx.fill();
+        } else if (isHeating < 0) {
+            ctx.fillStyle = '#0ea5e9';
+            ctx.fillRect(cx - 60, cy, 120, 20);
+        }
+
+        // 2. Вода
+        let waterColor = (temp >= bp) ? 'rgba(56, 189, 248, 0.7)' : 'rgba(14, 165, 233, 0.7)';
+        ctx.fillStyle = waterColor;
+        ctx.fillRect(cx - potW/2 + 5, cy - waterH, potW - 10, waterH);
+
+        // 3. Пузырьки
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 1)';
+        bubbles.forEach(b => {
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+        });
+
+        // 4. Колба
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(cx - potW/2, cy - potH);
+        ctx.lineTo(cx - potW/2, cy);
+        ctx.lineTo(cx + potW/2, cy);
+        ctx.lineTo(cx + potW/2, cy - potH);
+        ctx.stroke();
+        
+        // Крышка с манометром (если давление != 1.0, показываем герметичность)
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(cx - potW/2 - 10, cy - potH - 10, potW + 20, 10);
+        
+        // Рисуем манометр на крышке
+        ctx.beginPath();
+        ctx.arc(cx, cy - potH - 25, 20, 0, Math.PI*2);
+        ctx.fillStyle = '#f8fafc';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#1e293b';
+        ctx.stroke();
+        
+        // Стрелка манометра (угол зависит от давления)
+        // 0.5 -> -PI/4, 2.0 -> PI + PI/4
+        let angle = -Math.PI*0.8 + ((pressure - 0.5) / 1.5) * Math.PI * 1.6;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - potH - 25);
+        ctx.lineTo(cx + Math.cos(angle)*15, cy - potH - 25 + Math.sin(angle)*15);
+        ctx.strokeStyle = '#ef4444';
+        ctx.stroke();
+
+        // 5. Термометр (большой, справа)
+        const thX = 350;
+        const thY = 80;
+        const thW = 30;
+        const thH = 200;
+        const maxT = 140;
+        const minT = 20;
+
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(thX, thY, thW, thH);
+
+        let tRatio = (temp - minT) / (maxT - minT);
+        if (tRatio > 1) tRatio = 1;
+        if (tRatio < 0) tRatio = 0;
+        
+        let fillH = tRatio * (thH - 10);
+        ctx.fillStyle = '#0ea5e9';
+        if (temp >= bp) ctx.fillStyle = '#ef4444';
+        ctx.fillRect(thX + 5, thY + 5 + (thH - 10) - fillH, thW - 10, fillH);
+
+        // Отметки на термометре
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'left';
+        
+        // Отметка текущей точки кипения
+        let bpRatio = (bp - minT) / (maxT - minT);
+        let bpY = thY + 5 + (thH - 10) - bpRatio * (thH - 10);
+        
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(thX - 10, bpY);
+        ctx.lineTo(thX + thW + 10, bpY);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillText(`Кипение: ${Math.round(bp)}°C`, thX + thW + 15, bpY + 5);
+
+        // Текущая температура
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(`T = ${Math.round(temp)}°C`, thX + thW + 15, thY + thH - 10);
+
+        // 6. Электронное табло давления (Digital Display)
+        const boardX = 20;
+        const boardY = 20;
+        const boardW = 120;
+        const boardH = 65;
+        
+        ctx.fillStyle = '#0f172a'; // Темный экран
+        ctx.fillRect(boardX, boardY, boardW, boardH);
+        
+        ctx.strokeStyle = '#475569'; // Рамка табло
+        ctx.lineWidth = 4;
+        ctx.strokeRect(boardX, boardY, boardW, boardH);
+        
+        // Внутреннее свечение/текст
+        ctx.fillStyle = '#10b981'; // Ярко-зеленый цифровой текст
+        ctx.font = '12px monospace';
+        ctx.textAlign = 'center';
+        let lblPress = currentLang === 'ru' ? 'ДАВЛЕНИЕ' : 'ҚЫСЫМ';
+        ctx.fillText(lblPress, boardX + boardW/2, boardY + 22);
+        
+        ctx.font = 'bold 24px monospace';
+        ctx.fillText(pressure.toFixed(1) + ' ATM', boardX + boardW/2, boardY + 52);
+    }
+
+    function animate() {
+        let bp = getBoilingPoint(pressure);
+
+        // Изменение температуры
+        if (isHeating > 0) {
+            if (temp < bp) {
+                temp += 0.3; 
+            } else {
+                temp = bp; // Вода не нагревается выше точки кипения!
+            }
+        } else if (isHeating < 0) {
+            if (temp > 20) {
+                temp -= 0.3;
+            } else {
+                temp = 20;
+            }
+        }
+
+        // Образование пузырьков (Кипение)
+        const cx = 200;
+        const cy = 280;
+        const potW = 140;
+        const waterH = 100;
+        let waterY = cy - waterH;
+
+        if (temp >= bp && isHeating > 0) {
+            if (Math.random() < 0.8) {
+                bubbles.push({
+                    x: cx + (Math.random() - 0.5) * (potW - 20),
+                    y: cy - Math.random() * 10,
+                    size: Math.random() * 4 + 2,
+                    speed: Math.random() * 3 + 2
+                });
+            }
+        }
+
+        // Движение пузырьков
+        for (let i = bubbles.length - 1; i >= 0; i--) {
+            let b = bubbles[i];
+            b.y -= b.speed;
+            b.x += (Math.random() - 0.5) * 2;
+            
+            if (b.y <= waterY) {
+                bubbles.splice(i, 1); // Лопаются на поверхности
+            }
+        }
+
+        drawScene();
+
+        // Продолжать анимацию, если включен нагрев/охлаждение ИЛИ есть пузырьки
+        if (isHeating !== 0 || bubbles.length > 0) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    updatePressureValText();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

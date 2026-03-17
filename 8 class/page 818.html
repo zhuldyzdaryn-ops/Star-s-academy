@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электроемкость. Конденсатор — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #ecfdf5; /* Светло-изумрудный */
+            --text-color: #064e3b;
+            --card-bg: #ffffff;
+            --primary: #059669; /* Изумрудный */
+            --primary-hover: #047857;
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #a7f3d0;
+            --text-muted: #475569;
+            --formula-bg: #d1fae5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #022c22; 
+                --text-color: #f8fafc;
+                --card-bg: #064e3b;
+                --border: #047857;
+                --text-muted: #94a3b8;
+                --formula-bg: #065f46;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-charge { background-color: var(--hot); }
+        button.btn-charge:hover { background-color: #dc2626; }
+        button.btn-discharge { background-color: var(--warning); color: #000; }
+        button.btn-discharge:hover { background-color: #d97706; }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+        
+        .dashboard-bar {
+            width: 100%;
+            height: 15px;
+            background: #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .dashboard-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.2s;
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(5, 150, 105, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(5, 150, 105, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Электроемкость. Конденсаторы</span>
+            <span class="lang-kz">Электрсыйымдылық. Конденсаторлар</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как вспышка на камере телефона срабатывает так ярко и быстро? Откуда берется столько энергии за долю секунды? Секрет кроется в крошечном устройстве под названием конденсатор!</span>
+            <span class="lang-kz">Телефон камерасындағы жарқыл қалайша соншалықты жарық және тез жұмыс істейді? Осыншама энергия бір секундтың ішінде қайдан алынады? Мұның құпиясы конденсатор деп аталатын кішкентай құрылғыда!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое конденсатор?</span>
+            <span class="lang-kz">1. Конденсатор дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Конденсатор</strong> (от лат. <em>condensare</em> — уплотнять, сгущать) — это устройство для накопления электрического заряда и энергии электрического поля.</span>
+            <span class="lang-kz"><strong>Конденсатор</strong> (лат. <em>condensare</em> — тығыздау, қоюлату) — бұл электр зарядын және электр өрісінің энергиясын жинақтауға арналған құрылғы.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Простейший плоский конденсатор состоит из двух металлических пластин (их называют <strong>обкладками</strong>), расположенных параллельно друг другу и разделенных тонким слоем <strong>диэлектрика</strong> (изолятора: воздух, бумага, керамика). Пластины заряжаются разноименными зарядами (+q и -q), и благодаря притяжению заряды удерживаются внутри!</span>
+            <span class="lang-kz">Ең қарапайым жазық конденсатор бір-біріне параллель орналасқан және <strong>диэлектриктің</strong> (оқшаулағыштың: ауа, қағаз, керамика) жұқа қабатымен бөлінген екі металл пластинадан (оларды <strong>астарлар</strong> деп атайды) тұрады. Пластиналар әр аттас зарядтармен (+q және -q) зарядталады, ал тартылыс күшінің арқасында зарядтар іште ұсталып тұрады!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Электроемкость</span>
+            <span class="lang-kz">2. Электрсыйымдылық</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Разные конденсаторы могут накопить разное количество заряда. Эта "вместимость" называется <strong>электроемкостью (обозначается буквой <span class="math-symbol">C</span>)</strong>.</span>
+            <span class="lang-kz">Әртүрлі конденсаторлар әртүрлі заряд мөлшерін жинай алады. Бұл "сыйымдылық" <strong>электрсыйымдылық (<span class="math-symbol">C</span> әрпімен белгіленеді)</strong> деп аталады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Электроемкость — это отношение заряда одной из обкладок конденсатора <span class="math-symbol">q</span> к напряжению <span class="math-symbol">U</span> между ними:</span>
+            <span class="lang-kz">Электрсыйымдылық — бұл конденсатор астарларының бірінің <span class="math-symbol">q</span> зарядының олардың арасындағы <span class="math-symbol">U</span> кернеуіне қатынасы:</span>
+            
+            <div class="math-formula">
+                C = 
+                <div class="fraction">
+                    <span>q</span>
+                    <span class="fdn">U</span>
+                </div>
+            </div>
+            
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Единица измерения электроемкости — <strong>Фарад (Ф)</strong>. <br>1 Фарад = 1 Кулон / 1 Вольт. <br><em>Примечание: 1 Фарад — это огромная емкость, поэтому в технике чаще используют микрофарады (мкФ).</em></span>
+                <span class="lang-kz">Электрсыйымдылықтың өлшем бірлігі — <strong>Фарад (Ф)</strong>. <br>1 Фарад = 1 Кулон / 1 Вольт. <br><em>Ескертпе: 1 Фарад — өте үлкен сыйымдылық, сондықтан техникада жиі микрофарадтар (мкФ) қолданылады.</em></span>
+            </p>
+        </div>
+        
+        <p>
+            <span class="lang-ru"><strong>От чего зависит емкость?</strong> Она зависит только от геометрии (размера пластин, расстояния между ними) и от типа диэлектрика. Чем больше площадь пластин и чем ближе они друг к другу, тем больше емкость!</span>
+            <span class="lang-kz"><strong>Сыйымдылық неге тәуелді?</strong> Ол тек геометрияға (пластиналардың өлшеміне, олардың арақашықтығына) және диэлектрик түріне тәуелді. Пластиналардың ауданы неғұрлым үлкен болса және олар бір-біріне неғұрлым жақын болса, сыйымдылық соғұрлым үлкен болады!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Зарядка и Разрядка</span>
+            <span class="lang-kz">Симуляция: Зарядтау және Разрядтау</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    <span class="lang-ru">Слева — батарейка (Источник напряжения). Посередине — конденсатор. Справа — лампа-вспышка. Используйте кнопки, чтобы переключать рубильник. Наблюдайте, как заряды накапливаются, а затем мгновенно отдают энергию лампочке!</span>
+                    <span class="lang-kz">Сол жақта — батарейка (Кернеу көзі). Ортада — конденсатор. Оң жақта — жарқылдауық шам. Рубильникті ауыстыру үшін түймелерді пайдаланыңыз. Зарядтардың қалай жинақталатынын, содан кейін энергияны шамға лезде қалай беретінін бақылаңыз!</span>
+                </p>
+
+                <div class="buttons">
+                    <button class="btn-charge" onclick="setSwitch(1)">
+                        <span class="lang-ru">⚡ Зарядить (Подключить к батарее)</span>
+                        <span class="lang-kz">⚡ Зарядтау (Батареяға қосу)</span>
+                    </button>
+                    <button class="btn-discharge" onclick="setSwitch(2)">
+                        <span class="lang-ru">💡 Разрядить (Подключить к лампе)</span>
+                        <span class="lang-kz">💡 Разрядтау (Шамға қосу)</span>
+                    </button>
+                </div>
+
+                <div class="dashboard">
+                    <div>
+                        <span class="lang-ru">Заряд конденсатора:</span>
+                        <span class="lang-kz">Конденсатор заряды:</span>
+                        <strong><span id="chargeText">0</span>%</strong>
+                    </div>
+                    <div class="dashboard-bar">
+                        <div class="dashboard-fill" id="chargeFill"></div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Конденсатор заряжается постепенно (пока не уравновесит напряжение батареи). Но разряжается он почти мгновенно, выдавая мощный импульс тока, из-за чего лампочка ярко вспыхивает!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Конденсатор біртіндеп зарядталады (батарея кернеуін теңестіргенше). Бірақ ол қуатты ток импульсін бере отырып, дерлік лезде разрядталады, соның салдарынан шам жарқырап жанады!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет емкости)</span>
+                <span class="lang-kz">1-тапсырма (Сыйымдылықты есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Конденсатору сообщили заряд <strong>0.04 Кл</strong> (<span class="math-symbol">q</span>), при этом напряжение между его обкладками составило <strong>20 В</strong> (<span class="math-symbol">U</span>). Вычислите электроемкость конденсатора (<span class="math-symbol">C</span>) в Фарадах (Ф). <br><em>(Используйте формулу C = q / U)</em></span>
+                <span class="lang-kz">Конденсаторға <strong>0.04 Кл</strong> (<span class="math-symbol">q</span>) заряд берілді, бұл ретте оның астарлары арасындағы кернеу <strong>20 В</strong> (<span class="math-symbol">U</span>) құрады. Конденсатордың электрсыйымдылығын (<span class="math-symbol">C</span>) Фарадпен (Ф) есептеңіз. <br><em>(C = q / U формуласын қолданыңыз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" step="0.001" id="taskA" data-placeholder-ru="Ответ (например, 0.005)" data-placeholder-kz="Жауап (мысалы, 0.005)" placeholder="Ответ (например, 0.005)">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Зависит ли электроемкость конденсатора от величины заряда, который ему сообщили?</span>
+                <span class="lang-kz">Конденсатордың электрсыйымдылығы оған берілген зарядтың шамасына тәуелді ме?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Да, чем больше заряд, тем больше емкость" data-kz="Иә, заряд неғұрлым көп болса, сыйымдылық соғұрлым үлкен болады">Да, чем больше заряд, тем больше емкость</option>
+                    <option value="2" data-ru="Нет, емкость зависит только от свойств самого конденсатора (площади пластин, диэлектрика)" data-kz="Жоқ, сыйымдылық тек конденсатордың өз қасиеттеріне (пластиналар ауданына, диэлектрикке) тәуелді">Нет, емкость зависит только от свойств самого конденсатора (площади пластин, диэлектрика)</option>
+                    <option value="3" data-ru="Да, но только если напряжение равно нулю" data-kz="Иә, бірақ кернеу нөлге тең болғанда ғана">Да, но только если напряжение равно нулю</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы узнать, как выглядит конденсатор изнутри, и увидеть мощные эксперименты с их разрядом!</span>
+            <span class="lang-kz">Конденсатордың ішкі құрылысы қандай болатынын білу және олардың разрядымен жасалған қуатты тәжірибелерді көру үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%B5%D0%BC%D0%BA%D0%BE%D1%81%D1%82%D1%8C+%D0%BA%D0%BE%D0%BD%D0%B4%D0%B5%D0%BD%D1%81%D0%B0%D1%82%D0%BE%D1%80+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Конденсатор. Электроемкость»</span>
+                  <span class="lang-kz">«Конденсатор. Электрсыйымдылық» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Для чего предназначен конденсатор?</span>
+                <span class="lang-kz">1. Конденсатор не үшін арналған?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Для выработки электрического тока из тепла</span><span class="lang-kz">Жылудан электр тогын өндіру үшін</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Для быстрого накопления и отдачи электрического заряда</span><span class="lang-kz">Электр зарядын тез жинақтау және беру үшін</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Для измерения силы тока в цепи</span><span class="lang-kz">Тізбектегі ток күшін өлшеу үшін</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Для постоянного свечения лампочки</span><span class="lang-kz">Шамның тұрақты жануы үшін</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. В каких единицах измеряется электроемкость (C)?</span>
+                <span class="lang-kz">2. Электрсыйымдылық (C) қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Вольтах (В)</span><span class="lang-kz">Вольт (В)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Амперах (А)</span><span class="lang-kz">Ампер (А)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Фарадах (Ф)</span><span class="lang-kz">Фарад (Ф)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Омах (Ом)</span><span class="lang-kz">Ом (Ом)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Что находится между обкладками (пластинами) конденсатора?</span>
+                <span class="lang-kz">3. Конденсатор астарларының (пластиналарының) арасында не орналасқан?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Диэлектрик (изолятор)</span><span class="lang-kz">Диэлектрик (оқшаулағыш)</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Металлический проводник</span><span class="lang-kz">Металл өткізгіш</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Магнит</span><span class="lang-kz">Магнит</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Вода</span><span class="lang-kz">Су</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Выберите правильную формулу для электроемкости:</span>
+                <span class="lang-kz">4. Электрсыйымдылықтың дұрыс формуласын таңдаңыз:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">C = q &middot; U</span><span class="lang-kz">C = q &middot; U</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">C = U / q</span><span class="lang-kz">C = U / q</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">C = A / q</span><span class="lang-kz">C = A / q</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">C = q / U</span><span class="lang-kz">C = q / U</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Если пластины конденсатора сблизить (уменьшить расстояние между ними), что произойдет с его электроемкостью?</span>
+                <span class="lang-kz">5. Егер конденсатор пластиналарын жақындатса (олардың арақашықтығын азайтса), оның электрсыйымдылығы не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Уменьшится</span><span class="lang-kz">Кемиді</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Увеличится</span><span class="lang-kz">Артады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Станет равной нулю</span><span class="lang-kz">Нөлге тең болады</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Емкость C = q / U = 0.04 / 20 = 0.002 Ф (или 2 миллифарада).",
+            fbA_inc: "Неверно. Посмотрите на формулу: C = q / U. Нужно разделить 0.04 на 20.",
+            fbB_corr: "Абсолютно правильно! Емкость (подобно объему стакана) зависит от размеров самого конденсатора, а не от того, сколько воды (заряда) в него налили.",
+            fbB_inc: "Неверно. Представьте себе стакан. Зависит ли его вместимость (емкость) от того, налили в него воду или нет? Емкость — это характеристика самого прибора.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно поняли тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_bat: "Батарея",
+            lbl_cap: "Конденсатор",
+            lbl_lamp: "Вспышка"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Сыйымдылық C = q / U = 0.04 / 20 = 0.002 Ф (немесе 2 миллифарад).",
+            fbA_inc: "Қате. Формулаға қараңыз: C = q / U. 0.04-ті 20-ға бөлу керек.",
+            fbB_corr: "Өте дұрыс! Сыйымдылық (стақанның көлемі сияқты) оған қанша су (заряд) құйылғанына емес, конденсатордың өз өлшемдеріне тәуелді.",
+            fbB_inc: "Қате. Стақанды елестетіп көріңізші. Оның сыйымдылығы оған су құйылғанына немесе құйылмағанына тәуелді ме? Сыйымдылық — құралдың өз сипаттамасы.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_bat: "Батарея",
+            lbl_cap: "Конденсатор",
+            lbl_lamp: "Жарқыл"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene(); // Update labels on canvas
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let chargeLevel = 0; // от 0 до 1
+    let switchState = 0; // 0: нейтрально (верх), 1: батарея (лево), 2: лампа (право)
+    let bulbBrightness = 0;
+    
+    // Координаты схемы
+    const cx = 250;
+    const cy = 180;
+    
+    // Анимация
+    let animFrame = null;
+
+    window.setSwitch = function(state) {
+        switchState = state;
+        if (!animFrame) {
+            animate();
+        }
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Линии цепи
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        ctx.beginPath();
+        // Нижний провод (общий)
+        ctx.moveTo(100, cy + 60);
+        ctx.lineTo(400, cy + 60);
+        // Вертикаль к конденсатору (снизу)
+        ctx.moveTo(cx, cy + 60);
+        ctx.lineTo(cx, cy + 20);
+        // Левый контур (к батарее)
+        ctx.moveTo(100, cy + 60);
+        ctx.lineTo(100, cy - 60);
+        ctx.lineTo(200, cy - 60); // контакт 1
+        // Правый контур (к лампе)
+        ctx.moveTo(400, cy + 60);
+        ctx.lineTo(400, cy - 60);
+        ctx.lineTo(300, cy - 60); // контакт 2
+        // Вертикаль от конденсатора (сверху к переключателю)
+        ctx.moveTo(cx, cy - 20);
+        ctx.lineTo(cx, cy - 60);
+        ctx.stroke();
+
+        // Батарея (слева)
+        ctx.fillStyle = '#ef4444'; // плюс
+        ctx.fillRect(85, cy - 20, 30, 10);
+        ctx.fillStyle = '#3b82f6'; // минус
+        ctx.fillRect(85, cy + 10, 30, 20);
+        
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('+', 100, cy - 10);
+        ctx.fillText('-', 100, cy + 25);
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(t('lbl_bat'), 100, cy + 90);
+
+        // Лампа (справа)
+        ctx.beginPath();
+        ctx.arc(400, cy, 20, 0, Math.PI * 2);
+        ctx.fillStyle = '#1e293b';
+        ctx.fill();
+        ctx.stroke();
+        
+        // Свечение лампы
+        if (bulbBrightness > 0.01) {
+            let glow = ctx.createRadialGradient(400, cy, 10, 400, cy, 50);
+            glow.addColorStop(0, `rgba(252, 211, 77, ${bulbBrightness})`);
+            glow.addColorStop(1, 'rgba(252, 211, 77, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(400, cy, 50, 0, Math.PI*2);
+            ctx.fill();
+            
+            ctx.fillStyle = `rgba(253, 230, 138, ${bulbBrightness})`;
+            ctx.beginPath();
+            ctx.arc(400, cy, 15, 0, Math.PI*2);
+            ctx.fill();
+        }
+        
+        // Спираль лампы
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(390, cy + 10);
+        ctx.lineTo(395, cy - 5);
+        ctx.lineTo(405, cy - 5);
+        ctx.lineTo(410, cy + 10);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(t('lbl_lamp'), 400, cy + 90);
+
+        // Переключатель (Рубильник)
+        ctx.fillStyle = '#cbd5e1';
+        ctx.beginPath(); ctx.arc(200, cy - 60, 5, 0, Math.PI*2); ctx.fill(); // Контакт батареи
+        ctx.beginPath(); ctx.arc(300, cy - 60, 5, 0, Math.PI*2); ctx.fill(); // Контакт лампы
+        ctx.beginPath(); ctx.arc(cx, cy - 60, 5, 0, Math.PI*2); ctx.fill();  // Центр
+
+        ctx.strokeStyle = '#f87171';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - 60);
+        if (switchState === 0) {
+            ctx.lineTo(cx, cy - 90); // Нейтраль
+        } else if (switchState === 1) {
+            ctx.lineTo(200, cy - 60); // К батарее
+        } else if (switchState === 2) {
+            ctx.lineTo(300, cy - 60); // К лампе
+        }
+        ctx.stroke();
+
+        // Конденсатор (в центре)
+        ctx.strokeStyle = '#38bdf8'; // Обкладки
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cx - 30, cy - 20);
+        ctx.lineTo(cx + 30, cy - 20); // Верхняя (Плюс)
+        ctx.moveTo(cx - 30, cy + 20);
+        ctx.lineTo(cx + 30, cy + 20); // Нижняя (Минус)
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(t('lbl_cap'), cx, cy + 90);
+
+        // Визуализация зарядов на обкладках (зависит от chargeLevel)
+        if (chargeLevel > 0.05) {
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 16px monospace';
+            let count = Math.floor(chargeLevel * 5); // до 5 плюсов
+            for (let i = 0; i < count; i++) {
+                let px = cx - 20 + i * 10;
+                ctx.fillText('+', px, cy - 30);
+            }
+            ctx.fillStyle = '#3b82f6';
+            for (let i = 0; i < count; i++) {
+                let px = cx - 20 + i * 10;
+                ctx.fillText('-', px, cy + 40);
+            }
+        }
+        
+        // Обновление UI
+        let percent = Math.round(chargeLevel * 100);
+        document.getElementById('chargeText').innerText = percent;
+        document.getElementById('chargeFill').style.width = percent + '%';
+        
+        // Цвет полосы в зависимости от уровня
+        if(percent < 30) document.getElementById('chargeFill').style.background = '#3b82f6';
+        else if (percent < 80) document.getElementById('chargeFill').style.background = '#10b981';
+        else document.getElementById('chargeFill').style.background = '#ef4444';
+    }
+
+    function animate() {
+        let keepAnimating = false;
+
+        if (switchState === 1) {
+            // Зарядка (медленно)
+            if (chargeLevel < 1) {
+                chargeLevel += 0.02;
+                if (chargeLevel > 1) chargeLevel = 1;
+                keepAnimating = true;
+            }
+            bulbBrightness *= 0.8; // Лампа быстро тухнет, если была включена
+        } 
+        else if (switchState === 2) {
+            // Разрядка (быстро)
+            if (chargeLevel > 0) {
+                // Яркость лампы зависит от текущего заряда в момент разрядки
+                bulbBrightness = chargeLevel; 
+                chargeLevel -= 0.08; // Разряд идет быстрее зарядки (вспышка!)
+                if (chargeLevel < 0) chargeLevel = 0;
+                keepAnimating = true;
+            } else {
+                // Заряд кончился, лампа остывает
+                if (bulbBrightness > 0) {
+                    bulbBrightness -= 0.05;
+                    if (bulbBrightness < 0) bulbBrightness = 0;
+                    keepAnimating = true;
+                }
+            }
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // C = q / U = 0.04 / 20 = 0.002
+        if (val === 0.002) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

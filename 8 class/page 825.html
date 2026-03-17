@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сопротивление и Температура. Сверхпроводимость — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #eef2ff; /* Светло-индиго фон */
+            --text-color: #1e1b4b;
+            --card-bg: #ffffff;
+            --primary: #4f46e5; /* Индиго */
+            --primary-hover: #4338ca;
+            --secondary: #06b6d4; /* Циан (холод / сверхпроводимость) */
+            --hot: #ef4444; 
+            --cold: #06b6d4; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #c7d2fe;
+            --text-muted: #6b7280;
+            --formula-bg: #e0e7ff;
+            --super-glow: #22d3ee;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e1b4b;
+                --border: #3730a3;
+                --text-muted: #94a3b8;
+                --formula-bg: #312e81;
+                --super-glow: #0891b2;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+        
+        .super-box {
+            background-color: rgba(6, 182, 212, 0.1);
+            border-left: 4px solid var(--secondary);
+            border-right: 4px solid var(--secondary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #06b6d4, #cbd5e1 27%, #ef4444);
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+            padding-bottom: 4px;
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+        
+        .super-status {
+            color: var(--secondary);
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+            text-shadow: 0 0 5px var(--secondary);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+            100% { opacity: 0.7; transform: scale(0.98); }
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(79, 70, 229, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(79, 70, 229, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Зависимость сопротивления от температуры. Сверхпроводимость</span>
+            <span class="lang-kz">Кедергінің температураға тәуелділігі. Асқын өткізгіштік</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему лампочки чаще всего перегорают в момент включения? Как заставить ток течь по кольцу вечно, без батареек? Разгадаем тайну движения электронов при нагреве и супер-заморозке!</span>
+            <span class="lang-kz">Неліктен шамдар көбінесе қосылған кезде күйіп кетеді? Токты батареясыз сақина бойымен мәңгі ағуға қалай мәжбүрлеуге болады? Қыздыру және супер-мұздату кезіндегі электрондар қозғалысының құпиясын ашамыз!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Нагрев металла и сопротивление</span>
+            <span class="lang-kz">1. Металды қыздыру және кедергі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Электрический ток в металлах — это упорядоченное движение свободных электронов. Они пробираются сквозь «лес» ионов кристаллической решетки.</span>
+            <span class="lang-kz">Металдардағы электр тогы — бұл еркін электрондардың реттелген қозғалысы. Олар кристалдық тор иондарының «орманы» арқылы өтеді.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Когда металл <strong>нагревается</strong>, ионы решетки начинают колебаться сильнее и быстрее. Из-за этого электронам становится гораздо сложнее пройти, они чаще сталкиваются с ионами. Следовательно, <strong>сопротивление металлов увеличивается при нагревании</strong>!</span>
+            <span class="lang-kz">Металл <strong>қызған кезде</strong>, тор иондары күштірек және тезірек тербеле бастайды. Осыған байланысты электрондарға өту әлдеқайда қиындайды, олар иондармен жиі соқтығысады. Демек, <strong>металдардың кедергісі қыздырған кезде артады</strong>!</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Зависимость сопротивления от температуры выражается формулой:</span>
+            <span class="lang-kz">Кедергінің температураға тәуелділігі мына формуламен өрнектеледі:</span>
+            
+            <div class="math-formula">R = R<sub>0</sub>(1 + &alpha; &middot; t)</div>
+            
+            <p style="font-size: 0.9rem; margin-top: 10px; text-align: center;">
+                <span class="lang-ru">Где <span class="math-symbol">R<sub>0</sub></span> — сопротивление при 0 °C, <span class="math-symbol">t</span> — температура, <span class="math-symbol">&alpha;</span> (альфа) — температурный коэффициент сопротивления.</span>
+                <span class="lang-kz">Мұндағы <span class="math-symbol">R<sub>0</sub></span> — 0 °C кезіндегі кедергі, <span class="math-symbol">t</span> — температура, <span class="math-symbol">&alpha;</span> (альфа) — кедергінің температуралық коэффициенті.</span>
+            </p>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); text-align: center;">
+            <span class="lang-ru"><em>Именно поэтому холодная спираль лампочки имеет маленькое сопротивление, и в первую долю секунды после включения через нее идет огромный ток. Из-за этого скачка лампы часто перегорают именно в момент щелчка выключателя!</em></span>
+            <span class="lang-kz"><em>Сондықтан да шамның суық спиралі аз кедергіге ие болады және қосылғаннан кейінгі алғашқы секундта одан үлкен ток өтеді. Осы секірістің салдарынан шамдар жиі ажыратқышты басқан сәтте күйіп кетеді!</em></span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Сверхпроводимость: Физическое чудо</span>
+            <span class="lang-kz">2. Асқын өткізгіштік: Физикалық ғажайып</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если при нагревании сопротивление растет, значит при охлаждении оно падает. Что будет, если охладить металл почти до абсолютного нуля (-273 °C)?</span>
+            <span class="lang-kz">Егер қыздырғанда кедергі өссе, демек салқындатқанда ол төмендейді. Металды абсолютті нөлге (-273 °C) дейін салқындатса не болады?</span>
+        </p>
+        <p>
+            <span class="lang-ru">В 1911 году голландский физик Хейке Камерлинг-Оннес охлаждал ртуть с помощью жидкого гелия. При достижении температуры <strong>-269 °C (или 4,2 Кельвина)</strong> произошло невероятное: электрическое сопротивление ртути <strong>исчезло полностью</strong>, упав ровно до нуля!</span>
+            <span class="lang-kz">1911 жылы голланд физигі Хейке Камерлинг-Оннес сұйық гелийдің көмегімен сынапты салқындатты. <strong>-269 °C (немесе 4,2 Кельвин)</strong> температураға жеткенде сенбестей жағдай орын алды: сынаптың электр кедергісі <strong>толығымен жойылды</strong>, дәл нөлге дейін төмендеді!</span>
+        </p>
+
+        <div class="highlight-box super-box">
+            <span class="lang-ru"><strong>Сверхпроводимость</strong> — это явление, при котором электрическое сопротивление некоторых материалов (при их охлаждении ниже определенной критической температуры <span class="math-symbol">T<sub>c</sub></span>) падает до абсолютного нуля.</span>
+            <span class="lang-kz"><strong>Асқын өткізгіштік</strong> — бұл кейбір материалдардың электр кедергісі (оларды белгілі бір критикалық температурадан <span class="math-symbol">T<sub>c</sub></span> төмен салқындатқан кезде) абсолютті нөлге дейін төмендейтін құбылыс.</span>
+        </div>
+
+        <p>
+            <span class="lang-ru">В сверхпроводящем кольце пущенный однажды ток может циркулировать годами, не затухая, так как нет потерь на нагрев! Сегодня сверхпроводники используются для создания мощнейших магнитов в томографах (МРТ), коллайдерах и для парящих поездов (Маглев).</span>
+            <span class="lang-kz">Асқын өткізгіш сақинада бір рет жіберілген ток қызуға шығын болмағандықтан, өшпей жылдар бойы айнала алады! Бүгінгі таңда асқын өткізгіштер томографтарда (МРТ), коллайдерлерде және қалықтап жүретін пойыздарда (Маглев) өте қуатты магниттер жасау үшін қолданылады.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Кристаллическая решетка металла</span>
+            <span class="lang-kz">Симуляция: Металдың кристалдық торы</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Меняйте температуру от космического холода до адской жары. Наблюдайте за движением ионов (белые круги) и электронов (голубые точки). Найдите сверхпроводимость!</span>
+                    <span class="lang-kz">Температураны ғарыштық суықтан қатты ыстыққа дейін өзгертіңіз. Иондардың (ақ шеңберлер) және электрондардың (көк нүктелер) қозғалысын бақылаңыз. Асқын өткізгіштікті табыңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Материал провода:</span>
+                        <span class="lang-kz">Сым материалы:</span>
+                    </label>
+                    <select id="matSelect" onchange="updateSim()">
+                        <option value="hg" data-ru="Ртуть (Сверхпроводник, Tc = -269°C)" data-kz="Сынап (Асқын өткізгіш, Tc = -269°C)">Ртуть (Сверхпроводник, Tc = -269°C)</option>
+                        <option value="pb" data-ru="Свинец (Сверхпроводник, Tc = -266°C)" data-kz="Қорғасын (Асқын өткізгіш, Tc = -266°C)">Свинец (Сверхпроводник, Tc = -266°C)</option>
+                        <option value="cu" selected data-ru="Медь (Обычный металл, нет Tc)" data-kz="Мыс (Қалыпты металл, Tc жоқ)">Медь (Обычный металл, нет Tc)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-top: 5px;">
+                    <label>
+                        <span><span class="lang-ru">Температура (T):</span><span class="lang-kz">Температура (T):</span></span>
+                        <span id="tValText" style="font-weight: bold;">20 °C</span>
+                    </label>
+                    <!-- Шкала от -273 до 1000 -->
+                    <input type="range" id="tSlider" min="-273" max="1000" step="1" value="20" oninput="updateSim()">
+                </div>
+
+                <div id="superStatus" class="super-status">
+                    <span class="lang-ru">⚡ СВЕРХПРОВОДИМОСТЬ АКТИВНА ⚡</span>
+                    <span class="lang-kz">⚡ АСҚЫН ӨТКІЗГІШТІК БЕЛСЕНДІ ⚡</span>
+                </div>
+
+                <div class="dashboard" style="margin-top: 15px;">
+                    <div>
+                        <span class="lang-ru">Сопротивление (R):</span><span class="lang-kz">Кедергі (R):</span>
+                        <strong><span id="rMeter">10.0</span> Ом</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Колебания решетки:</span><span class="lang-kz">Тордың тербелісі:</span>
+                        <strong><span id="vibMeter">Норма</span></strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> При сильном нагреве электронам трудно пробиться из-за бешеной "пляски" атомов — сопротивление огромное. А в режиме сверхпроводимости атомы замирают, и электроны мчатся идеальным потоком с нулевым сопротивлением! (Для меди этот эффект недостижим).</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Қатты қыздырған кезде электрондарға атомдардың шапшаң "биіне" байланысты өту қиын — кедергі орасан зор. Ал асқын өткізгіштік режимінде атомдар қатып қалады, ал электрондар нөлдік кедергімен мінсіз ағынмен жүйткиді! (Мыс үшін бұл әсерге қол жеткізу мүмкін емес).</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Логика нагрева)</span>
+                <span class="lang-kz">1-тапсырма (Қыздыру логикасы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">У вас есть моток железной проволоки, по которому течет ток. Если вы начнете нагревать этот моток газовой горелкой, что произойдет с показаниями амперметра (силой тока) в цепи? (Напряжение источника постоянно).</span>
+                <span class="lang-kz">Сізде ток өтіп жатқан темір сым орамы бар. Егер сіз бұл орамды газ оттығымен қыздыра бастасаңыз, тізбектегі амперметрдің көрсеткіштерімен (ток күшімен) не болады? (Көздің кернеуі тұрақты).</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Сила тока увеличится" data-kz="Ток күші артады">Сила тока увеличится</option>
+                    <option value="2" data-ru="Сила тока уменьшится" data-kz="Ток күші кемиді">Сила тока уменьшится</option>
+                    <option value="3" data-ru="Сила тока не изменится" data-kz="Ток күші өзгермейді">Сила тока не изменится</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Сверхпроводимость)</span>
+                <span class="lang-kz">2-тапсырма (Асқын өткізгіштік)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Ученым удалось охладить кольцо из свинца до -270 °C, переведя его в сверхпроводящее состояние, и запустить в нем электрический ток. Что случится с током через год, если поддерживать эту температуру?</span>
+                <span class="lang-kz">Ғалымдар қорғасыннан жасалған сақинаны -270 °C-қа дейін салқындатып, оны асқын өткізгіш күйге келтірді және оған электр тогын жіберді. Егер осы температураны сақтаса, бір жылдан кейін токпен не болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Ток быстро затухнет из-за сопротивления" data-kz="Ток кедергіге байланысты тез өшеді">Ток быстро затухнет из-за сопротивления</option>
+                    <option value="2" data-ru="Ток будет течь как ни в чем не бывало, без потерь" data-kz="Ток еш шығынсыз, бұрынғыша аға береді">Ток будет течь как ни в чем не бывало, без потерь</option>
+                    <option value="3" data-ru="Ток превратится в магнитное поле и исчезнет" data-kz="Ток магнит өрісіне айналып, жойылады">Ток превратится в магнитное поле и исчезнет</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите завораживающие опыты с жидким азотом и квантовой левитацией (парением магнита над сверхпроводником)!</span>
+            <span class="lang-kz">Сұйық азотпен және кванттық левитациямен (магниттің асқын өткізгіш үстінде қалықтауы) жасалған таңғажайып тәжірибелерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%81%D0%B2%D0%B5%D1%80%D1%85%D0%BF%D1%80%D0%BE%D0%B2%D0%BE%D0%B4%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D1%8C+%D0%BA%D0%B2%D0%B0%D0%BD%D1%82%D0%BE%D0%B2%D0%B0%D1%8F+%D0%BB%D0%B5%D0%B2%D0%B8%D1%82%D0%B0%D1%86%D0%B8%D1%8F" target="_blank">
+                ▶ <span class="lang-ru">Найти видео «Сверхпроводимость и левитация»</span>
+                  <span class="lang-kz">«Асқын өткізгіштік және левитация» бейнесін табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Как изменяется электрическое сопротивление чистых металлов при их нагревании?</span>
+                <span class="lang-kz">1. Таза металдарды қыздырған кезде олардың электр кедергісі қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Уменьшается</span><span class="lang-kz">Кемиді</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Увеличивается</span><span class="lang-kz">Артады</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Не изменяется</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Сначала падает, потом растет</span><span class="lang-kz">Алдымен төмендейді, сосын өседі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Какова физическая причина увеличения сопротивления металлов при нагреве?</span>
+                <span class="lang-kz">2. Қыздыру кезінде металдардың кедергісі артуының физикалық себебі неде?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Электроны начинают двигаться медленнее</span><span class="lang-kz">Электрондар баяу қозғала бастайды</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Металл расширяется и рвет провода</span><span class="lang-kz">Металл кеңейіп, сымдарды үзеді</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Увеличивается амплитуда колебаний ионов кристаллической решетки, что мешает движению электронов</span><span class="lang-kz">Кристалдық тор иондарының тербеліс амплитудасы артады, бұл электрондардың қозғалысына кедергі жасайды</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">В металле образуется больше электронов</span><span class="lang-kz">Металда көбірек электрондар пайда болады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Что такое сверхпроводимость?</span>
+                <span class="lang-kz">3. Асқын өткізгіштік дегеніміз не?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Явление скачкообразного падения сопротивления до нуля при охлаждении ниже критической температуры</span><span class="lang-kz">Критикалық температурадан төмен салқындатқан кезде кедергінің нөлге дейін секірмелі түрде төмендеу құбылысы</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Способность металла проводить ток при очень высоких температурах</span><span class="lang-kz">Металдың өте жоғары температурада ток өткізу қабілеті</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Электрический пробой диэлектрика (изолятора)</span><span class="lang-kz">Диэлектриктің (оқшаулағыштың) электрлік тесілуі</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Скорость света внутри провода</span><span class="lang-kz">Сым ішіндегі жарық жылдамдығы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. При каких температурах обычно наблюдается классическая сверхпроводимость?</span>
+                <span class="lang-kz">4. Классикалық асқын өткізгіштік әдетте қандай температураларда байқалады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Около 0 °C (замерзание воды)</span><span class="lang-kz">Шамамен 0 °C (судың қатуы)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">При комнатной температуре</span><span class="lang-kz">Бөлме температурасында</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">При температурах выше 1000 °C</span><span class="lang-kz">1000 °C-тан жоғары температурада</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Вблизи абсолютного нуля (около -270 °C)</span><span class="lang-kz">Абсолютті нөлге жақын (шамамен -270 °C)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Кто открыл явление сверхпроводимости в 1911 году?</span>
+                <span class="lang-kz">5. 1911 жылы асқын өткізгіштік құбылысын кім ашты?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Георг Ом</span><span class="lang-kz">Георг Ом</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Хейке Камерлинг-Оннес</span><span class="lang-kz">Хейке Камерлинг-Оннес</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Джеймс Джоуль</span><span class="lang-kz">Джеймс Джоуль</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Исаак Ньютон</span><span class="lang-kz">Исаак Ньютон</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Верно! При нагревании сопротивление металла увеличивается. А по закону Ома (I = U/R), если сопротивление растет, то сила тока падает. Показания амперметра уменьшатся.",
+            fbA_inc: "Неверно. Вспомните: при нагревании атомы мешают электронам (сопротивление РАСТЕТ). А если препятствий стало больше, току сложнее течь.",
+            fbB_corr: "Абсолютно правильно! В состоянии сверхпроводимости сопротивление равно строго нулю. Ток не встречает преград и не тратит энергию на нагрев, поэтому может циркулировать бесконечно долго.",
+            fbB_inc: "Неверно. Фишка сверхпроводимости именно в том, что сопротивления НЕТ вообще (R=0). Потерь энергии нет.",
+            test_ok: "Отличный результат: {s} из {t}! Вы готовы к работе с квантовыми технологиями.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            vib_low: "Остановлены (Сверхпроводимость)",
+            vib_norm: "Слабые (Холод)",
+            vib_med: "Умеренные (Комнатная)",
+            vib_high: "Сильные (Жара)",
+            vib_extreme: "Критические (Плавление)"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Қыздырған кезде металдың кедергісі артады. Ал Ом заңы бойынша (I = U/R), егер кедергі өссе, ток күші төмендейді. Амперметр көрсеткіштері азаяды.",
+            fbA_inc: "Қате. Есіңізге түсіріңіз: қыздырғанда атомдар электрондарға кедергі жасайды (кедергі ӨСЕДІ). Ал егер кедергілер көбейсе, токқа ағу қиындайды.",
+            fbB_corr: "Өте дұрыс! Асқын өткізгіштік күйінде кедергі қатаң түрде нөлге тең. Ток ешқандай кедергіге ұшырамайды және қызуға энергия жұмсамайды, сондықтан ол шексіз ұзақ айнала алады.",
+            fbB_inc: "Қате. Асқын өткізгіштіктің басты ерекшелігі — кедергінің МҮЛДЕМ ЖОҚ болуында (R=0). Энергия шығыны жоқ.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз кванттық технологиялармен жұмыс істеуге дайынсыз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            vib_low: "Тоқтатылған (Асқын өткізгіштік)",
+            vib_norm: "Әлсіз (Суық)",
+            vib_med: "Орташа (Бөлме темп.)",
+            vib_high: "Күшті (Ыстық)",
+            vib_extreme: "Критикалық (Еру)"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateSim();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Параметры
+    let T = 20; // от -273 до 1000
+    let material = 'cu'; // hg, pb, cu
+    
+    // Данные материалов: {Tc: критич. темп, R0: баз. сопр (условное), alpha: коэфф}
+    const matData = {
+        'hg': { Tc: -269, R0: 8.0, alpha: 0.0009 },
+        'pb': { Tc: -266, R0: 6.0, alpha: 0.004 },
+        'cu': { Tc: -300, R0: 1.0, alpha: 0.004 } // -300 недостижимо -> нет сверхпроводимости
+    };
+    
+    let isSuper = false;
+    let currentR = 0;
+    
+    // Для анимации
+    let ions = [];
+    let electrons = [];
+    let animFrame = null;
+    let frameCount = 0;
+
+    // Инициализация частиц
+    function initParticles() {
+        ions = [];
+        electrons = [];
+        
+        // Решетка ионов (3 ряда по 8 штук)
+        for(let r=0; r<3; r++) {
+            for(let c=0; c<8; c++) {
+                ions.push({
+                    baseX: 60 + c * 55,
+                    baseY: 80 + r * 70,
+                    x: 60 + c * 55,
+                    y: 80 + r * 70,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+        
+        // Электроны
+        for(let i=0; i<40; i++) {
+            electrons.push({
+                x: Math.random() * canvas.width,
+                y: 60 + Math.random() * 180,
+                speed: 2 + Math.random() * 2,
+                wigglePhase: Math.random() * Math.PI * 2
+            });
+        }
+    }
+    initParticles();
+
+    window.updateSim = function() {
+        T = parseInt(document.getElementById('tSlider').value);
+        material = document.getElementById('matSelect').value;
+        
+        document.getElementById('tValText').textContent = T + ' °C';
+        
+        let data = matData[material];
+        
+        // Проверка сверхпроводимости
+        if (T <= data.Tc) {
+            isSuper = true;
+            currentR = 0.00;
+            document.getElementById('superStatus').style.display = 'block';
+        } else {
+            isSuper = false;
+            // Условный расчет сопротивления (формула с поправкой на T=0C как базу)
+            // R = R0 * (1 + alpha*T). Если меньше нуля (математическая ошибка линейной формулы при сильном минусе), просто берем 10% от R0
+            let rCalc = data.R0 * (1 + data.alpha * T);
+            currentR = Math.max(rCalc, data.R0 * 0.1); 
+            document.getElementById('superStatus').style.display = 'none';
+        }
+        
+        document.getElementById('rMeter').textContent = currentR.toFixed(2);
+        
+        // Текст вибрации
+        let vibLabel = '';
+        if (isSuper) vibLabel = t('vib_low');
+        else if (T < 0) vibLabel = t('vib_norm');
+        else if (T < 100) vibLabel = t('vib_med');
+        else if (T < 600) vibLabel = t('vib_high');
+        else vibLabel = t('vib_extreme');
+        
+        document.getElementById('vibMeter').textContent = vibLabel;
+        
+        if (!animFrame) animate();
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Фон (зависит от температуры)
+        // -273: #020617 (очень темный индиго), 20: #1e293b (базовый), 1000: #7f1d1d (темно-красный)
+        let r=30, g=41, b=59; // Base 20C
+        if (T < 20) {
+            let ratio = (20 - T) / 293; // 0 to 1
+            r = 30 - ratio * 28; // to 2
+            g = 41 - ratio * 35; // to 6
+            b = 59 - ratio * 36; // to 23
+        } else {
+            let ratio = (T - 20) / 980; // 0 to 1
+            r = 30 + ratio * 97; // to 127
+            g = 41 - ratio * 12; // to 29
+            b = 59 - ratio * 30; // to 29
+        }
+        ctx.fillStyle = `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Границы провода
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, 40); ctx.lineTo(canvas.width, 40);
+        ctx.moveTo(0, 260); ctx.lineTo(canvas.width, 260);
+        ctx.stroke();
+
+        // Свечение сверхпроводимости
+        if (isSuper) {
+            let glow = ctx.createLinearGradient(0, 40, 0, 260);
+            glow.addColorStop(0, 'rgba(6, 182, 212, 0.4)');
+            glow.addColorStop(0.5, 'rgba(6, 182, 212, 0.1)');
+            glow.addColorStop(1, 'rgba(6, 182, 212, 0.4)');
+            ctx.fillStyle = glow;
+            ctx.fillRect(0, 40, canvas.width, 220);
+        }
+
+        // Отрисовка Ионов (Кристаллическая решетка)
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        
+        // Амплитуда колебаний зависит от T
+        let amplitude = 0;
+        if (!isSuper) {
+            // От 0 (абс ноль) до ~15px при 1000C
+            amplitude = ((T + 273) / 1273) * 12; 
+        }
+
+        ions.forEach(ion => {
+            // Вибрация
+            ion.x = ion.baseX + Math.sin(ion.phase + frameCount*0.2) * amplitude;
+            ion.y = ion.baseY + Math.cos(ion.phase*1.5 + frameCount*0.2) * amplitude;
+            
+            // Тепловое свечение ионов при высокой T
+            if (T > 200) {
+                let heatAlpha = (T-200)/800 * 0.5;
+                ctx.fillStyle = `rgba(239, 68, 68, ${heatAlpha})`;
+                ctx.beginPath(); ctx.arc(ion.x, ion.y, 18, 0, Math.PI*2); ctx.fill();
+            }
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(ion.x, ion.y, 10, 0, Math.PI*2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Плюсик внутри
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(ion.x - 4, ion.y - 1, 8, 2);
+            ctx.fillRect(ion.x - 1, ion.y - 4, 2, 8);
+        });
+
+        // Отрисовка Электронов
+        electrons.forEach(el => {
+            // Хвост (след)
+            if (isSuper) {
+                ctx.strokeStyle = 'rgba(34, 211, 238, 0.8)'; // Циан
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(el.x - 25, el.y);
+                ctx.lineTo(el.x, el.y);
+                ctx.stroke();
+            } else {
+                ctx.strokeStyle = 'rgba(147, 197, 253, 0.4)'; // Бледный синий
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(el.x - 10, el.y);
+                ctx.lineTo(el.x, el.y);
+                ctx.stroke();
+            }
+
+            // Сам электрон
+            ctx.fillStyle = isSuper ? '#22d3ee' : '#bfdbfe';
+            ctx.beginPath();
+            ctx.arc(el.x, el.y, 4, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Минусик
+            ctx.fillStyle = '#000';
+            ctx.fillRect(el.x - 2, el.y - 0.5, 4, 1);
+        });
+    }
+
+    function animate() {
+        frameCount++;
+        
+        // Амплитуда колебаний влияет на сопротивление (визуально на скорость электронов)
+        // Чем больше амплитуда, тем "медленнее" они ползут вправо
+        let speedFactor = 1.0;
+        let scatterAmp = 0;
+        
+        if (isSuper) {
+            speedFactor = 3.0; // Быстрый беспрепятственный поток
+            scatterAmp = 0;
+        } else {
+            // T от -273 до 1000. factor от ~1.5 до 0.2
+            speedFactor = Math.max(0.2, 1.5 - ((T + 273) / 1273) * 1.3);
+            scatterAmp = ((T + 273) / 1273) * 5; // Хаотичное движение по Y
+        }
+
+        electrons.forEach(el => {
+            el.x += el.speed * speedFactor;
+            
+            if (!isSuper) {
+                el.y += Math.sin(el.wigglePhase + frameCount*0.1) * scatterAmp;
+                // Ограничение по Y
+                if (el.y < 50) el.y = 50;
+                if (el.y > 250) el.y = 250;
+            }
+
+            if (el.x > canvas.width + 20) {
+                el.x = -20;
+                el.y = 60 + Math.random() * 180; // случайный Y при возврате
+            }
+        });
+
+        drawScene();
+        animFrame = requestAnimationFrame(animate);
+    }
+
+    // Инициализация
+    updateSim();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

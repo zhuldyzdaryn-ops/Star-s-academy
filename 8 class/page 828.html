@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магнитное поле прямого тока — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #f59e0b; /* Оранжевый для тока */
+            --primary-hover: #d97706;
+            --secondary: #0ea5e9; /* Голубой для поля */
+            --secondary-hover: #0284c7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #f1f5f9;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0f172a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .formula {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--secondary);
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-weight: 600; font-size: 0.95rem; }
+        
+        select, input[type="range"], input[type="text"], input[type="number"] {
+            width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);
+            background-color: var(--card-bg); color: var(--text-color);
+        }
+        input[type="range"] { accent-color: var(--primary); padding: 0; cursor: pointer; }
+
+        button.btn-flip {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button.btn-flip:hover { opacity: 0.9; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 420px;
+        }
+        @media (prefers-color-scheme: dark) { .canvas-container { background-color: #e2e8f0; } }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--text-color); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select, .input-group input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(14, 165, 233, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(14, 165, 233, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Магнитное поле прямого проводника с током</span>
+            <span class="lang-kz">Тогы бар түзу өткізгіштің магнит өрісі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Обычный провод может стать магнитом, если по нему пустить электрический ток! Впервые это обнаружил Эрстед. Как выглядит это поле и как узнать его направление?</span>
+            <span class="lang-kz">Егер қарапайым сым арқылы электр тогын жіберсе, ол магнитке айналуы мүмкін! Мұны алғаш рет Эрстед байқады. Бұл өріс қандай болады және оның бағытын қалай білуге болады?</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Опыт Эрстеда и возникновение поля</span>
+            <span class="lang-kz">1. Эрстед тәжірибесі және өрістің пайда болуы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В 1820 году датский ученый <strong>Ханс Кристиан Эрстед</strong> заметил удивительное явление: магнитная стрелка компаса, расположенная рядом с прямым проводом, отклонялась каждый раз, когда по проводу пропускали электрический ток.</span>
+            <span class="lang-kz">1820 жылы дат ғалымы <strong>Ханс Кристиан Эрстед</strong> таңғажайып құбылысты байқады: түзу сымның жанында орналасқан компастың магнит тілі сым арқылы электр тогы өткен сайын ауытқып тұрды.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Вывод:</strong> Электрический ток (движущиеся заряды) всегда создает вокруг себя <strong>магнитное поле</strong>. Это поле воздействует на компасы и другие магниты.</span>
+            <span class="lang-kz"><strong>Қорытынды:</strong> Электр тогы (қозғалатын зарядтар) әрқашан өз айналасында <strong>магнит өрісін</strong> тудырады. Бұл өріс компастарға және басқа магниттерге әсер етеді.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Линии поля и правила определения направления</span>
+            <span class="lang-kz">2. Өріс сызықтары және бағытты анықтау ережелері</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если насыпать железные опилки на картонку, проткнутую проводом с током, опилки выстроятся в виде <strong>концентрических окружностей</strong>. Это и есть линии магнитного поля прямого тока. Для определения их направления используют специальные правила.</span>
+            <span class="lang-kz">Егер тогы бар сыммен тесілген картонға темір ұнтақтарын сепсек, ұнтақтар <strong>концентрлі шеңберлер</strong> түрінде орналасады. Бұл түзу токтың магнит өрісінің сызықтары. Олардың бағытын анықтау үшін арнайы ережелер қолданылады.</span>
+        </p>
+
+        <div class="highlight-box" style="border-left-color: var(--secondary);">
+            <span class="lang-ru"><strong>Правило правой руки:</strong><br> Если обхватить проводник правой рукой так, чтобы отогнутый большой палец указывал направление тока, то четыре согнутых пальца укажут направление линий магнитного поля вокруг проводника.</span>
+            <span class="lang-kz"><strong>Оң қол ережесі:</strong><br> Егер өткізгішті оң қолмен бас бармақ токтың бағытын көрсететіндей етіп ұстасақ, онда бүгілген төрт саусақ өткізгіштің айналасындағы магнит өрісі сызықтарының бағытын көрсетеді.</span>
+        </div>
+
+        <div class="highlight-box" style="border-left-color: var(--primary);">
+            <span class="lang-ru"><strong>Правило буравчика:</strong><br> Если направление поступательного движения буравчика (винта с правой резьбой) совпадает с направлением тока в проводнике, то направление вращения ручки буравчика совпадает с направлением линий магнитного поля.</span>
+            <span class="lang-kz"><strong>Бұрғы ережесі:</strong><br> Егер бұрғының (оң бұрандалы бұранданың) ілгерілемелі қозғалысының бағыты өткізгіштегі ток бағытымен сәйкес келсе, онда бұрғы тұтқасының айналу бағыты токтың магнит өрісі сызықтарының бағытымен сәйкес келеді.</span>
+        </div>
+
+        <p>
+            <span class="lang-ru">Чем больше сила тока, тем сильнее магнитное поле. Чем дальше от провода, тем поле слабее. Модуль магнитной индукции вычисляется по формуле:</span>
+            <span class="lang-kz">Ток күші неғұрлым көп болса, магнит өрісі соғұрлым күшті болады. Сымнан алыстаған сайын өріс әлсірейді. Магнит индукциясының модулі келесі формуламен есептеледі:</span>
+        </p>
+        
+        <span class="formula">B = (μ₀ · I) / (2π · r)</span>
+        <ul style="color: var(--text-muted); font-size: 0.95rem; text-align: center; list-style: none;">
+            <li><span class="lang-ru">где <strong>I</strong> — сила тока, <strong>r</strong> — расстояние от провода</span><span class="lang-kz">мұндағы <strong>I</strong> — ток күші, <strong>r</strong> — сымнан қашықтық</span></li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Магнитное поле прямого тока</span>
+            <span class="lang-kz">Симуляция: Түзу токтың магнит өрісі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Управляйте током и наблюдайте за поведением магнитных линий. Примените правило правой руки или правило буравчика к экрану!</span>
+                    <span class="lang-kz">Токты басқарыңыз және магнит сызықтарының әрекетін бақылаңыз. Экранға оң қол немесе бұрғы ережесін қолданыңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Выберите ракурс:</span>
+                        <span class="lang-kz">Ракурсты таңдаңыз:</span>
+                    </label>
+                    <select id="expSelect" onchange="changeExp()">
+                        <option value="wire_side" data-ru="Вид сбоку (Вертикальный провод)" data-kz="Бүйірінен көрініс (Тік сым)">Вид сбоку (Вертикальный провод)</option>
+                        <option value="wire" data-ru="Вид сверху (Провод ⊗/⊙)" data-kz="Үстінен көрініс (Сым ⊗/⊙)">Вид сверху (Провод ⊗/⊙)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-top: 10px;">
+                    <label>
+                        <span><span class="lang-ru">Сила тока:</span><span class="lang-kz">Ток күші:</span></span>
+                        <span id="currentVal" style="color: var(--primary);">5 А</span>
+                    </label>
+                    <input type="range" id="currentSlider" min="0" max="10" step="1" value="5" oninput="updateSim()">
+                </div>
+
+                <button class="btn-flip" style="margin-top: 10px;" onclick="flipCurrent()">
+                    <span class="lang-ru">🔄 Сменить направление тока</span>
+                    <span class="lang-kz">🔄 Ток бағытын өзгерту</span>
+                </button>
+
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="850" height="480"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText"></span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Практические задания</span>
+            <span class="lang-kz">Практикалық тапсырмалар</span>
+        </h2>
+        
+        <!-- Задание 1: Выпадающий список -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1: Выбор направления</span>
+                <span class="lang-kz">1-тапсырма: Бағытты таңдау</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Смотрим на сечение провода сверху. Ток направлен <strong>от нас</strong> (обозначается крестиком ⊗). В какую сторону будут закручены линии магнитного поля? Вспомните правило буравчика.</span>
+                <span class="lang-kz">Сымның қимасына үстінен қараймыз. Ток <strong>бізден әрі қарай</strong> бағытталған (крестпен ⊗ белгіленеді). Магнит өрісінің сызықтары қай жаққа бұралады? Бұрғы ережесін есіңізге түсіріңіз.</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="По часовой стрелке" data-kz="Сағат тілімен">По часовой стрелке</option>
+                    <option value="2" data-ru="Против часовой стрелки" data-kz="Сағат тіліне қарсы">Против часовой стрелки</option>
+                    <option value="3" data-ru="Они направлены радиально" data-kz="Олар радиалды бағытталған">Они направлены радиально</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задание 2: Текстовый ввод -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2: Расчет по формуле</span>
+                <span class="lang-kz">2-тапсырма: Формула бойынша есептеу</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Сила тока в прямом проводнике осталась неизменной, а расстояние до точки наблюдения увеличили в <strong>4 раза</strong>. Во сколько раз уменьшится модуль вектора магнитной индукции (B)? <em>(Впишите только число)</em></span>
+                <span class="lang-kz">Түзу өткізгіштегі ток күші өзгеріссіз қалды, ал бақылау нүктесіне дейінгі қашықтық <strong>4 есе</strong> артты. Магнит индукциясы (B) векторының модулі неше есе азаяды? <em>(Тек санды жазыңыз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="text" id="taskB" placeholder="Введите число..." data-ru="Введите число..." data-kz="Санды енгізіңіз...">
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Ответить</span><span class="lang-kz">Жауап беру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задание 3: Выпадающий список -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 3: Взаимодействие</span>
+                <span class="lang-kz">3-тапсырма: Өзара әрекеттесу</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Два параллельных проводника расположены рядом. Токи в них текут в <strong>одном</strong> и том же направлении. Как эти проводники будут взаимодействовать друг с другом благодаря магнитным полям?</span>
+                <span class="lang-kz">Екі параллель өткізгіш қатар орналасқан. Олардағы токтар <strong>бірдей</strong> бағытта ағады. Бұл өткізгіштер магнит өрістерінің арқасында бір-бірімен қалай әрекеттеседі?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Они будут притягиваться" data-kz="Олар тартылады">Они будут притягиваться</option>
+                    <option value="2" data-ru="Они будут отталкиваться" data-kz="Олар тебіледі">Они будут отталкиваться</option>
+                    <option value="3" data-ru="Никак не будут взаимодействовать" data-kz="Ешқандай әрекеттеспейді">Никак не будут взаимодействовать</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите, видео по теме!</span>
+            <span class="lang-kz">Тақырып бойынша бейнені қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BC%D0%B0%D0%B3%D0%BD%D0%B8%D1%82%D0%BD%D0%BE%D0%B5+%D0%BF%D0%BE%D0%BB%D0%B5+%D0%BF%D1%80%D1%8F%D0%BC%D0%BE%D0%B3%D0%BE+%D1%82%D0%BE%D0%BA%D0%B0" target="_blank">
+                ▶ <span class="lang-ru">Найти видео «Магнитное поле прямого тока»</span>
+                  <span class="lang-kz">«Түзу токтың магнит өрісі» бейнесін табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что возникает в пространстве вокруг проводника, когда по нему протекает электрический ток?</span>
+                <span class="lang-kz">1. Өткізгіш арқылы электр тогы өткен кезде оның айналасындағы кеңістікте не пайда болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Гравитационное поле</span><span class="lang-kz">Гравитациялық өріс</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Магнитное поле</span><span class="lang-kz">Магнит өрісі</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Только электрическое поле</span><span class="lang-kz">Тек электр өрісі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Какую форму имеют силовые линии магнитного поля прямого провода с током?</span>
+                <span class="lang-kz">2. Тогы бар түзу сымның магнит өрісінің күш сызықтары қандай пішінге ие?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Концентрические окружности</span><span class="lang-kz">Концентрлі шеңберлер</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Прямые линии, параллельные проводу</span><span class="lang-kz">Сымға параллель түзу сызықтар</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Радиальные лучи (как от солнца)</span><span class="lang-kz">Радиалды сәулелер (күн сияқты)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Как нужно расположить большой палец в "Правиле правой руки"?</span>
+                <span class="lang-kz">3. "Оң қол ережесінде" бас бармақты қалай орналастыру керек?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Перпендикулярно проводу</span><span class="lang-kz">Сымға перпендикуляр</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">По направлению линий магнитного поля</span><span class="lang-kz">Магнит өрісінің сызықтары бағытымен</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">По направлению электрического тока в проводе</span><span class="lang-kz">Сымдағы электр тогының бағытымен</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Если поменять направление тока в проводе на противоположное, что произойдет с магнитным полем?</span>
+                <span class="lang-kz">4. Егер сымдағы ток бағытын қарама-қарсы бағытқа өзгертсек, магнит өрісі не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Направление линий поля изменится на противоположное</span><span class="lang-kz">Өріс сызықтарының бағыты қарама-қарсы бағытқа өзгереді</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Магнитное поле исчезнет</span><span class="lang-kz">Магнит өрісі жойылады</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Ничего не изменится</span><span class="lang-kz">Ештеңе өзгермейді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Вы смотрите на срез провода, ток идет "от вас" (крестик ⊗). Как направлены магнитные линии согласно правилу буравчика?</span>
+                <span class="lang-kz">5. Сіз сымның кесіндісіне қарап тұрсыз, ток "сізден" (крест ⊗) жүреді. Бұрғы ережесіне сәйкес магнит сызықтары қалай бағытталған?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Против часовой стрелки</span><span class="lang-kz">Сағат тіліне қарсы</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">По часовой стрелки</span><span class="lang-kz">Сағат тілімен</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Они идут вниз, параллельно проводу</span><span class="lang-kz">Олар сымға параллель төмен түседі</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант / введите ответ.",
+            fbA_corr: "Верно! Если вкручивать буравчик в направлении «от нас» (в плоскость экрана), ручку придется вращать ПО часовой стрелке.",
+            fbA_inc: "Неверно. Представьте, что вы закручиваете шуруп в стену. Куда вы вращаете отвертку?",
+            fbB_corr: "Правильно! Согласно формуле $B = \\mu_0 I / (2\\pi r)$, магнитная индукция обратно пропорциональна расстоянию $r$. Расстояние больше в 4 раза — поле слабее в 4 раза.",
+            fbB_inc: "Неверно. Вспомните формулу: $B$ обратно пропорционально расстоянию $r$. Если $r$ увеличилось в 4 раза, как изменится результат?",
+            fbC_corr: "Верно! По закону Ампера, параллельные проводники с токами одного направления притягиваются.",
+            fbC_inc: "Неверно. Токи одного направления создают магнитные поля, которые заставляют проводники притягиваться друг к другу.",
+            test_ok: "Отличный результат: {s} из {t}! Вы хорошо усвоили магнитное поле прямого тока.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            obs_ws_up: "<strong>Ток ВВЕРХ.</strong> Вкручиваем буравчик вверх → ручка вращается, указывая <strong>вправо</strong> перед проводом.",
+            obs_ws_down: "<strong>Ток ВНИЗ.</strong> Вкручиваем буравчик вниз → магнитные линии закручиваются в другую сторону. Впереди они направлены <strong>влево</strong>.",
+            obs_w_dot: "<strong>Вид сверху. Ток К НАМ (⊙).</strong> Выкручиваем буравчик на себя. Линии закручены <strong>ПРОТИВ</strong> часовой стрелки.",
+            obs_w_cross: "<strong>Вид сверху. Ток ОТ НАС (⊗).</strong> Вкручиваем буравчик от себя. Линии закручены <strong>ПО</strong> часовой стрелке."
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз / жауапты енгізіңіз.",
+            fbA_corr: "Дұрыс! Егер бұрғыны «бізден әрі қарай» (экран жазықтығына) бұрап кіргізсе, тұтқаны сағат тіліМЕН бұрау керек.",
+            fbA_inc: "Қате. Қабырғаға бұранда бұрап жатырсыз деп елестетіңіз. Бұрағышты қай жаққа бұрайсыз?",
+            fbB_corr: "Дұрыс! Формулаға сәйкес, магнит индукциясы қашықтыққа кері пропорционал. Қашықтық 4 есе үлкен — өріс 4 есе әлсіз.",
+            fbB_inc: "Қате. Формуланы еске түсіріңіз: $B$ қашықтыққа кері пропорционал. Егер $r$ 4 есе өссе, нәтиже қалай өзгереді?",
+            fbC_corr: "Дұрыс! Ампер заңы бойынша, бағыттас токтары бар параллель өткізгіштер бір-біріне тартылады.",
+            fbC_inc: "Қате. Бір бағыттағы токтар өткізгіштердің бір-біріне тартылуына әкелетін магнит өрістерін жасайды.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз түзу токтың магнит өрісін жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            obs_ws_up: "<strong>Ток ЖОҒАРЫ.</strong> Бұрғыны жоғары бұраймыз → тұтқа айналып, сымның алдында <strong>оңға</strong> нұсқайды.",
+            obs_ws_down: "<strong>Ток ТӨМЕН.</strong> Бұрғыны төмен бұраймыз → магнит сызықтары басқа жаққа бұралады. Алдыңғы жағында олар <strong>солға</strong> бағытталған.",
+            obs_w_dot: "<strong>Үстінен. Ток БІЗГЕ (⊙).</strong> Бұрғыны өзімізге қарай бұрап шығарамыз. Сызықтар сағат тіліне <strong>ҚАРСЫ</strong> бұралған.",
+            obs_w_cross: "<strong>Үстінен. Ток БІЗДЕН (⊗).</strong> Бұрғыны өзімізден әрі қарай бұраймыз. Сызықтар сағат тілі<strong>МЕН</strong> бұралған."
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        // Обновляем select
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        // Обновляем input text placeholder
+        document.querySelectorAll('input[type="text"][data-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateSim();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let expMode = 'wire_side';
+    let currentDir = 1; 
+    let currentStrength = 5;
+    let frameCount = 0;
+    let animFrame = null;
+
+    const COLOR_N = '#ef4444'; 
+    const COLOR_S = '#3b82f6'; 
+    const COLOR_B_FIELD = '#0ea5e9'; 
+    const COLOR_WIRE = '#94a3b8'; 
+
+    window.changeExp = function() { expMode = document.getElementById('expSelect').value; currentDir = 1; updateSim(); }
+    window.flipCurrent = function() { currentDir *= -1; updateSim(); }
+
+    window.updateSim = function() {
+        currentStrength = parseInt(document.getElementById('currentSlider').value);
+        document.getElementById('currentVal').textContent = currentStrength + ' А';
+        
+        let obsKey = '';
+        if (expMode === 'wire_side') obsKey = currentDir === 1 ? 'obs_ws_up' : 'obs_ws_down';
+        else if (expMode === 'wire') obsKey = currentDir === 1 ? 'obs_w_dot' : 'obs_w_cross';
+        
+        document.getElementById('obsText').innerHTML = i18n[currentLang][obsKey];
+        if (!animFrame) animate();
+    }
+
+    function drawArrow(x, y, angle, size, color) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.fillStyle = color; ctx.beginPath();
+        ctx.moveTo(size, 0); ctx.lineTo(-size*0.8, -size*0.6);
+        ctx.lineTo(-size*0.5, 0); ctx.lineTo(-size*0.8, size*0.6);
+        ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+
+    function drawCompass(x, y, angle) {
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI*2);
+        ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = '#334155'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.fillStyle = COLOR_N; ctx.beginPath(); ctx.moveTo(0, -4); ctx.lineTo(12, 0); ctx.lineTo(0, 4); ctx.fill();
+        ctx.fillStyle = COLOR_S; ctx.beginPath(); ctx.moveTo(0, -4); ctx.lineTo(-12, 0); ctx.lineTo(0, 4); ctx.fill();
+        ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(0, 0, 2, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+    }
+
+    function drawWireExp() {
+        const cx = canvas.width / 2; const cy = canvas.height / 2;
+        if (currentStrength > 0) {
+            ctx.lineWidth = 2;
+            let radii = [80, 150, 220]; 
+            radii.forEach((r, idx) => {
+                ctx.strokeStyle = COLOR_B_FIELD;
+                ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+                
+                let speed = (currentStrength * 0.005) * (currentDir === 1 ? -1 : 1);
+                let t = (frameCount * speed + (idx * Math.PI/3)) % (Math.PI * 2);
+                
+                for(let i=0; i<4; i++) {
+                    let angle = t + (i * Math.PI / 2);
+                    let ax = cx + Math.cos(angle) * r; let ay = cy + Math.sin(angle) * r;
+                    let tangent = angle + (currentDir === 1 ? -Math.PI/2 : Math.PI/2);
+                    drawArrow(ax, ay, tangent, 10, COLOR_B_FIELD);
+                    if (idx === 1 && i % 2 === 0) drawCompass(cx + Math.cos(angle - 0.5) * r, cy + Math.sin(angle - 0.5) * r, tangent);
+                }
+            });
+        }
+        ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#000000'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.strokeStyle = '#000000'; ctx.fillStyle = '#000000';
+        if (currentDir === 1) { 
+            ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI*2); ctx.fill();
+        } else { 
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(cx - 15, cy - 15); ctx.lineTo(cx + 15, cy + 15);
+            ctx.moveTo(cx + 15, cy - 15); ctx.lineTo(cx - 15, cy + 15); ctx.stroke();
+        }
+    }
+
+    function drawWireSideExp() {
+        const cx = canvas.width / 2; const cy = canvas.height / 2;
+        if (currentStrength > 0) {
+            let radii = [100, 180]; 
+            let heights = [cy - 140, cy, cy + 140]; 
+            ctx.lineWidth = 2.5;
+
+            let baseSpeed = currentStrength * 0.015;
+            let dirMulti = currentDir === 1 ? -1 : 1; 
+            let t = (frameCount * baseSpeed * dirMulti);
+
+            for(let h of heights) {
+                for(let rx of radii) {
+                    let ry = rx * 0.25;
+                    
+                    ctx.strokeStyle = 'rgba(14, 165, 233, 0.3)';
+                    ctx.beginPath(); ctx.ellipse(cx, h, rx, ry, 0, Math.PI, Math.PI*2); ctx.stroke();
+                    ctx.strokeStyle = COLOR_B_FIELD;
+                    ctx.beginPath(); ctx.ellipse(cx, h, rx, ry, 0, 0, Math.PI); ctx.stroke();
+                    
+                    for (let i = 0; i < 2; i++) {
+                        let offsetT = (t + i * Math.PI) % (Math.PI * 2);
+                        if (offsetT < 0) offsetT += Math.PI * 2;
+                        
+                        let ax = cx + Math.cos(offsetT) * rx;
+                        let ay = h + Math.sin(offsetT) * ry;
+                        
+                        let dx = -rx * Math.sin(offsetT) * dirMulti;
+                        let dy = ry * Math.cos(offsetT) * dirMulti;
+                        let angle = Math.atan2(dy, dx);
+
+                        let isFront = Math.sin(offsetT) >= 0;
+                        let isBehindWire = (!isFront && ax > cx - 18 && ax < cx + 18);
+                        
+                        if (!isBehindWire) drawArrow(ax, ay, angle, isFront ? 12 : 7, isFront ? COLOR_B_FIELD : 'rgba(14, 165, 233, 0.4)');
+                    }
+                }
+            }
+        }
+        
+        ctx.fillStyle = COLOR_WIRE; ctx.fillRect(cx - 16, 20, 32, canvas.height - 40);
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 2; ctx.strokeRect(cx - 16, 20, 32, canvas.height - 40);
+
+        if (currentStrength > 0) {
+            ctx.fillStyle = '#000';
+            let dy = currentDir === 1 ? -35 : 35;
+            [cy - 180, cy + 180].forEach(yPos => {
+                ctx.beginPath(); ctx.moveTo(cx, yPos + dy); ctx.lineTo(cx - 12, yPos - dy*0.3); ctx.lineTo(cx + 12, yPos - dy*0.3); ctx.fill();
+            });
+        }
+        
+        if (currentStrength === 0) {
+            ctx.fillStyle = '#64748b'; ctx.font = 'italic 18px Arial'; ctx.textAlign = 'center';
+            ctx.fillText(currentLang === 'ru' ? '(Включите ток)' : '(Токты қосыңыз)', cx, cy);
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        frameCount++;
+        
+        if (expMode === 'wire_side') drawWireSideExp();
+        else if (expMode === 'wire') drawWireExp();
+
+        if (currentStrength > 0) animFrame = requestAnimationFrame(animate);
+        else animFrame = null;
+    }
+
+    setTimeout(updateSim, 100);
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        let val = document.getElementById('taskB').value.trim();
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        // Принимаем ответы "4", "в 4 раза"
+        if (val === '4' || val.toLowerCase() === 'в 4 раза') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Температура и температурные шкалы — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc; /* Светло-серо-голубой */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #ef4444; /* Красный (тепло) */
+            --primary-hover: #dc2626;
+            --secondary: #3b82f6; /* Синий (холод) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #fee2e2;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #450a0a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box .math {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 10px 0;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .scale-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .scale-card {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .scale-card strong {
+            display: block;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        .scale-card span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select, .input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background-color: var(--secondary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Температура и температурные шкалы</span>
+            <span class="lang-kz">Температура және температуралық шкалалар</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему в США говорят, что на улице +80 градусов, а у нас это значит, что вода почти кипит? Существует ли самая низкая температура во Вселенной? Давайте разберемся!</span>
+            <span class="lang-kz">Неліктен АҚШ-та далада +80 градус дейді, ал бізде бұл судың дерлік қайнап жатқанын білдіреді? Ғаламдағы ең төменгі температура бар ма? Бірге анықтайық!</span>
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ 1: Что такое температура -->
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое температура?</span>
+            <span class="lang-kz">1. Температура дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Из предыдущего урока мы знаем, что молекулы вещества непрерывно движутся. Чем быстрее они движутся, тем большей кинетической энергией они обладают.</span>
+            <span class="lang-kz">Алдыңғы сабақтан білетініміздей, заттың молекулалары үздіксіз қозғалыста болады. Олар неғұрлым жылдам қозғалса, соғұрлым кинетикалық энергиясы көп болады.</span>
+        </p>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Температура</strong> — это физическая величина, характеризующая степень нагретости тела. Она является мерой <strong>средней кинетической энергии</strong> движения молекул.</span>
+            <span class="lang-kz"><strong>Температура</strong> — дененің қызу дәрежесін сипаттайтын физикалық шама. Ол молекулалар қозғалысының <strong>орташа кинетикалық энергиясының</strong> өлшемі болып табылады.</span>
+        </div>
+        <p>
+            <span class="lang-ru">Температуру измеряют приборами — <strong>термометрами</strong>. Принцип работы жидкостного термометра основан на <strong>тепловом расширении</strong>: при нагревании объем жидкости (спирта или ртути) увеличивается, и она поднимается по трубке.</span>
+            <span class="lang-kz">Температураны <strong>термометрлер</strong> деп аталатын құралдармен өлшейді. Сұйық термометрдің жұмыс істеу принципі <strong>жылулық ұлғаюға</strong> негізделген: қыздырған кезде сұйықтықтың (спирт немесе сынап) көлемі ұлғайып, ол түтік бойымен жоғары көтеріледі.</span>
+        </p>
+    </section>
+
+    <!-- ТЕОРИЯ 2: Шкалы -->
+    <section>
+        <h2>
+            <span class="lang-ru">2. Температурные шкалы</span>
+            <span class="lang-kz">2. Температуралық шкалалар</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В мире существует несколько шкал для измерения температуры. Самые известные из них:</span>
+            <span class="lang-kz">Әлемде температураны өлшеуге арналған бірнеше шкала бар. Олардың ең танымалдары:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="lang-ru"><strong>Шкала Цельсия (&deg;C):</strong> Повседневная шкала. За 0 &deg;C взята температура таяния льда, а за 100 &deg;C — температура кипения воды (при нормальном давлении).</span>
+                <span class="lang-kz"><strong>Цельсий шкаласы (&deg;C):</strong> Күнделікті шкала. 0 &deg;C ретінде мұздың еру температурасы, ал 100 &deg;C ретінде судың қайнау температурасы алынған (қалыпты қысымда).</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Шкала Фаренгейта (&deg;F):</strong> Используется в США. В этой шкале вода замерзает при 32 &deg;F, а кипит при 212 &deg;F.</span>
+                <span class="lang-kz"><strong>Фаренгейт шкаласы (&deg;F):</strong> АҚШ-та қолданылады. Бұл шкалада су 32 &deg;F-та қатады, ал 212 &deg;F-та қайнайды.</span>
+            </li>
+            <li>
+                <span class="lang-ru"><strong>Шкала Кельвина (K):</strong> Абсолютная шкала, используемая в науке (в системе СИ).</span>
+                <span class="lang-kz"><strong>Кельвин шкаласы (K):</strong> Ғылымда (ХБЖ жүйесінде) қолданылатын абсолюттік шкала.</span>
+            </li>
+        </ul>
+
+        <div class="highlight-box">
+            <span class="lang-ru">В шкале Кельвина нет отрицательных значений! Отсчет начинается с <strong>Абсолютного нуля (0 К)</strong>. Это теоретическая температура, при которой полностью прекращается тепловое движение молекул.</span>
+            <span class="lang-kz">Кельвин шкаласында теріс мәндер жоқ! Санақ <strong>Абсолют нөлден (0 К)</strong> басталады. Бұл молекулалардың жылулық қозғалысы толығымен тоқтайтын теориялық температура.</span>
+            
+            <span class="lang-ru"><br><br>Связь между шкалами Цельсия (t) и Кельвина (T):</span>
+            <span class="lang-kz"><br><br>Цельсий (t) және Кельвин (T) шкалалары арасындағы байланыс:</span>
+            
+            <span class="math">T = t + 273</span>
+            
+            <span class="lang-ru"><em>(Абсолютный нуль 0 К равен -273 &deg;C)</em></span>
+            <span class="lang-kz"><em>(Абсолют нөл 0 К -273 &deg;C-қа тең)</em></span>
+        </div>
+    </section>
+
+    <!-- СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Термометры и Микромир</span>
+            <span class="lang-kz">Симуляция: Термометрлер және Микроәлем</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="tempSlider" style="color: var(--primary)">
+                        <span class="lang-ru">Нагрев / Охлаждение:</span>
+                        <span class="lang-kz">Қыздыру / Суыту:</span>
+                    </label>
+                    <input type="range" id="tempSlider" min="-273" max="150" step="1" value="20">
+                </div>
+                
+                <div class="scale-values">
+                    <div class="scale-card">
+                        <span class="lang-ru">Цельсий</span><span class="lang-kz">Цельсий</span>
+                        <strong id="valC">20 &deg;C</strong>
+                    </div>
+                    <div class="scale-card" style="border-color: var(--warning);">
+                        <span class="lang-ru">Кельвин</span><span class="lang-kz">Кельвин</span>
+                        <strong id="valK" style="color: var(--warning)">293 K</strong>
+                    </div>
+                    <div class="scale-card" style="border-color: var(--secondary);">
+                        <span class="lang-ru">Фаренгейт</span><span class="lang-kz">Фаренгейт</span>
+                        <strong id="valF" style="color: var(--secondary)">68 &deg;F</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="600" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Попробуйте сами:</strong> Опустите ползунок до минимума. При -273 &deg;C (Абсолютный ноль) шкала Кельвина покажет 0, а движение молекул в микроскопе полностью остановится! Обратите внимание: -40 &deg;C в точности равно -40 &deg;F.</span>
+                <span class="lang-kz"><strong>Өзіңіз көріңіз:</strong> Сырғытпаны минимумға дейін төмендетіңіз. -273 &deg;C (Абсолют нөл) кезінде Кельвин шкаласы 0-ді көрсетеді, ал микроскоптағы молекулалардың қозғалысы толығымен тоқтайды! Назар аударыңыз: -40 &deg;C дәл -40 &deg;F-қа тең.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Конвертер)</span>
+                <span class="lang-kz">1-тапсырма (Конвертер)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Температура в комнате равна 25 &deg;C. Выразите эту температуру в Кельвинах (К), используя формулу T = t + 273.</span>
+                <span class="lang-kz">Бөлмедегі температура 25 &deg;C-қа тең. T = t + 273 формуласын қолданып, осы температураны Кельвинмен (К) өрнектеңіз.</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Значение в Кельвинах" data-placeholder-kz="Кельвиндегі мәні" placeholder="Значение в Кельвинах">
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему в медицинских термометрах используют ртуть, а в уличных (для холодных регионов) — подкрашенный спирт?</span>
+                <span class="lang-kz">Неліктен медициналық термометрлерде сынап, ал далалық термометрлерде (суық аймақтар үшін) боялған спирт қолданылады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Ртуть замерзает при -39 °C, поэтому уличный ртутный термометр лопнет на сильном морозе" data-kz="Сынап -39 °C-та қатады, сондықтан даладағы сынап термометрі қатты аязда жарылып кетеді">Ртуть замерзает при -39 °C, поэтому уличный ртутный термометр лопнет на сильном морозе</option>
+                    <option value="2" data-ru="Спирт выглядит красивее" data-kz="Спирт әдемірек көрінеді">Спирт выглядит красивее</option>
+                    <option value="3" data-ru="Ртуть дешевле спирта" data-kz="Сынап спирттен арзан">Ртуть дешевле спирта</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересное видео о том, как работает термометр, что такое абсолютный ноль и как ученые пытаются достичь самых низких температур во Вселенной!</span>
+            <span class="lang-kz">Термометрдің қалай жұмыс істейтіні, абсолют нөл деген не және ғалымдар Ғаламдағы ең төменгі температураларға қалай жетуге тырысатыны туралы қызықты бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%82%D0%B5%D0%BC%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D1%83%D1%80%D0%B0+%D1%88%D0%BA%D0%B0%D0%BB%D0%B0+%D1%86%D0%B5%D0%BB%D1%8C%D1%81%D0%B8%D1%8F+%D0%BA%D0%B5%D0%BB%D1%8C%D0%B2%D0%B8%D0%BD%D0%B0+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Температура, шкалы» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Температура, шкалалар» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Какую физическую величину измеряет температура?</span>
+                <span class="lang-kz">1. Температура қандай физикалық шаманы өлшейді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Массу молекул</span><span class="lang-kz">Молекулалардың массасын</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Среднюю кинетическую энергию молекул</span><span class="lang-kz">Молекулалардың орташа кинетикалық энергиясын</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Потенциальную энергию молекул</span><span class="lang-kz">Молекулалардың потенциалдық энергиясын</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Размер атомов</span><span class="lang-kz">Атомдардың өлшемін</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. На каком физическом явлении основана работа жидкостного термометра?</span>
+                <span class="lang-kz">2. Сұйық термометрдің жұмысы қандай физикалық құбылысқа негізделген?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Диффузия</span><span class="lang-kz">Диффузия</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Испарение</span><span class="lang-kz">Булану</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Тепловое расширение жидкостей</span><span class="lang-kz">Сұйықтықтардың жылулық ұлғаюы</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Броуновское движение</span><span class="lang-kz">Броундық қозғалыс</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Чему равен Абсолютный нуль по шкале Цельсия?</span>
+                <span class="lang-kz">3. Цельсий шкаласы бойынша Абсолют нөл неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">-273 &deg;C</span><span class="lang-kz">-273 &deg;C</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">0 &deg;C</span><span class="lang-kz">0 &deg;C</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">-100 &deg;C</span><span class="lang-kz">-100 &deg;C</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">100 &deg;C</span><span class="lang-kz">100 &deg;C</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Выразите 100 &deg;C в шкале Кельвина.</span>
+                <span class="lang-kz">4. 100 &deg;C-ты Кельвин шкаласымен өрнектеңіз.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">100 K</span><span class="lang-kz">100 K</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">273 K</span><span class="lang-kz">273 K</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">173 K</span><span class="lang-kz">173 K</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">373 K</span><span class="lang-kz">373 K</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. В какой из температурных шкал не бывает отрицательных значений температуры?</span>
+                <span class="lang-kz">5. Қай температуралық шкалада температураның теріс мәндерері болмайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Шкала Цельсия</span><span class="lang-kz">Цельсий шкаласы</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Шкала Кельвина</span><span class="lang-kz">Кельвин шкаласы</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Шкала Фаренгейта</span><span class="lang-kz">Фаренгейт шкаласы</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Во всех бывают отрицательные значения</span><span class="lang-kz">Барлығында теріс мәндер болады</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Правильно! T = 25 + 273 = 298 К.",
+            fbA_inc: "Неверно. Прибавьте к градусам Цельсия число 273.",
+            fbB_corr: "Верно! Спирт замерзает при гораздо более низкой температуре (около -114 °C), поэтому он отлично подходит для измерения сильных морозов.",
+            fbB_inc: "Неверно. Вспомните про температуру замерзания жидкостей. Что произойдет со льдом (или твердой ртутью) в стеклянной колбе?",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_temp_c: "Шкала Цельсия",
+            lbl_micro: "Микромир (Молекулы)",
+            lbl_stop: "ДВИЖЕНИЕ ОСТАНОВЛЕНО!"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! T = 25 + 273 = 298 К.",
+            fbA_inc: "Қате. Цельсий градусына 273 санын қосыңыз.",
+            fbB_corr: "Дұрыс! Спирт әлдеқайда төмен температурада (шамамен -114 °C) қатады, сондықтан ол қатты аяздарды өлшеуге өте қолайлы.",
+            fbB_inc: "Қате. Сұйықтықтардың қату температурасын еске түсіріңіз. Шыны колбадағы мұзбен (немесе қатты сынаппен) не болады?",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_temp_c: "Цельсий шкаласы",
+            lbl_micro: "Микроәлем (Молекулалар)",
+            lbl_stop: "ҚОЗҒАЛЫС ТОҚТАДЫ!"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene(); // Обновить текст на Canvas
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const tempSlider = document.getElementById('tempSlider');
+    const valC = document.getElementById('valC');
+    const valK = document.getElementById('valK');
+    const valF = document.getElementById('valF');
+    
+    let tempCelsius = 20; 
+    let molecules = [];
+    const numMolecules = 50;
+
+    // Инициализация молекул
+    for(let i=0; i<numMolecules; i++) {
+        molecules.push({
+            x: Math.random() * 200 + 350, // Правая часть холста (микромир)
+            y: Math.random() * 200 + 50,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            baseSpeed: Math.random() * 1.5 + 0.5
+        });
+    }
+
+    function getThermometerColor(celsius) {
+        if (celsius > 40) return '#ef4444'; // Красный (горячо)
+        if (celsius < 0) return '#3b82f6';  // Синий (мороз)
+        return '#f59e0b'; // Оранжевый/Желтый (комнатная)
+    }
+
+    function updateValues() {
+        tempCelsius = parseInt(tempSlider.value);
+        
+        let k = tempCelsius + 273;
+        let f = Math.round(tempCelsius * 1.8 + 32);
+        
+        valC.innerHTML = `${tempCelsius} &deg;C`;
+        valK.innerHTML = `${k} K`;
+        valF.innerHTML = `${f} &deg;F`;
+        
+        // Изменение цвета слайдера
+        tempSlider.style.accentColor = getThermometerColor(tempCelsius);
+    }
+
+    tempSlider.addEventListener('input', () => {
+        updateValues();
+    });
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // --- 1. ТЕРМОМЕТР (Левая часть) ---
+        const thermX = 150;
+        const thermY = 40;
+        const thermW = 30;
+        const thermH = 200;
+        const bulbR = 25;
+        const bulbY = thermY + thermH + bulbR - 10;
+
+        // Рисуем колбу (стекло)
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath();
+        ctx.roundRect(thermX, thermY, thermW, thermH, 15);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(thermX + thermW/2, bulbY, bulbR + 5, 0, Math.PI*2);
+        ctx.fill();
+
+        // Расчет уровня жидкости (масштабируем от -273 до 150)
+        // Диапазон: 423 градуса. 
+        let fillRatio = (tempCelsius + 273) / 423; // от 0 до 1
+        let fillHeight = fillRatio * (thermH - 20); // 20px отступ сверху
+        let fillY = thermY + thermH - fillHeight;
+
+        let liqColor = getThermometerColor(tempCelsius);
+        
+        // Рисуем жидкость (колба)
+        ctx.fillStyle = liqColor;
+        ctx.beginPath();
+        ctx.arc(thermX + thermW/2, bulbY, bulbR, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Рисуем жидкость (столбик)
+        ctx.beginPath();
+        ctx.roundRect(thermX + 5, fillY, thermW - 10, fillHeight + 10, 10);
+        ctx.fill();
+
+        // Засечки и подписи (-273, 0, 100)
+        ctx.fillStyle = '#334155';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'right';
+        
+        // 100 C
+        let y100 = thermY + thermH - ((100 + 273)/423)*(thermH-20);
+        ctx.fillText("100°C", thermX - 10, y100 + 5);
+        ctx.fillRect(thermX, y100, 10, 2);
+        
+        // 0 C
+        let y0 = thermY + thermH - ((0 + 273)/423)*(thermH-20);
+        ctx.fillText("0°C", thermX - 10, y0 + 5);
+        ctx.fillRect(thermX, y0, 10, 2);
+
+        // -273 C
+        let y273 = thermY + thermH - ((0)/423)*(thermH-20);
+        ctx.fillText("-273°C", thermX - 10, y273 + 5);
+        ctx.fillRect(thermX, y273, 10, 2);
+
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(t('lbl_temp_c'), thermX + thermW/2, thermY - 15);
+
+        // --- 2. МИКРОМИР (Правая часть) ---
+        const microX = 350;
+        const microY = 50;
+        const microSize = 200;
+        
+        // Рамка микроскопа
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(microX + microSize/2, microY + microSize/2, microSize/2 + 10, 0, Math.PI*2);
+        ctx.stroke();
+        ctx.fillStyle = '#1e293b'; // Темный фон для контраста
+        ctx.fill();
+
+        // Заголовок микромира
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(t('lbl_micro'), microX + microSize/2, microY - 15);
+
+        // Расчет скорости молекул от температуры (в Кельвинах)
+        // 0 К = 0 скорость. 293 К (20С) = норм скорость.
+        let kelvin = tempCelsius + 273;
+        let speedMultiplier = kelvin / 293; 
+
+        // Отрисовка и движение молекул
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(microX + microSize/2, microY + microSize/2, microSize/2 + 8, 0, Math.PI*2);
+        ctx.clip(); // Обрезаем по кругу микроскопа
+
+        molecules.forEach(m => {
+            // Движение
+            m.x += m.vx * m.baseSpeed * Math.sqrt(speedMultiplier); // квадратный корень для реалистичности кинетической энергии
+            m.y += m.vy * m.baseSpeed * Math.sqrt(speedMultiplier);
+
+            // Отскок от стенок микроскопа (квадратных для простоты расчетов, clip скруглит)
+            if (m.x < microX || m.x > microX + microSize) m.vx *= -1;
+            if (m.y < microY || m.y > microY + microSize) m.vy *= -1;
+
+            // Цвет молекул зависит от температуры
+            let r = Math.min(255, kelvin);
+            let b = Math.max(0, 255 - kelvin/2);
+
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, 4, 0, Math.PI*2);
+            ctx.fillStyle = `rgb(${r}, 100, ${b})`;
+            ctx.fill();
+        });
+        
+        ctx.restore();
+
+        // Если абсолютный нуль - пишем сообщение
+        if (tempCelsius === -273) {
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(t('lbl_stop'), microX + microSize/2, microY + microSize/2 + 5);
+        }
+    }
+
+    function animate() {
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // Инициализация
+    updateValues();
+    animate();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value.replace(/\s/g, ''));
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 298) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

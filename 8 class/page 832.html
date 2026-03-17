@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Преломление света. Полное внутреннее отражение</title>
+    <style>
+        :root {
+            /* Синяя оптическая тема */
+            --bg-color: #eff6ff; 
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #bfdbfe;
+            --text-muted: #64748b;
+            --formula-bg: #dbeafe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e293b;
+                --primary: #60a5fa;
+                --primary-hover: #3b82f6;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, #1d4ed8 0%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .formula-text {
+            font-family: 'Cambria', 'Times New Roman', serif;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        ul { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+            .controls { flex: 1; min-width: 250px; }
+            .canvas-wrapper { flex: 2; }
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-weight: 600; font-size: 0.95rem; display: flex; justify-content: space-between;}
+        
+        select, input[type="range"] {
+            width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);
+            background-color: var(--card-bg); color: var(--text-color); cursor: pointer;
+        }
+        input[type="range"] { accent-color: var(--primary); padding: 0; }
+
+        .canvas-wrapper {
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+            max-width: 600px; /* Чтобы не растягивался слишком сильно на ПК */
+        }
+
+        .status-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .status-item {
+            background: rgba(37, 99, 235, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+        .status-item.tir-active {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning);
+            color: var(--warning);
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        /* --- ТЕСТ --- */
+        .test-question { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem; }
+        .test-options label {
+            display: flex; align-items: center; gap: 10px; padding: 0.75rem;
+            background-color: var(--bg-color); border: 1px solid var(--border);
+            border-radius: 6px; cursor: pointer; transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(37, 99, 235, 0.05); }
+        #testResult { margin-top: 1.5rem; padding: 1.5rem; border-radius: 8px; font-weight: 600; display: none; }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        /* --- Языковой переключатель --- */
+        .lang-toggle-container {
+            position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px;
+            background: var(--card-bg); padding: 8px 16px; border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); z-index: 1000; border: 1px solid var(--border);
+        }
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Преломление света. Полное внутреннее отражение</span>
+            <span class="lang-kz">Жарықтың сынуы. Толық ішкі шағылу</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему карандаш в стакане с водой кажется сломанным? Как работает оптоволоконный интернет? Погружаемся в законы преломления!</span>
+            <span class="lang-kz">Неліктен судағы қарындаш сынған сияқты көрінеді? Оптикалық талшықты интернет қалай жұмыс істейді? Сыну заңдарына үңілейік!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Преломление света и закон Снеллиуса</span>
+            <span class="lang-kz">1. Жарықтың сынуы және Снеллиус заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Преломление</strong> — это изменение направления луча света при переходе из одной прозрачной среды в другую. Это происходит из-за того, что скорость света в разных средах (воздух, вода, стекло) отличается.</span>
+            <span class="lang-kz"><strong>Жарықтың сынуы</strong> — жарық сәулесінің бір мөлдір ортадан екінші ортаға өткен кезде бағытын өзгертуі. Бұл жарық жылдамдығының әртүрлі орталарда (ауа, су, шыны) әртүрлі болуына байланысты.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <p>
+                <span class="lang-ru">Связь между углом падения (<strong>&alpha;</strong>) и углом преломления (<strong>&gamma;</strong>) описывается <strong>законом Снеллиуса</strong>:</span>
+                <span class="lang-kz">Түсу бұрышы (<strong>&alpha;</strong>) мен сыну бұрышы (<strong>&gamma;</strong>) арасындағы байланыс <strong>Снеллиус заңымен</strong> сипатталады:</span>
+            </p>
+            <span class="formula-text">n<sub>1</sub> &middot; sin(&alpha;) = n<sub>2</sub> &middot; sin(&gamma;)</span>
+            <p style="font-size: 0.95rem; margin-top: 10px;">
+                <span class="lang-ru">Где <strong>n<sub>1</sub></strong> и <strong>n<sub>2</sub></strong> — показатели преломления первой и второй среды. Чем выше <strong>n</strong>, тем среда оптически более "плотная".</span>
+                <span class="lang-kz">Мұндағы <strong>n<sub>1</sub></strong> және <strong>n<sub>2</sub></strong> — бірінші және екінші ортаның сыну көрсеткіштері. <strong>n</strong> неғұрлым жоғары болса, орта оптикалық тұрғыдан соғұрлым "тығыз" болады.</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Полное внутреннее отражение (ПВО)</span>
+            <span class="lang-kz">2. Толық ішкі шағылу (ТІШ)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если свет переходит из <strong>более плотной среды в менее плотную</strong> (например, из воды в воздух), угол преломления всегда больше угла падения.</span>
+            <span class="lang-kz">Егер жарық <strong>тығызырақ ортадан тығыздығы төмен ортаға</strong> өтсе (мысалы, судан ауаға), сыну бұрышы әрқашан түсу бұрышынан үлкен болады.</span>
+        </p>
+        <p style="margin-top: 10px;">
+            <span class="lang-ru">При определенном угле падения преломленный луч пойдет прямо по границе раздела сред (угол преломления станет 90&deg;). Этот угол называется <strong>предельным углом полного отражения (&alpha;<sub>пр</sub>)</strong>. Если увеличить угол еще больше, свет вообще не выйдет во вторую среду, а полностью отразится обратно! На этом принципе работают оптоволоконные кабели.</span>
+            <span class="lang-kz">Белгілі бір түсу бұрышында сынған сәуле орталардың шекарасымен тіке жүреді (сыну бұрышы 90&deg; болады). Бұл бұрыш <strong>толық шағылудың шекті бұрышы (&alpha;<sub>пр</sub>)</strong> деп аталады. Егер бұрышты одан әрі үлкейтсек, жарық екінші ортаға мүлдем шықпайды, толығымен кері шағылады! Оптикалық талшықты кабельдер осы принциппен жұмыс істейді.</span>
+        </p>
+        <div class="highlight-box" style="border-left-color: var(--warning); background-color: rgba(245, 158, 11, 0.05);">
+            <span class="formula-text" style="color: var(--warning);">sin(&alpha;<sub>пр</sub>) = n<sub>2</sub> / n<sub>1</sub></span>
+            <p style="text-align: center; font-size: 0.9rem;">
+                <span class="lang-ru">(Возможно только если n<sub>1</sub> > n<sub>2</sub>)</span>
+                <span class="lang-kz">(Тек n<sub>1</sub> > n<sub>2</sub> болғанда ғана мүмкін)</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Интерактивная лаборатория: Преломление</span>
+            <span class="lang-kz">Интерактивті зертхана: Сыну</span>
+        </h2>
+        <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 0.95rem;">
+            <span class="lang-ru">Меняйте среды и угол падения лазера. Попробуйте направить луч из воды или стекла в воздух так, чтобы добиться эффекта полного внутреннего отражения!</span>
+            <span class="lang-kz">Орталарды және лазердің түсу бұрышын өзгертіңіз. Толық ішкі шағылу әсеріне қол жеткізу үшін сәулені судан немесе шыныдан ауаға бағыттап көріңіз!</span>
+        </p>
+
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Среда 1 (откуда идет луч):</span><span class="lang-kz">Орта 1 (сәуле шығатын):</span></span>
+                    </label>
+                    <select id="n1Select" onchange="updateSim()">
+                        <option value="1.0" data-ru="Воздух (n = 1.0)" data-kz="Ауа (n = 1.0)">Воздух (n = 1.0)</option>
+                        <option value="1.33" data-ru="Вода (n = 1.33)" data-kz="Су (n = 1.33)" selected>Вода (n = 1.33)</option>
+                        <option value="1.5" data-ru="Стекло (n = 1.5)" data-kz="Шыны (n = 1.5)">Стекло (n = 1.5)</option>
+                        <option value="2.4" data-ru="Алмаз (n = 2.4)" data-kz="Алмас (n = 2.4)">Алмаз (n = 2.4)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Среда 2 (куда идет луч):</span><span class="lang-kz">Орта 2 (сәуле кіретін):</span></span>
+                    </label>
+                    <select id="n2Select" onchange="updateSim()">
+                        <option value="1.0" data-ru="Воздух (n = 1.0)" data-kz="Ауа (n = 1.0)" selected>Воздух (n = 1.0)</option>
+                        <option value="1.33" data-ru="Вода (n = 1.33)" data-kz="Су (n = 1.33)">Вода (n = 1.33)</option>
+                        <option value="1.5" data-ru="Стекло (n = 1.5)" data-kz="Шыны (n = 1.5)">Стекло (n = 1.5)</option>
+                        <option value="2.4" data-ru="Алмаз (n = 2.4)" data-kz="Алмас (n = 2.4)">Алмаз (n = 2.4)</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-top: 10px;">
+                    <label>
+                        <span><span class="lang-ru">Угол падения (&alpha;):</span><span class="lang-kz">Түсу бұрышы (&alpha;):</span></span>
+                        <span id="alphaVal" style="color: var(--primary);">45&deg;</span>
+                    </label>
+                    <input type="range" id="alphaSlider" min="0" max="89" step="1" value="45" oninput="updateSim()">
+                </div>
+                
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span><span class="lang-ru">Угол преломления (&gamma;):</span><span class="lang-kz">Сыну бұрышы (&gamma;):</span></span>
+                        <strong id="gammaDisplay">0&deg;</strong>
+                    </div>
+                    <div class="status-item" id="criticalAngleDisplay" style="display: none;">
+                        <span><span class="lang-ru">Предельный угол (&alpha;<sub>пр</sub>):</span><span class="lang-kz">Шекті бұрыш (&alpha;<sub>пр</sub>):</span></span>
+                        <strong id="critVal">0&deg;</strong>
+                    </div>
+                    <div class="status-item tir-active" id="tirWarning" style="display: none;">
+                        <strong><span class="lang-ru">⚡ ПОЛНОЕ ВНУТРЕННЕЕ ОТРАЖЕНИЕ ⚡</span><span class="lang-kz">⚡ ТОЛЫҚ ІШКІ ШАҒЫЛУ ⚡</span></strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="refractCanvas" width="600" height="500"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверьте свои знания</span>
+            <span class="lang-kz">Біліміңізді тексеріңіз</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Из-за чего происходит преломление света на границе двух прозрачных сред?</span>
+                <span class="lang-kz">1. Екі мөлдір орта шекарасында жарықтың сынуы неліктен пайда болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Из-за разной скорости распространения света в этих средах</span><span class="lang-kz">Бұл орталарда жарықтың таралу жылдамдығының әртүрлі болуына байланысты</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Из-за того, что свет отражается от шероховатостей поверхности</span><span class="lang-kz">Жарықтың беттің кедір-бұдырынан шағылуына байланысты</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Свет всегда распространяется строго по прямой</span><span class="lang-kz">Жарық әрқашан қатаң түрде түзу сызықпен таралады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Луч переходит из воздуха (n = 1) в воду (n = 1.33). Как соотносятся угол падения (&alpha;) и угол преломления (&gamma;)?</span>
+                <span class="lang-kz">2. Сәуле ауадан (n = 1) суға (n = 1.33) өтеді. Түсу бұрышы (&alpha;) мен сыну бұрышы (&gamma;) қалай байланысты?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">&alpha; = &gamma; (углы равны)</span><span class="lang-kz">&alpha; = &gamma; (бұрыштар тең)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">&alpha; > &gamma; (луч прижимается к перпендикуляру)</span><span class="lang-kz">&alpha; > &gamma; (сәуле перпендикулярға жақындайды)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">&alpha; < &gamma; (луч отклоняется от перпендикуляра)</span><span class="lang-kz">&alpha; < &gamma; (сәуле перпендикулярдан ауытқиды)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. При каком условии возможно Полное Внутреннее Отражение (ПВО)?</span>
+                <span class="lang-kz">3. Қандай жағдайда Толық Ішкі Шағылу (ТІШ) мүмкін болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Если свет идет из воздуха в плотное стекло</span><span class="lang-kz">Егер жарық ауадан тығыз шыныға өтсе</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Оно возможно на границе любых двух сред при угле 90 градусов</span><span class="lang-kz">Кез келген екі орта шекарасында 90 градус бұрышта мүмкін</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Только если свет переходит из оптически более плотной среды в менее плотную</span><span class="lang-kz">Тек жарық оптикалық тығызырақ ортадан тығыздығы төмен ортаға өткенде</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Если угол падения равен 0&deg; (свет падает перпендикулярно границе), чему равен угол преломления?</span>
+                <span class="lang-kz">4. Егер түсу бұрышы 0&deg; болса (жарық шекараға перпендикуляр түседі), сыну бұрышы неге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">90&deg;</span><span class="lang-kz">90&deg;</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">0&deg; (свет не меняет направление)</span><span class="lang-kz">0&deg; (жарық бағытын өзгертпейді)</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Зависит от показателя преломления</span><span class="lang-kz">Сыну көрсеткішіне байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Какое изобретение работает исключительно благодаря явлению полного внутреннего отражения?</span>
+                <span class="lang-kz">5. Қандай өнертабыс тек толық ішкі шағылу құбылысының арқасында жұмыс істейді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Обычное зеркало в ванной</span><span class="lang-kz">Жуынатын бөлмедегі қарапайым айна</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Увеличительное стекло (лупа)</span><span class="lang-kz">Үлкейткіш шыны (лупа)</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Оптоволоконный кабель</span><span class="lang-kz">Оптикалық талшықты кабель</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            test_ok: "Отличный результат: {s} из {t}! Законы оптики изучены успешно.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            tir_none: "— (ПВО)"
+        },
+        kz: {
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Оптика заңдары сәтті меңгерілді.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            tir_none: "— (ТІШ)"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        updateSim();
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('refractCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Центр координат для симуляции
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const rayLength = 350;
+
+    // Вспомогательная функция для получения цвета среды по коэффициенту преломления
+    function getMediumColor(n, isTop) {
+        if (n == 1.0) return isTop ? '#e0f2fe' : '#bae6fd'; // Воздух (голубовато-белый)
+        if (n == 1.33) return isTop ? '#93c5fd' : '#60a5fa'; // Вода (синий)
+        if (n == 1.5) return isTop ? '#a7f3d0' : '#6ee7b7';  // Стекло (зеленоватый, плотный)
+        if (n == 2.4) return isTop ? '#c4b5fd' : '#a78bfa';  // Алмаз (фиолетовый)
+        return '#cbd5e1';
+    }
+
+    window.updateSim = function() {
+        const n1 = parseFloat(document.getElementById('n1Select').value);
+        const n2 = parseFloat(document.getElementById('n2Select').value);
+        let alphaDeg = parseInt(document.getElementById('alphaSlider').value);
+        
+        document.getElementById('alphaVal').innerHTML = alphaDeg + '&deg;';
+        
+        const alphaRad = alphaDeg * Math.PI / 180;
+        
+        // Расчет критического угла (ПВО)
+        let isTIR = false;
+        let criticalAngleDeg = null;
+
+        if (n1 > n2) {
+            criticalAngleDeg = Math.asin(n2 / n1) * 180 / Math.PI;
+            document.getElementById('criticalAngleDisplay').style.display = 'flex';
+            document.getElementById('critVal').innerHTML = criticalAngleDeg.toFixed(1) + '&deg;';
+            
+            if (alphaDeg >= criticalAngleDeg) {
+                isTIR = true;
+            }
+        } else {
+            document.getElementById('criticalAngleDisplay').style.display = 'none';
+        }
+
+        // Расчет угла преломления
+        let gammaRad = 0;
+        let gammaDeg = 0;
+        if (!isTIR) {
+            gammaRad = Math.asin((n1 / n2) * Math.sin(alphaRad));
+            gammaDeg = gammaRad * 180 / Math.PI;
+            document.getElementById('gammaDisplay').innerHTML = gammaDeg.toFixed(1) + '&deg;';
+            document.getElementById('tirWarning').style.display = 'none';
+        } else {
+            document.getElementById('gammaDisplay').innerHTML = t('tir_none');
+            document.getElementById('tirWarning').style.display = 'flex';
+        }
+
+        drawSimulation(n1, n2, alphaRad, gammaRad, isTIR);
+    }
+
+    function drawSimulation(n1, n2, alpha, gamma, isTIR) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. Отрисовка сред
+        // Верхняя среда (n1)
+        ctx.fillStyle = getMediumColor(n1, true);
+        ctx.fillRect(0, 0, canvas.width, cy);
+        
+        // Нижняя среда (n2)
+        ctx.fillStyle = getMediumColor(n2, false);
+        ctx.fillRect(0, cy, canvas.width, canvas.height - cy);
+
+        // Граница раздела сред
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, cy);
+        ctx.lineTo(canvas.width, cy);
+        ctx.stroke();
+
+        // 2. Нормаль (перпендикуляр)
+        ctx.strokeStyle = '#475569';
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx, 0);
+        ctx.lineTo(cx, canvas.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 3. Лазерный источник (рисуем прямоугольник у начала падающего луча)
+        const startX = cx - rayLength * Math.sin(alpha);
+        const startY = cy - rayLength * Math.cos(alpha);
+        
+        ctx.save();
+        ctx.translate(startX, startY);
+        ctx.rotate(Math.PI/2 - alpha); // Поворот лазера
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(-20, -10, 40, 20);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(15, -4, 10, 8); // носик лазера
+        ctx.restore();
+
+        // 4. Падающий луч
+        ctx.strokeStyle = '#ef4444'; // Красный лазер
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(cx, cy);
+        ctx.stroke();
+
+        // 5. Отраженный луч
+        // Интенсивность отраженного луча. Если ПВО - он яркий 100%, иначе тусклый
+        const reflectOpacity = isTIR ? 1.0 : 0.2 + (alpha / (Math.PI/2)) * 0.3; 
+        ctx.strokeStyle = `rgba(239, 68, 68, ${reflectOpacity})`;
+        const refX = cx + rayLength * Math.sin(alpha);
+        const refY = cy - rayLength * Math.cos(alpha);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(refX, refY);
+        ctx.stroke();
+
+        // 6. Преломленный луч
+        if (!isTIR) {
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 3;
+            const refrX = cx + rayLength * Math.sin(gamma);
+            const refrY = cy + rayLength * Math.cos(gamma);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(refrX, refrY);
+            ctx.stroke();
+        }
+
+        // 7. Дуги углов
+        ctx.lineWidth = 1.5;
+        // Дуга угла падения
+        if (alpha > 0.05) {
+            ctx.strokeStyle = '#1e293b';
+            ctx.beginPath();
+            // От нормали (-pi/2) до луча (-pi/2 - alpha)
+            ctx.arc(cx, cy, 50, -Math.PI/2 - alpha, -Math.PI/2);
+            ctx.stroke();
+            // Текст
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'italic 16px sans-serif';
+            ctx.fillText('α', cx - 25 * Math.sin(alpha/2) - 15, cy - 50 * Math.cos(alpha/2) - 5);
+        }
+
+        // Дуга угла преломления
+        if (!isTIR && gamma > 0.05) {
+            ctx.strokeStyle = '#1d4ed8';
+            ctx.beginPath();
+            // От нормали (pi/2) до луча (pi/2 - gamma) -- в canvas оси Y идут вниз!
+            // Нормаль внизу это +pi/2. Луч отклонен влево от оси Y на -gamma (но у нас он идет вправо, так что +gamma от оси y).
+            // Ось Y: Math.PI/2. Угол луча: Math.PI/2 - gamma
+            ctx.arc(cx, cy, 60, Math.PI/2 - gamma, Math.PI/2);
+            ctx.stroke();
+            // Текст
+            ctx.fillStyle = '#1d4ed8';
+            ctx.font = 'italic 16px sans-serif';
+            ctx.fillText('γ', cx + 30 * Math.sin(gamma/2) + 5, cy + 60 * Math.cos(gamma/2) + 15);
+        }
+    }
+
+    window.onload = () => { updateSim(); };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5; 
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => { if (r.checked) selected = r.value; });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

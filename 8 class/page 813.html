@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тепловые двигатели. КПД — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc; /* Светло-серый (индустриальный) */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #ea580c; /* Оранжевый (энергия/огонь) */
+            --primary-hover: #c2410c;
+            --hot: #ef4444; /* Красный */
+            --cold: #3b82f6; /* Синий */
+            --work: #10b981; /* Зеленый (полезная работа) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fed7aa;
+            --text-muted: #64748b;
+            --formula-bg: #fff7ed;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #7c2d12;
+                --text-muted: #94a3b8;
+                --formula-bg: #431407;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            padding: 8px 0;
+            accent-color: var(--primary);
+        }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(234, 88, 12, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(234, 88, 12, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(234, 88, 12, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Тепловые двигатели. КПД</span>
+            <span class="lang-kz">Жылу қозғалтқыштары. ПӘК</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">От автомобилей до гигантских электростанций — наш мир движется благодаря тепловым двигателям. Но почему даже самый совершенный двигатель выбрасывает больше половины энергии в трубу?</span>
+            <span class="lang-kz">Автомобильдерден бастап алып электр станцияларына дейін — біздің әлеміміз жылу қозғалтқыштарының арқасында қозғалады. Бірақ неліктен тіпті ең мінсіз қозғалтқыштың өзі энергияның жартысынан көбін далаға (құбырға) тастайды?</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое тепловой двигатель?</span>
+            <span class="lang-kz">1. Жылу қозғалтқышы дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Тепловой двигатель</strong> — это устройство, которое превращает внутреннюю энергию топлива в механическую работу. Любой тепловой двигатель состоит из трех главных частей:</span>
+            <span class="lang-kz"><strong>Жылу қозғалтқышы</strong> — бұл отынның ішкі энергиясын механикалық жұмысқа айналдыратын құрылғы. Кез келген жылу қозғалтқышы үш негізгі бөліктен тұрады:</span>
+        </p>
+        
+        <div class="highlight-box">
+            <ol>
+                <li>
+                    <span class="lang-ru"><strong>Нагреватель</strong> — сгорая, топливо отдает теплоту <span class="math-symbol">Q<sub>1</sub></span>.</span>
+                    <span class="lang-kz"><strong>Қыздырғыш</strong> — отын жанып, <span class="math-symbol">Q<sub>1</sub></span> жылу мөлшерін береді.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>Рабочее тело</strong> — газ или пар. Получив тепло, газ расширяется, двигает поршень/турбину и совершает полезную работу <span class="math-symbol">A</span>.</span>
+                    <span class="lang-kz"><strong>Жұмыстық дене</strong> — газ немесе бу. Жылу алып, газ кеңейеді, поршеньді/турбинаны жылжытады және пайдалы жұмыс <span class="math-symbol">A</span> жасайды.</span>
+                </li>
+                <li>
+                    <span class="lang-ru"><strong>Холодильник</strong> — атмосфера или вода. Газ должен остыть и сжаться, чтобы цикл повторился. При этом часть теплоты <span class="math-symbol">Q<sub>2</sub></span> неизбежно отдается холодильнику (выбрасывается).</span>
+                    <span class="lang-kz"><strong>Суытқыш</strong> — атмосфера немесе су. Цикл қайталануы үшін газ суып, сығылуы керек. Бұл ретте жылудың бір бөлігі <span class="math-symbol">Q<sub>2</sub></span> сөзсіз суытқышқа беріледі (далаға тасталады).</span>
+                </li>
+            </ol>
+        </div>
+        <p>
+            <span class="lang-ru"><em>Примеры:</em> Двигатель внутреннего сгорания (ДВС) в автомобиле, паровая турбина на ТЭЦ, реактивный двигатель самолета.</span>
+            <span class="lang-kz"><em>Мысалдар:</em> Автомобильдегі іштен жану қозғалтқышы (ІЖҚ), ЖЭО-дағы бу турбинасы, ұшақтың реактивті қозғалтқышы.</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Коэффициент полезного действия (КПД)</span>
+            <span class="lang-kz">2. Пайдалы әсер коэффициенті (ПӘК)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Невозможно превратить всё тепло от топлива в работу. Часть энергии улетает с выхлопными газами. Эффективность двигателя показывает его <strong>КПД (обозначается греческой буквой &eta; - "эта")</strong>.</span>
+            <span class="lang-kz">Отыннан алынған барлық жылуды жұмысқа айналдыру мүмкін емес. Энергияның бір бөлігі пайдаланылған газдармен бірге ұшып кетеді. Қозғалтқыштың тиімділігін оның <strong>ПӘК-і (грек әрпімен &eta; - "эта" деп белгіленеді)</strong> көрсетеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru" style="display:block; text-align:center; margin-bottom:10px;">Формула КПД:</span>
+            <span class="lang-kz" style="display:block; text-align:center; margin-bottom:10px;">ПӘК формуласы:</span>
+            
+            <div class="math-formula">
+                &eta; = 
+                <div class="fraction">
+                    <span>A</span>
+                    <span class="fdn">Q<sub>1</sub></span>
+                </div>
+                &middot; 100% 
+                &nbsp; = &nbsp;
+                <div class="fraction">
+                    <span>Q<sub>1</sub> - Q<sub>2</sub></span>
+                    <span class="fdn">Q<sub>1</sub></span>
+                </div>
+                &middot; 100%
+            </div>
+
+            <p style="font-size:0.95rem; margin-top: 15px;">
+                <span class="lang-ru">Где: <br><strong>Q<sub>1</sub></strong> — тепло, полученное от нагревателя (энергия топлива)<br><strong>Q<sub>2</sub></strong> — тепло, отданное холодильнику (потери)<br><strong>A</strong> — полезная работа (A = Q<sub>1</sub> - Q<sub>2</sub>)</span>
+                <span class="lang-kz">Мұндағы: <br><strong>Q<sub>1</sub></strong> — қыздырғыштан алынған жылу (отын энергиясы)<br><strong>Q<sub>2</sub></strong> — суытқышқа берілген жылу (шығындар)<br><strong>A</strong> — пайдалы жұмыс (A = Q<sub>1</sub> - Q<sub>2</sub>)</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Распределение энергии (Диаграмма Санки)</span>
+            <span class="lang-kz">Симуляция: Энергияның таралуы (Санки диаграммасы)</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Сжечь топлива (Q<sub>1</sub>):</span><span class="lang-kz">Отын жағу (Q<sub>1</sub>):</span></span>
+                        <span id="q1ValText">3000 Дж</span>
+                    </label>
+                    <input type="range" id="q1Slider" min="1000" max="5000" step="100" value="3000" oninput="updateSim()">
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Тип двигателя:</span><span class="lang-kz">Қозғалтқыш түрі:</span></span>
+                    </label>
+                    <select id="engineType" onchange="updateSim()">
+                        <option value="0.08" data-ru="Паровоз (КПД ~ 8%)" data-kz="Паровоз (ПӘК ~ 8%)">Паровоз (КПД ~ 8%)</option>
+                        <option value="0.30" selected data-ru="Бензиновый ДВС (КПД ~ 30%)" data-kz="Бензинді ІЖҚ (ПӘК ~ 30%)">Бензиновый ДВС (КПД ~ 30%)</option>
+                        <option value="0.45" data-ru="Паровая турбина (КПД ~ 45%)" data-kz="Бу турбинасы (ПӘК ~ 45%)">Паровая турбина (КПД ~ 45%)</option>
+                        <option value="0.60" data-ru="Идеальный двигатель (КПД ~ 60%)" data-kz="Идеал қозғалтқыш (ПӘК ~ 60%)">Идеальный двигатель (КПД ~ 60%)</option>
+                    </select>
+                </div>
+                
+                <p style="font-size: 0.85rem; margin-top: 10px; color: var(--text-muted);">
+                    <span class="lang-ru"><em>Обратите внимание на толщину потоков: красная река энергии (Q1) разделяется на полезную зеленую работу (A) и огромные синие тепловые потери (Q2).</em></span>
+                    <span class="lang-kz"><em>Ағындардың қалыңдығына назар аударыңыз: қызыл энергия өзені (Q1) пайдалы жасыл жұмысқа (A) және орасан зор көк жылу шығындарына (Q2) бөлінеді.</em></span>
+                </p>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="550" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Даже современный автомобильный двигатель (ДВС) тратит 70% энергии бензина впустую (нагрев воздуха и деталей). Полезная работа (создающая движение) составляет лишь малую часть!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Тіпті заманауи автомобиль қозғалтқышының (ІЖҚ) өзі бензин энергиясының 70%-ын босқа (ауа мен бөлшектерді қыздыруға) жұмсайды. Пайдалы жұмыс (қозғалыс тудыратын) оның аз ғана бөлігін құрайды!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет)</span>
+                <span class="lang-kz">1-тапсырма (Есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Двигатель получил от нагревателя <strong>4000 Дж</strong> теплоты (Q<sub>1</sub>) и отдал холодильнику <strong>3000 Дж</strong> теплоты (Q<sub>2</sub>). <br>Чему равен КПД этого двигателя в процентах (%)?</span>
+                <span class="lang-kz">Қозғалтқыш қыздырғыштан <strong>4000 Дж</strong> жылу (Q<sub>1</sub>) алды және суытқышқа <strong>3000 Дж</strong> жылу (Q<sub>2</sub>) берді. <br>Бұл қозғалтқыштың ПӘК-і пайызбен (%) неге тең?</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Только число, например 25" data-placeholder-kz="Тек сан, мысалы 25" placeholder="Только число, например 25">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Может ли КПД теплового двигателя быть равен 100% (или больше)?</span>
+                <span class="lang-kz">Жылу қозғалтқышының ПӘК-і 100%-ға тең (немесе одан көп) болуы мүмкін бе?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Да, если использовать очень хорошее топливо" data-kz="Иә, егер өте жақсы отын пайдаланылса">Да, если использовать очень хорошее топливо</option>
+                    <option value="2" data-ru="Да, современные двигатели имеют КПД 110%" data-kz="Иә, заманауи қозғалтқыштардың ПӘК-і 110%">Да, современные двигатели имеют КПД 110%</option>
+                    <option value="3" data-ru="Нет. В реальных условиях часть тепла всегда отдается холодильнику (атмосфере), плюс есть трение деталей." data-kz="Жоқ. Нақты жағдайда жылудың бір бөлігі әрқашан суытқышқа (атмосфераға) беріледі, сонымен қатар бөлшектердің үйкелісі бар.">Нет. В реальных условиях часть тепла всегда отдается холодильнику (атмосфере), плюс есть трение деталей.</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите, как на самом деле работает 4-тактный двигатель внутреннего сгорания внутри автомобиля!</span>
+            <span class="lang-kz">Автомобиль ішіндегі 4 тактілі іштен жану қозғалтқышының шын мәнінде қалай жұмыс істейтінін көріңіз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%BA%D0%B0%D0%BA+%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%B0%D0%B5%D1%82+%D0%B4%D0%B2%D0%B8%D0%B3%D0%B0%D1%82%D0%B5%D0%BB%D1%8C+%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B5%D0%BD%D0%BD%D0%B5%D0%B3%D0%BE+%D1%81%D0%B3%D0%BE%D1%80%D0%B0%D0%BD%D0%B8%D1%8F" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Как работает ДВС»</span>
+                  <span class="lang-kz">«ІЖҚ қалай жұмыс істейді» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что является основным назначением теплового двигателя?</span>
+                <span class="lang-kz">1. Жылу қозғалтқышының негізгі мақсаты не?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Охлаждение окружающего воздуха</span><span class="lang-kz">Қоршаған ауаны салқындату</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Превращение механической работы в тепло</span><span class="lang-kz">Механикалық жұмысты жылуға айналдыру</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Превращение внутренней энергии топлива в механическую работу</span><span class="lang-kz">Отынның ішкі энергиясын механикалық жұмысқа айналдыру</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Нагревание воды в радиаторе</span><span class="lang-kz">Радиатордағы суды қыздыру</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Как найти полезную работу (A) теплового двигателя?</span>
+                <span class="lang-kz">2. Жылу қозғалтқышының пайдалы жұмысын (A) қалай табуға болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">A = Q<sub>1</sub> + Q<sub>2</sub></span><span class="lang-kz">A = Q<sub>1</sub> + Q<sub>2</sub></span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">A = Q<sub>1</sub> - Q<sub>2</sub></span><span class="lang-kz">A = Q<sub>1</sub> - Q<sub>2</sub></span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">A = Q<sub>2</sub> - Q<sub>1</sub></span><span class="lang-kz">A = Q<sub>2</sub> - Q<sub>1</sub></span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">A = Q<sub>1</sub> / Q<sub>2</sub></span><span class="lang-kz">A = Q<sub>1</sub> / Q<sub>2</sub></span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Газ в цилиндре двигателя внутреннего сгорания является...</span>
+                <span class="lang-kz">3. Іштен жану қозғалтқышының цилиндріндегі газ... болып табылады.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Рабочим телом</span><span class="lang-kz">Жұмыстық дене</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Нагревателем</span><span class="lang-kz">Қыздырғыш</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Холодильником</span><span class="lang-kz">Суытқыш</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Маховиком</span><span class="lang-kz">Маховик</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Если КПД двигателя равен 30%, это означает, что:</span>
+                <span class="lang-kz">4. Егер қозғалтқыштың ПӘК-і 30% болса, бұл нені білдіреді:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">30% энергии уходит в выхлопную трубу</span><span class="lang-kz">Энергияның 30%-ы пайдаланылған газдар құбырына кетеді</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Двигатель работает только 30% времени</span><span class="lang-kz">Қозғалтқыш уақыттың тек 30%-ында ғана жұмыс істейді</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Топливо сгорает на 30%</span><span class="lang-kz">Отын 30%-ға жанады</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Только 30% энергии сгоревшего топлива идет на полезную работу, остальное теряется</span><span class="lang-kz">Жанған отын энергиясының тек 30%-ы ғана пайдалы жұмысқа жұмсалады, қалғаны жоғалады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Роль "холодильника" в автомобильном двигателе внутреннего сгорания играет:</span>
+                <span class="lang-kz">5. Автомобильдің іштен жану қозғалтқышында "суытқыштың" рөлін не атқарады:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Кондиционер в салоне</span><span class="lang-kz">Салондағы кондиционер</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Бензобак</span><span class="lang-kz">Бензин багы</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Окружающая среда (атмосферный воздух)</span><span class="lang-kz">Қоршаған орта (атмосфералық ауа)</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Аккумулятор</span><span class="lang-kz">Аккумулятор</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! A = Q<sub>1</sub> - Q<sub>2</sub> = 4000 - 3000 = 1000 Дж. КПД = (1000 / 4000) * 100% = 25%.",
+            fbA_inc: "Неверно. Сначала найдите полезную работу A = 4000 - 3000. Затем разделите её на Q<sub>1</sub> (4000) и умножьте на 100.",
+            fbB_corr: "Абсолютно верно! Второй закон термодинамики и законы трения запрещают создание идеального двигателя со 100% КПД.",
+            fbB_inc: "Неверно. Вспомните теорию: часть энергии <em>всегда</em> уходит на нагрев атмосферы или преодоление трения. 100% КПД невозможен.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили суть.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_q1: "Q1 (Нагреватель)",
+            lbl_q2: "Q2 (Потери)",
+            lbl_a: "A (Работа)"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! A = Q<sub>1</sub> - Q<sub>2</sub> = 4000 - 3000 = 1000 Дж. ПӘК = (1000 / 4000) * 100% = 25%.",
+            fbA_inc: "Қате. Алдымен пайдалы жұмысты табыңыз A = 4000 - 3000. Содан кейін оны Q<sub>1</sub>-ге (4000) бөліп, 100-ге көбейтіңіз.",
+            fbB_corr: "Өте дұрыс! Термодинамиканың екінші заңы және үйкеліс заңдары 100% ПӘК-і бар идеал қозғалтқышты жасауға тыйым салады.",
+            fbB_inc: "Қате. Теорияны есіңізге түсіріңіз: энергияның бір бөлігі <em>әрқашан</em> атмосфераны қыздыруға немесе үйкелісті жеңуге кетеді. 100% ПӘК мүмкін емес.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз мәнін өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_q1: "Q1 (Қыздырғыш)",
+            lbl_q2: "Q2 (Шығын)",
+            lbl_a: "A (Жұмыс)"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateSimText();
+    }
+
+    // --- СИМУЛЯЦИЯ (Sankey Flow) ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let q1 = 3000;
+    let kpd = 0.30;
+    let workA = q1 * kpd;
+    let q2 = q1 - workA;
+    
+    let gearAngle = 0;
+    let time = 0;
+
+    function updateSimText() {
+        document.getElementById('q1ValText').textContent = q1 + ' Дж';
+    }
+
+    window.updateSim = function() {
+        q1 = parseInt(document.getElementById('q1Slider').value);
+        kpd = parseFloat(document.getElementById('engineType').value);
+        workA = q1 * kpd;
+        q2 = q1 - workA;
+        updateSimText();
+    }
+
+    function drawFlowLine(x1, y1, x2, y2, width, color) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineWidth = width;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+    }
+
+    // Отрисовка "бегущих" частичек по пути
+    function drawFlowParticles(x1, y1, x2, y2, width, count, color, speed) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const len = Math.sqrt(dx*dx + dy*dy);
+        
+        ctx.fillStyle = color;
+        for (let i = 0; i < count; i++) {
+            // Сдвигаем фазу для каждой частицы
+            let phase = ((time * speed) + (i / count)) % 1;
+            let px = x1 + dx * phase;
+            let py = y1 + dy * phase;
+            
+            // Немного разбросать по ширине
+            // Псевдослучайный разброс на основе индекса, чтобы не дергались
+            let offset = (Math.sin(i * 999) * (width/2 - 4)); 
+            
+            // Нормаль к вектору
+            let nx = -dy / len;
+            let ny = dx / len;
+            
+            ctx.beginPath();
+            ctx.arc(px + nx*offset, py + ny*offset, 3, 0, Math.PI*2);
+            ctx.fill();
+        }
+    }
+
+    function drawGear(cx, cy, radius, teeth, angle) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        
+        ctx.fillStyle = '#64748b';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Зубья
+        for (let i = 0; i < teeth; i++) {
+            ctx.rotate((Math.PI*2)/teeth);
+            ctx.fillRect(radius - 5, -8, 15, 16);
+        }
+        
+        // Дырка в центре
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.4, 0, Math.PI*2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const scale = 50; // 5000 Дж = 100px толщины
+        let wQ1 = q1 / scale;
+        let wA = workA / scale;
+        let wQ2 = q2 / scale;
+
+        // Координаты узлов
+        const cx = 250;
+        const cy = 175; // Центр двигателя (распределитель)
+        
+        const q1Start = {x: 50, y: cy};
+        const enginePos = {x: cx, y: cy};
+        const workEnd = {x: cx, y: 60};
+        const q2End = {x: cx + 180, y: cy};
+
+        // 1. Отрисовка базовых линий-подложек (полупрозрачные)
+        drawFlowLine(q1Start.x, q1Start.y, enginePos.x, enginePos.y, wQ1, 'rgba(239, 68, 68, 0.2)'); // Красный Q1
+        drawFlowLine(enginePos.x, enginePos.y, workEnd.x, workEnd.y, wA, 'rgba(16, 185, 129, 0.2)'); // Зеленый A
+        drawFlowLine(enginePos.x, enginePos.y, q2End.x, q2End.y, wQ2, 'rgba(59, 130, 246, 0.2)'); // Синий Q2
+
+        // 2. Движущиеся частицы (потоки)
+        drawFlowParticles(q1Start.x, q1Start.y, enginePos.x, enginePos.y, wQ1, Math.floor(wQ1), '#ef4444', 0.5);
+        drawFlowParticles(enginePos.x, enginePos.y, workEnd.x, workEnd.y, wA, Math.floor(wA), '#10b981', 0.5);
+        drawFlowParticles(enginePos.x, enginePos.y, q2End.x, q2End.y, wQ2, Math.floor(wQ2), '#3b82f6', 0.5);
+
+        // 3. Центральный круг (Символ двигателя)
+        ctx.fillStyle = '#1e293b';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 35, 0, Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        // 4. Шестеренка на конце полезной работы
+        drawGear(workEnd.x, workEnd.y - 15, 20, 8, gearAngle);
+
+        // 5. Огонь слева (Источник Q1)
+        ctx.fillStyle = '#ea580c';
+        ctx.beginPath();
+        ctx.arc(q1Start.x - 20, q1Start.y, 25, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#fef08a';
+        ctx.beginPath();
+        ctx.arc(q1Start.x - 20, q1Start.y+5, 12, 0, Math.PI*2);
+        ctx.fill();
+
+        // 6. Облако справа (Выброс Q2)
+        ctx.fillStyle = '#94a3b8';
+        ctx.beginPath();
+        ctx.arc(q2End.x + 20, q2End.y, 25, 0, Math.PI*2);
+        ctx.arc(q2End.x + 35, q2End.y - 10, 20, 0, Math.PI*2);
+        ctx.arc(q2End.x + 10, q2End.y - 15, 15, 0, Math.PI*2);
+        ctx.fill();
+
+        // Текстовые метки с цифрами
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 14px sans-serif';
+        
+        ctx.textAlign = 'left';
+        ctx.fillText(`${t('lbl_q1')}`, q1Start.x - 30, q1Start.y + 45);
+        ctx.fillText(`${q1} Дж`, q1Start.x - 10, q1Start.y + 65);
+
+        ctx.textAlign = 'right';
+        ctx.fillText(`${t('lbl_q2')}`, q2End.x + 60, q2End.y + 45);
+        ctx.fillText(`${q2} Дж`, q2End.x + 40, q2End.y + 65);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#10b981';
+        ctx.fillText(`${t('lbl_a')}`, workEnd.x + 35, workEnd.y - 20);
+        ctx.fillText(`${workA} Дж`, workEnd.x + 35, workEnd.y);
+    }
+
+    function animate() {
+        time += 0.016; // Приблизительно 60 FPS
+        
+        // Шестеренка крутится со скоростью, пропорциональной полезной работе A
+        let gearSpeed = (workA / 5000) * 0.1; 
+        gearAngle += gearSpeed;
+
+        drawScene();
+        requestAnimationFrame(animate);
+    }
+
+    // Инициализация
+    updateSimText();
+    animate();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseInt(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        if (val === 25) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

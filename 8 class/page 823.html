@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Последовательное и параллельное соединение — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdfa; /* Светло-бирюзовый */
+            --text-color: #134e4a;
+            --card-bg: #ffffff;
+            --primary: #0d9488; /* Бирюзовый */
+            --primary-hover: #0f766e;
+            --secondary: #7c3aed; /* Фиолетовый (для параллельного) */
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #a7f3d0;
+            --text-muted: #64748b;
+            --formula-bg: #ccfbf1;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #042f2e; 
+                --text-color: #f8fafc;
+                --card-bg: #115e59;
+                --border: #0d9488;
+                --text-muted: #94a3b8;
+                --formula-bg: #134e4a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr 1fr; }
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.4rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+        
+        .math-formula.purple { color: var(--secondary); }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span { display: block; padding: 0.1em; }
+        .fraction span.fdn { border-top: 2px solid var(--primary); }
+        .purple .fraction span.fdn { border-top: 2px solid var(--secondary); }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: background 0.2s, border 0.2s;
+        }
+        
+        .radio-label:hover { background-color: rgba(13, 148, 136, 0.1); }
+        .radio-label input:checked + span { color: var(--primary); }
+
+        button.btn-break {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background-color: var(--danger);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button.btn-break:hover { background-color: #dc2626; }
+        button.btn-break.broken { background-color: var(--warning); color: #000; }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.05rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+        .dashboard .accent { color: var(--secondary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(13, 148, 136, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(13, 148, 136, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(13, 148, 136, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(13, 148, 136, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Виды соединения проводников</span>
+            <span class="lang-kz">Өткізгіштерді жалғау түрлері</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему старые елочные гирлянды гасли целиком, если перегорала всего одна лампочка, а люстра в комнате продолжает гореть, даже если выкрутить половину ламп? Все дело в способе соединения проводов!</span>
+            <span class="lang-kz">Неліктен ескі шырша гирляндаларында бір ғана шам күйіп кетсе, бәрі сөніп қалатын, ал бөлмедегі люстра шамдардың жартысын бұрап алса да жана береді? Мұның бәрі сымдарды жалғау тәсіліне байланысты!</span>
+        </p>
+    </header>
+
+    <div class="grid-2">
+        <section style="margin-bottom: 0;">
+            <h2 style="color: var(--primary);">
+                <span class="lang-ru">1. Последовательное</span>
+                <span class="lang-kz">1. Тізбектей жалғау</span>
+            </h2>
+            <p>
+                <span class="lang-ru">Приборы соединены друг за другом, как вагоны поезда. Электронам некуда свернуть, путь только один.</span>
+                <span class="lang-kz">Құралдар пойыз вагондары сияқты бірінен соң бірі жалғанған. Электрондарға бұрылатын жер жоқ, жол тек біреу ғана.</span>
+            </p>
+            <div class="highlight-box" style="display:block;">
+                <div class="math-formula">I = I<sub>1</sub> = I<sub>2</sub></div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Ток везде одинаковый)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Ток барлық жерде бірдей)</span>
+                
+                <div class="math-formula">U = U<sub>1</sub> + U<sub>2</sub></div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Напряжение делится)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Кернеу бөлінеді)</span>
+                
+                <div class="math-formula">R = R<sub>1</sub> + R<sub>2</sub></div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Сопротивления складываются)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Кедергілер қосылады)</span>
+            </div>
+            <p>
+                <span class="lang-ru"><strong>Минус:</strong> Если один прибор ломается (цепь разрывается), перестают работать все остальные.</span>
+                <span class="lang-kz"><strong>Кемшілігі:</strong> Егер бір құрал бұзылса (тізбек үзілсе), қалғандарының барлығы жұмыс істемей қалады.</span>
+            </p>
+        </section>
+
+        <section style="margin-bottom: 0; border-top: 4px solid var(--secondary);">
+            <h2 style="color: var(--secondary);">
+                <span class="lang-ru">2. Параллельное</span>
+                <span class="lang-kz">2. Параллель жалғау</span>
+            </h2>
+            <p>
+                <span class="lang-ru">Провод разветвляется, как русло реки. Электроны могут выбрать, по какому из параллельных путей им течь.</span>
+                <span class="lang-kz">Сым өзен арнасы сияқты тармақталады. Электрондар қай параллель жолмен ағу керектігін таңдай алады.</span>
+            </p>
+            <div class="highlight-box" style="display:block; background-color: rgba(124, 58, 237, 0.05); border-color: var(--secondary);">
+                <div class="math-formula purple">U = U<sub>1</sub> = U<sub>2</sub></div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Напряжение одинаковое)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Кернеу бірдей)</span>
+                
+                <div class="math-formula purple">I = I<sub>1</sub> + I<sub>2</sub></div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Токи складываются)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Токтар қосылады)</span>
+                
+                <div class="math-formula purple">
+                    <div class="fraction"><span>1</span><span class="fdn">R</span></div> = 
+                    <div class="fraction"><span>1</span><span class="fdn">R<sub>1</sub></span></div> + 
+                    <div class="fraction"><span>1</span><span class="fdn">R<sub>2</sub></span></div>
+                </div>
+                <span class="lang-ru" style="font-size:0.9rem;">(Общее сопротивление уменьшается!)</span>
+                <span class="lang-kz" style="font-size:0.9rem;">(Жалпы кедергі азаяды!)</span>
+            </div>
+            <p>
+                <span class="lang-ru"><strong>Плюс:</strong> Если перегорит одна лампа, другие продолжат светить (так подключены приборы дома).</span>
+                <span class="lang-kz"><strong>Артықшылығы:</strong> Егер бір шам күйіп кетсе, басқалары жана береді (үйдегі құралдар осылай қосылған).</span>
+            </p>
+        </section>
+    </div>
+
+    <section style="margin-top: 2rem;">
+        <h2>
+            <span class="lang-ru">Симуляция: Сравнение соединений</span>
+            <span class="lang-kz">Симуляция: Жалғауларды салыстыру</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="radio-group">
+                    <label class="radio-label" style="border-color: var(--primary); background-color: rgba(13, 148, 136, 0.05);">
+                        <input type="radio" name="mode" value="series" checked onchange="changeMode()">
+                        <span>
+                            <span class="lang-ru">Последовательное (Гирлянда)</span>
+                            <span class="lang-kz">Тізбектей (Гирлянда)</span>
+                        </span>
+                    </label>
+                    <label class="radio-label" style="border-color: var(--secondary); background-color: rgba(124, 58, 237, 0.05);">
+                        <input type="radio" name="mode" value="parallel" onchange="changeMode()">
+                        <span style="color: var(--secondary);">
+                            <span class="lang-ru">Параллельное (Люстра)</span>
+                            <span class="lang-kz">Параллель (Люстра)</span>
+                        </span>
+                    </label>
+                </div>
+
+                <button class="btn-break" id="btnBreak" onclick="toggleBreak()">
+                    <span class="lang-ru">💥 Пережечь Лампу 1</span>
+                    <span class="lang-kz">💥 1-шамды күйдіру</span>
+                </button>
+
+                <div class="dashboard">
+                    <div style="font-size: 0.9em; color: var(--text-muted);">
+                        <span class="lang-ru">Дано: U батареи = 12 В, Лампы R1 = 4 Ом, R2 = 4 Ом</span>
+                        <span class="lang-kz">Берілгені: Батарея U = 12 В, Шамдар R1 = 4 Ом, R2 = 4 Ом</span>
+                    </div>
+                    <div style="border-top: 2px solid var(--primary); margin-top: 10px; padding-top: 10px;">
+                        <span class="lang-ru">Общее сопротивление (R):</span><span class="lang-kz">Жалпы кедергі (R):</span>
+                        <strong><span id="rTotal">8</span> Ом</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Общий ток батареи (I):</span><span class="lang-kz">Батареяның жалпы тогы (I):</span>
+                        <strong><span id="iTotal">1.5</span> А</strong>
+                    </div>
+                    
+                    <!-- Данные по лампам -->
+                    <div style="margin-top: 10px; background: rgba(0,0,0,0.05); padding: 5px; border-radius: 4px;">
+                        <span class="lang-ru">💡 Лампа 1:</span><span class="lang-kz">💡 1-шам:</span>
+                        <span><span id="i1Val" class="accent">1.5</span> А, <span id="u1Val" class="accent">6</span> В</span>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.05); padding: 5px; border-radius: 4px;">
+                        <span class="lang-ru">💡 Лампа 2:</span><span class="lang-kz">💡 2-шам:</span>
+                        <span><span id="i2Val" class="accent">1.5</span> А, <span id="u2Val" class="accent">6</span> В</span>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> При последовательном соединении сопротивление большое, ток маленький. Если лампа сгорает — тухнут обе. При параллельном соединении ток разделяется, лампы светят ярко (на обеих полные 12 В), и если одна сгорит, вторая продолжит работать!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Тізбектей жалғағанда кедергі үлкен, ток аз. Егер шам күйіп кетсе — екеуі де сөнеді. Параллель жалғағанда ток бөлінеді, шамдар жарық жанады (екеуінде де толық 12 В), ал егер біреуі күйіп кетсе, екіншісі жұмысын жалғастырады!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет общего сопротивления)</span>
+                <span class="lang-kz">1-тапсырма (Жалпы кедергіні есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Два резистора сопротивлением <strong>10 Ом</strong> и <strong>15 Ом</strong> соединены <strong>последовательно</strong>. Чему равно их общее сопротивление?</span>
+                <span class="lang-kz">Кедергілері <strong>10 Ом</strong> және <strong>15 Ом</strong> болатын екі резистор <strong>тізбектей</strong> жалғанған. Олардың жалпы кедергісі неге тең?</span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Омах" data-placeholder-kz="Жауап Оммен" placeholder="Ответ в Омах">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Домашняя электрика)</span>
+                <span class="lang-kz">2-тапсырма (Үйдегі электр желісі)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Как соединены между собой розетки и лампочки в вашей квартире?</span>
+                <span class="lang-kz">Сіздің пәтеріңіздегі розеткалар мен шамдар өзара қалай жалғанған?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Последовательно" data-kz="Тізбектей">Последовательно</option>
+                    <option value="2" data-ru="Параллельно" data-kz="Параллель">Параллельно</option>
+                    <option value="3" data-ru="Вперемешку, как повезет" data-kz="Аралас, қалай сәті түссе">Вперемешку, как повезет</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Обязательно посмотрите опыты, где физики собирают реальные цепи и измеряют токи и напряжения приборами!</span>
+            <span class="lang-kz">Физиктердің нақты тізбектерді жинайтын және құралдармен токтар мен кернеулерді өлшейтін тәжірибелерін міндетті түрде қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5+%D0%B8+%D0%BF%D0%B0%D1%80%D0%B0%D0%BB%D0%BB%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE%D0%B5+%D1%81%D0%BE%D0%B5%D0%B4%D0%B8%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5+%D0%BF%D1%80%D0%BE%D0%B2%D0%BE%D0%B4%D0%BD%D0%B8%D0%BA%D0%BE%D0%B2+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Соединение проводников»</span>
+                  <span class="lang-kz">«Өткізгіштерді жалғау» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. При каком соединении сила тока одинакова во всех участках цепи?</span>
+                <span class="lang-kz">1. Қандай жалғау кезінде ток күші тізбектің барлық бөліктерінде бірдей болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">При последовательном</span><span class="lang-kz">Тізбектей жалғағанда</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">При параллельном</span><span class="lang-kz">Параллель жалғағанда</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">При любом</span><span class="lang-kz">Кез келген жалғағанда</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Ни при каком</span><span class="lang-kz">Ешқандай жалғағанда</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. При каком соединении напряжение на всех приборах одинаково и равно напряжению источника?</span>
+                <span class="lang-kz">2. Қандай жалғау кезінде барлық құралдардағы кернеу бірдей және көздің кернеуіне тең болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">При последовательном</span><span class="lang-kz">Тізбектей жалғағанда</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">При параллельном</span><span class="lang-kz">Параллель жалғағанда</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">При любом</span><span class="lang-kz">Кез келген жалғағанда</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. Как изменится общее сопротивление цепи, если к одному резистору ПАРАЛЛЕЛЬНО подключить еще один такой же?</span>
+                <span class="lang-kz">3. Егер бір резисторға ПАРАЛЛЕЛЬ тағы бір сондай резисторды жалғаса, тізбектің жалпы кедергісі қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Увеличится в 2 раза</span><span class="lang-kz">2 есе артады</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Уменьшится в 2 раза (т.к. электронам открылась новая дорога)</span><span class="lang-kz">2 есе кемиді (себебі электрондарға жаңа жол ашылды)</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Станет равно нулю</span><span class="lang-kz">Нөлге тең болады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Если из елочной гирлянды (последовательное соединение) выкрутить одну лампочку, что произойдет с остальными?</span>
+                <span class="lang-kz">4. Егер шырша гирляндасынан (тізбектей жалғау) бір шамды бұрап алса, қалғандарымен не болады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Все погаснут</span><span class="lang-kz">Барлығы сөнеді</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Остальные будут гореть ярче</span><span class="lang-kz">Қалғандары жарығырақ жанады</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Остальные будут гореть тусклее</span><span class="lang-kz">Қалғандары көмескірек жанады</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Ничего не изменится</span><span class="lang-kz">Ештеңе өзгермейді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Два резистора 6 Ом и 3 Ом соединены ПАРАЛЛЕЛЬНО. Чему равно их общее сопротивление? (Используйте формулу R = (R1*R2)/(R1+R2))</span>
+                <span class="lang-kz">5. 6 Ом және 3 Ом екі резистор ПАРАЛЛЕЛЬ жалғанған. Олардың жалпы кедергісі неге тең? (R = (R1*R2)/(R1+R2) формуласын қолданыңыз)</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">9 Ом</span><span class="lang-kz">9 Ом</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">2 Ом</span><span class="lang-kz">2 Ом</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">18 Ом</span><span class="lang-kz">18 Ом</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">3 Ом</span><span class="lang-kz">3 Ом</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! При последовательном соединении сопротивления просто складываются: 10 + 15 = 25 Ом.",
+            fbA_inc: "Неверно. Вспомните правило последовательного соединения: общее сопротивление равно СУММЕ сопротивлений. Просто сложите 10 и 15.",
+            fbB_corr: "Абсолютно правильно! Вся домашняя проводка соединяется параллельно, чтобы каждый прибор получал 220В и работал независимо от других.",
+            fbB_inc: "Неверно. Если бы они были соединены последовательно, то при выключении света в туалете у вас бы выключался холодильник! Подумайте еще раз.",
+            test_ok: "Отличный результат: {s} из {t}! Вы стали экспертом в электрических цепях.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_break_off: "💥 Пережечь Лампу 1",
+            btn_break_on: "🔧 Починить Лампу 1"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Тізбектей жалғағанда кедергілер жай ғана қосылады: 10 + 15 = 25 Ом.",
+            fbA_inc: "Қате. Тізбектей жалғау ережесін есіңізге түсіріңіз: жалпы кедергі кедергілердің ҚОСЫНДЫСЫНА тең. 10 мен 15-ті қосыңыз.",
+            fbB_corr: "Өте дұрыс! Әрбір құрал 220В алып, басқаларынан тәуелсіз жұмыс істеуі үшін үйдегі барлық сымдар параллель жалғанады.",
+            fbB_inc: "Қате. Егер олар тізбектей жалғанған болса, онда дәретханадағы жарықты өшіргенде тоңазытқыш та өшіп қалар еді! Тағы ойланып көріңіз.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз электр тізбектерінің сарапшысы болдыңыз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_break_off: "💥 1-шамды күйдіру",
+            btn_break_on: "🔧 1-шамды жөндеу"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateButtonText();
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояние
+    let mode = 'series'; // series | parallel
+    let isBroken = false;
+    
+    // Параметры
+    const U = 12;
+    const R1 = 4;
+    const R2 = 4;
+    
+    let R_total = 0;
+    let I_total = 0;
+    let I1 = 0, U1 = 0;
+    let I2 = 0, U2 = 0;
+    
+    // Анимация
+    let animFrame = null;
+    let particles1 = []; // Основной контур / Ветка 1
+    let particles2 = []; // Ветка 2 (только для параллельного)
+    
+    for(let i=0; i<20; i++) particles1.push(i * (1000/20));
+    for(let i=0; i<15; i++) particles2.push(i * (1000/15));
+
+    function updateButtonText() {
+        const btn = document.getElementById('btnBreak');
+        if (isBroken) {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_break_on')}</span>`;
+            btn.classList.add('broken');
+        } else {
+            btn.innerHTML = `<span class="lang-${currentLang}">${t('btn_break_off')}</span>`;
+            btn.classList.remove('broken');
+        }
+    }
+
+    window.changeMode = function() {
+        const radios = document.getElementsByName('mode');
+        for(let r of radios) {
+            if(r.checked) mode = r.value;
+        }
+        calculateCircuit();
+    }
+
+    window.toggleBreak = function() {
+        isBroken = !isBroken;
+        updateButtonText();
+        calculateCircuit();
+    }
+
+    function calculateCircuit() {
+        if (mode === 'series') {
+            if (isBroken) {
+                R_total = "∞";
+                I_total = 0; I1 = 0; I2 = 0; U1 = 0; U2 = 0;
+            } else {
+                R_total = R1 + R2; // 8
+                I_total = U / R_total; // 1.5
+                I1 = I_total; I2 = I_total;
+                U1 = I1 * R1; U2 = I2 * R2;
+            }
+        } else { // parallel
+            if (isBroken) {
+                // Ветка 1 разорвана, работает только ветка 2
+                R_total = R2; // 4
+                I1 = 0; U1 = 0;
+                U2 = U; I2 = U2 / R2; // 12 / 4 = 3
+                I_total = I2; // 3
+            } else {
+                R_total = (R1 * R2) / (R1 + R2); // 2
+                I_total = U / R_total; // 6
+                U1 = U; U2 = U;
+                I1 = U1 / R1; // 3
+                I2 = U2 / R2; // 3
+            }
+        }
+
+        document.getElementById('rTotal').textContent = R_total;
+        document.getElementById('iTotal').textContent = typeof I_total === 'number' ? I_total.toFixed(1) : I_total;
+        document.getElementById('i1Val').textContent = I1.toFixed(1);
+        document.getElementById('u1Val').textContent = U1.toFixed(1);
+        document.getElementById('i2Val').textContent = I2.toFixed(1);
+        document.getElementById('u2Val').textContent = U2.toFixed(1);
+
+        if (!animFrame && I_total > 0) {
+            animate();
+        } else if (I_total === 0) {
+            drawScene();
+        }
+    }
+
+    // Координаты для последовательного: (100,175) -> (100,75) -> (400,75) -> (400,275) -> (100,275) -> (100,175)
+    function getSeriesCoord(p) {
+        let d = (p / 1000) * 1000; // Периметр 1000 (300+200+300+200)
+        if (d <= 300) return {x: 100 + d, y: 75};
+        else if (d <= 500) return {x: 400, y: 75 + (d - 300)};
+        else if (d <= 800) return {x: 400 - (d - 500), y: 275};
+        else return {x: 100, y: 275 - (d - 800)};
+    }
+
+    // Координаты для параллельного (Ветка 1 - внутренний квадрат, Ветка 2 - внешний)
+    // Общая часть: (100,175)->(100,75)->(200,75) И (200,275)->(100,275)->(100,175).
+    // Ветка 1: (200,75) -> (200,275)
+    // Ветка 2: (200,75) -> (350,75) -> (350,275) -> (200,275)
+    function getParallel1Coord(p) {
+        let d = (p / 1000) * 600; // 100(вверх)+100(вправо)+200(вниз)+100(влево)+100(вверх) = 600
+        if (d <= 100) return {x: 100, y: 175 - d};
+        else if (d <= 200) return {x: 100 + (d-100), y: 75};
+        else if (d <= 400) return {x: 200, y: 75 + (d-200)};
+        else if (d <= 500) return {x: 200 - (d-400), y: 275};
+        else return {x: 100, y: 275 - (d-500)};
+    }
+    function getParallel2Coord(p) {
+        let d = (p / 1000) * 900; // 100+250(вправо)+200(вниз)+250(влево)+100(вверх) = 900
+        if (d <= 100) return {x: 100, y: 175 - d};
+        else if (d <= 350) return {x: 100 + (d-100), y: 75};
+        else if (d <= 550) return {x: 350, y: 75 + (d-350)};
+        else if (d <= 800) return {x: 350 - (d-550), y: 275};
+        else return {x: 100, y: 275 - (d-800)};
+    }
+
+    function drawBulb(cx, cy, label, u, isBrk) {
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 3;
+        
+        // Стекло
+        ctx.beginPath(); ctx.arc(cx, cy, 25, 0, Math.PI*2); 
+        ctx.fillStyle = '#1e293b'; 
+        ctx.fill(); ctx.stroke();
+        
+        let r = 18; // Смещение для крестика
+        if (isBrk) {
+            // Разрыв крестика (перегоревшая лампа)
+            ctx.strokeStyle = '#ef4444';
+            ctx.beginPath(); ctx.moveTo(cx-r, cy-r); ctx.lineTo(cx-5, cy-5); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx+5, cy+5); ctx.lineTo(cx+r, cy+r); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx-r, cy+r); ctx.lineTo(cx-5, cy+5); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx+5, cy-5); ctx.lineTo(cx+r, cy-r); ctx.stroke();
+        } else {
+            // Целый крестик (стандартное обозначение)
+            ctx.beginPath(); 
+            ctx.moveTo(cx-r, cy-r); ctx.lineTo(cx+r, cy+r); 
+            ctx.moveTo(cx-r, cy+r); ctx.lineTo(cx+r, cy-r); 
+            ctx.stroke();
+            
+            // Свечение
+            if (u > 0) {
+                let glowRatio = u / 12; // от 0 до 1
+                let grad = ctx.createRadialGradient(cx, cy, 20, cx, cy, 60);
+                grad.addColorStop(0, `rgba(250, 204, 21, ${glowRatio})`);
+                grad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath(); ctx.arc(cx, cy, 60, 0, Math.PI*2); ctx.fill();
+            }
+        }
+        
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign='center';
+        ctx.fillText(label, cx, cy-35);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        
+        // 1. ПРОВОДА
+        ctx.beginPath();
+        if (mode === 'series') {
+            // Одна петля
+            ctx.moveTo(100, 175); ctx.lineTo(100, 75); ctx.lineTo(400, 75); ctx.lineTo(400, 275); ctx.lineTo(100, 275); ctx.lineTo(100, 175);
+            ctx.stroke();
+            // Лампы
+            drawBulb(250, 75, 'Л1', U1, isBroken);
+            drawBulb(400, 175, 'Л2', U2, false);
+        } else {
+            // Параллельно
+            // Левая часть
+            ctx.moveTo(100, 175); ctx.lineTo(100, 75); ctx.lineTo(350, 75);
+            ctx.moveTo(100, 175); ctx.lineTo(100, 275); ctx.lineTo(350, 275);
+            // Ветка 1
+            ctx.moveTo(200, 75); ctx.lineTo(200, 275);
+            // Ветка 2
+            ctx.moveTo(350, 75); ctx.lineTo(350, 275);
+            ctx.stroke();
+            
+            // Точки соединения
+            ctx.fillStyle = '#cbd5e1';
+            ctx.beginPath(); ctx.arc(200, 75, 5, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(200, 275, 5, 0, Math.PI*2); ctx.fill();
+            
+            // Лампы
+            drawBulb(200, 175, 'Л1', U1, isBroken);
+            drawBulb(350, 175, 'Л2', U2, false);
+        }
+
+        // 2. БАТАРЕЯ (Слева)
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(80, 160, 40, 30); // Закрасить фон под батареей
+        ctx.lineWidth = 4; ctx.strokeStyle = '#fff';
+        ctx.beginPath(); ctx.moveTo(80, 160); ctx.lineTo(120, 160); ctx.stroke(); // +
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(90, 190); ctx.lineTo(110, 190); ctx.stroke(); // -
+        ctx.fillStyle = '#ef4444'; ctx.fillText('+', 65, 165);
+        ctx.fillStyle = '#3b82f6'; ctx.fillText('-', 75, 195);
+        ctx.fillStyle = '#0d9488'; ctx.font = 'bold 16px sans-serif';
+        ctx.fillText('12 В', 50, 180);
+
+        // 3. ЭЛЕКТРОНЫ
+        ctx.fillStyle = '#60a5fa'; // Голубые электроны
+        
+        if (mode === 'series') {
+            if (I_total > 0) {
+                for(let i=0; i<particles1.length; i++) {
+                    let pos = getSeriesCoord(particles1[i]);
+                    // Не рисуем на лампах и батарее
+                    if ((pos.x > 225 && pos.x < 275 && pos.y === 75) || 
+                        (pos.x === 400 && pos.y > 150 && pos.y < 200) ||
+                        (pos.x === 100 && pos.y > 150 && pos.y < 200)) continue;
+                    ctx.beginPath(); ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        } else {
+            if (I1 > 0) {
+                for(let i=0; i<particles1.length; i++) {
+                    let pos = getParallel1Coord(particles1[i]);
+                    if ((pos.x === 200 && pos.y > 150 && pos.y < 200) || 
+                        (pos.x === 100 && pos.y > 150 && pos.y < 200)) continue;
+                    ctx.beginPath(); ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            if (I2 > 0) {
+                for(let i=0; i<particles2.length; i++) {
+                    let pos = getParallel2Coord(particles2[i]);
+                    if ((pos.x === 350 && pos.y > 150 && pos.y < 200) || 
+                        (pos.x === 100 && pos.y > 150 && pos.y < 200)) continue;
+                    ctx.beginPath(); ctx.arc(pos.x, pos.y, 4, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        let keepAnimating = false;
+
+        if (mode === 'series') {
+            if (I_total > 0) {
+                let speed = I_total * 2; // 1.5 * 2 = 3.0
+                for(let i=0; i<particles1.length; i++) {
+                    particles1[i] += speed;
+                    if (particles1[i] > 1000) particles1[i] -= 1000;
+                }
+                keepAnimating = true;
+            }
+        } else {
+            if (I1 > 0) {
+                let speed1 = I1 * 1.5; // 3 * 1.5 = 4.5
+                for(let i=0; i<particles1.length; i++) {
+                    particles1[i] += speed1;
+                    if (particles1[i] > 1000) particles1[i] -= 1000;
+                }
+                keepAnimating = true;
+            }
+            if (I2 > 0) {
+                let speed2 = I2 * 1.5; 
+                for(let i=0; i<particles2.length; i++) {
+                    particles2[i] += speed2;
+                    if (particles2[i] > 1000) particles2[i] -= 1000;
+                }
+                keepAnimating = true;
+            }
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    calculateCircuit();
+
+</script>
+</body>
+</html>

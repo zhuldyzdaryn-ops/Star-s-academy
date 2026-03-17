@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Потенциал и разность потенциалов — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fffbeb; /* Светло-янтарный */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #d97706; /* Золотой/Янтарный */
+            --primary-hover: #b45309;
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fde68a;
+            --text-muted: #64748b;
+            --formula-bg: #fef3c7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1e1b4b; /* Темно-фиолетовый (космос/энергия) */
+                --text-color: #f8fafc;
+                --card-bg: #312e81;
+                --border: #4338ca;
+                --text-muted: #94a3b8;
+                --formula-bg: #3730a3;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(217, 119, 6, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(217, 119, 6, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(217, 119, 6, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(217, 119, 6, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Потенциал и разность потенциалов</span>
+            <span class="lang-kz">Потенциал және потенциалдар айырымы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Представьте себе холм. Чем выше вы находитесь, тем больше энергии может выделиться, если вы скатитесь вниз. Электрический потенциал — это высота "электрических холмов", по которым катятся заряды!</span>
+            <span class="lang-kz">Төбені елестетіп көріңізші. Неғұрлым биікте болсаңыз, төмен қарай сырғанағанда соғұрлым көп энергия бөлінуі мүмкін. Электр потенциалы — бұл зарядтар сырғанайтын "электрлік төбелердің" биіктігі!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Потенциал электрического поля</span>
+            <span class="lang-kz">1. Электр өрісінің потенциалы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В прошлой теме мы измеряли поле с помощью силы (Напряженность <span class="math-symbol">E</span>). Но поле можно описать и с помощью <strong>энергии</strong>.</span>
+            <span class="lang-kz">Алдыңғы тақырыпта біз өрісті күштің көмегімен өлшедік (Кернеулік <span class="math-symbol">E</span>). Бірақ өрісті <strong>энергияның</strong> көмегімен де сипаттауға болады.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Заряд, помещенный в поле, обладает <em>потенциальной энергией</em> (<span class="math-symbol">W</span>). Если разделить эту энергию на величину заряда, мы получим энергетическую характеристику самой точки поля. Это и есть <strong>Потенциал (обозначается греческой буквой &phi; - "фи")</strong>.</span>
+            <span class="lang-kz">Өріске орналастырылған заряд <em>потенциалдық энергияға</em> (<span class="math-symbol">W</span>) ие болады. Егер бұл энергияны заряд шамасына бөлсек, біз өрістің сол нүктесінің энергетикалық сипаттамасын аламыз. Бұл <strong>Потенциал (&phi; - "фи" грек әрпімен белгіленеді)</strong> деп аталады.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Потенциал равен отношению потенциальной энергии заряда к самому заряду:</span>
+            <span class="lang-kz">Потенциал зарядтың потенциалдық энергиясының сол зарядтың өзіне қатынасына тең:</span>
+            
+            <div class="math-formula">
+                &phi; = 
+                <div class="fraction">
+                    <span>W</span>
+                    <span class="fdn">q</span>
+                </div>
+            </div>
+            
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Потенциал измеряется в <strong>Вольтах (В)</strong>. <br>1 Вольт = 1 Джоуль / 1 Кулон.</span>
+                <span class="lang-kz">Потенциал <strong>Вольтпен (В)</strong> өлшенеді. <br>1 Вольт = 1 Джоуль / 1 Кулон.</span>
+            </p>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Разность потенциалов (Напряжение)</span>
+            <span class="lang-kz">2. Потенциалдар айырымы (Кернеу)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">На практике нам важен не сам потенциал в одной точке, а <strong>разность потенциалов</strong> между двумя точками (например, на двух концах батарейки). Эту разность часто называют <strong>Напряжением (обозначается <span class="math-symbol">U</span>)</strong>.</span>
+            <span class="lang-kz">Іс жүзінде бізге бір нүктедегі потенциалдың өзі емес, екі нүкте арасындағы <strong>потенциалдар айырымы</strong> маңызды (мысалы, батарейканың екі ұшындағы). Бұл айырымды жиі <strong>Кернеу (<span class="math-symbol">U</span> деп белгіленеді)</strong> деп атайды.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Напряжение равно работе <span class="math-symbol">A</span>, которую совершает поле при перемещении заряда <span class="math-symbol">q</span> из точки 1 в точку 2, деленной на этот заряд:</span>
+            <span class="lang-kz">Кернеу өрістің зарядты 1-ші нүктеден 2-ші нүктеге жылжытқанда атқаратын <span class="math-symbol">A</span> жұмысының осы зарядқа қатынасына тең:</span>
+            
+            <div class="math-formula">
+                U = &phi;<sub>1</sub> - &phi;<sub>2</sub> = 
+                <div class="fraction">
+                    <span>A</span>
+                    <span class="fdn">q</span>
+                </div>
+            </div>
+            
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Отсюда важнейшая формула для вычисления работы электрического поля: <strong>A = q &middot; U</strong></span>
+                <span class="lang-kz">Осыдан электр өрісінің жұмысын есептеуге арналған ең маңызды формула шығады: <strong>A = q &middot; U</strong></span>
+            </p>
+        </div>
+        
+        <p>
+            <span class="lang-ru">Линии или поверхности, на которых потенциал одинаков (разность равна нулю), называются <strong>эквипотенциальными поверхностями</strong>. Вдоль них поле не совершает работы!</span>
+            <span class="lang-kz">Потенциалы бірдей болатын (айырымы нөлге тең) сызықтар немесе беттер <strong>эквипотенциал беттер</strong> деп аталады. Олардың бойымен өріс жұмыс жасамайды!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Электрический рельеф и Работа</span>
+            <span class="lang-kz">Симуляция: Электр рельефі және Жұмыс</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+                    <span class="lang-ru">В центре находится источник поля (+). Вокруг него нарисованы круги — это линии одинакового потенциала (как линии высоты на карте гор). Перемещайте пробный заряд ползунком.</span>
+                    <span class="lang-kz">Ортада өріс көзі (+) орналасқан. Оның айналасында шеңберлер сызылған — бұл бірдей потенциал сызықтары (тау картасындағы биіктік сызықтары сияқты). Сынақ зарядын ползунокпен жылжытыңыз.</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Положение заряда:</span><span class="lang-kz">Зарядтың орны:</span></span>
+                    </label>
+                    <input type="range" id="posSlider" min="0" max="100" value="0" oninput="updateSim()">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#64748b;">
+                        <span>Точка 1</span>
+                        <span>Точка 2</span>
+                    </div>
+                </div>
+
+                <div class="dashboard">
+                    <div>
+                        <span class="lang-ru">Заряд (q):</span><span class="lang-kz">Заряд (q):</span>
+                        <strong>+2 Кл</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Потенциал (&phi;<sub>1</sub>):</span><span class="lang-kz">Потенциал (&phi;<sub>1</sub>):</span>
+                        <strong><span id="phi1Val">100</span> В</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Потенциал (&phi;<sub>2</sub>):</span><span class="lang-kz">Потенциал (&phi;<sub>2</sub>):</span>
+                        <strong><span id="phi2Val">40</span> В</strong>
+                    </div>
+                    <div style="border-top: 2px solid var(--primary); margin-top: 5px; padding-top: 5px;">
+                        <span class="lang-ru">Напряжение (U):</span><span class="lang-kz">Кернеу (U):</span>
+                        <strong><span id="uVal">60</span> В</strong>
+                    </div>
+                    <div>
+                        <span class="lang-ru">Работа поля (A):</span><span class="lang-kz">Өріс жұмысы (A):</span>
+                        <strong style="color:var(--success);"><span id="aVal">120</span> Дж</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="450" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Когда заряд "скатывается" от высокого потенциала (100 В) к низкому (40 В), поле совершает положительную работу. Разность потенциалов (напряжение) показывает, сколько энергии тратится на перемещение 1 Кулона заряда.</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Заряд жоғары потенциалдан (100 В) төменгіге (40 В) "сырғанағанда", өріс оң жұмыс жасайды. Потенциалдар айырымы (кернеу) 1 Кулон зарядты тасымалдауға қанша энергия жұмсалатынын көрсетеді.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет работы)</span>
+                <span class="lang-kz">1-тапсырма (Жұмысты есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Напряжение электрической сети в наших домах равно <strong>220 В</strong> (<span class="math-symbol">U</span>). Какую работу (<span class="math-symbol">A</span>) совершит электрическое поле, перемещая заряд <strong>3 Кл</strong> (<span class="math-symbol">q</span>) по спирали лампочки? <br><em>(Используйте формулу A = q &middot; U)</em></span>
+                <span class="lang-kz">Біздің үйлеріміздегі электр желісінің кернеуі <strong>220 В</strong> (<span class="math-symbol">U</span>). Электр өрісі шамның спиралі бойымен <strong>3 Кл</strong> (<span class="math-symbol">q</span>) зарядты жылжыта отырып, қандай жұмыс (<span class="math-symbol">A</span>) жасайды? <br><em>(A = q &middot; U формуласын қолданыңыз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Джоулях (число)" data-placeholder-kz="Жауап Джоульмен (сан)" placeholder="Ответ в Джоулях (число)">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика эквипотенциалей)</span>
+                <span class="lang-kz">2-тапсырма (Эквипотенциалдар логикасы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Электрон переместился из точки с потенциалом 50 В в другую точку, потенциал которой также равен 50 В (двигался по эквипотенциальной поверхности). Чему равна работа электрического поля?</span>
+                <span class="lang-kz">Электрон потенциалы 50 В нүктеден потенциалы дәл сондай 50 В болатын басқа нүктеге ауысты (эквипотенциал бет бойымен қозғалды). Электр өрісінің жұмысы неге тең?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="50 Джоулей" data-kz="50 Джоуль">50 Джоулей</option>
+                    <option value="2" data-ru="100 Джоулей" data-kz="100 Джоуль">100 Джоулей</option>
+                    <option value="3" data-ru="0 (Ноль)" data-kz="0 (Нөл)">0 (Ноль)</option>
+                    <option value="4" data-ru="-50 Джоулей" data-kz="-50 Джоуль">-50 Джоулей</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите видео, чтобы лучше понять аналогию между электрическим напряжением и давлением воды в трубах!</span>
+            <span class="lang-kz">Электр кернеуі мен құбырлардағы су қысымы арасындағы ұқсастықты жақсырақ түсіну үшін бейнероликті қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%9F%D0%BE%D1%82%D0%B5%D0%BD%D1%86%D0%B8%D0%B0%D0%BB+%D0%B8+%D1%80%D0%B0%D0%B7%D0%BD%D0%BE%D1%81%D1%82%D1%8C+%D0%BF%D0%BE%D1%82%D0%B5%D0%BD%D1%86%D0%B8%D0%B0%D0%BB%D0%BE%D0%B2+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Потенциал и разность потенциалов»</span>
+                  <span class="lang-kz">«Потенциал және потенциалдар айырымы» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. В каких единицах измеряется электрический потенциал и напряжение?</span>
+                <span class="lang-kz">1. Электр потенциалы мен кернеу қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Ампер (А)</span><span class="lang-kz">Ампер (А)</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Ньютон (Н)</span><span class="lang-kz">Ньютон (Н)</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Вольт (В)</span><span class="lang-kz">Вольт (В)</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Кулон (Кл)</span><span class="lang-kz">Кулон (Кл)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">2. Как связаны работа поля, заряд и напряжение? (Выберите правильную формулу)</span>
+                <span class="lang-kz">2. Өріс жұмысы, заряд және кернеу қалай байланысты? (Дұрыс формуланы таңдаңыз)</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">A = q &middot; U</span><span class="lang-kz">A = q &middot; U</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">U = q &middot; A</span><span class="lang-kz">U = q &middot; A</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">q = A &middot; U</span><span class="lang-kz">q = A &middot; U</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">A = q / U</span><span class="lang-kz">A = q / U</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">3. Эквипотенциальная поверхность — это поверхность, во всех точках которой...</span>
+                <span class="lang-kz">3. Эквипотенциал бет — бұл барлық нүктелерінде ... бет.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Равны нулю электрические заряды</span><span class="lang-kz">Электр зарядтары нөлге тең болатын</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Напряженность поля равна нулю</span><span class="lang-kz">Өріс кернеулігі нөлге тең болатын</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Работа всегда максимальна</span><span class="lang-kz">Жұмыс әрқашан максимал болатын</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Одинаков потенциал</span><span class="lang-kz">Потенциал бірдей болатын</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Если разность потенциалов между двумя точками равна нулю, то при перемещении заряда между ними...</span>
+                <span class="lang-kz">4. Егер екі нүкте арасындағы потенциалдар айырымы нөлге тең болса, онда олардың арасында зарядты жылжытқанда...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Совершается огромная работа</span><span class="lang-kz">Орасан зор жұмыс жасалады</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Работа не совершается (A=0)</span><span class="lang-kz">Жұмыс жасалмайды (A=0)</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Заряд исчезает</span><span class="lang-kz">Заряд жойылады</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Поле взрывается</span><span class="lang-kz">Өріс жарылады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Напряжение между клеммами батарейки 1,5 Вольта. Это значит, что при переносе заряда в 1 Кулон от плюса к минусу батарейка совершит работу...</span>
+                <span class="lang-kz">5. Батарейка клеммалары арасындағы кернеу 1,5 Вольт. Бұл плюстен минусқа 1 Кулон зарядты тасымалдағанда батарейка ... жұмыс жасайтынын білдіреді.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">1,5 Джоуля</span><span class="lang-kz">1,5 Джоуль</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">1 Джоуль</span><span class="lang-kz">1 Джоуль</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">0 Джоулей</span><span class="lang-kz">0 Джоуль</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">15 Джоулей</span><span class="lang-kz">15 Джоуль</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Работа вычисляется как произведение заряда на напряжение: A = 3 Кл &middot; 220 В = 660 Дж.",
+            fbA_inc: "Неверно. Посмотрите на формулу: A = q &middot; U. Нужно умножить 3 Кл на 220 В.",
+            fbB_corr: "Абсолютно правильно! Разность потенциалов U = 50 - 50 = 0 В. Значит и работа A = q &middot; 0 = 0. При движении вдоль эквипотенциальной поверхности работа не совершается!",
+            fbB_inc: "Неверно. Вспомните, от чего зависит работа? От РАЗНОСТИ потенциалов (U = &phi;1 - &phi;2). Если начальный и конечный потенциал равны, то разность равна...",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно поняли тему потенциала.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_pt1: "Точка 1",
+            lbl_pt2: "Точка 2",
+            lbl_work: "A"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Жұмыс зарядты кернеуге көбейту арқылы есептеледі: A = 3 Кл &middot; 220 В = 660 Дж.",
+            fbA_inc: "Қате. Формулаға қараңыз: A = q &middot; U. 3 Кл-ды 220 В-қа көбейту керек.",
+            fbB_corr: "Өте дұрыс! Потенциалдар айырымы U = 50 - 50 = 0 В. Демек жұмыс та A = q &middot; 0 = 0. Эквипотенциал бет бойымен қозғалғанда жұмыс жасалмайды!",
+            fbB_inc: "Қате. Есіңізге түсіріңіз, жұмыс неге тәуелді? Потенциалдар АЙЫРЫМЫНА (U = &phi;1 - &phi;2). Егер бастапқы және соңғы потенциал тең болса, онда айырым мынаған тең...",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз потенциал тақырыбын өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_pt1: "1-нүкте",
+            lbl_pt2: "2-нүкте",
+            lbl_work: "A"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ (Потенциал и Работа) ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Центральный заряд
+    const cx = 50;
+    const cy = 175;
+    
+    // Радиусы эквипотенциальных поверхностей (кругов)
+    const r1 = 60;  // Точка 1 (Высокий потенциал 100В)
+    const r2 = 300; // Точка 2 (Низкий потенциал 40В)
+    
+    let sliderPercent = 0; // от 0 до 100
+
+    window.updateSim = function() {
+        sliderPercent = parseInt(document.getElementById('posSlider').value);
+        
+        // Математика симуляции
+        let currentPhi = 100 - (sliderPercent / 100) * 60; // От 100 до 40
+        let currentU = 100 - currentPhi; // От 0 до 60
+        let currentWork = 2 * currentU; // q=2, A = qU (от 0 до 120)
+
+        document.getElementById('phi2Val').textContent = Math.round(currentPhi);
+        document.getElementById('uVal').textContent = Math.round(currentU);
+        document.getElementById('aVal').textContent = Math.round(currentWork);
+
+        drawScene();
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. Рисуем эквипотенциальные поверхности (полукольца)
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        
+        // Линия R1 (100В)
+        ctx.strokeStyle = '#ef4444'; // Красноватый (горячий/высокий)
+        ctx.beginPath();
+        ctx.arc(cx, cy, r1, -Math.PI/2, Math.PI/2);
+        ctx.stroke();
+
+        // Промежуточные линии (декор)
+        ctx.strokeStyle = '#94a3b8';
+        ctx.globalAlpha = 0.3;
+        for(let i=1; i<4; i++) {
+            let r_mid = r1 + (r2-r1) * (i/4);
+            ctx.beginPath();
+            ctx.arc(cx, cy, r_mid, -Math.PI/2, Math.PI/2);
+            ctx.stroke();
+        }
+        ctx.globalAlpha = 1.0;
+
+        // Линия R2 (40В)
+        ctx.strokeStyle = '#3b82f6'; // Синеватый (холодный/низкий)
+        ctx.beginPath();
+        ctx.arc(cx, cy, r2, -Math.PI/2, Math.PI/2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 2. Источник поля (+)
+        ctx.beginPath();
+        ctx.arc(cx, cy, 25, 0, Math.PI*2);
+        ctx.fillStyle = '#ef4444';
+        ctx.fill();
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 24px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('+', cx, cy+2);
+
+        // 3. Траектория движения (прямая линия от r1 до r2)
+        ctx.strokeStyle = '#64748b';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx + r1, cy);
+        ctx.lineTo(cx + r2, cy);
+        ctx.stroke();
+
+        // 4. Метки Точка 1 и Точка 2
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText(t('lbl_pt1'), cx + r1 + 10, cy - 10);
+        ctx.fillText('100 В', cx + r1 + 15, cy + 15);
+
+        ctx.fillStyle = '#3b82f6';
+        ctx.fillText(t('lbl_pt2'), cx + r2 - 10, cy - 10);
+        ctx.fillText('40 В', cx + r2 - 10, cy + 15);
+
+        // 5. Пробный заряд
+        let currentR = r1 + (sliderPercent / 100) * (r2 - r1);
+        let qx = cx + currentR;
+        let qy = cy;
+
+        // Если заряд сдвинулся, рисуем "работу" в виде шлейфа
+        if (sliderPercent > 0) {
+            ctx.strokeStyle = '#10b981'; // Зеленый шлейф (выполненная работа)
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(cx + r1, cy);
+            ctx.lineTo(qx, cy);
+            ctx.stroke();
+            
+            // Текст А
+            ctx.fillStyle = '#10b981';
+            ctx.fillText(t('lbl_work'), cx + r1 + (currentR - r1)/2, cy - 10);
+        }
+
+        ctx.beginPath();
+        ctx.arc(qx, qy, 15, 0, Math.PI*2);
+        ctx.fillStyle = '#d97706'; // Янтарный заряд
+        ctx.fill();
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 16px monospace';
+        ctx.fillText('+q', qx, qy+1);
+    }
+
+    // Инициализация
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // A = q * U = 3 * 220 = 660
+        if (val === 660) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

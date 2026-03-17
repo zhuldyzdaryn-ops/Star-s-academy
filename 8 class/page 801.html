@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тепловое движение, броуновское движение, диффузия — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #faf5ff; /* Светло-фиолетовый (теплый/научный) */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #9333ea; /* Пурпурный */
+            --primary-hover: #7e22ce;
+            --secondary: #0ea5e9;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e9d5ff;
+            --text-muted: #64748b;
+            --formula-bg: #f3e8ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --text-color: #f1f5f9;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #3b0764;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .highlight-box strong {
+            color: var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--danger);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        button.action-btn {
+            background-color: var(--secondary);
+        }
+        button.action-btn:hover {
+            background-color: #0284c7;
+        }
+
+        .canvas-container {
+            flex: 2;
+            background-color: #0f172a; /* Темный фон микроскопа */
+            border-radius: 8px;
+            border: 4px solid #334155;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        
+        .microscope-hud {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: monospace;
+            font-size: 13px;
+            pointer-events: none;
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #334155;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(147, 51, 234, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 {
+            color: var(--warning);
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select, .input-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            display: block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(147, 51, 234, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .video-container a:hover {
+            background-color: rgba(147, 51, 234, 0.2);
+        }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .test-question:last-of-type {
+            border-bottom: none;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .test-options label:hover {
+            background-color: rgba(147, 51, 234, 0.05);
+        }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label {
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .lang-label.active {
+            color: var(--primary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ТУМБЛЕР ЯЗЫКА -->
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <!-- ШАПКА -->
+    <header>
+        <h1>
+            <span class="lang-ru">Тепловое движение, броуновское движение, диффузия</span>
+            <span class="lang-kz">Жылулық қозғалыс, броундық қозғалыс, диффузия</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему запах духов быстро распространяется по комнате? И почему чай заваривается только в горячей воде? Разгадка кроется в непрерывном танце невидимых частиц микромира!</span>
+            <span class="lang-kz">Неліктен әтірдің иісі бөлмеге тез тарайды? Және неге шай тек ыстық суда демделеді? Мұның сыры микроәлемдегі көрінбейтін бөлшектердің үздіксіз биінде жатыр!</span>
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ 1: Тепловое движение -->
+    <section>
+        <h2>
+            <span class="lang-ru">1. Тепловое движение</span>
+            <span class="lang-kz">1. Жылулық қозғалыс</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Все вещества состоят из мельчайших частиц (молекул и атомов). И самое главное их свойство — они <strong>никогда не останавливаются</strong>!</span>
+            <span class="lang-kz">Барлық заттар ең кішкентай бөлшектерден (молекулалар мен атомдардан) тұрады. Және олардың ең басты қасиеті — олар <strong>ешқашан тоқтамайды</strong>!</span>
+        </p>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Тепловое движение</strong> — это беспорядочное (хаотичное) движение частиц, из которых состоят тела. Скорость этого движения напрямую зависит от температуры: <strong>чем горячее тело, тем быстрее движутся его молекулы</strong>.</span>
+            <span class="lang-kz"><strong>Жылулық қозғалыс</strong> — бұл денелерді құрайтын бөлшектердің ретсіз (хаостық) қозғалысы. Бұл қозғалыстың жылдамдығы температураға тікелей байланысты: <strong>дене неғұрлым ыстық болса, оның молекулалары соғұрлым жылдам қозғалады</strong>.</span>
+        </div>
+        <p>
+            <span class="lang-ru">Сумма кинетических энергий всех движущихся частиц и потенциальных энергий их взаимодействия составляет <strong>внутреннюю энергию</strong> тела.</span>
+            <span class="lang-kz">Барлық қозғалатын бөлшектердің кинетикалық энергияларының және олардың өзара әрекеттесуінің потенциалдық энергияларының қосындысы дененің <strong>ішкі энергиясын</strong> құрайды.</span>
+        </p>
+    </section>
+
+    <!-- ТЕОРИЯ 2: Броуновское движение -->
+    <section>
+        <h2>
+            <span class="lang-ru">2. Броуновское движение</span>
+            <span class="lang-kz">2. Броундық қозғалыс</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В 1827 году английский ботаник Роберт Броун, рассматривая в микроскоп споры плауна (пыльцу) в капле воды, заметил удивительную вещь: споры непрерывно и беспорядочно дрожали и перемещались.</span>
+            <span class="lang-kz">1827 жылы ағылшын ботанигі Роберт Броун микроскоппен су тамшысындағы плаун спораларын (тозаңын) қарап отырып, таңғажайып нәрсені байқады: споралар үздіксіз және ретсіз дірілдеп, қозғалып тұрды.</span>
+        </p>
+        <p>
+            <span class="lang-ru"><strong>Причина:</strong> Невидимые глазу молекулы воды находятся в постоянном тепловом движении. Они со всех сторон ударяются о крупную частицу пыльцы. Так как удары случайны, с одной стороны молекул может ударить чуть больше, чем с другой, что и толкает пыльцу!</span>
+            <span class="lang-kz"><strong>Себебі:</strong> Көзге көрінбейтін су молекулалары тұрақты жылулық қозғалыста болады. Олар үлкен тозаң бөлшегін жан-жақтан соғады. Соққылар кездейсоқ болғандықтан, бір жағынан молекулалар екінші жағына қарағанда сәл көбірек соғуы мүмкін, бұл тозаңды итереді!</span>
+        </p>
+    </section>
+
+    <!-- ТЕОРИЯ 3: Диффузия -->
+    <section>
+        <h2>
+            <span class="lang-ru">3. Диффузия</span>
+            <span class="lang-kz">3. Диффузия</span>
+        </h2>
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Диффузия</strong> — это явление взаимного проникновения молекул одного вещества между молекулами другого.</span>
+            <span class="lang-kz"><strong>Диффузия</strong> — бұл бір заттың молекулаларының екінші заттың молекулаларының арасына өзара ену құбылысы.</span>
+        </div>
+        <p>
+            <span class="lang-ru">Диффузия доказывает, что: 1) молекулы движутся; 2) между молекулами есть промежутки. В газах она протекает очень быстро (распространение запахов), в жидкостях — медленнее (заваривание чая), а в твердых телах — годами!</span>
+            <span class="lang-kz">Диффузия мыналарды дәлелдейді: 1) молекулалар қозғалады; 2) молекулалар арасында бос кеңістіктер бар. Газдарда ол өте жылдам (иістердің таралуы), сұйықтықтарда — баяу (шайдың демделуі), ал қатты денелерде — жылдар бойы жүреді!</span>
+        </p>
+    </section>
+
+    <!-- СИМУЛЯЦИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Лаборатория под микроскопом</span>
+            <span class="lang-kz">Симуляция: Микроскоп астындағы зертхана</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="tempSlider" style="color: var(--danger)">
+                        <span class="lang-ru">Температура воды:</span>
+                        <span class="lang-kz">Судың температурасы:</span>
+                        <span id="tempVal">20</span>°C
+                    </label>
+                    <input type="range" id="tempSlider" min="0" max="100" step="1" value="20">
+                </div>
+                
+                <div class="buttons">
+                    <button id="btnPlayPause">
+                        <span class="lang-ru">Запустить симуляцию</span><span class="lang-kz">Симуляцияны бастау</span>
+                    </button>
+                    <button id="btnAddDye" class="action-btn">
+                        <span class="lang-ru">Капнуть краситель (Диффузия)</span><span class="lang-kz">Бояу тамызу (Диффузия)</span>
+                    </button>
+                    <button id="btnReset" class="outline" style="margin-top: 5px;">
+                        <span class="lang-ru">Очистить микроскоп</span><span class="lang-kz">Микроскопты тазарту</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <div class="microscope-hud">
+                    <span class="lang-ru">Режим микроскопа: x10000</span>
+                    <span class="lang-kz">Микроскоп режимі: x10000</span>
+                </div>
+                <canvas id="simCanvas" width="600" height="400"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Инструкция:</strong> Большая желтая частица — это пыльца (броуновское движение). Голубые точки — молекулы воды. Попробуйте увеличить температуру до 100°C и посмотрите, как изменится траектория пыльцы! Затем нажмите «Капнуть краситель», чтобы увидеть процесс диффузии в реальном времени.</span>
+                <span class="lang-kz"><strong>Нұсқаулық:</strong> Үлкен сары бөлшек — бұл тозаң (броундық қозғалыс). Көк нүктелер — су молекулалары. Температураны 100°C-қа дейін көтеріп, тозаңның траекториясы қалай өзгеретінін көріңіз! Содан кейін нақты уақытта диффузия процесін көру үшін «Бояу тамызу» түймесін басыңыз.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Основы)</span>
+                <span class="lang-kz">1-тапсырма (Негіздері)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">От чего в первую очередь зависит скорость теплового движения молекул в веществе?</span>
+                <span class="lang-kz">Заттағы молекулалардың жылулық қозғалысының жылдамдығы бірінші кезекте неге байланысты?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="От плотности вещества" data-kz="Заттың тығыздығына">От плотности вещества</option>
+                    <option value="2" data-ru="От температуры" data-kz="Температураға">От температуры</option>
+                    <option value="3" data-ru="От освещенности помещения" data-kz="Бөлменің жарықтығына">От освещенности помещения</option>
+                </select>
+                <button onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика)</span>
+                <span class="lang-kz">2-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Почему сахар быстрее растворяется (диффундирует) в горячем чае, чем в холодной воде?</span>
+                <span class="lang-kz">Неліктен қант салқын суға қарағанда ыстық шайда тезірек ериді (диффузияланады)?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="В горячей воде промежутки между молекулами исчезают" data-kz="Ыстық суда молекулалар арасындағы бос орындар жоғалады">В горячей воде промежутки между молекулами исчезают</option>
+                    <option value="2" data-ru="Горячая вода разрушает молекулы сахара" data-kz="Ыстық су қант молекулаларын бұзады">Горячая вода разрушает молекулы сахара</option>
+                    <option value="3" data-ru="С ростом температуры молекулы движутся быстрее, и перемешивание идет активнее" data-kz="Температура өскен сайын молекулалар тезірек қозғалады және араласу белсендірек жүреді">С ростом температуры молекулы движутся быстрее, и перемешивание идет активнее</option>
+                </select>
+                <button onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите интересные эксперименты, демонстрирующие броуновское движение под настоящим микроскопом и наглядный процесс диффузии!</span>
+            <span class="lang-kz">Нағыз микроскоппен броундық қозғалысты және диффузия процесін көрсететін қызықты тәжірибелерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B1%D1%80%D0%BE%D1%83%D0%BD%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B5+%D0%B4%D0%B2%D0%B8%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5+%D0%B4%D0%B8%D1%84%D1%84%D1%83%D0%B7%D0%B8%D1%8F+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Тепловое движение, диффузия» на YouTube</span>
+                  <span class="lang-kz">YouTube-тан «Жылулық қозғалыс, диффузия» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что доказывает явление диффузии?</span>
+                <span class="lang-kz">1. Диффузия құбылысы нені дәлелдейді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Что молекулы имеют цвет</span><span class="lang-kz">Молекулалардың түсі бар екенін</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Что молекулы не движутся</span><span class="lang-kz">Молекулалар қозғалмайтынын</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Что молекулы движутся и между ними есть промежутки</span><span class="lang-kz">Молекулалар қозғалатынын және олардың арасында бос орындар бар екенін</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Что все тела притягиваются друг к другу</span><span class="lang-kz">Барлық денелер бір-біріне тартылатынын</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. В каком состоянии вещества диффузия происходит быстрее всего при одинаковой температуре?</span>
+                <span class="lang-kz">2. Бірдей температурада заттың қай күйінде диффузия ең жылдам жүреді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">В жидкостях</span><span class="lang-kz">Сұйықтықтарда</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">В газах</span><span class="lang-kz">Газдарда</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">В твердых телах</span><span class="lang-kz">Қатты денелерде</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Скорость везде одинакова</span><span class="lang-kz">Жылдамдық барлық жерде бірдей</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Почему мелкая пыльца беспорядочно движется в капле воды (броуновское движение)?</span>
+                <span class="lang-kz">3. Неліктен ұсақ тозаң су тамшысында ретсіз қозғалады (броундық қозғалыс)?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Она получает случайные удары от невидимых молекул воды</span><span class="lang-kz">Ол көрінбейтін су молекулаларынан кездейсоқ соққылар алады</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Пыльца живая и сама плывет</span><span class="lang-kz">Тозаң тірі және өзі жүзеді</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Из-за силы тяжести</span><span class="lang-kz">Ауырлық күшіне байланысты</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Из-за магнитного поля Земли</span><span class="lang-kz">Жердің магнит өрісіне байланысты</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. Как изменяется скорость диффузия при охлаждении вещества?</span>
+                <span class="lang-kz">4. Затты суытқан кезде диффузия жылдамдығы қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Увеличивается</span><span class="lang-kz">Артады</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Не изменяется</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Сначала увеличивается, потом уменьшается</span><span class="lang-kz">Алдымен артады, сосын кемиді</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Уменьшается</span><span class="lang-kz">Кемиді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Какое движение физики называют тепловым?</span>
+                <span class="lang-kz">5. Физиктер қандай қозғалысты жылулық қозғалыс деп атайды?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Движение нагретого воздуха вверх</span><span class="lang-kz">Жылы ауаның жоғары көтерілуі</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Беспорядочное движение частиц, из которых состоят тела</span><span class="lang-kz">Денелерді құрайтын бөлшектердің ретсіз қозғалысы</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Движение планет вокруг Солнца</span><span class="lang-kz">Планеталардың Күнді айнала қозғалуы</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Движение теплой воды в океане</span><span class="lang-kz">Мұхиттағы жылы судың ағысы</span></label>
+            </div>
+        </div>
+
+        <button onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    // --- DICTIONARY FOR JS DYNAMIC TEXTS ---
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Правильно! Тепловое движение потому так и называется, что его скорость напрямую зависит от температуры (степени нагретости тела).",
+            fbA_inc: "Неверно. Вспомните, как называется этот вид движения и что происходит при нагревании.",
+            fbB_corr: "Верно! Чем выше температура воды, тем быстрее движутся её молекулы. Они быстрее расталкивают и перемешивают молекулы сахара.",
+            fbB_inc: "Неверно. Молекулы сахара не разрушаются, они просто перемешиваются с молекулами воды (это и есть диффузия).",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            btn_play: "Запустить симуляцию",
+            btn_pause: "Пауза"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Дұрыс! Жылулық қозғалыс деп аталуының себебі де осында, оның жылдамдығы тікелей температураға (дененің қызу дәрежесіне) байланысты.",
+            fbA_inc: "Қате. Бұл қозғалыс түрі қалай аталатынын және қыздырған кезде не болатынын есіңізге түсіріңіз.",
+            fbB_corr: "Дұрыс! Судың температурасы неғұрлым жоғары болса, оның молекулалары соғұрлым жылдам қозғалады. Олар қант молекулаларын тезірек итеріп, араластырады.",
+            fbB_inc: "Қате. Қант молекулалары бұзылмайды, олар жай ғана су молекулаларымен араласады (бұл диффузия).",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            btn_play: "Симуляцияны бастау",
+            btn_pause: "Кідірту"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    // --- LANGUAGE TOGGLE LOGIC ---
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updatePlayBtnText();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const tempSlider = document.getElementById('tempSlider');
+    const tempVal = document.getElementById('tempVal');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnAddDye = document.getElementById('btnAddDye');
+    const btnReset = document.getElementById('btnReset');
+    
+    let isPlaying = false;
+    let animFrame;
+    let temperature = 20; // 0 to 100
+    
+    // Броуновская частица (Пыльца)
+    let pollen = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        radius: 15,
+        path: [],
+        color: '#fbbf24' // Желтый
+    };
+
+    // Фоновые молекулы воды (для визуала)
+    let waterMolecules = [];
+    const numWater = 100;
+    
+    // Молекулы красителя (Диффузия)
+    let dyeMolecules = [];
+
+    function initWater() {
+        waterMolecules = [];
+        for(let i = 0; i < numWater; i++) {
+            waterMolecules.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                radius: 2,
+                color: 'rgba(56, 189, 248, 0.4)' // Голубой полупрозрачный
+            });
+        }
+    }
+
+    function resetSimulation() {
+        temperature = 20;
+        tempSlider.value = 20;
+        tempVal.textContent = 20;
+        
+        pollen.x = canvas.width / 2;
+        pollen.y = canvas.height / 2;
+        pollen.path = [];
+        
+        dyeMolecules = [];
+        initWater();
+        
+        if (!isPlaying) drawScene();
+    }
+
+    function updatePlayBtnText() {
+        if(isPlaying) {
+            btnPlayPause.innerHTML = `<span class="lang-${currentLang}">${t('btn_pause')}</span>`;
+        } else {
+            btnPlayPause.innerHTML = `<span class="lang-${currentLang}">${t('btn_play')}</span>`;
+        }
+    }
+
+    tempSlider.addEventListener('input', () => {
+        temperature = parseInt(tempSlider.value);
+        tempVal.textContent = temperature;
+        if(!isPlaying) drawScene();
+    });
+
+    btnPlayPause.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        updatePlayBtnText();
+        if(isPlaying) animateScene();
+        else cancelAnimationFrame(animFrame);
+    });
+
+    btnAddDye.addEventListener('click', () => {
+        // Добавляем каплю красителя в случайное место (или по центру, если пыльца не там)
+        let cx = Math.random() * (canvas.width - 100) + 50;
+        let cy = Math.random() * (canvas.height - 100) + 50;
+        
+        for(let i=0; i<150; i++) {
+            // Нормальное распределение в центре капли
+            let angle = Math.random() * Math.PI * 2;
+            let dist = Math.random() * 20;
+            dyeMolecules.push({
+                x: cx + Math.cos(angle) * dist,
+                y: cy + Math.sin(angle) * dist,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                radius: 3,
+                color: '#d946ef' // Яркий пурпурный/розовый
+            });
+        }
+        
+        if(!isPlaying) {
+            isPlaying = true;
+            updatePlayBtnText();
+            animateScene();
+        }
+    });
+
+    btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        cancelAnimationFrame(animFrame);
+        updatePlayBtnText();
+        resetSimulation();
+    });
+
+    function drawScene() {
+        // Очистка фона
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Рисуем след пыльцы
+        if (pollen.path.length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(pollen.path[0].x, pollen.path[0].y);
+            for(let i=1; i<pollen.path.length; i++) {
+                ctx.lineTo(pollen.path[i].x, pollen.path[i].y);
+            }
+            ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)'; // Полупрозрачный желтый след
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Рисуем молекулы воды
+        waterMolecules.forEach(m => {
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
+            ctx.fillStyle = m.color;
+            ctx.fill();
+        });
+
+        // Рисуем молекулы красителя
+        dyeMolecules.forEach(m => {
+            ctx.beginPath();
+            ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
+            ctx.fillStyle = m.color;
+            ctx.fill();
+        });
+
+        // Рисуем пыльцу
+        ctx.beginPath();
+        ctx.arc(pollen.x, pollen.y, pollen.radius, 0, Math.PI * 2);
+        ctx.fillStyle = pollen.color;
+        ctx.fill();
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    function animateScene() {
+        if (!isPlaying) return;
+
+        // Фактор скорости от температуры (T = 0 -> factor = 0.5; T = 100 -> factor = 5.5)
+        let tempFactor = 0.5 + (temperature / 100) * 5;
+
+        // 1. Движение фоновых молекул воды
+        waterMolecules.forEach(m => {
+            m.x += m.vx * tempFactor;
+            m.y += m.vy * tempFactor;
+            
+            // Отскок от стен
+            if(m.x < 0 || m.x > canvas.width) m.vx *= -1;
+            if(m.y < 0 || m.y > canvas.height) m.vy *= -1;
+        });
+
+        // 2. Движение молекул красителя (Диффузия)
+        dyeMolecules.forEach(m => {
+            // Диффузия = случайное блуждание + небольшой дрейф
+            m.x += (m.vx + (Math.random() - 0.5)) * tempFactor * 0.5;
+            m.y += (m.vy + (Math.random() - 0.5)) * tempFactor * 0.5;
+            
+            // Заворачивание за экран (как бесконечная среда) или отскок
+            if(m.x < 0 || m.x > canvas.width) m.vx *= -1;
+            if(m.y < 0 || m.y > canvas.height) m.vy *= -1;
+        });
+
+        // 3. Броуновское движение пыльцы
+        // Пыльца получает случайные толчки. Чем выше Т, тем сильнее толчки.
+        let jitter = tempFactor * 1.5;
+        pollen.x += (Math.random() - 0.5) * jitter;
+        pollen.y += (Math.random() - 0.5) * jitter;
+
+        // Ограничение пыльцы экраном
+        if (pollen.x < pollen.radius) pollen.x = pollen.radius;
+        if (pollen.x > canvas.width - pollen.radius) pollen.x = canvas.width - pollen.radius;
+        if (pollen.y < pollen.radius) pollen.y = pollen.radius;
+        if (pollen.y > canvas.height - pollen.radius) pollen.y = canvas.height - pollen.radius;
+
+        // Сохранение следа (раз в несколько кадров, чтобы не перегружать)
+        if (Math.random() < 0.2) {
+            pollen.path.push({x: pollen.x, y: pollen.y});
+            if (pollen.path.length > 200) pollen.path.shift(); // Ограничение длины следа
+        }
+
+        drawScene();
+        animFrame = requestAnimationFrame(animateScene);
+    }
+
+    // Инициализация при загрузке
+    initWater();
+    updatePlayBtnText();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5; // Теперь 5 вопросов
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

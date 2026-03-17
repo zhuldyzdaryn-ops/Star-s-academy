@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прямолинейное распространение и отражение света — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fffbeb;
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #f59e0b; /* Янтарный/Оранжевый для света */
+            --primary-hover: #d97706;
+            --secondary: #eab308; /* Желтый акцент */
+            --secondary-hover: #ca8a04;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #fde68a;
+            --text-muted: #64748b;
+            --formula-bg: #fef3c7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e293b;
+                --primary: #fbbf24;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, #ea580c 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .formula {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #ea580c;
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-weight: 600; font-size: 0.95rem; }
+        
+        select, input[type="range"], input[type="text"] {
+            width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);
+            background-color: var(--card-bg); color: var(--text-color);
+        }
+        input[type="range"] { accent-color: var(--primary); padding: 0; cursor: pointer; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; /* Темный фон для лазера */
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(245, 158, 11, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--text-color); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select, .input-group input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #ea580c;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(245, 158, 11, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(245, 158, 11, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Прямолинейное распространение и отражение света</span>
+            <span class="lang-kz">Жарықтың түзу сызық бойымен таралуы және шағылуы</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему в солнечный день мы отбрасываем тень? Как работают перископы и зеркала? В этом уроке мы раскроем главные секреты лучей света.</span>
+            <span class="lang-kz">Неліктен шуақты күні біз көлеңке түсіреміз? Перископтар мен айналар қалай жұмыс істейді? Бұл сабақта біз жарық сәулелерінің негізгі құпияларын ашамыз.</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Закон прямолинейного распространения света</span>
+            <span class="lang-kz">1. Жарықтың түзу сызық бойымен таралу заңы</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В однородной прозрачной среде свет распространяется строго по прямым линиям. Именно поэтому мы не можем видеть, что находится за углом здания.</span>
+            <span class="lang-kz">Біртекті мөлдір ортада жарық қатаң түрде түзу сызықтар бойымен таралады. Сондықтан біз ғимарат бұрышының артында не бар екенін көре алмаймыз.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Доказательства этого закона:</strong><br> Образование <strong>тени</strong> и <strong>полутени</strong>. Если источник света маленький (точечный), образуется резкая тень. Если большой — вокруг тени возникает полутень. Солнечные и лунные затмения — это тоже грандиозный пример образования тени в космосе!</span>
+            <span class="lang-kz"><strong>Бұл заңның дәлелдері:</strong><br> <strong>Көлеңке</strong> және <strong>шала көлеңке</strong> түзілуі. Егер жарық көзі кішкентай (нүктелік) болса, айқын көлеңке пайда болады. Егер үлкен болса — көлеңке айналасында шала көлеңке пайда болады. Күн мен Айдың тұтылуы — бұл да ғарыштағы көлеңкенің пайда болуының тамаша мысалы!</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Законы отражения света</span>
+            <span class="lang-kz">2. Жарықтың шағылу заңдары</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Когда свет падает на границу двух сред (например, на поверхность зеркала), часть его возвращается обратно. Это называется отражением. Углы в оптике всегда измеряются от <strong>перпендикуляра</strong> (нормали), восстановленного к поверхности в точку падения луча.</span>
+            <span class="lang-kz">Жарық екі ортаның шекарасына (мысалы, айна бетіне) түскенде, оның бір бөлігі кері қайтады. Бұл шағылу деп аталады. Оптикадағы бұрыштар әрқашан сәуленің түсу нүктесінде бетке тұрғызылған <strong>перпендикулярдан</strong> (нормальдан) бастап өлшенеді.</span>
+        </p>
+
+        <div class="highlight-box" style="border-left-color: var(--secondary);">
+            <span class="lang-ru"><strong>Два закона отражения:</strong></span>
+            <span class="lang-kz"><strong>Шағылудың екі заңы:</strong></span>
+            <ul style="margin-top: 10px;">
+                <li><span class="lang-ru">Падающий луч, отраженный луч и перпендикуляр лежат в <strong>одной плоскости</strong>.</span><span class="lang-kz">Түскен сәуле, шағылған сәуле және перпендикуляр <strong>бір жазықтықта</strong> жатады.</span></li>
+                <li><span class="lang-ru">Угол падения (α) равен углу отражения (β).</span><span class="lang-kz">Түсу бұрышы (α) шағылу бұрышына (β) тең.</span></li>
+            </ul>
+        </div>
+        
+        <span class="formula">∠α = ∠β</span>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">3. Плоское зеркало</span>
+            <span class="lang-kz">3. Жазық айна</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Плоским зеркалом называют плоскую поверхность, зеркально отражающую свет. Изображение, которое мы видим в зеркале, обладает рядом уникальных свойств:</span>
+            <span class="lang-kz">Жазық айна деп жарықты айнадай шағылдыратын жазық бетті атайды. Біз айнадан көретін кескін бірқатар ерекше қасиеттерге ие:</span>
+        </p>
+
+        <div class="highlight-box">
+            <ul>
+                <li><span class="lang-ru">Оно <strong>мнимое</strong> (образуется не самими лучами, а их продолжениями за зеркалом).</span><span class="lang-kz">Ол <strong>жалған</strong> (сәулелердің өздерімен емес, олардың айна артындағы жалғасымен түзіледі).</span></li>
+                <li><span class="lang-ru">Оно <strong>прямое</strong> (не перевернутое вверх ногами).</span><span class="lang-kz">Ол <strong>тура</strong> (төңкерілмеген).</span></li>
+                <li><span class="lang-ru">Оно <strong>равно по размеру</strong> самому предмету.</span><span class="lang-kz">Оның <strong>өлшемі</strong> заттың өзімен бірдей.</span></li>
+                <li><span class="lang-ru">Оно <strong>симметрично</strong> предмету относительно плоскости зеркала (правое кажется левым).</span><span class="lang-kz">Ол айна жазықтығына қатысты затқа <strong>симметриялы</strong> (оң жақ сол жақ болып көрінеді).</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Закон отражения</span>
+            <span class="lang-kz">Симуляция: Шағылу заңы</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Перемещайте ползунок, чтобы изменить угол падения лазерного луча. Убедитесь, что угол отражения всегда ему равен!</span>
+                    <span class="lang-kz">Лазер сәулесінің түсу бұрышын өзгерту үшін сырғытпаны жылжытыңыз. Шағылу бұрышының әрқашан оған тең екеніне көз жеткізіңіз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Угол падения (α):</span><span class="lang-kz">Түсу бұрышы (α):</span></span>
+                        <span id="angleVal" style="color: var(--primary); font-weight: bold;">45°</span>
+                    </label>
+                    <input type="range" id="angleSlider" min="0" max="85" step="1" value="45" oninput="updateAngle()">
+                </div>
+
+                <div style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 6px;">
+                    <div><span class="lang-ru">Угол падения (α) = </span><span class="lang-kz">Түсу бұрышы (α) = </span> <b id="alphaText" style="color: #ef4444;">45°</b></div>
+                    <div><span class="lang-ru">Угол отражения (β) = </span><span class="lang-kz">Шағылу бұрышы (β) = </span> <b id="betaText" style="color: #3b82f6;">45°</b></div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="850" height="400"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span class="lang-ru"><strong>Важно:</strong> Углы измеряются не от зеркала, а от пунктирной линии — перпендикуляра (нормали)!</span>
+            <span class="lang-kz"><strong>Маңызды:</strong> Бұрыштар айнадан емес, үзік сызықтан — перпендикулярдан (нормальдан) өлшенеді!</span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Практические задания</span>
+            <span class="lang-kz">Практикалық тапсырмалар</span>
+        </h2>
+        
+        <!-- Задание 1 -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1: Свойства света</span>
+                <span class="lang-kz">1-тапсырма: Жарықтың қасиеттері</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Какое природное явление служит лучшим доказательством прямолинейного распространения света?</span>
+                <span class="lang-kz">Қандай табиғи құбылыс жарықтың түзу сызықпен таралуының ең жақсы дәлелі болып табылады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Радуга на небе" data-kz="Аспандағы кемпірқосақ">Радуга на небе</option>
+                    <option value="2" data-ru="Солнечные и лунные затмения" data-kz="Күн мен Айдың тұтылуы">Солнечные и лунные затмения</option>
+                    <option value="3" data-ru="Миражи в пустыне" data-kz="Шөлдегі сағымдар">Миражи в пустыне</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задание 2 -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2: Расчет углов</span>
+                <span class="lang-kz">2-тапсырма: Бұрыштарды есептеу</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Световой луч падает на плоское зеркало. Угол падения равен <strong>30°</strong>. Чему равен угол <strong>МЕЖДУ</strong> падающим и отраженным лучами? <em>(Впишите только число в градусах)</em></span>
+                <span class="lang-kz">Жарық сәулесі жазық айнаға түседі. Түсу бұрышы <strong>30°</strong>-қа тең. Түскен және шағылған сәулелер <strong>АРАСЫНДАҒЫ</strong> бұрыш нешеге тең? <em>(Тек санды градуспен жазыңыз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="text" id="taskB" placeholder="Введите число..." data-ru="Введите число..." data-kz="Санды енгізіңіз...">
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Ответить</span><span class="lang-kz">Жауап беру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задание 3 -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 3: Изображение в зеркале</span>
+                <span class="lang-kz">3-тапсырма: Айнадағы кескін</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Человек стоит на расстоянии 2 метров от плоского зеркала. На каком расстоянии от зеркала находится его изображение?</span>
+                <span class="lang-kz">Адам жазық айнадан 2 метр қашықтықта тұр. Оның кескіні айнадан қандай қашықтықта орналасқан?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="1 метр" data-kz="1 метр">1 метр</option>
+                    <option value="2" data-ru="2 метра" data-kz="2 метр">2 метра</option>
+                    <option value="3" data-ru="4 метра" data-kz="4 метр">4 метра</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Закрепите материал, посмотрев видео!</span>
+            <span class="lang-kz">Бейнені көру арқылы материалды бекітіңіз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%B7%D0%B0%D0%BA%D0%BE%D0%BD+%D0%BE%D1%82%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F+%D1%81%D0%B2%D0%B5%D1%82%D0%B0+%D0%BF%D0%BB%D0%BE%D1%81%D0%BA%D0%BE%D0%B5+%D0%B7%D0%B5%D1%80%D0%BA%D0%B0%D0%BB%D0%BE+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видео «Отражение света и плоское зеркало»</span>
+                  <span class="lang-kz">«Жарықтың шағылуы және жазық айна» бейнесін табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Свет в однородной среде распространяется...</span>
+                <span class="lang-kz">1. Біртекті ортада жарық қалай таралады...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Волнообразно</span><span class="lang-kz">Толқын тәрізді</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Прямолинейно</span><span class="lang-kz">Түзу сызық бойымен</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">По кругу</span><span class="lang-kz">Шеңбер бойымен</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Как измеряется угол падения луча?</span>
+                <span class="lang-kz">2. Сәуленің түсу бұрышы қалай өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Между лучом и поверхностью зеркала</span><span class="lang-kz">Сәуле мен айна бетінің арасында</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Между падающим и отраженным лучом</span><span class="lang-kz">Түскен және шағылған сәулелер арасында</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Между лучом и перпендикуляром к поверхности</span><span class="lang-kz">Сәуле мен бетке тұрғызылған перпендикуляр арасында</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Согласно закону отражения света...</span>
+                <span class="lang-kz">3. Жарықтың шағылу заңына сәйкес...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Угол падения равен углу отражения</span><span class="lang-kz">Түсу бұрышы шағылу бұрышына тең</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Угол падения всегда больше угла отражения</span><span class="lang-kz">Түсу бұрышы әрқашан шағылу бұрышынан үлкен</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Угол падения плюс угол отражения равен 90°</span><span class="lang-kz">Түсу бұрышы мен шағылу бұрышының қосындысы 90°-қа тең</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Какое изображение дает плоское зеркало?</span>
+                <span class="lang-kz">4. Жазық айна қандай кескін береді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Действительное, перевернутое, уменьшенное</span><span class="lang-kz">Шын, төңкерілген, кішірейтілген</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Мнимое, прямое, равное по размеру</span><span class="lang-kz">Жалған, тура, өлшемі бірдей</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Действительное, прямое, увеличенное</span><span class="lang-kz">Шын, тура, үлкейтілген</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Угол падения луча равен 40°. Чему равен угол отражения?</span>
+                <span class="lang-kz">5. Сәуленің түсу бұрышы 40°-қа тең. Шағылу бұрышы нешеге тең?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">40°</span><span class="lang-kz">40°</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">50°</span><span class="lang-kz">50°</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">80°</span><span class="lang-kz">80°</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант / введите ответ.",
+            fbA_corr: "Верно! Затмения (лунные и солнечные) происходят именно потому, что свет идет прямо и не может 'огнуть' планету.",
+            fbA_inc: "Неверно. Радуга связана с преломлением света, а миражи — с искривлением лучей в нагретом воздухе. Вспомните про тени!",
+            fbB_corr: "Правильно! Угол падения = 30°, угол отражения = 30°. Значит угол между ними: 30° + 30° = 60°.",
+            fbB_inc: "Неверно. Вспомните: угол падения равен углу отражения. А угол МЕЖДУ лучами — это их сумма.",
+            fbC_corr: "Верно! Изображение в плоском зеркале симметрично. Значит оно находится на таком же расстоянии ЗА зеркалом.",
+            fbC_inc: "Неверно. Изображение симметрично. Если предмет в 2 метрах ПЕРЕД зеркалом, то изображение...",
+            test_ok: "Отличный результат: {s} из {t}! Оптика вам покорилась.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз / жауапты енгізіңіз.",
+            fbA_corr: "Дұрыс! Тұтылулар (Ай мен Күн) жарықтың тікелей жүруіне және планетаны 'айналып' өте алмауына байланысты болады.",
+            fbA_inc: "Қате. Кемпірқосақ жарықтың сынуымен, ал сағымдар ыстық ауада сәулелердің қисаюымен байланысты. Көлеңкелер туралы еске түсіріңіз!",
+            fbB_corr: "Дұрыс! Түсу бұрышы = 30°, шағылу бұрышы = 30°. Демек олардың арасындағы бұрыш: 30° + 30° = 60°.",
+            fbB_inc: "Қате. Есте сақтаңыз: түсу бұрышы шағылу бұрышына тең. Ал сәулелер АРАСЫНДАҒЫ бұрыш — олардың қосындысы.",
+            fbC_corr: "Дұрыс! Жазық айнадағы кескін симметриялы. Демек ол айна АРТЫНДА дәл сондай қашықтықта орналасқан.",
+            fbC_inc: "Қате. Кескін симметриялы. Егер зат айна АЛДЫНДА 2 метр болса, онда кескін...",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Оптика сізге бағынды.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[type="text"][data-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    // --- СИМУЛЯЦИЯ ОПТИКИ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    let angleDeg = parseInt(document.getElementById('angleSlider').value);
+
+    window.updateAngle = function() {
+        angleDeg = parseInt(document.getElementById('angleSlider').value);
+        document.getElementById('angleVal').textContent = angleDeg + '°';
+        document.getElementById('alphaText').textContent = angleDeg + '°';
+        document.getElementById('betaText').textContent = angleDeg + '°';
+        drawSimulation();
+    }
+
+    function drawSimulation() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const centerX = canvas.width / 2;
+        const mirrorY = canvas.height - 50;
+
+        // Рисуем зеркало
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillRect(centerX - 300, mirrorY, 600, 10);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for(let i = -290; i < 300; i+=20) {
+            ctx.moveTo(centerX + i, mirrorY + 10);
+            ctx.lineTo(centerX + i - 10, mirrorY + 25);
+        }
+        ctx.stroke();
+
+        // Рисуем перпендикуляр (нормаль)
+        ctx.setLineDash([10, 10]);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX, mirrorY);
+        ctx.lineTo(centerX, 50);
+        ctx.stroke();
+        ctx.setLineDash([]); // Возвращаем сплошную линию
+
+        // Перевод угла в радианы (отсчет от нормали, т.е. от вертикали Y)
+        const rad = angleDeg * Math.PI / 180;
+        
+        // Длина луча для отрисовки
+        const rayLen = 400;
+
+        // Координаты падающего луча (источник)
+        const srcX = centerX - rayLen * Math.sin(rad);
+        const srcY = mirrorY - rayLen * Math.cos(rad);
+
+        // Координаты отраженного луча
+        const refX = centerX + rayLen * Math.sin(rad);
+        const refY = mirrorY - rayLen * Math.cos(rad);
+
+        // Рисуем падающий луч (красный)
+        ctx.strokeStyle = '#ef4444';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(srcX, srcY);
+        ctx.lineTo(centerX, mirrorY);
+        ctx.stroke();
+
+        // Рисуем отраженный луч (синий для наглядности)
+        ctx.strokeStyle = '#3b82f6';
+        ctx.beginPath();
+        ctx.moveTo(centerX, mirrorY);
+        ctx.lineTo(refX, refY);
+        ctx.stroke();
+
+        // Стрелки на лучах
+        drawArrowhead(ctx, srcX, srcY, centerX, mirrorY, '#ef4444');
+        drawArrowhead(ctx, centerX, mirrorY, refX, refY, '#3b82f6');
+
+        // Рисуем дуги углов, если угол больше 0
+        if (angleDeg > 0) {
+            ctx.lineWidth = 2;
+            
+            // Дуга альфа (падающий)
+            ctx.strokeStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(centerX, mirrorY, 80, -Math.PI/2 - rad, -Math.PI/2);
+            ctx.stroke();
+
+            // Дуга бета (отраженный)
+            ctx.strokeStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(centerX, mirrorY, 80, -Math.PI/2, -Math.PI/2 + rad);
+            ctx.stroke();
+
+            // Текст углов
+            ctx.fillStyle = '#ef4444';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('α', centerX - 25, mirrorY - 90);
+
+            ctx.fillStyle = '#3b82f6';
+            ctx.textAlign = 'left';
+            ctx.fillText('β', centerX + 25, mirrorY - 90);
+        }
+
+        // Рисуем "лазерную указку"
+        ctx.save();
+        ctx.translate(srcX, srcY);
+        ctx.rotate(Math.PI/2 - rad); // поворот указки
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(-30, -10, 60, 20);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(30, -5, 10, 10);
+        ctx.restore();
+    }
+
+    function drawArrowhead(ctx, fromX, fromY, toX, toY, color) {
+        const headlen = 15;
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        // Рисуем стрелку примерно посередине луча
+        const midX = fromX + dx/2;
+        const midY = fromY + dy/2;
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(midX, midY);
+        ctx.lineTo(midX - headlen * Math.cos(angle - Math.PI / 6), midY - headlen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(midX - headlen * Math.cos(angle + Math.PI / 6), midY - headlen * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+    }
+
+    // Инициализация симуляции
+    window.onload = () => {
+        drawSimulation();
+    };
+
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        let val = document.getElementById('taskB').value.trim();
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '60' || val.includes('60')) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

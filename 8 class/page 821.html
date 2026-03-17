@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сопротивление. Реостат — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #fdf2f8; /* Светло-розовый/рубиновый фон */
+            --text-color: #1e293b;
+            --card-bg: #ffffff;
+            --primary: #e11d48; /* Рубиново-красный */
+            --primary-hover: #be123c;
+            --secondary: #475569; /* Металлический серый */
+            --hot: #ef4444; 
+            --cold: #3b82f6; 
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #fecdd3;
+            --text-muted: #64748b;
+            --formula-bg: #ffe4e6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #881337;
+                --text-muted: #94a3b8;
+                --formula-bg: #4c0519;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .dashboard {
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        .dashboard div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+        .dashboard div:last-child { border-bottom: none; margin-bottom: 0; }
+        .dashboard strong { color: var(--primary); }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 380px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(225, 29, 72, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--secondary); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(225, 29, 72, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(225, 29, 72, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(225, 29, 72, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Сопротивление. Реостаты</span>
+            <span class="lang-kz">Кедергі. Реостаттар</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему ток не течет бесконечно быстро? Что мешает электронам внутри провода и почему от этого провода нагреваются? Разберемся с главным препятствием электричества — сопротивлением!</span>
+            <span class="lang-kz">Неліктен ток шексіз жылдам ақпайды? Сымның ішіндегі электрондарға не кедергі келтіреді және неліктен одан сымдар қызады? Электрдің басты кедергісі — кедергімен танысайық!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Природа электрического сопротивления</span>
+            <span class="lang-kz">1. Электр кедергісінің табиғаты</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Представьте толпу людей, бегущих по лесу. Им мешают деревья, они сталкиваются с ними, замедляются и тратят энергию. Электроны в проводнике ведут себя так же!</span>
+            <span class="lang-kz">Орманда жүгіріп келе жатқан адамдар тобын елестетіңіз. Оларға ағаштар кедергі жасайды, олар ағаштарға соғылып, баяулайды және энергия жұмсайды. Өткізгіштегі электрондар да өздерін осылай ұстайды!</span>
+        </p>
+        <p>
+            <span class="lang-ru">Двигаясь по металлическому проводу, свободные электроны постоянно сталкиваются с ионами кристаллической решетки металла. Эти столкновения тормозят ток. Свойство проводника ограничивать силу тока называется <strong>электрическим сопротивлением (обозначается <span class="math-symbol">R</span>)</strong>.</span>
+            <span class="lang-kz">Металл сым бойымен қозғала отырып, еркін электрондар металдың кристалдық торының иондарымен үнемі соқтығысады. Бұл соқтығысулар токты тежейді. Өткізгіштің ток күшін шектеу қасиеті <strong>электр кедергісі ( <span class="math-symbol">R</span> деп белгіленеді)</strong> деп аталады.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Сопротивление измеряется в <strong>Омах (Ом)</strong>, в честь немецкого физика Георга Ома. Из-за этих столкновений электроны передают свою энергию решетке, и проводник <strong>нагревается</strong>!</span>
+            <span class="lang-kz">Кедергі неміс физигі Георг Омның құрметіне <strong>Оммен (Ом)</strong> өлшенеді. Осы соқтығысулардың салдарынан электрондар өз энергиясын торға береді, сөйтіп өткізгіш <strong>қызады</strong>!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. От чего зависит сопротивление?</span>
+            <span class="lang-kz">2. Кедергі неге тәуелді?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Сопротивление любого провода можно вычислить, зная его размеры и материал. Чем провод <strong>длиннее</strong>, тем сложнее электронам пройти (сопротивление больше). Чем провод <strong>толще</strong> (больше площадь), тем просторнее электронам (сопротивление меньше).</span>
+            <span class="lang-kz">Кез келген сымның кедергісін оның өлшемдері мен материалын біле отырып есептеуге болады. Сым неғұрлым <strong>ұзын</strong> болса, электрондарға өту соғұрлым қиын болады (кедергі үлкен). Сым неғұрлым <strong>қалың</strong> болса (ауданы үлкен), электрондарға соғұрлым кең болады (кедергі аз).</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Формула сопротивления проводника:</span>
+            <span class="lang-kz">Өткізгіш кедергісінің формуласы:</span>
+            
+            <div class="math-formula">
+                R = &rho; &middot; 
+                <div class="fraction">
+                    <span>L</span>
+                    <span class="fdn">S</span>
+                </div>
+            </div>
+            
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Где: <br><strong>R</strong> — сопротивление (Ом)<br><strong>L</strong> — длина проводника (м)<br><strong>S</strong> — площадь поперечного сечения (мм<sup>2</sup>)<br><strong>&rho; (ро)</strong> — удельное сопротивление материала (Ом&middot;мм<sup>2</sup>/м).</span>
+                <span class="lang-kz">Мұндағы: <br><strong>R</strong> — кедергі (Ом)<br><strong>L</strong> — өткізгіштің ұзындығы (м)<br><strong>S</strong> — көлденең қимасының ауданы (мм<sup>2</sup>)<br><strong>&rho; (ро)</strong> — материалдың меншікті кедергісі (Ом&middot;мм<sup>2</sup>/м).</span>
+            </p>
+        </div>
+        
+        <p>
+            <span class="lang-ru"><strong>Удельное сопротивление (&rho;)</strong> показывает, насколько сильно сам материал мешает току. У меди и серебра оно очень маленькое (хорошие проводники), а у нихрома — большое (из него делают спирали для утюгов и обогревателей).</span>
+            <span class="lang-kz"><strong>Меншікті кедергі (&rho;)</strong> материалдың өзі токқа қаншалықты қатты кедергі жасайтынын көрсетеді. Мыс пен күмісте ол өте аз (жақсы өткізгіштер), ал нихромда — үлкен (одан үтіктер мен жылытқыштарға арналған спиральдар жасайды).</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">3. Реостаты</span>
+            <span class="lang-kz">3. Реостаттар</span>
+        </h2>
+        <p>
+            <span class="lang-ru"><strong>Реостат</strong> — это прибор для плавной регулировки силы тока в цепи. Это провод, намотанный на керамический цилиндр. По нему скользит металлический ползунок. Передвигая ползунок, мы меняем <em>длину</em> той части провода, по которой идет ток, а значит, меняем сопротивление!</span>
+            <span class="lang-kz"><strong>Реостат</strong> — бұл тізбектегі ток күшін бірқалыпты реттеуге арналған құрал. Бұл керамикалық цилиндрге оралған сым. Оның бойымен металл жүгіртпе сырғиды. Жүгіртпені жылжыта отырып, біз ток өтетін сым бөлігінің <em>ұзындығын</em> өзгертеміз, демек, кедергіні өзгертеміз!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Реостат в цепи</span>
+            <span class="lang-kz">Симуляция: Тізбектегі реостат</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Меняйте параметры провода реостата и передвигайте ползунок (изменяя длину <span class="math-symbol">L</span>). Наблюдайте, как меняется сопротивление <span class="math-symbol">R</span> и яркость лампы!</span>
+                    <span class="lang-kz">Реостат сымының параметрлерін өзгертіңіз және жүгіртпені жылжытыңыз (<span class="math-symbol">L</span> ұзындығын өзгерте отырып). <span class="math-symbol">R</span> кедергісі мен шамның жарықтығы қалай өзгеретінін бақылаңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Материал провода (&rho;):</span>
+                        <span class="lang-kz">Сым материалы (&rho;):</span>
+                    </label>
+                    <select id="matSelect" onchange="updateSim()">
+                        <option value="0.017" data-ru="Медь (&rho; = 0.017)" data-kz="Мыс (&rho; = 0.017)">Медь (&rho; = 0.017)</option>
+                        <option value="0.028" data-ru="Алюминий (&rho; = 0.028)" data-kz="Алюминий (&rho; = 0.028)">Алюминий (&rho; = 0.028)</option>
+                        <option value="0.10" data-ru="Сталь (&rho; = 0.10)" data-kz="Болат (&rho; = 0.10)">Сталь (&rho; = 0.10)</option>
+                        <option value="1.1" selected data-ru="Нихром (&rho; = 1.1) - Сплав" data-kz="Нихром (&rho; = 1.1) - Қорытпа">Нихром (&rho; = 1.1) - Сплав</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Толщина провода S:</span><span class="lang-kz">Сым қалыңдығы S:</span></span>
+                        <span id="sValText">1.0 мм²</span>
+                    </label>
+                    <input type="range" id="sSlider" min="0.5" max="5.0" step="0.5" value="1.0" oninput="updateSim()">
+                </div>
+
+                <div class="control-group" style="margin-top: 5px; padding-top: 10px; border-top: 1px solid var(--border);">
+                    <label style="color: var(--primary);">
+                        <span><span class="lang-ru">ПОЛЗУНОК РЕОСТАТА (Длина L):</span><span class="lang-kz">РЕОСТАТ ЖҮГІРТПЕСІ (Ұзындық L):</span></span>
+                        <span id="lValText">25 м</span>
+                    </label>
+                    <input type="range" id="lSlider" min="0" max="50" step="1" value="25" oninput="updateSim()">
+                </div>
+
+                <div class="dashboard" style="margin-top: 15px;">
+                    <div>
+                        <span class="lang-ru">Сопротивление реостата (R):</span><span class="lang-kz">Реостат кедергісі (R):</span>
+                        <strong><span id="rMeter">27.5</span> Ом</strong>
+                    </div>
+                    <div style="border-top: 2px solid var(--primary); margin-top: 5px; padding-top: 5px;">
+                        <span class="lang-ru">Сила тока в цепи (I):</span><span class="lang-kz">Тізбектегі ток күші (I):</span>
+                        <strong style="color: var(--success);"><span id="iMeter">0.3</span> А</strong>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Чтобы реостат мог сильно менять ток, его делают из провода с <strong>высоким удельным сопротивлением</strong> (например, из нихрома). Если взять медный провод, то даже 50 метров дадут сопротивление меньше 1 Ома, и яркость лампы почти не изменится!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Реостат токты қатты өзгерте алуы үшін оны <strong>меншікті кедергісі жоғары</strong> сымнан (мысалы, нихромнан) жасайды. Егер мыс сымды алсаңыз, тіпті 50 метр 1 Ом-нан аз кедергі береді және шамның жарықтығы дерлік өзгермейді!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет сопротивления)</span>
+                <span class="lang-kz">1-тапсырма (Кедергіні есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Железный провод (&rho; = 0.10) имеет длину <strong>100 м</strong> и площадь поперечного сечения <strong>2 мм²</strong>. Вычислите его электрическое сопротивление. <br><em>(Формула: R = &rho; &middot; L / S)</em></span>
+                <span class="lang-kz">Темір сымның (&rho; = 0.10) ұзындығы <strong>100 м</strong> және көлденең қимасының ауданы <strong>2 мм²</strong>. Оның электр кедергісін есептеңіз. <br><em>(Формула: R = &rho; &middot; L / S)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Омах" data-placeholder-kz="Жауап Оммен" placeholder="Ответ в Омах">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика реостата)</span>
+                <span class="lang-kz">2-тапсырма (Реостат логикасы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Что нужно сделать с ползунком реостата (увеличить или уменьшить рабочую длину провода), чтобы лампочка в цепи стала светить <strong>ярче</strong>?</span>
+                <span class="lang-kz">Тізбектегі шам <strong>жарығырақ</strong> жануы үшін реостат жүгіртпесімен не істеу керек (сымның жұмыс ұзындығын ұлғайту немесе азайту)?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Увеличить длину провода" data-kz="Сымның ұзындығын ұлғайту">Увеличить длину провода</option>
+                    <option value="2" data-ru="Уменьшить длину провода" data-kz="Сымның ұзындығын азайту">Уменьшить длину провода</option>
+                    <option value="3" data-ru="Длина провода не влияет на яркость" data-kz="Сымның ұзындығы жарықтыққа әсер етпейді">Длина провода не влияет на яркость</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите наглядные опыты о том, как разные материалы по-разному проводят ток, и как ползунковый реостат управляет электричеством!</span>
+            <span class="lang-kz">Әртүрлі материалдар токты қалай әртүрлі өткізетіні және жүгіртпелі реостат электрді қалай басқаратыны туралы көрнекі тәжірибелерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B5+%D1%81%D0%BE%D0%BF%D1%80%D0%BE%D1%82%D0%B8%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5+%D1%80%D0%B5%D0%BE%D1%81%D1%82%D0%B0%D1%82+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Сопротивление. Реостат»</span>
+                  <span class="lang-kz">«Кедергі. Реостат» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">1. Что является причиной электрического сопротивления металлических проводников?</span>
+                <span class="lang-kz">1. Металл өткізгіштердің электр кедергісінің себебі неде?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Трение электронов о воздух</span><span class="lang-kz">Электрондардың ауаға үйкелісі</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Взаимодействие электронов друг с другом</span><span class="lang-kz">Электрондардың бір-бірімен өзара әсерлесуі</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Столкновение свободных электронов с ионами кристаллической решетки</span><span class="lang-kz">Еркін электрондардың кристалдық тордың иондарымен соқтығысуы</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Наличие изоляции на проводе</span><span class="lang-kz">Сымда оқшаулағыштың болуы</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. В каких единицах измеряется электрическое сопротивление?</span>
+                <span class="lang-kz">2. Электр кедергісі қандай бірліктермен өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">В Амперах (А)</span><span class="lang-kz">Ампермен (А)</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">В Омах (Ом)</span><span class="lang-kz">Оммен (Ом)</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">В Вольтах (В)</span><span class="lang-kz">Вольтпен (В)</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">В Фарадах (Ф)</span><span class="lang-kz">Фарадпен (Ф)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">3. Как изменится сопротивление провода, если его длину увеличить в 2 раза (а толщину оставить прежней)?</span>
+                <span class="lang-kz">3. Егер сымның ұзындығын 2 есе арттырса (ал қалыңдығын сол қалпында қалдырса), оның кедергісі қалай өзгереді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Уменьшится в 2 раза</span><span class="lang-kz">2 есе кемиді</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Не изменится</span><span class="lang-kz">Өзгермейді</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Увеличится в 4 раза</span><span class="lang-kz">4 есе артады</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Увеличится в 2 раза</span><span class="lang-kz">2 есе артады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Если проводник сложить вдвое (тем самым увеличив его площадь поперечного сечения), то его сопротивление...</span>
+                <span class="lang-kz">4. Егер өткізгішті екіге бүктесе (осылайша оның көлденең қимасының ауданын ұлғайтса), онда оның кедергісі...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Уменьшится (т.к. электронам "просторнее" двигаться)</span><span class="lang-kz">Кемиді (себебі электрондарға қозғалу "кеңірек" болады)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Увеличится (т.к. провод стал толще)</span><span class="lang-kz">Артады (себебі сым қалыңдады)</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Останется прежним</span><span class="lang-kz">Сол қалпында қалады</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Станет равным нулю</span><span class="lang-kz">Нөлге тең болады</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">5. Каково основное назначение реостата в электрической цепи?</span>
+                <span class="lang-kz">5. Электр тізбегіндегі реостаттың негізгі міндеті қандай?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Измерение напряжения</span><span class="lang-kz">Кернеуді өлшеу</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Выработка электрической энергии</span><span class="lang-kz">Электр энергиясын өндіру</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Регулирование силы тока путем изменения сопротивления</span><span class="lang-kz">Кедергіні өзгерту арқылы ток күшін реттеу</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Охлаждение проводов</span><span class="lang-kz">Сымдарды салқындату</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Подставляем в формулу: R = 0.10 * 100 / 2 = 10 / 2 = 5 Ом.",
+            fbA_inc: "Неверно. Умножьте удельное сопротивление (0.10) на длину (100) и разделите на площадь (2).",
+            fbB_corr: "Абсолютно правильно! Чтобы лампа светила ярче, ток должен быть больше. Для этого сопротивление нужно уменьшить. Следовательно, рабочую длину провода реостата надо уменьшить.",
+            fbB_inc: "Неверно. Если длину увеличить, сопротивление вырастет, току станет сложнее проходить, и лампа потускнеет.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно поняли тему сопротивления.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! Формулаға қоямыз: R = 0.10 * 100 / 2 = 10 / 2 = 5 Ом.",
+            fbA_inc: "Қате. Меншікті кедергіні (0.10) ұзындыққа (100) көбейтіп, ауданға (2) бөліңіз.",
+            fbB_corr: "Өте дұрыс! Шам жарығырақ жануы үшін ток көбірек болуы керек. Ол үшін кедергіні азайту қажет. Демек, реостат сымының жұмыс ұзындығын азайту керек.",
+            fbB_inc: "Қате. Егер ұзындықты арттырса, кедергі өседі, токқа өту қиындайды және шам көмескіленеді.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз кедергі тақырыбын өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        updateSim();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Переменные симуляции
+    let rho = 1.1; // Удельное сопротивление
+    let areaS = 1.0; // Площадь
+    let lengthL = 25; // Рабочая длина
+    
+    let resR = 0; // Сопротивление реостата
+    let currentI = 0; // Ток
+    const voltageU = 12; // Постоянная батарея 12В
+    const lampR = 10; // Сопротивление лампы 10 Ом
+
+    window.updateSim = function() {
+        rho = parseFloat(document.getElementById('matSelect').value);
+        areaS = parseFloat(document.getElementById('sSlider').value);
+        lengthL = parseInt(document.getElementById('lSlider').value);
+        
+        document.getElementById('sValText').textContent = areaS.toFixed(1) + ' мм²';
+        document.getElementById('lValText').textContent = lengthL + ' м';
+        
+        // Математика
+        resR = rho * (lengthL / areaS);
+        currentI = voltageU / (lampR + resR);
+        
+        document.getElementById('rMeter').textContent = resR.toFixed(1);
+        document.getElementById('iMeter').textContent = currentI.toFixed(2);
+        
+        drawScene();
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Центр и масштабы
+        const cx = 250;
+        const cy = 150;
+        
+        // 1. Провода цепи (Прямоугольник)
+        ctx.strokeStyle = '#475569';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        // От батареи (верх центр) направо, вниз к лампе
+        ctx.moveTo(cx + 30, 40); ctx.lineTo(420, 40); ctx.lineTo(420, 240); ctx.lineTo(cx + 25, 240);
+        // От лампы налево, вверх к реостату (справа внизу)
+        ctx.moveTo(cx - 25, 240); ctx.lineTo(80, 240); ctx.lineTo(80, 150); ctx.lineTo(120, 150);
+        // От реостата (верхний ползунок) вверх и направо к батарее
+        // Позиция ползунка зависит от длины. Реостат занимает от x=120 до x=380. (длина 260px)
+        let sliderX = 120 + (lengthL / 50) * 260;
+        ctx.moveTo(sliderX, 110); ctx.lineTo(sliderX, 40); ctx.lineTo(cx - 30, 40);
+        ctx.stroke();
+
+        // 2. Батарея
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(cx - 30, 20); ctx.lineTo(cx - 30, 60); ctx.stroke(); // длинный +
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(cx + 30, 30); ctx.lineTo(cx + 30, 50); ctx.stroke(); // короткий -
+        ctx.lineWidth = 2; ctx.setLineDash([4,4]);
+        ctx.beginPath(); ctx.moveTo(cx - 15, 40); ctx.lineTo(cx + 15, 40); ctx.stroke(); // пунктир
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ef4444'; ctx.fillText('+', cx - 45, 30);
+        ctx.fillStyle = '#3b82f6'; ctx.fillText('-', cx + 40, 30);
+
+        // 3. Лампа (внизу)
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, 240, 25, 0, Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - 15, 225); ctx.lineTo(cx + 15, 255); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 15, 225); ctx.lineTo(cx - 15, 255); ctx.stroke();
+        
+        // Яркость лампы зависит от тока. Макс ток = 12/10 = 1.2А
+        let brightness = Math.min(1, currentI / 1.2);
+        if (brightness > 0.05) {
+            let glow = ctx.createRadialGradient(cx, 240, 20, cx, 240, 80);
+            glow.addColorStop(0, `rgba(250, 204, 21, ${brightness})`);
+            glow.addColorStop(1, 'rgba(250, 204, 21, 0)');
+            ctx.fillStyle = glow;
+            ctx.beginPath(); ctx.arc(cx, 240, 80, 0, Math.PI*2); ctx.fill();
+        }
+
+        // 4. РЕОСТАТ
+        // Основа (цилиндр)
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(120, 130, 260, 40);
+        
+        // Витки провода (цвет зависит от материала и нагрева)
+        // Если ток высокий и сопротивление высокое - греется (краснеет)
+        // Для простоты визуализируем материал: Медь (оранжевый), Алюм (светло-серый), Сталь (темно-серый), Нихром (красноватый)
+        let wireColor = '#94a3b8';
+        if (rho === 0.017) wireColor = '#fb923c';
+        else if (rho === 0.028) wireColor = '#cbd5e1';
+        else if (rho === 0.10) wireColor = '#64748b';
+        else if (rho === 1.1) wireColor = '#f43f5e';
+        
+        // Тепло (эффект) - если нихром и ток идет, он светится красным
+        if (rho === 1.1 && currentI > 0.1) {
+            let heatGlow = ctx.createLinearGradient(120, 130, 380, 130);
+            heatGlow.addColorStop(0, `rgba(225, 29, 72, ${brightness * 0.8})`);
+            heatGlow.addColorStop(1, 'transparent');
+            ctx.fillStyle = heatGlow;
+            // Светится только "активная" часть
+            ctx.fillRect(120, 130, sliderX - 120, 40);
+        }
+
+        ctx.strokeStyle = wireColor;
+        // Толщина витков зависит от areaS (0.5 - 5.0) -> линия от 1 до 5px
+        ctx.lineWidth = 1 + (areaS / 5) * 4; 
+        
+        // Рисуем зигзаг-витки
+        ctx.beginPath();
+        for(let x = 120; x <= 380; x += 8) {
+            ctx.moveTo(x, 130);
+            ctx.lineTo(x + 4, 170);
+            if (x + 8 <= 380) {
+                ctx.lineTo(x + 8, 130);
+            }
+        }
+        ctx.stroke();
+
+        // Ползунок
+        ctx.fillStyle = '#e11d48';
+        ctx.beginPath();
+        ctx.moveTo(sliderX, 130);
+        ctx.lineTo(sliderX - 10, 110);
+        ctx.lineTo(sliderX + 10, 110);
+        ctx.fill();
+
+        // 5. Амперметр
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath(); ctx.arc(420, 150, 20, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 3; ctx.stroke();
+        ctx.fillStyle = '#10b981'; ctx.font = 'bold 18px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText('A', 420, 150);
+
+        // Стрелка направления тока (условно)
+        if (currentI > 0) {
+            // От плюса батареи вниз по левой стороне (просто декоративная стрелочка)
+            ctx.strokeStyle = '#e11d48';
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(90, 190); ctx.lineTo(80, 210); ctx.lineTo(70, 190); ctx.stroke();
+            ctx.fillStyle = '#e11d48';
+            ctx.fillText('I', 60, 200);
+        }
+    }
+
+    // Инициализация
+    updateSim();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // R = rho * L / S = 0.10 * 100 / 2 = 10 / 2 = 5
+        if (val === 5) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

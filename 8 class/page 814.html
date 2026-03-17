@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электрический заряд. Электризация — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f0fdf4; /* Светло-зеленый (нейтральный) */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #2563eb; /* Электрический синий */
+            --primary-hover: #1d4ed8;
+            --hot: #ef4444; /* Положительный (Красный) */
+            --cold: #0ea5e9; /* Отрицательный (Синий) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b; /* Искра / Энергия */
+            --border: #bfdbfe;
+            --text-muted: #64748b;
+            --formula-bg: #eff6ff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #020617; /* Очень темный синий */
+                --text-color: #f1f5f9;
+                --card-bg: #0f172a;
+                --border: #1e3a8a;
+                --text-muted: #94a3b8;
+                --formula-bg: #1e3a8a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .charge-badge {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            color: white;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 0 2px;
+        }
+        .charge-plus { background-color: var(--hot); }
+        .charge-minus { background-color: var(--cold); }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        button:active { transform: scale(0.97); }
+        button.btn-primary { background-color: var(--primary); }
+        button.btn-primary:hover { background-color: var(--primary-hover); }
+        button.btn-reset { background-color: var(--text-muted); }
+        button.btn-reset:hover { background-color: #475569; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #0f172a; 
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(37, 99, 235, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(37, 99, 235, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Электрический заряд. Электризация тел</span>
+            <span class="lang-kz">Электр заряды. Денелердің электрленуі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Почему волосы тянутся к расческе? Почему снимая свитер зимой, мы слышим треск и видим искры? Все дело в невидимых частицах — электрических зарядах!</span>
+            <span class="lang-kz">Неліктен шаш тараққа тартылады? Қыста жемпірді шешкенде неге сытырлаған дыбыс естіп, ұшқындарды көреміз? Мұның бәрі көзге көрінбейтін бөлшектер — электр зарядтарының әсері!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Два вида зарядов</span>
+            <span class="lang-kz">1. Зарядтардың екі түрі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В природе существует всего два вида электрических зарядов. Их условно назвали:</span>
+            <span class="lang-kz">Табиғатта электр зарядтарының тек екі түрі ғана бар. Оларды шартты түрде былай атады:</span>
+        </p>
+        <ul>
+            <li>
+                <span class="charge-badge charge-plus">+</span> <strong><span class="lang-ru">Положительные</span><span class="lang-kz">Оң зарядтар</span></strong> 
+                <span class="lang-ru">(например, у протонов в ядре атома или на стекле, потертом о шелк).</span>
+                <span class="lang-kz">(мысалы, атом ядросындағы протондарда немесе жібекке үйкелген шыныда).</span>
+            </li>
+            <li style="margin-top: 10px;">
+                <span class="charge-badge charge-minus">-</span> <strong><span class="lang-ru">Отрицательные</span><span class="lang-kz">Теріс зарядтар</span></strong> 
+                <span class="lang-ru">(у электронов, которые вращаются вокруг ядра, или на эбоните, потертом о шерсть).</span>
+                <span class="lang-kz">(ядроны айнала қозғалатын электрондарда немесе жүнге үйкелген эбонитте).</span>
+            </li>
+        </ul>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Главное правило взаимодействия:</strong> Одноименные заряды (+ и +, или - и -) <strong>отталкиваются</strong>. Разноименные заряды (+ и -) <strong>притягиваются</strong> друг к другу.</span>
+            <span class="lang-kz"><strong>Өзара әсерлесудің басты ережесі:</strong> Аттас зарядтар (+ және +, немесе - және -) <strong>тебіледі</strong>. Әр аттас зарядтар (+ және -) бір-біріне <strong>тартылады</strong>.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Как происходит электризация?</span>
+            <span class="lang-kz">2. Электрлену қалай жүреді?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Обычно тела вокруг нас <strong>электрически нейтральны</strong> (заряд равен нулю). Это значит, что количество плюсов (протонов) в них точно равно количеству минусов (электронов).</span>
+            <span class="lang-kz">Әдетте бізді қоршаған денелер <strong>электрлік бейтарап</strong> (заряды нөлге тең). Бұл олардағы плюстер (протондар) саны минустар (электрондар) санына дәл тең екенін білдіреді.</span>
+        </p>
+        <p>
+            <span class="lang-ru">Но электроны на внешних орбитах атомов держатся слабо. Если плотно прижать два разных тела друг к другу (или потереть), <strong>электроны могут перепрыгнуть с одного тела на другое!</strong> Протоны при этом никуда не перемещаются (они плотно сидят в ядрах).</span>
+            <span class="lang-kz">Бірақ атомдардың сыртқы орбиталарындағы электрондар әлсіз ұсталады. Егер екі түрлі денені бір-біріне қатты қысса (немесе үйкесе), <strong>электрондар бір денеден екіншісіне секіріп өтуі мүмкін!</strong> Бұл ретте протондар ешқайда жылжымайды (олар ядроларда мықтап орналасқан).</span>
+        </p>
+        
+        <div class="highlight-box" style="border-left-color: var(--hot);">
+            <ul style="margin:0; padding-left: 1rem;">
+                <li><span class="lang-ru">Тело, которое <strong>потеряло</strong> электроны, становится <strong>положительно заряженным</strong> (плюсов стало больше).</span><span class="lang-kz">Электрондарын <strong>жоғалтқан</strong> дене <strong>оң зарядталады</strong> (плюстер көбейді).</span></li>
+                <li><span class="lang-ru">Тело, которое <strong>приняло</strong> лишние электроны, становится <strong>отрицательно заряженным</strong>.</span><span class="lang-kz">Артық электрондарды <strong>қабылдаған</strong> дене <strong>теріс зарядталады</strong>.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Электризация трением</span>
+            <span class="lang-kz">Симуляция: Үйкеліс арқылы электрлену</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                <p style="font-size: 0.95rem; margin-bottom: 10px;">
+                    <span class="lang-ru">Слева — шерстяной свитер. Справа — резиновый шарик. Сейчас они нейтральны. Нажмите кнопку, чтобы потереть шарик о свитер!</span>
+                    <span class="lang-kz">Сол жақта — жүнді жемпір. Оң жақта — резеңке шар. Қазір олар бейтарап. Шарды жемпірге үйкеу үшін түймені басыңыз!</span>
+                </p>
+
+                <div class="buttons">
+                    <button class="btn-primary" id="btnRub" onclick="startRubbing()">
+                        <span class="lang-ru">&#129412; Потереть шарик о свитер</span>
+                        <span class="lang-kz">&#129412; Шарды жемпірге үйкеу</span>
+                    </button>
+                    <button class="btn-reset" onclick="resetSim()">
+                        <span class="lang-ru">Сбросить заряды</span>
+                        <span class="lang-kz">Зарядтарды бастапқы күйге келтіру</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="550" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> При трении легкие электроны (-) переходят с шерсти на резину. Шарик становится отрицательным, а свитер — положительным. Поскольку заряды разноименные, тела начинают притягиваться!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Үйкеліс кезінде жеңіл электрондар (-) жүннен резеңкеге өтеді. Шар теріс, ал жемпір — оң зарядталады. Зарядтар әр аттас болғандықтан, денелер бір-біріне тартыла бастайды!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Логика)</span>
+                <span class="lang-kz">1-тапсырма (Логика)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Стеклянную палочку потерли о кусок шелка. После этого палочка приобрела <strong>положительный</strong> заряд. Что произошло с частицами при электризации?</span>
+                <span class="lang-kz">Шыны таяқшаны жібек кесегіне үйкеді. Осыдан кейін таяқша <strong>оң</strong> зарядқа ие болды. Электрлену кезінде бөлшектермен не болды?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Протоны перешли со стекла на шелк" data-kz="Протондар шыныдан жібекке өтті">Протоны перешли со стекла на шелк</option>
+                    <option value="2" data-ru="Электроны перешли с шелка на стекло" data-kz="Электрондар жібектен шыныға өтті">Электроны перешли с шелка на стекло</option>
+                    <option value="3" data-ru="Электроны перешли со стекла на шелк" data-kz="Электрондар шыныдан жібекке өтті">Электроны перешли со стекла на шелк</option>
+                    <option value="4" data-ru="Стекло само создало новые протоны" data-kz="Шыны өздігінен жаңа протондар жасады">Стекло само создало новые протоны</option>
+                </select>
+                <button class="btn-primary" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Закон сохранения заряда)</span>
+                <span class="lang-kz">2-тапсырма (Зарядтың сақталу заңы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Имеются два одинаковых металлических шарика. Заряд первого равен <strong>+6q</strong>, а заряд второго равен <strong>-2q</strong>. Шарики привели в соприкосновение и снова раздвинули. Какой заряд станет у каждого шарика? <br><em>(Подсказка: заряды сложатся и разделятся поровну)</em></span>
+                <span class="lang-kz">Екі бірдей металл шар бар. Біріншісінің заряды <strong>+6q</strong>, ал екіншісінің заряды <strong>-2q</strong>. Шарларды бір-біріне тигізіп, қайтадан ажыратты. Әр шардың заряды қандай болады? <br><em>(Көмек: зарядтар қосылып, теңдей бөлінеді)</em></span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="+4q у каждого" data-kz="Әрқайсысында +4q">+4q у каждого</option>
+                    <option value="2" data-ru="+2q у каждого" data-kz="Әрқайсысында +2q">+2q у каждого</option>
+                    <option value="3" data-ru="-4q у каждого" data-kz="Әрқайсысында -4q">-4q у каждого</option>
+                    <option value="4" data-ru="0 у каждого" data-kz="Әрқайсысында 0">0 у каждого</option>
+                </select>
+                <button class="btn-primary" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите увлекательные опыты по электризации тел, взаимодействию зарядов и устройству электроскопа!</span>
+            <span class="lang-kz">Денелердің электрленуі, зарядтардың өзара әсерлесуі және электроскоптың құрылысы туралы қызықты тәжірибелерді қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F+%D1%82%D0%B5%D0%BB+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Электризация тел»</span>
+                  <span class="lang-kz">«Денелердің электрленуі» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Как взаимодействуют между собой два положительных заряда?</span>
+                <span class="lang-kz">1. Екі оң заряд бір-бірімен қалай әсерлеседі?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Отталкиваются</span><span class="lang-kz">Тебіледі</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Притягиваются</span><span class="lang-kz">Тартылады</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Никак не взаимодействуют</span><span class="lang-kz">Ешқандай әсерлеспейді</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Сначала притягиваются, затем отталкиваются</span><span class="lang-kz">Алдымен тартылады, сосын тебіледі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">2. Какая элементарная частица имеет наименьший отрицательный заряд?</span>
+                <span class="lang-kz">2. Қандай элементар бөлшек ең аз теріс зарядқа ие?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Протон</span><span class="lang-kz">Протон</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Нейтрон</span><span class="lang-kz">Нейтрон</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Атом</span><span class="lang-kz">Атом</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Электрон</span><span class="lang-kz">Электрон</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. При трении эбонитовой палочки о шерсть палочка заряжается отрицательно. Это происходит потому, что...</span>
+                <span class="lang-kz">3. Эбонит таяқшаны жүнге үйкегенде таяқша теріс зарядталады. Бұл неліктен болады...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Палочка теряет протоны</span><span class="lang-kz">Таяқша протондарын жоғалтады</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Палочка теряет электроны</span><span class="lang-kz">Таяқша электрондарын жоғалтады</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Палочка приобретает электроны от шерсти</span><span class="lang-kz">Таяқша жүннен электрондар алады</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">Протоны переходят с палочки на шерсть</span><span class="lang-kz">Протондар таяқшадан жүнге өтеді</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">4. Тело является электрически нейтральным, если:</span>
+                <span class="lang-kz">4. Егер ... болса, дене электрлік бейтарап болып табылады:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">В нем вообще нет заряженных частиц</span><span class="lang-kz">Онда зарядталған бөлшектер мүлдем жоқ</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Количество протонов равно количеству электронов</span><span class="lang-kz">Протондар саны электрондар санына тең</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">В нем больше протонов, чем электронов</span><span class="lang-kz">Онда электрондарға қарағанда протондар көп</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Оно сделано из диэлектрика</span><span class="lang-kz">Ол диэлектриктен жасалған</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">5. Два одноименно заряженных тела (например, оба отрицательные)...</span>
+                <span class="lang-kz">5. Екі аттас зарядталған дене (мысалы, екеуі де теріс)...</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Всегда отталкиваются</span><span class="lang-kz">Әрқашан тебіледі</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Всегда притягиваются</span><span class="lang-kz">Әрқашан тартылады</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Могут как притягиваться, так и отталкиваться</span><span class="lang-kz">Тартылуы да, тебілуі де мүмкін</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Не взаимодействуют</span><span class="lang-kz">Әсерлеспейді</span></label>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            fbA_corr: "Совершенно верно! Протоны не могут покинуть ядро атома. Если стекло стало положительным, значит оно <strong>потеряло</strong> свои электроны (они ушли на шелк).",
+            fbA_inc: "Неверно. Вспомните: протоны тяжелые и сидят в ядрах атомов, они не перемещаются при трении. Перемещаться могут только электроны (-).",
+            fbB_corr: "Правильно! Закон сохранения заряда: (+6q + (-2q)) = +4q. Так как шарики одинаковые, заряд делится поровну: +4q / 2 = +2q.",
+            fbB_inc: "Неверно. Нужно сложить заряды (+6q и -2q), а затем разделить полученную сумму поровну на два шарика.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили тему.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_rubbing: "ЭЛЕКТРОНЫ ПЕРЕХОДЯТ!",
+            lbl_neutral: "Нейтрально",
+            lbl_pos: "Положительно (+)",
+            lbl_neg: "Отрицательно (-)"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            fbA_corr: "Өте дұрыс! Протондар атом ядросынан шыға алмайды. Егер шыны оң зарядталса, бұл оның өз электрондарын <strong>жоғалтқанын</strong> білдіреді (олар жібекке кетті).",
+            fbA_inc: "Қате. Есіңізге түсіріңіз: протондар ауыр және атом ядроларында орналасқан, олар үйкеліс кезінде жылжымайды. Тек электрондар (-) ғана жылжи алады.",
+            fbB_corr: "Дұрыс! Зарядтың сақталу заңы: (+6q + (-2q)) = +4q. Шарлар бірдей болғандықтан, заряд теңдей бөлінеді: +4q / 2 = +2q.",
+            fbB_inc: "Қате. Зарядтарды қосу керек (+6q және -2q), содан кейін алынған соманы екі шарға теңдей бөлу керек.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз тақырыпты өте жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_rubbing: "ЭЛЕКТРОНДАР ӨТУДЕ!",
+            lbl_neutral: "Бейтарап",
+            lbl_pos: "Оң зарядты (+)",
+            lbl_neg: "Теріс зарядты (-)"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Состояния: 0=neutral, 1=moving_to_rub, 2=rubbing, 3=moving_back, 4=charged
+    let simState = 0; 
+    let animFrame = null;
+    let time = 0;
+
+    // Позиции
+    const sweaterX = 150;
+    const sweaterY = 180;
+    const initialBalloonX = 400;
+    const initialBalloonY = 180;
+    
+    let balloonX = initialBalloonX;
+    let balloonY = initialBalloonY;
+    
+    // Заряды (массивы объектов {x, y, type})
+    let sweaterCharges = [];
+    let balloonCharges = [];
+    let flyingElectrons = [];
+
+    function initCharges() {
+        sweaterCharges = [];
+        balloonCharges = [];
+        flyingElectrons = [];
+        
+        // Свитер (Нейтральный = 15 плюсов, 15 минусов)
+        for(let i=0; i<15; i++) {
+            sweaterCharges.push({ ox: -50 + Math.random()*100, oy: -60 + Math.random()*120, type: '+' });
+            sweaterCharges.push({ ox: -50 + Math.random()*100, oy: -60 + Math.random()*120, type: '-' });
+        }
+        
+        // Шарик (Нейтральный = 6 плюсов, 6 минусов)
+        for(let i=0; i<6; i++) {
+            balloonCharges.push({ ox: -30 + Math.random()*60, oy: -40 + Math.random()*80, type: '+' });
+            balloonCharges.push({ ox: -30 + Math.random()*60, oy: -40 + Math.random()*80, type: '-' });
+        }
+    }
+
+    window.startRubbing = function() {
+        if (simState === 0 || simState === 4) {
+            initCharges(); // Сброс перед новым трением
+            simState = 1;
+            document.getElementById('btnRub').disabled = true;
+            if (!animFrame) animate();
+        }
+    }
+
+    window.resetSim = function() {
+        simState = 0;
+        balloonX = initialBalloonX;
+        balloonY = initialBalloonY;
+        document.getElementById('btnRub').disabled = false;
+        initCharges();
+        if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+        drawScene();
+    }
+
+    function drawCharge(x, y, type) {
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI*2);
+        ctx.fillStyle = type === '+' ? '#ef4444' : '#0ea5e9';
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(type, x, y+1);
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 1. Свитер (зеленоватый полигон)
+        ctx.fillStyle = '#16a34a'; // Зеленый цвет свитера
+        ctx.beginPath();
+        ctx.moveTo(sweaterX - 60, sweaterY - 80);
+        ctx.lineTo(sweaterX + 60, sweaterY - 80);
+        ctx.lineTo(sweaterX + 80, sweaterY - 30); // рукав
+        ctx.lineTo(sweaterX + 60, sweaterY - 10);
+        ctx.lineTo(sweaterX + 60, sweaterY + 80);
+        ctx.lineTo(sweaterX - 60, sweaterY + 80);
+        ctx.lineTo(sweaterX - 60, sweaterY - 10);
+        ctx.lineTo(sweaterX - 80, sweaterY - 30); // рукав
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = '#14532d';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Заряды на свитере
+        sweaterCharges.forEach(c => drawCharge(sweaterX + c.ox, sweaterY + c.oy, c.type));
+
+        // 2. Шарик (Овал + ниточка)
+        // Если state 4 (charged), шарик немного тянется к свитеру
+        let drawBx = balloonX;
+        if (simState === 4) {
+            // Легкое притяжение
+            drawBx = balloonX - 30;
+            // Рисуем линии поля притяжения
+            ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(sweaterX + 70, sweaterY);
+            ctx.lineTo(drawBx - 40, balloonY);
+            ctx.moveTo(sweaterX + 60, sweaterY - 40);
+            ctx.lineTo(drawBx - 30, balloonY - 20);
+            ctx.moveTo(sweaterX + 60, sweaterY + 40);
+            ctx.lineTo(drawBx - 30, balloonY + 20);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Ниточка
+        ctx.strokeStyle = '#f8fafc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(drawBx, balloonY + 50);
+        ctx.lineTo(drawBx, balloonY + 120);
+        ctx.stroke();
+
+        // Сам шарик
+        ctx.fillStyle = '#f59e0b'; // Желто-оранжевый шарик
+        ctx.beginPath();
+        ctx.ellipse(drawBx, balloonY, 45, 55, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle = '#b45309';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Заряды на шарике
+        balloonCharges.forEach(c => drawCharge(drawBx + c.ox, balloonY + c.oy, c.type));
+
+        // Летающие электроны (во время трения)
+        flyingElectrons.forEach(e => drawCharge(e.x, e.y, '-'));
+
+        // Текстовые метки (Статус)
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        
+        let swStatus = t('lbl_neutral');
+        let blStatus = t('lbl_neutral');
+        
+        if (simState === 4) {
+            swStatus = t('lbl_pos');
+            blStatus = t('lbl_neg');
+            ctx.fillStyle = '#ef4444'; // Красный текст для свитера
+            ctx.fillText(swStatus, sweaterX, sweaterY - 100);
+            ctx.fillStyle = '#0ea5e9'; // Синий текст для шарика
+            ctx.fillText(blStatus, drawBx, balloonY - 70);
+        } else if (simState === 0) {
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(swStatus, sweaterX, sweaterY - 100);
+            ctx.fillText(blStatus, drawBx, balloonY - 70);
+        }
+
+        // Надпись при трении
+        if (simState === 2) {
+            ctx.fillStyle = '#facc15';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.fillText(t('lbl_rubbing'), 275, 50);
+        }
+    }
+
+    function animate() {
+        time++;
+        let keepAnimating = true;
+
+        if (simState === 1) {
+            // Движение к свитеру
+            balloonX -= 8;
+            if (balloonX <= sweaterX + 80) {
+                balloonX = sweaterX + 80;
+                simState = 2;
+                time = 0; // Reset time for rubbing phase
+            }
+        } 
+        else if (simState === 2) {
+            // Трение (шарик дергается вверх-вниз)
+            balloonY = initialBalloonY + Math.sin(time * 0.5) * 30;
+            
+            // Перенос электронов (каждые 10 кадров)
+            if (time % 10 === 0 && time < 100) {
+                // Ищем минус на свитере
+                let idx = sweaterCharges.findIndex(c => c.type === '-');
+                if (idx !== -1) {
+                    let c = sweaterCharges.splice(idx, 1)[0];
+                    // Создаем летящий электрон
+                    flyingElectrons.push({
+                        x: sweaterX + c.ox,
+                        y: sweaterY + c.oy,
+                        targetOx: -30 + Math.random()*60, // Целевая позиция на шарике
+                        targetOy: -40 + Math.random()*80
+                    });
+                }
+            }
+
+            // Движение летящих электронов
+            for (let i = flyingElectrons.length - 1; i >= 0; i--) {
+                let e = flyingElectrons[i];
+                let targetX = balloonX + e.targetOx;
+                let targetY = balloonY + e.targetOy;
+                
+                e.x += (targetX - e.x) * 0.2;
+                e.y += (targetY - e.y) * 0.2;
+
+                // Если долетел
+                if (Math.abs(e.x - targetX) < 5 && Math.abs(e.y - targetY) < 5) {
+                    balloonCharges.push({ ox: e.targetOx, oy: e.targetOy, type: '-' });
+                    flyingElectrons.splice(i, 1);
+                }
+            }
+
+            // Заканчиваем трение
+            if (time > 120 && flyingElectrons.length === 0) {
+                simState = 3;
+            }
+        }
+        else if (simState === 3) {
+            // Возврат шарика (плавный)
+            balloonX += 5;
+            balloonY += (initialBalloonY - balloonY) * 0.1;
+            
+            if (balloonX >= initialBalloonX) {
+                balloonX = initialBalloonX;
+                balloonY = initialBalloonY;
+                simState = 4;
+                document.getElementById('btnRub').disabled = false;
+                keepAnimating = false; // Можно остановить анимацию (поля нарисуем статично)
+            }
+        }
+
+        drawScene();
+
+        if (keepAnimating) {
+            animFrame = requestAnimationFrame(animate);
+        } else {
+            animFrame = null;
+        }
+    }
+
+    // Инициализация
+    initCharges();
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электрическое поле. Напряженность — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #ecfeff; /* Светло-циан (электричество) */
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #06b6d4; /* Циан */
+            --primary-hover: #0891b2;
+            --hot: #ef4444; /* Положительный */
+            --cold: #3b82f6; /* Отрицательный */
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #a5f3fc;
+            --text-muted: #64748b;
+            --formula-bg: #cffafe;
+            --field-color: rgba(6, 182, 212, 0.4);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #083344;
+                --text-color: #f8fafc;
+                --card-bg: #164e63;
+                --border: #0e7490;
+                --text-muted: #94a3b8;
+                --formula-bg: #0e7490;
+                --field-color: rgba(34, 211, 238, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .math-formula {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Times New Roman', Times, serif;
+            color: var(--primary);
+            display: block;
+            margin: 15px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+        }
+        
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .fraction > span {
+            display: block;
+            padding: 0.1em;
+        }
+        .fraction span.fdn {
+            border-top: 2px solid var(--primary);
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container {
+                flex-direction: row;
+            }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        select {
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #020617; /* Всегда темный фон для поля */
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+            cursor: crosshair;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--warning); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(6, 182, 212, 0.1);
+            color: var(--primary-hover);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(6, 182, 212, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(6, 182, 212, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Электрическое поле и его напряженность</span>
+            <span class="lang-kz">Электр өрісі және оның кернеулігі</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как два заряда отталкиваются в абсолютном вакууме, не касаясь друг друга? Они взаимодействуют через невидимую материю, которая заполняет пространство вокруг них — электрическое поле!</span>
+            <span class="lang-kz">Екі заряд абсолюттік вакуумде бір-біріне тиіспей қалай тебіледі? Олар өздерінің айналасындағы кеңістікті толтыратын көрінбейтін материя — электр өрісі арқылы әсерлеседі!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Что такое электрическое поле?</span>
+            <span class="lang-kz">1. Электр өрісі дегеніміз не?</span>
+        </h2>
+        <p>
+            <span class="lang-ru">В физике материя существует в двух видах: <strong>вещество</strong> (то, что можно потрогать, например стол или вода) и <strong>поле</strong> (невидимая среда).</span>
+            <span class="lang-kz">Физикада материя екі түрде болады: <strong>зат</strong> (мысалы, үстел немесе су сияқты ұстауға болатын нәрсе) және <strong>өріс</strong> (көрінбейтін орта).</span>
+        </p>
+        <p>
+            <span class="lang-ru"><strong>Электрическое поле</strong> — это особый вид материи, который существует вокруг электрических зарядов. Главное свойство этого поля: оно действует с определенной силой на любой другой заряд, помещенный в него.</span>
+            <span class="lang-kz"><strong>Электр өрісі</strong> — электр зарядтарының айналасында болатын материяның ерекше түрі. Бұл өрістің басты қасиеті: ол оған енгізілген кез келген басқа зарядқа белгілі бір күшпен әсер етеді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Чтобы визуализировать невидимое поле, английский физик Майкл Фарадей придумал <strong>силовые линии</strong> (линии напряженности). <br>Правило: силовые линии выходят из <strong>положительного</strong> заряда и входят в <strong>отрицательный</strong>! Они никогда не пересекаются.</span>
+            <span class="lang-kz">Көрінбейтін өрісті көзге елестету үшін ағылшын физигі Майкл Фарадей <strong>күш сызықтарын</strong> (кернеулік сызықтарын) ойлап тапты. <br>Ереже: күш сызықтары <strong>оң</strong> зарядтан шығып, <strong>теріс</strong> зарядқа кіреді! Олар ешқашан қиылыспайды.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Напряженность электрического поля</span>
+            <span class="lang-kz">2. Электр өрісінің кернеулігі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Как измерить "силу" электрического поля в конкретной точке? Для этого ввели физическую величину — <strong>напряженность (обозначается буквой <span class="math-symbol">E</span>)</strong>.</span>
+            <span class="lang-kz">Белгілі бір нүктедегі электр өрісінің "күшін" қалай өлшеуге болады? Ол үшін физикалық шама — <strong>кернеулік ( <span class="math-symbol">E</span> әрпімен белгіленеді)</strong> енгізілді.</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru">Напряженность равна отношению силы <span class="math-symbol">F</span>, с которой поле действует на точечный заряд, к величине этого заряда <span class="math-symbol">q</span>.</span>
+            <span class="lang-kz">Кернеулік өрістің нүктелік зарядқа әсер ететін <span class="math-symbol">F</span> күшінің осы зарядтың <span class="math-symbol">q</span> шамасына қатынасына тең.</span>
+            
+            <div class="math-formula">
+                E = 
+                <div class="fraction">
+                    <span>F</span>
+                    <span class="fdn">q</span>
+                </div>
+            </div>
+            
+            <p style="font-size:0.9rem; margin-top: 15px;">
+                <span class="lang-ru">Где: <br><strong>E</strong> — напряженность (измеряется в <strong>Н/Кл</strong> - Ньютон на Кулон)<br><strong>F</strong> — сила, действующая на заряд (Н)<br><strong>q</strong> — величина пробного заряда (Кл)</span>
+                <span class="lang-kz">Мұндағы: <br><strong>E</strong> — кернеулік (<strong>Н/Кл</strong> - Ньютон/Кулонмен өлшенеді)<br><strong>F</strong> — зарядқа әсер ететін күш (Н)<br><strong>q</strong> — сынақ зарядының шамасы (Кл)</span>
+            </p>
+        </div>
+        
+        <p>
+            <span class="lang-ru"><em>Важно:</em> Напряженность — это вектор! Ее направление совпадает с направлением силы, действующей на <strong>положительный</strong> заряд. Если в поле поместить электрон (минус), сила потащит его в сторону, <em>противоположную</em> вектору напряженности!</span>
+            <span class="lang-kz"><em>Маңызды:</em> Кернеулік — бұл вектор! Оның бағыты <strong>оң</strong> зарядқа әсер ететін күштің бағытымен сәйкес келеді. Егер өріске электрон (минус) орналастырса, күш оны кернеулік векторына <em>қарама-қарсы</em> жаққа тартады!</span>
+        </p>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Интерактив: Исследование поля</span>
+            <span class="lang-kz">Интерактив: Өрісті зерттеу</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Центральный заряд (Создает поле):</span>
+                        <span class="lang-kz">Орталық заряд (Өрісті жасайды):</span>
+                    </label>
+                    <select id="sourceCharge" onchange="updateSim()">
+                        <option value="1" data-ru="Положительный (+Q)" data-kz="Оң (+Q)">Положительный (+Q)</option>
+                        <option value="-1" data-ru="Отрицательный (-Q)" data-kz="Теріс (-Q)">Отрицательный (-Q)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>
+                        <span class="lang-ru">Пробный заряд (Исследует поле):</span>
+                        <span class="lang-kz">Сынақ заряды (Өрісті зерттейді):</span>
+                    </label>
+                    <select id="testCharge" onchange="updateSim()">
+                        <option value="1" data-ru="Положительный протон (+q)" data-kz="Оң протон (+q)">Положительный протон (+q)</option>
+                        <option value="-1" data-ru="Отрицательный электрон (-q)" data-kz="Теріс электрон (-q)">Отрицательный электрон (-q)</option>
+                    </select>
+                </div>
+                
+                <p style="font-size: 0.85rem; margin-top: 10px; color: var(--text-muted);">
+                    <span class="lang-ru"><em>Наведите мышку (или палец) на темный экран, чтобы перемещать пробный заряд. Светящиеся стрелочки показывают вектор напряженности поля E. Толстая стрелка — это сила F, действующая на ваш заряд.</em></span>
+                    <span class="lang-kz"><em>Сынақ зарядын жылжыту үшін тышқанды (немесе саусағыңызды) қараңғы экранға апарыңыз. Жарқыраған көрсеткілер E өрісінің кернеулік векторын көрсетеді. Жуан көрсеткі — бұл сіздің зарядыңызға әсер ететін F күші.</em></span>
+                </p>
+
+            </div>
+            
+            <div class="canvas-container" id="canvasBox">
+                <canvas id="simCanvas" width="500" height="350"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Линии поля всегда идут <strong>ОТ плюса К минусу</strong>. Чем ближе к источнику, тем поле сильнее (вектор силы F становится длиннее). Обратите внимание: на положительный пробный заряд сила действует <strong>по направлению поля</strong>, а на отрицательный — <strong>против поля</strong>!</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Өріс сызықтары әрқашан <strong>плюстен минусқа</strong> қарай жүреді. Көзге жақындаған сайын өріс күшейеді (F күшінің векторы ұзарады). Назар аударыңыз: оң сынақ зарядына күш <strong>өріс бағытымен</strong> әсер етеді, ал теріс зарядқа — <strong>өріске қарсы</strong>!</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Проверка знаний</span>
+            <span class="lang-kz">Білімді тексеру</span>
+        </h2>
+        
+        <!-- Задача A -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1 (Расчет силы)</span>
+                <span class="lang-kz">1-тапсырма (Күшті есептеу)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Напряженность электрического поля в грозовом облаке равна <strong>2000 Н/Кл</strong> (<span class="math-symbol">E</span>). В это поле попала капля воды с электрическим зарядом <strong>0,5 Кл</strong> (<span class="math-symbol">q</span>). С какой силой (<span class="math-symbol">F</span>) поле действует на эту каплю? <br><em>(Подсказка: выразите F из формулы E = F/q)</em></span>
+                <span class="lang-kz">Найзағайлы бұлттағы электр өрісінің кернеулігі <strong>2000 Н/Кл</strong> (<span class="math-symbol">E</span>). Бұл өріске электр заряды <strong>0,5 Кл</strong> (<span class="math-symbol">q</span>) болатын су тамшысы түсті. Өріс бұл тамшыға қандай күшпен (<span class="math-symbol">F</span>) әсер етеді? <br><em>(Көмек: E = F/q формуласынан F-ті өрнектеңіз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="number" id="taskA" data-placeholder-ru="Ответ в Ньютонах" data-placeholder-kz="Жауап Ньютонмен" placeholder="Ответ в Ньютонах">
+                <button class="btn-check" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задача B -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2 (Логика направлений)</span>
+                <span class="lang-kz">2-тапсырма (Бағыттар логикасы)</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Вектор напряженности электрического поля направлен <strong>вправо</strong> &rarr;. В это поле поместили <strong>электрон</strong> (отрицательный заряд). В какую сторону будет двигаться электрон под действием поля?</span>
+                <span class="lang-kz">Электр өрісінің кернеулік векторы <strong>оңға</strong> &rarr; бағытталған. Бұл өріске <strong>электрон</strong> (теріс заряд) орналастырылды. Өрістің әсерінен электрон қай бағытта қозғалады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskB">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вправо (по направлению поля)" data-kz="Оңға (өріс бағытымен)">Вправо (по направлению поля)</option>
+                    <option value="2" data-ru="Влево (против поля)" data-kz="Солға (өріске қарсы)">Влево (против поля)</option>
+                    <option value="3" data-ru="Останется на месте" data-kz="Орнында қалады">Останется на месте</option>
+                    <option value="4" data-ru="Вверх" data-kz="Жоғары">Вверх</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Обязательно посмотрите, как выглядят силовые линии электрического поля в реальности с помощью султанов и манной крупы в масле!</span>
+            <span class="lang-kz">Электр өрісінің күш сызықтары сұлтандар мен майдағы жарманың көмегімен шын мәнінде қалай көрінетінін міндетті түрде қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B5+%D0%BF%D0%BE%D0%BB%D0%B5+%D0%BD%D0%B0%D0%BF%D1%80%D1%8F%D0%B6%D0%B5%D0%BD%D0%BD%D0%BE%D1%81%D1%82%D1%8C+%D1%84%D0%B8%D0%B7%D0%B8%D0%BA%D0%B0+8+%D0%BA%D0%BB%D0%B0%D1%81%D1%81" target="_blank">
+                ▶ <span class="lang-ru">Найти видеоуроки «Электрическое поле. Напряженность»</span>
+                  <span class="lang-kz">«Электр өрісі. Кернеулік» бейнесабақтарын табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">1. Что такое электрическое поле?</span>
+                <span class="lang-kz">1. Электр өрісі дегеніміз не?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Поток протонов в воздухе</span><span class="lang-kz">Ауадағы протондар ағыны</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Особый вид материи вокруг электрических зарядов</span><span class="lang-kz">Электр зарядтарының айналасындағы материяның ерекше түрі</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Пространство, где нет атомов</span><span class="lang-kz">Атомдар жоқ кеңістік</span></label>
+                <label><input type="radio" name="q1" value="4"> <span class="lang-ru">Светящаяся область вокруг провода</span><span class="lang-kz">Сымның айналасындағы жарқыраған аймақ</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">2. Как направлены силовые линии электрического поля?</span>
+                <span class="lang-kz">2. Электр өрісінің күш сызықтары қалай бағытталған?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">От минуса к плюсу</span><span class="lang-kz">Минустан плюске қарай</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Вдоль проводника</span><span class="lang-kz">Өткізгіш бойымен</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">От плюса к минусу</span><span class="lang-kz">Плюстен минусқа қарай</span></label>
+                <label><input type="radio" name="q2" value="4"> <span class="lang-ru">Хаотично</span><span class="lang-kz">Хаосты түрде</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">3. Напряженность поля вычисляется по формуле:</span>
+                <span class="lang-kz">3. Өріс кернеулігі мына формула бойынша есептеледі:</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">E = F / q</span><span class="lang-kz">E = F / q</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">E = F &middot; q</span><span class="lang-kz">E = F &middot; q</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">E = q / F</span><span class="lang-kz">E = q / F</span></label>
+                <label><input type="radio" name="q3" value="4"> <span class="lang-ru">E = m &middot; g</span><span class="lang-kz">E = m &middot; g</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="4">
+            <p><strong>
+                <span class="lang-ru">4. В какой единице измеряется напряженность электрического поля (E)?</span>
+                <span class="lang-kz">4. Электр өрісінің кернеулігі (E) қандай бірлікте өлшенеді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Джоуль (Дж)</span><span class="lang-kz">Джоуль (Дж)</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Кулон (Кл)</span><span class="lang-kz">Кулон (Кл)</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Ньютон (Н)</span><span class="lang-kz">Ньютон (Н)</span></label>
+                <label><input type="radio" name="q4" value="4"> <span class="lang-ru">Ньютон на Кулон (Н/Кл)</span><span class="lang-kz">Ньютон/Кулон (Н/Кл)</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. На положительный заряд, помещенный в электрическое поле, действует сила...</span>
+                <span class="lang-kz">5. Электр өрісіне орналастырылған оң зарядқа ... күш әсер етеді.</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Направленная противоположно вектору напряженности</span><span class="lang-kz">Кернеулік векторына қарама-қарсы бағытталған</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Направленная в ту же сторону, что и вектор напряженности поля</span><span class="lang-kz">Өрістің кернеулік векторымен бірдей бағытта бағытталған</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Равная нулю</span><span class="lang-kz">Нөлге тең</span></label>
+                <label><input type="radio" name="q5" value="4"> <span class="lang-ru">Направленная перпендикулярно линиям поля</span><span class="lang-kz">Өріс сызықтарына перпендикуляр бағытталған</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант.",
+            num_req: "Введите число.",
+            fbA_corr: "Верно! Из формулы E = F/q выражаем силу: F = E &middot; q. Получаем: F = 2000 &middot; 0,5 = 1000 Н.",
+            fbA_inc: "Неверно. Используйте формулу E = F/q. Чтобы найти F, нужно напряженность (2000) умножить на заряд (0,5).",
+            fbB_corr: "Абсолютно правильно! Напряженность показывает, куда поле толкает ПЛЮС. Поскольку электрон имеет знак МИНУС, поле будет толкать его в противоположную сторону (влево).",
+            fbB_inc: "Неверно. Вспомните теорию: вектор напряженности показывает направление силы для ПОЛОЖИТЕЛЬНОГО заряда. А электрон — отрицательный, значит сила направлена в обратную сторону.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно поняли тему электрического поля.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>",
+            lbl_force: "Сила F"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз.",
+            num_req: "Сан енгізіңіз.",
+            fbA_corr: "Дұрыс! E = F/q формуласынан күшті өрнектейміз: F = E &middot; q. Аламыз: F = 2000 &middot; 0,5 = 1000 Н.",
+            fbA_inc: "Қате. E = F/q формуласын қолданыңыз. F-ті табу үшін кернеулікті (2000) зарядқа (0,5) көбейту керек.",
+            fbB_corr: "Өте дұрыс! Кернеулік өрістің ПЛЮСТІ қайда итеретінін көрсетеді. Электронның таңбасы МИНУС болғандықтан, өріс оны қарама-қарсы жаққа (солға) итереді.",
+            fbB_inc: "Қате. Теорияны есіңізге түсіріңіз: кернеулік векторы ОҢ зарядқа әсер ететін күштің бағытын көрсетеді. Ал электрон — теріс, яғни күш кері бағытқа бағытталған.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз электр өрісі тақырыбын өте жақсы түсіндіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>",
+            lbl_force: "F күші"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('input[data-placeholder-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-placeholder-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+        
+        drawScene();
+    }
+
+    // --- СИМУЛЯЦИЯ (Векторное поле) ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let sourceQ = 1; // 1 = Положительный, -1 = Отрицательный
+    let testQ = 1;   // 1 = Положительный, -1 = Отрицательный
+    
+    // Позиция источника - в центре левой половины
+    let cx = 150;
+    let cy = 175;
+
+    // Позиция пробного заряда (управляется мышью)
+    let px = 350;
+    let py = 175;
+
+    // Сетка для векторного поля
+    const gridSpacing = 30;
+
+    window.updateSim = function() {
+        sourceQ = parseInt(document.getElementById('sourceCharge').value);
+        testQ = parseInt(document.getElementById('testCharge').value);
+        drawScene();
+    }
+
+    // Обработка мыши / touch для перемещения пробного заряда
+    function handleMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        // Поддержка Touch и Mouse
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if(e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+
+        let mx = clientX - rect.left;
+        let my = clientY - rect.top;
+        
+        // Учет масштабирования канваса (если CSS меняет его размер)
+        mx = mx * (canvas.width / rect.width);
+        my = my * (canvas.height / rect.height);
+
+        // Ограничение: не даем пробному заряду "залезть" прямо в источник (избегаем деления на 0)
+        let dx = mx - cx;
+        let dy = my - cy;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 30) {
+            px = mx;
+            py = my;
+            drawScene();
+        }
+    }
+
+    canvas.addEventListener('mousemove', handleMove);
+    canvas.addEventListener('touchmove', function(e) {
+        e.preventDefault(); // Запрет прокрутки страницы при вождении по канвасу
+        handleMove(e);
+    }, {passive: false});
+
+    function drawVector(x, y, angle, length, color, lineWidth = 2) {
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = lineWidth;
+
+        let endX = x + Math.cos(angle) * length;
+        let endY = y + Math.sin(angle) * length;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Стрелочка
+        let headLen = Math.min(6, length * 0.5);
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(endX - headLen * Math.cos(angle - Math.PI / 6), endY - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(endX - headLen * Math.cos(angle + Math.PI / 6), endY - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+    }
+
+    function drawScene() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Цвета
+        const colorHot = '#ef4444'; // Красный (+)
+        const colorCold = '#3b82f6'; // Синий (-)
+        const colorField = 'rgba(6, 182, 212, 0.6)'; // Циан для линий поля
+        
+        let sourceColor = sourceQ > 0 ? colorHot : colorCold;
+        let testColor = testQ > 0 ? colorHot : colorCold;
+
+        // 1. Рисуем векторное поле (маленькие стрелочки в фоне)
+        for(let x = gridSpacing/2; x < canvas.width; x += gridSpacing) {
+            for(let y = gridSpacing/2; y < canvas.height; y += gridSpacing) {
+                let dx = x - cx;
+                let dy = y - cy;
+                let r2 = dx*dx + dy*dy;
+                let r = Math.sqrt(r2);
+                
+                if (r > 25) { // Не рисуем внутри самого заряда
+                    let angle = Math.atan2(dy, dx);
+                    if (sourceQ < 0) {
+                        angle += Math.PI; // Векторы к минусу
+                    }
+                    
+                    // Длина стрелочки зависит от напряженности (E ~ 1/r^2), но визуально ограничим
+                    let fieldMag = 5000 / r2; 
+                    if (fieldMag > 15) fieldMag = 15;
+                    if (fieldMag < 2) fieldMag = 2;
+
+                    // Чем дальше, тем прозрачнее
+                    let alpha = Math.max(0.1, Math.min(0.8, 1000 / r2));
+                    
+                    drawVector(x, y, angle, fieldMag, `rgba(6, 182, 212, ${alpha})`, 1);
+                }
+            }
+        }
+
+        // 2. Рисуем источник поля (Центральный заряд)
+        // Свечение (Аура)
+        let gradient = ctx.createRadialGradient(cx, cy, 20, cx, cy, 60);
+        gradient.addColorStop(0, sourceColor);
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = 0.3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 60, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+
+        // Сам заряд
+        ctx.beginPath();
+        ctx.arc(cx, cy, 20, 0, Math.PI*2);
+        ctx.fillStyle = sourceColor;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(sourceQ > 0 ? '+' : '-', cx, cy + 2);
+
+        // 3. Рисуем пробный заряд
+        let dxTest = px - cx;
+        let dyTest = py - cy;
+        let rTest = Math.sqrt(dxTest*dxTest + dyTest*dyTest);
+        let angleTest = Math.atan2(dyTest, dxTest);
+
+        // Вектор силы, действующей на пробный заряд
+        // Направление силы: если знаки одинаковые - отталкивание, если разные - притяжение
+        let forceAngle = angleTest;
+        if (sourceQ * testQ < 0) {
+            forceAngle += Math.PI; // Притяжение
+        }
+
+        // Величина силы F = qE, пропорциональна 1/r^2. 
+        let forceMag = 40000 / (rTest * rTest);
+        if (forceMag > 150) forceMag = 150; // Визуальный ограничитель длины
+        if (forceMag < 10) forceMag = 10;
+
+        // Рисуем вектор силы (толстая желтая стрелка)
+        drawVector(px, py, forceAngle, forceMag, '#facc15', 4);
+        
+        // Подпись F
+        let fxText = px + Math.cos(forceAngle) * (forceMag + 15);
+        let fyText = py + Math.sin(forceAngle) * (forceMag + 15);
+        ctx.fillStyle = '#facc15';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText("F", fxText, fyText);
+
+        // Сам пробный заряд (поменьше)
+        ctx.beginPath();
+        ctx.arc(px, py, 12, 0, Math.PI*2);
+        ctx.fillStyle = testColor;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px monospace';
+        ctx.fillText(testQ > 0 ? '+' : '-', px, py + 1);
+    }
+
+    // Инициализация
+    drawScene();
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = parseFloat(document.getElementById('taskA').value);
+        if (isNaN(val)) return showFeedback('fbA', false, t('num_req'));
+        // E = F/q => F = E*q = 2000 * 0.5 = 1000
+        if (val === 1000) {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        const val = document.getElementById('taskB').value;
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        if (val === '2') {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>

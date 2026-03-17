@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Действие магнитного поля. Индукция — 8 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --primary: #8b5cf6; /* Фиолетовый для индукции/силы */
+            --primary-hover: #7c3aed;
+            --secondary: #f43f5e; /* Розово-красный для акцентов */
+            --secondary-hover: #e11d48;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --formula-bg: #f1f5f9;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a; 
+                --text-color: #f8fafc;
+                --card-bg: #1e293b;
+                --border: #334155;
+                --text-muted: #94a3b8;
+                --formula-bg: #0f172a;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+            padding-top: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hook {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-style: italic;
+            padding: 0 20px;
+        }
+
+        section {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box {
+            background-color: var(--formula-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .formula {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--secondary);
+            display: block;
+            text-align: center;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .simulation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .simulation-container { flex-direction: row; }
+        }
+
+        .controls {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        .control-group label { font-weight: 600; font-size: 0.95rem; }
+        
+        select, input[type="range"], input[type="text"] {
+            width: 100%; padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border);
+            background-color: var(--card-bg); color: var(--text-color);
+        }
+        input[type="range"] { accent-color: var(--primary); padding: 0; cursor: pointer; }
+
+        button.btn-flip {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button.btn-flip:hover { opacity: 0.9; }
+
+        .canvas-container {
+            flex: 1.5;
+            background-color: #ffffff;
+            border-radius: 8px;
+            border: 3px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            min-height: 420px;
+        }
+        @media (prefers-color-scheme: dark) { .canvas-container { background-color: #e2e8f0; } }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            display: block;
+            touch-action: none;
+        }
+
+        .observation {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        /* --- ЗАДАНИЯ --- */
+        .task-card {
+            background-color: var(--bg-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .task-card h4 { color: var(--text-color); }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .input-group select, .input-group input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        button.btn-check {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.btn-check:hover { background-color: var(--primary-hover); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback.correct { display: block; background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .feedback.incorrect { display: block; background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- ВИДЕО --- */
+        .video-container a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem;
+            background-color: rgba(139, 92, 246, 0.1);
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .video-container a:hover { background-color: rgba(139, 92, 246, 0.2); }
+
+        /* --- ТЕСТ --- */
+        .test-question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .test-question:last-of-type { border-bottom: none; }
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .test-options label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .test-options label:hover { background-color: rgba(139, 92, 246, 0.05); }
+
+        #testResult {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* --- Стили переключателя языков --- */
+        .lang-toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            border: 1px solid var(--border);
+        }
+        
+        .lang-label { font-weight: 600; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
+        .lang-label.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="lang-toggle-container">
+    <span class="lang-label active" id="label-ru" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+    <label class="switch">
+        <input type="checkbox" id="langToggle" onchange="toggleLang()">
+        <span class="slider round"></span>
+    </label>
+    <span class="lang-label" id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+</div>
+
+<div class="container">
+    <header>
+        <h1>
+            <span class="lang-ru">Действие магнитного поля. Электромагнитная индукция</span>
+            <span class="lang-kz">Магнит өрісінің әрекеті. Электромагниттік индукция</span>
+        </h1>
+        <p class="hook">
+            <span class="lang-ru">Как электричество заставляет вращаться колеса электромобиля? И как на электростанциях вырабатывают ток? Все дело во взаимодействии магнитов и электричества!</span>
+            <span class="lang-kz">Электр тогы электромобиль дөңгелектерін қалай айналдырады? Ал электр станцияларында ток қалай өндіріледі? Мұның бәрі магниттер мен электрдің өзара әрекеттесуіне байланысты!</span>
+        </p>
+    </header>
+
+    <section>
+        <h2>
+            <span class="lang-ru">1. Сила Ампера и Правило левой руки</span>
+            <span class="lang-kz">1. Ампер күші және Сол қол ережесі</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Мы уже знаем, что ток создает вокруг себя магнитное поле. Но верно и обратное: <strong>внешнее магнитное поле действует на проводник с током</strong>. Эту силу называют <strong>силой Ампера</strong>.</span>
+            <span class="lang-kz">Токтың өз айналасында магнит өрісін тудыратынын білеміз. Бірақ керісінше де рас: <strong>сыртқы магнит өрісі тогы бар өткізгішке әсер етеді</strong>. Бұл күшті <strong>Ампер күші</strong> деп атайды.</span>
+        </p>
+        
+        <span class="formula">F<sub>A</sub> = I · B · L · sin(α)</span>
+
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Правило левой руки:</strong><br> Если расположить левую руку так, чтобы линии магнитного поля (от N к S) входили в ладонь, а четыре вытянутых пальца указывали направление тока в проводнике, то отогнутый на 90° большой палец укажет направление силы Ампера.</span>
+            <span class="lang-kz"><strong>Сол қол ережесі:</strong><br> Егер сол қолды магнит өрісінің сызықтары (N-нен S-ке қарай) алақанға кіретіндей, ал созылған төрт саусақ өткізгіштегі ток бағытын көрсететіндей етіп орналастырса, онда 90°-қа бұрылған бас бармақ Ампер күшінің бағытын көрсетеді.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">2. Электродвигатель и измерительные приборы</span>
+            <span class="lang-kz">2. Электрқозғалтқыш және өлшеуіш құралдар</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Если в магнитное поле поместить не один проводник, а прямоугольную рамку с током, то сила Ампера будет толкать одну ее сторону вверх, а другую вниз. В результате <strong>рамка начнет вращаться</strong>!</span>
+            <span class="lang-kz">Егер магнит өрісіне бір өткізгіш емес, тогы бар тікбұрышты рама орналастырсақ, Ампер күші оның бір жағын жоғары, ал екінші жағын төмен итереді. Нәтижесінде <strong>рама айнала бастайды</strong>!</span>
+        </p>
+
+        <div class="highlight-box" style="border-left-color: var(--secondary);">
+            <ul style="margin: 0;">
+                <li><span class="lang-ru"><strong>Электродвигатель:</strong> преобразует электрическую энергию в механическую работу (вращение).</span><span class="lang-kz"><strong>Электрқозғалтқыш:</strong> электр энергиясын механикалық жұмысқа (айналуға) түрлендіреді.</span></li>
+                <li><span class="lang-ru"><strong>Электроизмерительные приборы</strong> (амперметры, вольтметры): стрелка прибора крепится к катушке. Чем больше ток, тем сильнее катушка поворачивается в магнитном поле, отклоняя стрелку.</span><span class="lang-kz"><strong>Электр өлшеуіш құралдар</strong> (амперметрлер, вольтметрлер): құралдың тілі катушкаға бекітіледі. Ток неғұрлым көп болса, катушка магнит өрісінде соғұрлым күшті бұрылып, тілді ауытқытады.</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">3. Электромагнитная индукция (Опыт Фарадея)</span>
+            <span class="lang-kz">3. Электромагниттік индукция (Фарадей тәжірибесі)</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Английский физик Майкл Фарадей задался вопросом: <em>если ток создает магнитное поле, может ли магнитное поле создать ток?</em> После долгих опытов он доказал: <strong>да, может, но только если магнитное поле МЕНЯЕТСЯ</strong>!</span>
+            <span class="lang-kz">Ағылшын физигі Майкл Фарадей мынадай сұрақ қойды: <em>егер ток магнит өрісін тудырса, магнит өрісі ток тудыра ала ма?</em> Ұзақ тәжірибелерден кейін ол дәлелдеді: <strong>иә, мүмкін, бірақ магнит өрісі ӨЗГЕРГЕН жағдайда ғана</strong>!</span>
+        </p>
+        
+        <div class="highlight-box">
+            <span class="lang-ru"><strong>Электромагнитная индукция</strong> — это явление возникновения электрического тока в замкнутом контуре при изменении магнитного поля, пронизывающего этот контур. Полученный ток называют индукционным. Это основа работы всех электростанций (генераторов).</span>
+            <span class="lang-kz"><strong>Электромагниттік индукция</strong> — бұл тұйық контурды тесіп өтетін магнит өрісі өзгерген кезде онда электр тогының пайда болу құбылысы. Алынған токты индукциялық деп атайды. Бұл барлық электр станцияларының (генераторлардың) жұмыс негізі.</span>
+        </div>
+    </section>
+
+    <section>
+        <h2>
+            <span class="lang-ru">Симуляция: Опыт Фарадея</span>
+            <span class="lang-kz">Симуляция: Фарадей тәжірибесі</span>
+        </h2>
+        <div class="simulation-container">
+            <div class="controls">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 5px;">
+                    <span class="lang-ru">Быстро вводите и выводите магнит из катушки с помощью ползунка. Следите за стрелкой гальванометра!</span>
+                    <span class="lang-kz">Сырғытпаның көмегімен магнитті катушкаға тез кіргізіп, шығарыңыз. Гальванометр тілін бақылаңыз!</span>
+                </p>
+
+                <div class="control-group">
+                    <label>
+                        <span><span class="lang-ru">Положение магнита:</span><span class="lang-kz">Магниттің орны:</span></span>
+                    </label>
+                    <input type="range" id="magnetSlider" min="50" max="750" step="5" value="150" oninput="updateMagnet()">
+                </div>
+
+                <div class="control-group" style="margin-top: 10px;">
+                    <label>
+                        <span><span class="lang-ru">Количество витков катушки:</span><span class="lang-kz">Катушка орамдарының саны:</span></span>
+                        <span id="turnsVal" style="color: var(--primary);">4</span>
+                    </label>
+                    <input type="range" id="turnsSlider" min="1" max="8" step="1" value="4" oninput="updateTurns()">
+                </div>
+
+                <button class="btn-flip" style="margin-top: 10px;" onclick="flipPolarity()">
+                    <span class="lang-ru">🔄 Поменять полюса (N ↔ S)</span>
+                    <span class="lang-kz">🔄 Полюстерді ауыстыру (N ↔ S)</span>
+                </button>
+
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="simCanvas" width="850" height="420"></canvas>
+            </div>
+        </div>
+        <div class="observation">
+            <span id="obsText">
+                <span class="lang-ru"><strong>Вывод:</strong> Ток возникает <strong>только во время движения</strong> магнита. Чем быстрее вы двигаете магнит и чем больше витков в катушке, тем сильнее отклоняется стрелка. При смене направления движения (внутрь/наружу) ток меняет свое направление.</span>
+                <span class="lang-kz"><strong>Қорытынды:</strong> Ток магниттің <strong>қозғалысы кезінде ғана</strong> пайда болады. Магнитті неғұрлым тез жылжытсаңыз және катушкада орамдар неғұрлым көп болса, тіл соғұрлым күшті ауытқиды. Қозғалыс бағытын өзгерткенде (ішке/сыртқа) ток өз бағытын өзгертеді.</span>
+            </span>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Практические задания</span>
+            <span class="lang-kz">Практикалық тапсырмалар</span>
+        </h2>
+        
+        <!-- Задание 1: Выпадающий список -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 1: Правило левой руки</span>
+                <span class="lang-kz">1-тапсырма: Сол қол ережесі</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Проводник находится в магнитном поле. Линии поля направлены сверху <strong>вниз</strong> (Северный полюс сверху, Южный снизу). Ток по проводнику идет <strong>к нам</strong> (от экрана на вас). Куда направлена сила Ампера?</span>
+                <span class="lang-kz">Өткізгіш магнит өрісінде орналасқан. Өріс сызықтары жоғарыдан <strong>төмен</strong> бағытталған (Солтүстік полюс жоғарыда, Оңтүстік төменде). Өткізгіштегі ток <strong>бізге қарай</strong> (экраннан сізге) жүреді. Ампер күші қайда бағытталған?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskA">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вправо" data-kz="Оңға">Вправо</option>
+                    <option value="2" data-ru="Влево" data-kz="Солға">Влево</option>
+                    <option value="3" data-ru="Вверх" data-kz="Жоғары">Вверх</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskA()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbA" class="feedback"></div>
+        </div>
+
+        <!-- Задание 2: Текстовый ввод -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 2: Формула силы Ампера</span>
+                <span class="lang-kz">2-тапсырма: Ампер күшінің формуласы</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Индукцию магнитного поля (B) увеличили в <strong>2 раза</strong>, а силу тока (I) в проводнике увеличили в <strong>3 раза</strong>. Во сколько раз увеличится сила Ампера, действующая на этот проводник? <em>(Впишите только число)</em></span>
+                <span class="lang-kz">Магнит өрісінің индукциясын (B) <strong>2 есе</strong> арттырды, ал өткізгіштегі ток күшін (I) <strong>3 есе</strong> арттырды. Осы өткізгішке әсер ететін Ампер күші неше есе артады? <em>(Тек санды жазыңыз)</em></span>
+            </p>
+            <div class="input-group">
+                <input type="text" id="taskB" placeholder="Введите число..." data-ru="Введите число..." data-kz="Санды енгізіңіз...">
+                <button class="btn-check" style="width:auto;" onclick="checkTaskB()">
+                    <span class="lang-ru">Ответить</span><span class="lang-kz">Жауап беру</span>
+                </button>
+            </div>
+            <div id="fbB" class="feedback"></div>
+        </div>
+
+        <!-- Задание 3: Выпадающий список -->
+        <div class="task-card">
+            <h4>
+                <span class="lang-ru">Задание 3: Индукционный ток</span>
+                <span class="lang-kz">3-тапсырма: Индукциялық ток</span>
+            </h4>
+            <p>
+                <span class="lang-ru">Вы вдвигаете магнит в катушку, и гальванометр показывает ток. Как можно <strong>изменить направление</strong> этого индукционного тока на противоположное?</span>
+                <span class="lang-kz">Сіз магнитті катушкаға кіргізесіз, және гальванометр токты көрсетеді. Бұл индукциялық токтың бағытын қарама-қарсы бағытқа қалай <strong>өзгертуге</strong> болады?</span>
+            </p>
+            <div class="input-group">
+                <select id="taskC">
+                    <option value="" data-ru="Выберите ответ..." data-kz="Жауапты таңдаңыз...">Выберите ответ...</option>
+                    <option value="1" data-ru="Вдвигать магнит быстрее" data-kz="Магнитті тезірек кіргізу">Вдвигать магнит быстрее</option>
+                    <option value="2" data-ru="Взять магнит побольше" data-kz="Үлкенірек магнит алу">Взять магнит побольше</option>
+                    <option value="3" data-ru="Начать выдвигать магнит обратно из катушки" data-kz="Магнитті катушкадан қайта суырып шығару">Начать выдвигать магнит обратно из катушки</option>
+                </select>
+                <button class="btn-check" style="width:auto;" onclick="checkTaskC()">
+                    <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+                </button>
+            </div>
+            <div id="fbC" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section>
+        <h2>
+            <span class="lang-ru">Видео по теме</span>
+            <span class="lang-kz">Тақырып бойынша бейнеролик</span>
+        </h2>
+        <p>
+            <span class="lang-ru">Посмотрите, видео по теме!</span>
+            <span class="lang-kz">Тақырып бойынша бейнені қараңыз!</span>
+        </p>
+        <div class="video-container">
+            <a href="https://www.youtube.com/results?search_query=%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BC%D0%B0%D0%B3%D0%BD%D0%B8%D1%82%D0%BD%D0%B0%D1%8F+%D0%B8%D0%BD%D0%B4%D1%83%D0%BA%D1%86%D0%B8%D1%8F+%D1%8D%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%B4%D0%B2%D0%B8%D0%B3%D0%B0%D1%82%D0%B5%D0%BB%D1%8C" target="_blank">
+                ▶ <span class="lang-ru">Найти видео «Электродвигатель и электромагнитная индукция»</span>
+                  <span class="lang-kz">«Электрқозғалтқыш және электромагниттік индукция» бейнесін табу</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section>
+        <h2>
+            <span class="lang-ru">Итоговый тест</span>
+            <span class="lang-kz">Қорытынды тест</span>
+        </h2>
+        
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">1. Как называется сила, с которой магнитное поле действует на проводник с током?</span>
+                <span class="lang-kz">1. Магнит өрісінің тогы бар өткізгішке әсер ететін күші қалай аталады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q1" value="1"> <span class="lang-ru">Сила Ампера</span><span class="lang-kz">Ампер күші</span></label>
+                <label><input type="radio" name="q1" value="2"> <span class="lang-ru">Сила тяжести</span><span class="lang-kz">Ауырлық күші</span></label>
+                <label><input type="radio" name="q1" value="3"> <span class="lang-ru">Сила трения</span><span class="lang-kz">Үйкеліс күші</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">2. Какое правило используется для определения направления силы Ампера?</span>
+                <span class="lang-kz">2. Ампер күшінің бағытын анықтау үшін қандай ереже қолданылады?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Правило буравчика</span><span class="lang-kz">Бұрғы ережесі</span></label>
+                <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Правило левой руки</span><span class="lang-kz">Сол қол ережесі</span></label>
+                <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Правило правой руки</span><span class="lang-kz">Оң қол ережесі</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="3">
+            <p><strong>
+                <span class="lang-ru">3. На каком явлении основана работа электродвигателя?</span>
+                <span class="lang-kz">3. Электрқозғалтқыштың жұмысы қандай құбылысқа негізделген?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q3" value="1"> <span class="lang-ru">Электромагнитная индукция</span><span class="lang-kz">Электромагниттік индукция</span></label>
+                <label><input type="radio" name="q3" value="2"> <span class="lang-ru">Нагревание проводника током</span><span class="lang-kz">Өткізгіштің токпен қызуы</span></label>
+                <label><input type="radio" name="q3" value="3"> <span class="lang-ru">Действие магнитного поля на рамку с током</span><span class="lang-kz">Магнит өрісінің тогы бар рамаға әсері</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="1">
+            <p><strong>
+                <span class="lang-ru">4. Кто открыл явление электромагнитной индукции?</span>
+                <span class="lang-kz">4. Электромагниттік индукция құбылысын кім ашты?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q4" value="1"> <span class="lang-ru">Майкл Фарадей</span><span class="lang-kz">Майкл Фарадей</span></label>
+                <label><input type="radio" name="q4" value="2"> <span class="lang-ru">Исаак Ньютон</span><span class="lang-kz">Исаак Ньютон</span></label>
+                <label><input type="radio" name="q4" value="3"> <span class="lang-ru">Ханс Кристиан Эрстед</span><span class="lang-kz">Ханс Кристиан Эрстед</span></label>
+            </div>
+        </div>
+
+        <div class="test-question" data-answer="2">
+            <p><strong>
+                <span class="lang-ru">5. Какое преобразование энергии происходит в электрическом генераторе?</span>
+                <span class="lang-kz">5. Электр генераторында энергияның қандай түрленуі жүреді?</span>
+            </strong></p>
+            <div class="test-options">
+                <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Электрической в механическую</span><span class="lang-kz">Электр энергиясы механикалыққа</span></label>
+                <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Механической в электрическую</span><span class="lang-kz">Механикалық энергия электрлікке</span></label>
+                <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Внутренней в электрическую</span><span class="lang-kz">Ішкі энергия электрлікке</span></label>
+            </div>
+        </div>
+
+        <button class="btn-check" onclick="checkTest()">
+            <span class="lang-ru">Проверить тест</span>
+            <span class="lang-kz">Тестті тексеру</span>
+        </button>
+        <div id="testResult"></div>
+    </section>
+</div>
+
+<script>
+    const i18n = {
+        ru: {
+            sel_opt: "Пожалуйста, выберите вариант / введите ответ.",
+            fbA_corr: "Верно! Ладонь смотрит вверх (чтобы поймать линии, идущие вниз). 4 пальца направлены на нас. Большой палец отогнется ВПРАВО.",
+            fbA_inc: "Неверно. Представьте: ваша ладонь смотрит вверх (ловит линии), 4 пальца направлены прямо на ваше лицо (ток). Куда указывает большой палец?",
+            fbB_corr: "Правильно! Формула F = I·B·L. Если I увеличили в 3 раза, а B в 2 раза, то 3 × 2 = 6 раз.",
+            fbB_inc: "Неверно. Посмотрите на формулу: сила Ампера прямо пропорциональна и силе тока (I), и индукции (B). Перемножьте их изменения.",
+            fbC_corr: "Верно! По правилу Ленца, чтобы индукционный ток поменял направление, нужно поменять направление движения магнита.",
+            fbC_inc: "Неверно. Скорость и сила магнита меняют только ВЕЛИЧИНУ тока. Чтобы поменять НАПРАВЛЕНИЕ, нужно изменить направление движения.",
+            test_ok: "Отличный результат: {s} из {t}! Вы прекрасно усвоили индукцию и силу Ампера.",
+            test_bad: "Ваш результат: {s} из {t}.<br>Работа над ошибками:<br>{m}",
+            test_q: "Вопрос {n}: правильный ответ — <strong>{ans}</strong>"
+        },
+        kz: {
+            sel_opt: "Нұсқаны таңдаңыз / жауапты енгізіңіз.",
+            fbA_corr: "Дұрыс! Алақан жоғары қарайды (төмен түсетін сызықтарды ұстау үшін). 4 саусақ бізге бағытталған. Бас бармақ ОҢҒА бұрылады.",
+            fbA_inc: "Қате. Елестетіңіз: алақаныңыз жоғары қарайды (сызықтарды ұстайды), 4 саусақ бетіңізге бағытталған (ток). Бас бармақ қайда көрсетеді?",
+            fbB_corr: "Дұрыс! F = I·B·L формуласы. Егер I 3 есе, ал B 2 есе артса, онда 3 × 2 = 6 есе болады.",
+            fbB_inc: "Қате. Формулаға қараңыз: Ампер күші ток күшіне (I) және индукцияға (B) тура пропорционал. Олардың өзгерістерін көбейтіңіз.",
+            fbC_corr: "Дұрыс! Ленц ережесі бойынша индукциялық ток бағытын өзгерту үшін магниттің қозғалыс бағытын өзгерту керек.",
+            fbC_inc: "Қате. Магниттің жылдамдығы мен күші токтың ШАМАСЫН ғана өзгертеді. БАҒЫТТЫ өзгерту үшін қозғалыс бағытын өзгерту керек.",
+            test_ok: "Тамаша нәтиже: {t} ішінен {s}! Сіз индукция мен Ампер күшін жақсы меңгердіңіз.",
+            test_bad: "Сіздің нәтижеңіз: {t} ішінен {s}.<br>Қатемен жұмыс:<br>{m}",
+            test_q: "Сұрақ {n}: дұрыс жауап — <strong>{ans}</strong>"
+        }
+    };
+
+    let currentLang = 'ru';
+
+    function t(key, params = {}) {
+        let str = i18n[currentLang][key];
+        for (let k in params) {
+            str = str.replace(`{${k}}`, params[k]);
+        }
+        return str;
+    }
+
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+
+        // Обновляем select
+        document.querySelectorAll('option[data-ru]').forEach(opt => {
+            opt.innerHTML = opt.getAttribute('data-' + currentLang);
+        });
+
+        // Обновляем input text placeholder
+        document.querySelectorAll('input[type="text"][data-ru]').forEach(inp => {
+            inp.placeholder = inp.getAttribute('data-' + currentLang);
+        });
+
+        document.querySelectorAll('.feedback').forEach(fb => fb.style.display = 'none');
+        document.getElementById('testResult').style.display = 'none';
+    }
+
+    // --- СИМУЛЯЦИЯ ФАРАДЕЯ ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let magnetX = parseInt(document.getElementById('magnetSlider').value);
+    let prevMagnetX = magnetX;
+    let coilTurns = parseInt(document.getElementById('turnsSlider').value);
+    let polarity = 1; // 1 = N right, -1 = S right
+    
+    let targetNeedleAngle = 0;
+    let currentNeedleAngle = 0;
+    let coilCenterX = 425;
+
+    window.updateMagnet = function() {
+        magnetX = parseInt(document.getElementById('magnetSlider').value);
+    }
+
+    window.updateTurns = function() {
+        coilTurns = parseInt(document.getElementById('turnsSlider').value);
+        document.getElementById('turnsVal').textContent = coilTurns;
+    }
+
+    window.flipPolarity = function() {
+        polarity *= -1;
+    }
+
+    function drawCoil(cx, cy, radius, turns) {
+        ctx.strokeStyle = '#d97706'; // Медный цвет
+        for(let i = 0; i < turns; i++) {
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            let xOffset = cx - (turns * 12)/2 + i * 12;
+            ctx.ellipse(xOffset, cy, 15, radius, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
+        // Провода к гальванометру
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#0f172a';
+        ctx.beginPath();
+        let startX = cx - (turns * 12)/2;
+        let endX = cx + (turns * 12)/2;
+        ctx.moveTo(startX, cy + radius);
+        ctx.lineTo(startX, cy + radius + 40);
+        ctx.lineTo(cx - 50, cy + radius + 40);
+        ctx.lineTo(cx - 50, cy + radius + 80);
+        
+        ctx.moveTo(endX, cy + radius);
+        ctx.lineTo(endX, cy + radius + 40);
+        ctx.lineTo(cx + 50, cy + radius + 40);
+        ctx.lineTo(cx + 50, cy + radius + 80);
+        ctx.stroke();
+    }
+
+    function drawMagnet(x, cy) {
+        let mw = 140;
+        let mh = 40;
+        
+        ctx.save();
+        ctx.translate(x, cy);
+        
+        // Тень
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.fillRect(-mw/2 + 5, -mh/2 + 5, mw, mh);
+
+        let colorLeft = polarity === 1 ? '#3b82f6' : '#ef4444'; // S = blue, N = red
+        let colorRight = polarity === 1 ? '#ef4444' : '#3b82f6';
+        let lblLeft = polarity === 1 ? 'S' : 'N';
+        let lblRight = polarity === 1 ? 'N' : 'S';
+
+        ctx.fillStyle = colorLeft;
+        ctx.fillRect(-mw/2, -mh/2, mw/2, mh);
+        
+        ctx.fillStyle = colorRight;
+        ctx.fillRect(0, -mh/2, mw/2, mh);
+
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-mw/2, -mh/2, mw, mh);
+
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 20px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(lblLeft, -mw/4, 0);
+        ctx.fillText(lblRight, mw/4, 0);
+        
+        // Линии поля (схематично)
+        ctx.strokeStyle = 'rgba(14, 165, 233, 0.4)';
+        ctx.lineWidth = 1.5;
+        for(let i=1; i<=3; i++) {
+            ctx.beginPath();
+            ctx.ellipse(mw/2, 0, 30 + i*20, 30 + i*15, 0, -Math.PI/2, Math.PI/2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(-mw/2, 0, 30 + i*20, 30 + i*15, 0, Math.PI/2, -Math.PI/2);
+            ctx.stroke();
+        }
+
+        ctx.restore();
+    }
+
+    function drawGalvanometer(cx, cy, angle) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        
+        // Корпус
+        ctx.fillStyle = '#f8fafc';
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(0, 0, 50, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        
+        // Шкала
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 40, -Math.PI*0.8, -Math.PI*0.2);
+        ctx.stroke();
+        ctx.fillStyle = '#0f172a';
+        ctx.font = '12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("0", 0, -25);
+        ctx.fillText("-", -25, -25);
+        ctx.fillText("+", 25, -25);
+
+        // Стрелка
+        ctx.rotate(angle);
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(-3, 10);
+        ctx.lineTo(0, -35);
+        ctx.lineTo(3, 10);
+        ctx.fill();
+        
+        // Центр
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(0, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Вычисление скорости и индукции
+        let dx = magnetX - prevMagnetX;
+        prevMagnetX = magnetX;
+        
+        let distance = Math.abs(magnetX - coilCenterX);
+        // Индукция максимальна, когда полюс пересекает витки (расстояние ~70)
+        let inductionFactor = Math.max(0, 1 - Math.abs(distance - 70)/150); 
+        if (distance < 30) inductionFactor = 0.5; // внутри катушки поток почти не меняется
+
+        // Сила тока зависит от скорости, количества витков, полярности и близости к катушке
+        let current = dx * inductionFactor * (coilTurns * 0.1) * polarity * -0.05;
+        targetNeedleAngle = current;
+
+        // Ограничитель угла стрелки
+        if(targetNeedleAngle > Math.PI/3) targetNeedleAngle = Math.PI/3;
+        if(targetNeedleAngle < -Math.PI/3) targetNeedleAngle = -Math.PI/3;
+
+        // Плавное движение стрелки
+        currentNeedleAngle += (targetNeedleAngle - currentNeedleAngle) * 0.15;
+        
+        // Если магнит не движется, ток быстро падает до нуля
+        targetNeedleAngle *= 0.8;
+
+        // Отрисовка
+        drawCoil(coilCenterX, 180, 50, coilTurns);
+        drawMagnet(magnetX, 180);
+        drawGalvanometer(coilCenterX, 320, currentNeedleAngle);
+
+        requestAnimationFrame(animate);
+    }
+
+    // Старт симуляции
+    requestAnimationFrame(animate);
+
+
+    // --- ПРОВЕРКА ЗАДАЧ ---
+    function showFeedback(elementId, isCorrect, message) {
+        const el = document.getElementById(elementId);
+        el.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        el.innerHTML = message;
+    }
+
+    window.checkTaskA = function() {
+        const val = document.getElementById('taskA').value;
+        if (!val) return showFeedback('fbA', false, t('sel_opt'));
+        if (val === '1') {
+            showFeedback('fbA', true, t('fbA_corr'));
+        } else {
+            showFeedback('fbA', false, t('fbA_inc'));
+        }
+    };
+
+    window.checkTaskB = function() {
+        let val = document.getElementById('taskB').value.trim();
+        if (!val) return showFeedback('fbB', false, t('sel_opt'));
+        // Принимаем ответы "6", "в 6 раз", "6 раз"
+        if (val === '6' || val.toLowerCase().includes('6')) {
+            showFeedback('fbB', true, t('fbB_corr'));
+        } else {
+            showFeedback('fbB', false, t('fbB_inc'));
+        }
+    };
+
+    window.checkTaskC = function() {
+        const val = document.getElementById('taskC').value;
+        if (!val) return showFeedback('fbC', false, t('sel_opt'));
+        if (val === '3') {
+            showFeedback('fbC', true, t('fbC_corr'));
+        } else {
+            showFeedback('fbC', false, t('fbC_inc'));
+        }
+    };
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0;
+        const total = 5;
+        const questions = document.querySelectorAll('.test-question');
+        let mistakesHTML = '<ul>';
+        
+        questions.forEach((q, index) => {
+            const correctAns = q.getAttribute('data-answer');
+            const radios = q.querySelectorAll('input[type="radio"]');
+            let selected = null;
+            
+            radios.forEach(r => {
+                if (r.checked) selected = r.value;
+            });
+
+            if (selected === correctAns) {
+                score++;
+            } else {
+                let correctText = "";
+                radios.forEach(r => {
+                    if (r.value === correctAns) {
+                        correctText = r.parentElement.querySelector('.lang-' + currentLang).textContent.trim();
+                    }
+                });
+                mistakesHTML += `<li>${t('test_q', {n: index + 1, ans: correctText})}</li>`;
+            }
+        });
+        mistakesHTML += '</ul>';
+
+        const resDiv = document.getElementById('testResult');
+        resDiv.style.display = 'block';
+        
+        if (score === total) {
+            resDiv.style.backgroundColor = 'rgba(16, 185, 129, 0.2)';
+            resDiv.style.color = 'var(--success)';
+            resDiv.innerHTML = t('test_ok', {s: score, t: total});
+        } else {
+            resDiv.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            resDiv.style.color = 'var(--danger)';
+            resDiv.innerHTML = t('test_bad', {s: score, t: total, m: mistakesHTML});
+        }
+    };
+</script>
+</body>
+</html>
