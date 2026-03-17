@@ -613,8 +613,8 @@
             const frame = document.getElementById('pageFrame');
             frame.style.display = 'block';
             
-            // Используем encodeURI для безопасного формирования пути (пробелы заменятся на %20)
-            frame.src = encodeURI(`${folder}/${fileName}`);
+            // Возвращаем обычные пути без encodeURI (для корректной работы из локальных папок на ПК)
+            frame.src = `${folder}/${fileName}`;
         }
 
         function setActive(element) {
