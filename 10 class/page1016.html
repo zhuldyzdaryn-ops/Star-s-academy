@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уравнение неразрывности. Уравнение Бернулли. Подъемная сила — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0284c7; /* Небесно-синий */
+            --primary-hover: #0369a1;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #38bdf8;
+                --primary-hover: #7dd3fc;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #87ceeb; /* Цвет неба */
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; border-color: #475569; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Уравнение неразрывности. Уравнение Бернулли. Подъемная сила — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Как многотонные железные птицы (самолеты) держатся в воздухе? Почему во время урагана с домов срывает крыши, а два идущих параллельно корабля притягиваются друг к другу? Все эти парадоксы блестяще объясняет закон Бернулли!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Законы движения жидкости и газа</h2>
+        <ul>
+            <li><b>Уравнение неразрывности:</b> Если жидкость или газ текут по трубе переменного сечения, то через любое сечение за одно и то же время проходит одинаковый объем вещества. Следствие: <i>в узких местах трубы скорость потока больше, чем в широких</i>.</li>
+            <li><b>Уравнение Бернулли:</b> Это закон сохранения энергии для потока. Он устанавливает связь между давлением, скоростью и высотой. Главный вывод для горизонтального потока: <i>там, где скорость течения жидкости (или газа) больше, её внутреннее давление меньше</i>, и наоборот.</li>
+            <li><b>Подъемная сила крыла:</b> Профиль крыла самолета несимметричен — сверху оно более выпуклое. Воздуху сверху приходится преодолевать больший путь, поэтому его <b>скорость там выше</b>. По закону Бернулли, из-за более высокой скорости <b>давление над крылом падает</b>. Возникает разность давлений (снизу давление больше, чем сверху), которая и толкает крыло вверх!</li>
+        </ul>
+    </section>
+
+    <!-- 3) ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section class="card">
+        <h2>2. Парадоксы гидроаэродинамики в жизни</h2>
+        <ul>
+            <li><b>Срыв крыш при урагане:</b> Ураганный ветер проносится <i>над</i> крышей с огромной скоростью (давление снаружи падает). Внутри дома воздух неподвижен, его давление равно нормальному атмосферному. Это нормальное давление изнутри просто "выдавливает" крышу вверх.</li>
+            <li><b>Эффект притяжения поездов:</b> Если вы стоите близко к краю платформы, когда проносится скорый поезд, воздух между вами и поездом увлекается с большой скоростью. Давление там падает, и атмосферное давление со спины может толкнуть вас под поезд.</li>
+            <li><b>Эффект Магнуса:</b> Если футболист бьет "крученый" мяч, вращающийся мяч с одной стороны увлекает за собой воздух (увеличивая скорость обтекания и снижая давление), а с другой тормозит. Мяч начинает лететь по дуге!</li>
+        </ul>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ -->
+    <section class="card">
+        <h2>3. Формулы и обозначения</h2>
+        <p>Уравнение неразрывности струи:</p>
+        <div class="formula">
+            <b>S<sub>1</sub> &middot; v<sub>1</sub> = S<sub>2</sub> &middot; v<sub>2</sub></b>
+        </div>
+        <p>Уравнение Бернулли (для горизонтальной линии тока):</p>
+        <div class="formula">
+            <b>p<sub>1</sub> + (&rho; &middot; v<sub>1</sub><sup>2</sup>) / 2 = p<sub>2</sub> + (&rho; &middot; v<sub>2</sub><sup>2</sup>) / 2</b>
+        </div>
+        <p>Разность давлений (&Delta;p) и Подъемная сила (F<sub>y</sub>):</p>
+        <div class="formula">
+            <b>&Delta;p = p<sub>снизу</sub> - p<sub>сверху</sub> = &rho; &middot; (v<sub>сверху</sub><sup>2</sup> - v<sub>снизу</sub><sup>2</sup>) / 2</b><br><br>
+            <b>F<sub>y</sub> = &Delta;p &middot; S</b>
+        </div>
+        <p><b>Обозначения:</b></p>
+        <ul>
+            <li><b>S</b> — площадь (для крыла — площадь несущей поверхности) (м<sup>2</sup>)</li>
+            <li><b>v</b> — скорость обтекающего потока воздуха (м/с)</li>
+            <li><b>p</b> — статическое давление (Па)</li>
+            <li><b>&rho;</b> (ро) — плотность воздуха (&approx; 1.2 кг/м<sup>3</sup> у поверхности Земли)</li>
+            <li><b>F<sub>y</sub></b> — подъемная сила (Ньютоны, Н)</li>
+        </ul>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Аэродинамическая труба</h2>
+        <p>Перед вами профиль крыла самолета в аэродинамической трубе. Меняйте скорость потока (тягу двигателей) и угол атаки крыла (наклон носа самолета). Наблюдайте, как изменяется разность давлений и генерируется вектор подъемной силы.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-speed">Скорость самолета (v): <span id="val-speed">100</span> м/с</label>
+                    <input type="range" id="sim-speed" min="50" max="300" value="100" step="10">
+                    <small style="color:var(--text-muted)">От 180 до 1080 км/ч</small>
+                </div>
+
+                <div class="control-group">
+                    <label for="sim-angle">Угол атаки (&alpha;): <span id="val-angle">5</span>&deg;</label>
+                    <input type="range" id="sim-angle" min="0" max="20" value="5" step="1">
+                    <small style="color:var(--text-muted)">Наклон крыла к набегающему потоку</small>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-toggle">Ветер: ВКЛ / ВЫКЛ</button>
+                </div>
+                
+                <div id="sim-dashboard" style="background: var(--bg-color); padding: 12px; margin-top: 15px; border-radius: 8px; font-family: monospace; font-size: 0.95rem;">
+                    <b>Аэродинамические расчеты:</b><br>
+                    Разность скоростей: <span id="out-dv" style="color:var(--primary);">--</span> м/с<br>
+                    Разность давлений (&Delta;p): <span id="out-dp" style="color:var(--accent);">--</span> Па<br>
+                    <span style="font-size:1.1rem; font-weight:bold;">Подъемная сила: <span id="out-lift" style="color:var(--success);">--</span> кН</span><br>
+                    <small>(для крыла S = 50 м²)</small>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="600" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Что наблюдаем: Линии тока сверху сближаются — скорость растет, давление падает. Вектор подъемной силы (зеленая стрелка) растет пропорционально квадрату скорости!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи (Закон Бернулли)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Самолет летит горизонтально. Скорость потока воздуха под крылом равна 100 м/с, а над крылом — 120 м/с. Плотность воздуха принять равной 1.2 кг/м<sup>3</sup>. Площадь крыльев самолета равна 20 м<sup>2</sup>. Найдите подъемную силу, действующую на самолет.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                v<sub>снизу</sub> = 100 м/с<br>
+                v<sub>сверху</sub> = 120 м/с<br>
+                &rho; = 1.2 кг/м<sup>3</sup><br>
+                S = 20 м<sup>2</sup><br>
+                <b>Найти:</b> F<sub>y</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула / Идея:</b><br>
+                1. Сначала найдем разность давлений по следствию из уравнения Бернулли:<br>
+                &Delta;p = &rho; &middot; (v<sub>сверху</sub><sup>2</sup> - v<sub>снизу</sub><sup>2</sup>) / 2<br>
+                2. Затем найдем силу: F<sub>y</sub> = &Delta;p &middot; S</p>
+                <p><b>Подстановка и шаги:</b><br>
+                1. Возводим скорости в квадрат: 120<sup>2</sup> = 14400, 100<sup>2</sup> = 10000.<br>
+                2. Разность квадратов: 14400 - 10000 = 4400 м<sup>2</sup>/с<sup>2</sup>.<br>
+                3. Считаем &Delta;p = 1.2 &middot; 4400 / 2 = 0.6 &middot; 4400 = 2640 Па.<br>
+                4. Находим силу: F<sub>y</sub> = 2640 &middot; 20 = 52800 Н.</p>
+                <p><b>Ответ:</b> Подъемная сила равна 52 800 Н (около 52.8 кН). Такая сила способна удерживать в воздухе самолет массой чуть более 5 тонн.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Уравнение неразрывности)</h3>
+            <p>В горизонтальной водопроводной трубе вода течет со скоростью 2 м/с. Затем труба сужается, и её площадь поперечного сечения <b>уменьшается в 4 раза</b>. Какой станет <b>скорость</b> течения воды (в м/с) в узкой части?</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 8, 0, 'По уравнению неразрывности (S1*v1 = S2*v2), во сколько раз уменьшилась площадь, во столько же раз увеличилась скорость.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает смысл уравнения неразрывности потока.</li>
+                    <li>Понимает обратную пропорциональность скорости и площади.</li>
+                    <li>Верно умножает начальную скорость на коэффициент сужения.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет давления Бернулли)</h3>
+            <p>Вентилятор продувает воздух по трубе. В широкой части трубы скорость воздуха равна 10 м/с, а в сужении достигает 30 м/с. На сколько Паскалей (Па) давление в широкой части <b>больше</b>, чем в узкой? Плотность воздуха примите равной &rho; = 1.2 кг/м<sup>3</sup>.</p>
+            <input type="number" id="taskB-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 480, 1, 'Используйте формулу Δp = ρ * (v2² - v1²) / 2. Подставьте: 1.2 * (900 - 100) / 2.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Выделяет из уравнения Бернулли формулу для разности давлений.</li>
+                    <li>Учитывает, что разность квадратов (30² - 10²) не равна квадрату разности (20²).</li>
+                    <li>Безошибочно проводит вычисления.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Масса самолета)</h3>
+            <p>Самолет летит горизонтально (подъемная сила точно уравновешивает силу тяжести). Разность давлений под и над крылом составляет &Delta;p = 3000 Па. Площадь крыльев равна S = 40 м<sup>2</sup>. Ускорение свободного падения g = 10 м/с<sup>2</sup>. Найдите <b>массу</b> этого самолета (в килограммах).</p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 12000, 0, 'Сначала найдите подъемную силу Fy = Δp * S. Поскольку самолет летит ровно, Fy = m*g. Отсюда m = Fy / 10.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает условие горизонтального полета (F_подъемная = F_тяжести).</li>
+                    <li>Связывает давление и площадь для нахождения силы.</li>
+                    <li>Находит массу тела через силу тяжести.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) ВИДЕО -->
+    <section class="card">
+        <h2>7. Видео по теме</h2>
+        <p>Для лучшего понимания рекомендуем посмотреть визуализацию обтекания профиля крыла в аэродинамической трубе и объяснение уравнения Бернулли:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=подъемная+сила+крыла+уравнение+бернулли+физика+10+класс" target="_blank" class="video-link">
+                ▶ Смотреть видеоразборы на YouTube
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке с видеоматериалами для 10 класса)</p>
+    </section>
+
+    <!-- 9) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>8. Рефлексия</h2>
+        <p>Оцените, насколько хорошо вы усвоили принципы гидроаэродинамики:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что в узком месте трубы газ или жидкость движутся быстрее (неразрывность).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я запомнил(а) закон Бернулли: больше скорость — меньше давление.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я могу объяснить, почему возникает подъемная сила крыла самолета.</label>
+        </div>
+        <button onclick="alert('Отличная работа! Теперь вы понимаете физику авиации и аэродинамики.')" style="margin-top: 10px;">Подтвердить результат</button>
+    </section>
+
+    <!-- 10) ТЕСТ -->
+    <section class="card">
+        <h2>9. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Согласно уравнению неразрывности потока для несжимаемой жидкости:</b></p>
+                <label><input type="radio" name="q1" value="0"> Скорость течения жидкости одинакова во всех сечениях трубы.</label>
+                <label><input type="radio" name="q1" value="1"> Произведение площади сечения на скорость потока является величиной постоянной.</label>
+                <label><input type="radio" name="q1" value="0"> Давление жидкости обратно пропорционально площади сечения.</label>
+                <label><input type="radio" name="q1" value="0"> В узких местах скорость жидкости уменьшается.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В чем суть парадокса, вытекающего из уравнения Бернулли?</b></p>
+                <label><input type="radio" name="q2" value="0"> Чем быстрее течет жидкость, тем сильнее она давит на стенки (давление растет).</label>
+                <label><input type="radio" name="q2" value="0"> В узких трубах жидкость замерзает быстрее.</label>
+                <label><input type="radio" name="q2" value="1"> В тех участках трубы, где скорость потока выше, давление жидкости на стенки меньше.</label>
+                <label><input type="radio" name="q2" value="0"> Плотность жидкости зависит от её скорости.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как распределяется давление воздуха вокруг крыла самолета во время полета?</b></p>
+                <label><input type="radio" name="q3" value="0"> Давление сверху и снизу одинаково.</label>
+                <label><input type="radio" name="q3" value="1"> Давление под крылом больше, чем над крылом.</label>
+                <label><input type="radio" name="q3" value="0"> Давление над крылом больше, чем под крылом.</label>
+                <label><input type="radio" name="q3" value="0"> Давление зависит только от высоты полета, а не от обтекания.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Почему сильный ураганный ветер может сорвать крышу с дома?</b></p>
+                <label><input type="radio" name="q4" value="0"> Ветер задувает под крышу и механически отрывает её.</label>
+                <label><input type="radio" name="q4" value="1"> Из-за огромной скорости ветра над крышей давление там резко падает, и нормальное давление изнутри дома выталкивает крышу вверх.</label>
+                <label><input type="radio" name="q4" value="0"> Давление ураганного ветра сверху раздавливает стены, и крыша отскакивает.</label>
+                <label><input type="radio" name="q4" value="0"> Ураган создает вакуум внутри дома.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как изменится аэродинамическая подъемная сила, если скорость самолета увеличить в 2 раза? (При том же угле атаки).</b></p>
+                <label><input type="radio" name="q5" value="0"> Увеличится в 2 раза.</label>
+                <label><input type="radio" name="q5" value="0"> Не изменится.</label>
+                <label><input type="radio" name="q5" value="0"> Уменьшится в 2 раза.</label>
+                <label><input type="radio" name="q5" value="1"> Увеличится в 4 раза (так как зависит от квадрата скорости).</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ПРОФИЛЬ КРЫЛА
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const inSpeed = document.getElementById('sim-speed');
+    const inAngle = document.getElementById('sim-angle');
+    const btnToggle = document.getElementById('btn-toggle');
+    
+    const valSpeed = document.getElementById('val-speed');
+    const valAngle = document.getElementById('val-angle');
+    
+    const outDv = document.getElementById('out-dv');
+    const outDp = document.getElementById('out-dp');
+    const outLift = document.getElementById('out-lift');
+
+    // Параметры симуляции
+    let isBlowing = true;
+    let baseSpeed = 100; // m/s
+    let angleDeg = 5;
+    const rho = 1.2; // kg/m^3
+    const wingArea = 50; // m^2
+    let animId;
+
+    // Линии тока (частицы)
+    let streamlines = [];
+    const numLines = 14;
+
+    function initStreamlines() {
+        streamlines = [];
+        for (let i = 0; i < numLines; i++) {
+            let yStart = 40 + i * 20; // Равномерно по высоте
+            let particles = [];
+            for(let j=0; j<40; j++) {
+                particles.push({
+                    x: Math.random() * canvas.width, 
+                    y: yStart,
+                    baseY: yStart
+                });
+            }
+            streamlines.push({
+                baseY: yStart,
+                particles: particles
+            });
+        }
+    }
+
+    function updatePhysics() {
+        baseSpeed = parseFloat(inSpeed.value);
+        angleDeg = parseFloat(inAngle.value);
+        
+        valSpeed.innerText = baseSpeed;
+        valAngle.innerText = angleDeg;
+
+        if (isBlowing) {
+            // Упрощенная аэродинамическая модель для симуляции
+            // Разность скоростей зависит от угла атаки (асимметрия потока)
+            // При 0 градусах тоже есть разность (из-за формы профиля)
+            let v_diff = baseSpeed * (0.1 + angleDeg * 0.015); 
+            
+            let v_top = baseSpeed + v_diff / 2;
+            let v_bot = baseSpeed - v_diff / 2;
+            
+            // Давление
+            let dp = 0.5 * rho * (v_top*v_top - v_bot*v_bot);
+            
+            // Сила
+            let liftForce = dp * wingArea; // в Ньютонах
+            let lift_kN = liftForce / 1000;
+
+            outDv.innerText = v_diff.toFixed(1);
+            outDp.innerText = dp.toFixed(0);
+            outLift.innerText = lift_kN.toFixed(1);
+        } else {
+            outDv.innerText = "0.0";
+            outDp.innerText = "0";
+            outLift.innerText = "0.0";
+        }
+    }
+
+    [inSpeed, inAngle].forEach(el => el.addEventListener('input', updatePhysics));
+
+    function drawAirfoil(cx, cy, rotationRad) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(-rotationRad); // Угол атаки (нос вверх = поворот против часовой)
+
+        // Рисуем классический профиль крыла (каплевидный)
+        ctx.beginPath();
+        ctx.moveTo(-80, 0); // Носик
+        // Верхняя кромка (более выпуклая)
+        ctx.bezierCurveTo(-80, -35, 20, -40, 100, 0);
+        // Нижняя кромка (более плоская)
+        ctx.bezierCurveTo(20, -10, -80, -5, -80, 0);
+        
+        ctx.fillStyle = "#cbd5e1";
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#475569";
+        ctx.stroke();
+
+        ctx.restore();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Рисуем сетку для красоты
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+        ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
+        }
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2 + 20;
+        let angleRad = angleDeg * Math.PI / 180;
+
+        // Обновляем и рисуем линии тока
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        
+        for (let i = 0; i < numLines; i++) {
+            let sl = streamlines[i];
+            
+            for (let j = 0; j < sl.particles.length; j++) {
+                let p = sl.particles[j];
+                
+                if (isBlowing) {
+                    // Базовая скорость визуально масштабируется
+                    let vx = baseSpeed * 0.05; 
+                    
+                    // Влияние крыла на скорость и позицию
+                    let distToWingX = p.x - cx;
+                    let influence = Math.exp(-(distToWingX*distToWingX)/15000); // Гауссиана
+                    
+                    if (sl.baseY < cy) {
+                        // Над крылом: поток ускоряется и огибает горб
+                        p.y = sl.baseY - influence * (30 + angleDeg*2);
+                        vx += influence * baseSpeed * 0.03 * (1 + angleDeg/10); 
+                    } else {
+                        // Под крылом: поток немного замедляется и отклоняется вниз
+                        p.y = sl.baseY + influence * (10 + angleDeg);
+                        vx -= influence * baseSpeed * 0.01;
+                    }
+
+                    p.x += vx;
+
+                    if (p.x > canvas.width) {
+                        p.x = -Math.random() * 50;
+                        p.y = sl.baseY;
+                    }
+                }
+
+                // Отрисовка частицы как черточки
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI*2);
+                ctx.fill();
+                
+                if (isBlowing) {
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    let tail = baseSpeed * 0.1;
+                    ctx.lineTo(p.x - tail, p.y);
+                    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Рисуем профиль крыла поверх линий тока
+        drawAirfoil(cx, cy, angleRad);
+
+        // Рисуем вектор подъемной силы
+        if (isBlowing) {
+            let liftVal = parseFloat(outLift.innerText);
+            if (!isNaN(liftVal) && liftVal > 0) {
+                let arrowLen = liftVal * 2; // Визуальный масштаб
+                if (arrowLen > 120) arrowLen = 120; // Ограничитель
+                
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx, cy - arrowLen);
+                ctx.strokeStyle = "#16a34a"; // Зеленый вектор
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                
+                // Стрелочка
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - arrowLen);
+                ctx.lineTo(cx - 8, cy - arrowLen + 10);
+                ctx.lineTo(cx + 8, cy - arrowLen + 10);
+                ctx.fillStyle = "#16a34a";
+                ctx.fill();
+
+                ctx.fillStyle = "#16a34a";
+                ctx.font = "bold 16px Arial";
+                ctx.fillText("F y", cx + 15, cy - arrowLen/2);
+            }
+        }
+    }
+
+    function loop() {
+        draw();
+        animId = requestAnimationFrame(loop);
+    }
+
+    btnToggle.addEventListener('click', () => {
+        isBlowing = !isBlowing;
+        updatePhysics();
+    });
+
+    // Инициализация
+    initStreamlines();
+    updatePhysics();
+    loop();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        const inputVal = parseFloat(document.getElementById(id + '-input').value);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Уравнение неразрывности (S1*v1 = S2*v2) означает, что произведение площади на скорость постоянно. Чем ýже труба, тем больше скорость потока.",
+            "2. Уравнение Бернулли доказывает: в узких местах (где скорость растет) статическое давление жидкости или газа ПАДАЕТ.",
+            "3. Поток над крылом из-за формы профиля (выпуклости) движется быстрее. Следовательно, давление над крылом МЕНЬШЕ, чем под ним. Это создает подъемную силу.",
+            "4. Внутри дома воздух стоит на месте (нормальное давление). Снаружи над крышей ураган (скорость огромная -> давление падает). Разность давлений выталкивает крышу изнутри.",
+            "5. Разность давлений пропорциональна разности КВАДРАТОВ скоростей (v²). Увеличение скорости в 2 раза увеличит силу в 2² = 4 раза."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Законы гидроаэродинамики усвоены на 100%.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

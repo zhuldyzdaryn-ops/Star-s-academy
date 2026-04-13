@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сила упругости. Сила трения. Сила Архимеда — 10 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #818cf8;
+                --primary-hover: #a5b4fc;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        .sim-status { margin-top: 12px; font-family: monospace; font-size: 1rem; color: var(--text-main); white-space: pre-line; background: var(--bg-color); padding: 10px; border-radius: 8px;}
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 12px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.1rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Силы в механике: Упругость, Трение, сила Архимеда — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            В 10 классе мы смотрим на привычные силы глубже. Знаете ли вы, что упругость и трение имеют единую электромагнитную природу? 
+            Понимание этих взаимодействий позволяет инженерам проектировать сейсмоустойчивые здания, а аэродинамикам — скоростные автомобили.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Природа сил и углубленная теория</h2>
+        <ul>
+            <li><b>Электромагнитная природа:</b> В отличие от гравитации (силы тяжести), силы упругости и трения возникают из-за электромагнитного взаимодействия атомов и молекул соприкасающихся тел.</li>
+            <li><b>Сила упругости (Закон Гука):</b> Возникает при деформации. Справедлив только в пределах <i>пропорциональности</i> (пока деформация упругая). В векторном виде сила всегда направлена противоположно вектору смещения частиц.</li>
+            <li><b>Силы трения:</b> Разделяют на <i>трение покоя</i>, <i>трение скольжения</i> и <i>трение качения</i>. Сила трения покоя переменна и саморегулируется от $0$ до максимального значения $F_{тр.пок}^{max} \approx \mu N$. Она удерживает тела от проскальзывания.</li>
+            <li><b>Сила Архимеда:</b> Равна весу вытесненной жидкости. Возникает из-за разности гидростатического давления на нижнюю и верхнюю грани погруженного тела. В невесомости (при падении) гидростатическое давление исчезает, и сила Архимеда становится равной нулю!</li>
+        </ul>
+    </section>
+
+    <!-- 3) ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section class="card">
+        <h2>2. Сложные примеры применения</h2>
+        <ul>
+            <li><b>Автомобильные системы ABS:</b> Антиблокировочная система тормозов не дает колесам пойти "юзом". Она поддерживает колесо на грани скольжения (используя трение покоя, которое всегда немного больше трения скольжения), обеспечивая лучшее сцепление.</li>
+            <li><b>Строительство мостов:</b> При расчете вантовых мостов инженеры используют закон Гука и понятие <i>механического напряжения</i> (модуль Юнга), чтобы тросы не разорвались под нагрузкой.</li>
+            <li><b>Подводная сварка и кессоны:</b> Инженерам нужно точно рассчитывать выталкивающую силу массивных бетонных кессонов, удерживаемых кранами (натяжение тросов) при строительстве опор моста в воде.</li>
+        </ul>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ -->
+    <section class="card">
+        <h2>3. Формулы и обозначения (10 класс)</h2>
+        <div class="formula">
+            <b>Закон Гука (векторная форма):</b> &nbsp; $\vec{F}_{упр} = -k\Delta\vec{x}$<br>
+            <b>Трение покоя и скольжения:</b> &nbsp; $F_{тр.пок} \le \mu_0 N$ &nbsp; | &nbsp; $F_{тр.ск} = \mu N$<br>
+            <b>Сила Архимеда:</b> &nbsp; $\vec{F}_A = -\rho_{ж}\vec{g}V_{погр}$
+        </div>
+        <p><b>Обозначения:</b></p>
+        <ul>
+            <li><b>k</b> — жесткость пружины (Н/м). Зависит от материала (модуля Юнга) и геометрии тела.</li>
+            <li><b>&mu;<sub>0</sub>, &mu;</b> — коэффициенты трения покоя и скольжения (обычно $\mu_0 > \mu$).</li>
+            <li><b>N</b> — сила нормальной реакции опоры (Н). Зависит от проекции внешних сил на перпендикуляр к поверхности!</li>
+            <li><b>&rho;<sub>ж</sub></b> — плотность жидкости/газа (кг/м³).</li>
+        </ul>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Груз на пружине в жидкости</h2>
+        <p>Сложная система: груз подвешен на упругой пружине над резервуаром. Вы можете изменять массу, объем груза и плотность жидкости. Анализируйте, как распределяются три вектора сил (Тяжести, Упругости и Архимеда) в состоянии равновесия.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-mass">Масса груза (m): <span id="val-mass">5</span> кг</label>
+                    <input type="range" id="sim-mass" min="1" max="15" value="5" step="0.5">
+                </div>
+                
+                <div class="control-group">
+                    <label for="sim-vol">Объем груза (V): <span id="val-vol">2</span> л (дм³)</label>
+                    <input type="range" id="sim-vol" min="0.5" max="10" value="2" step="0.5">
+                    <small style="color:var(--text-muted)">Изменяет плотность тела и силу Архимеда</small>
+                </div>
+
+                <div class="control-group">
+                    <label for="sim-liq">Плотность жидкости (&rho;): <span id="val-liq">1000</span> кг/м³</label>
+                    <input type="range" id="sim-liq" min="700" max="1500" value="1000" step="100">
+                </div>
+
+                <div class="control-group">
+                    <label for="sim-k">Жесткость пружины (k): <span id="val-k">200</span> Н/м</label>
+                    <input type="range" id="sim-k" min="50" max="500" value="200" step="10">
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-start">Отпустить груз</button>
+                    <button id="btn-reset" class="secondary">Сбросить</button>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="500" height="400"></canvas>
+                <div class="sim-status" id="sim-info">
+Нажмите "Отпустить груз", чтобы запустить физический движок.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения комплексной задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Алюминиевый цилиндр ($m = 5.4$ кг, плотность алюминия $\rho_a = 2700$ кг/м³) полностью погружен в воду ($\rho_в = 1000$ кг/м³) и подвешен на динамометре (пружине). Определите силу упругости, возникающую в пружине. ($g = 10$ м/с²).</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                $m = 5.4$ кг; $\rho_a = 2700$ кг/м³; $\rho_в = 1000$ кг/м³; $g = 10$ м/с²<br>
+                <b>Найти:</b> $F_{упр}$ — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Анализ и Формулы:</b><br>
+                На тело действуют три силы: сила тяжести ($mg$) направлена вниз, выталкивающая сила Архимеда ($F_A$) и сила упругости ($F_{упр}$) направлены вверх. Так как цилиндр в покое, по 1-му закону Ньютона: $mg = F_A + F_{упр}$.<br>
+                Отсюда $F_{упр} = mg - F_A$.<br>
+                Вычислим объем тела: $V = m / \rho_a$.<br>
+                Сила Архимеда: $F_A = \rho_в g V = \rho_в g (m / \rho_a)$.</p>
+                <p><b>Подстановка и шаги:</b><br>
+                1. Объем: $V = 5.4 / 2700 = 0.002$ м³.<br>
+                2. Сила Архимеда: $F_A = 1000 \cdot 10 \cdot 0.002 = 20$ Н.<br>
+                3. Сила тяжести: $mg = 5.4 \cdot 10 = 54$ Н.<br>
+                4. Сила упругости: $F_{упр} = 54 - 20 = 34$ Н.</p>
+                <p><b>Ответ:</b> Динамометр покажет силу $34$ Н.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+        <p><i>Для расчетов принимайте $g = 10$ м/с².</i></p>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Трение на наклонной плоскости)</h3>
+            <p>Деревянный брусок равномерно скользит вниз по наклонной плоскости с углом наклона $45^\circ$. Чему равен <b>коэффициент трения скольжения</b> $\mu$ между бруском и плоскостью? (Ответ введите целым числом).</p>
+            <input type="number" id="taskA-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 1, 0.01, 'При равномерном движении по наклонной плоскости коэффициент трения равен тангенсу угла наклона: μ = tg(α). tg(45°) = 1.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает условие равномерного движения (ускорение равно 0, суммы сил по осям равны 0).</li>
+                    <li>Знает, что нормальная реакция опоры на наклонной плоскости $N = mg \cos\alpha$.</li>
+                    <li>Выводит классический результат $\mu = \text{tg}(\alpha)$.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Механическое напряжение / Упругость)</h3>
+            <p>Чтобы растянуть стальную пружину на $2$ см, нужно приложить силу $100$ Н. Какую <b>силу (в Ньютонах)</b> нужно приложить, чтобы растянуть эту же пружину на $7$ см, если предел пропорциональности не превышен?</p>
+            <input type="number" id="taskB-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 350, 1, 'Найдите жесткость пружины k = F1 / x1. Затем найдите новую силу F2 = k * x2. Переводите см в метры!')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Применяет закон Гука в скалярном виде.</li>
+                    <li>Определяет постоянную характеристику системы (жесткость $k$).</li>
+                    <li>Выполняет расчеты, соблюдая размерность СИ.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложная система: Архимед + Нить)</h3>
+            <p>Кусок стекла массой $2.5$ кг (плотность стекла $2500$ кг/м³) находится на дне аквариума с водой ($\rho_{воды} = 1000$ кг/м³). К стеклу привязана нить, которую тянут вверх с силой $10$ Н. Чему равна <b>сила давления (нормальная реакция опоры N)</b> стекла на дно аквариума? Ответ дайте в Ньютонах.</p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 5, 0.1, 'Ось Y направлена вверх. N + F_A + T - mg = 0. Найдите объем V=m/ρ. F_A = 1000*10*V. N = mg - F_A - T.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Анализирует систему с четырьмя силами ($mg, N, F_A, T$).</li>
+                    <li>Применяет первый закон Ньютона в проекциях на ось Y.</li>
+                    <li>Самостоятельно рассчитывает объем тела через массу и плотность.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) ВИДЕО -->
+    <section class="card">
+        <h2>7. Видео по теме (Углубленный уровень)</h2>
+        <p>Для понимания электромагнитной природы сил и разбора сложных олимпиадных задач с наклонными плоскостями рекомендуем видеоразборы:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=динамика+силы+трения+упругости+архимеда+физика+10+класс+ЕГ" target="_blank" class="video-link">
+                ▶ Видеоуроки и разборы на YouTube
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке с видеоматериалами для профильных классов)</p>
+    </section>
+
+    <!-- 9) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>8. Рефлексия</h2>
+        <p>Отметьте, какие из концепций вы усвоили в полной мере:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понимаю природу происхождения сил трения и упругости.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я уверенно проецирую векторы сил на оси (например, на наклонной плоскости).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я умею составлять уравнения баланса сил по 1-му и 2-му законам Ньютона.</label>
+        </div>
+        <button onclick="alert('Отличная работа! Физика требует структурного мышления.')" style="margin-top: 10px;">Зафиксировать</button>
+    </section>
+
+    <!-- 10) ТЕСТ -->
+    <section class="card">
+        <h2>9. Итоговый тест (10 класс)</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Какова природа силы трения и силы упругости?</b></p>
+                <label><input type="radio" name="q1" value="0"> Гравитационная</label>
+                <label><input type="radio" name="q1" value="1"> Электромагнитная</label>
+                <label><input type="radio" name="q1" value="0"> Сильное ядерное взаимодействие</label>
+                <label><input type="radio" name="q1" value="0"> Кинематическая</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Вектор силы упругости при деформации...</b></p>
+                <label><input type="radio" name="q2" value="0"> Сонаправлен с вектором перемещения частиц тела.</label>
+                <label><input type="radio" name="q2" value="1"> Всегда направлен противоположно направлению перемещения (деформации).</label>
+                <label><input type="radio" name="q2" value="0"> Перпендикулярен направлению деформации.</label>
+                <label><input type="radio" name="q2" value="0"> Не зависит от направления деформации.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как связаны максимальная сила трения покоя ($F_{пок}^{max}$) и сила трения скольжения ($F_{ск}$)?</b></p>
+                <label><input type="radio" name="q3" value="0"> Они всегда абсолютно равны.</label>
+                <label><input type="radio" name="q3" value="1"> $F_{пок}^{max}$ обычно немного больше, чем $F_{ск}$.</label>
+                <label><input type="radio" name="q3" value="0"> $F_{ск}$ всегда значительно больше $F_{пок}^{max}$.</label>
+                <label><input type="radio" name="q3" value="0"> Трение покоя не зависит от силы реакции опоры.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Лифт обрывается и свободно падает вниз с ускорением $g$. Чему равна выталкивающая (Архимедова) сила, действующая на плавающее в ведре (внутри лифта) яблоко?</b></p>
+                <label><input type="radio" name="q4" value="1"> Нулю.</label>
+                <label><input type="radio" name="q4" value="0"> Увеличивается в 2 раза.</label>
+                <label><input type="radio" name="q4" value="0"> Равна стандартной силе $\rho g V$.</label>
+                <label><input type="radio" name="q4" value="0"> Зависит от массы лифта.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Тело находится на наклонной плоскости (угол $\alpha$) в состоянии покоя. Сила трения покоя равна:</b></p>
+                <label><input type="radio" name="q5" value="0"> $\mu mg \cos\alpha$</label>
+                <label><input type="radio" name="q5" value="0"> $mg \cos\alpha$</label>
+                <label><input type="radio" name="q5" value="1"> $mg \sin\alpha$</label>
+                <label><input type="radio" name="q5" value="0"> $0$</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ: Динамика (Пружина + Архимед)
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы
+    const inMass = document.getElementById('sim-mass');
+    const inVol = document.getElementById('sim-vol');
+    const inLiq = document.getElementById('sim-liq');
+    const inK = document.getElementById('sim-k');
+    
+    const valMass = document.getElementById('val-mass');
+    const valVol = document.getElementById('val-vol');
+    const valLiq = document.getElementById('val-liq');
+    const valK = document.getElementById('val-k');
+    
+    const btnStart = document.getElementById('btn-start');
+    const btnReset = document.getElementById('btn-reset');
+    const infoText = document.getElementById('sim-info');
+
+    // Физические параметры (СИ)
+    let m = 5;      // кг
+    let V = 0.002;  // м³ (в литрах * 0.001)
+    let rhoL = 1000;// кг/м³
+    let k = 200;    // Н/м
+    const g = 9.8;  // м/с²
+    
+    // Параметры визуала
+    const scale = 100; // 100 пикселей = 1 метр
+    const anchorY = 20; // Точка крепления пружины сверху
+    const waterLevelY = 200; // Уровень воды (пиксели)
+    const tankBottomY = 400; // Дно (пиксели)
+    let blockSide = 40; // Размер блока в пикселях (визуальный)
+    const L0 = 1; // Длина нерастянутой пружины в метрах (100 пикселей)
+
+    // Состояние блока (координата Y центра масс)
+    let y = 1.0; // в метрах (от якоря вниз)
+    let v = 0;   // скорость м/с
+    let isRunning = false;
+    let animId;
+
+    function updateInputs() {
+        m = parseFloat(inMass.value);
+        let volLiters = parseFloat(inVol.value);
+        V = volLiters / 1000; 
+        rhoL = parseFloat(inLiq.value);
+        k = parseFloat(inK.value);
+        
+        valMass.innerText = m;
+        valVol.innerText = volLiters;
+        valLiq.innerText = rhoL;
+        valK.innerText = k;
+        
+        // Визуальный размер зависит от объема (кубический корень)
+        let sideMeters = Math.cbrt(V); // м
+        blockSide = Math.max(30, sideMeters * scale * 1.5); // Масштабируем для видимости
+
+        if (!isRunning) draw();
+    }
+
+    [inMass, inVol, inLiq, inK].forEach(el => el.addEventListener('input', updateInputs));
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Рисуем воду
+        ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+        ctx.fillRect(0, waterLevelY, canvas.width, tankBottomY - waterLevelY);
+        ctx.beginPath();
+        ctx.moveTo(0, waterLevelY);
+        ctx.lineTo(canvas.width, waterLevelY);
+        ctx.strokeStyle = "#0284c7";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Координаты блока в пикселях
+        let pixelY = anchorY + y * scale;
+        let blockTop = pixelY - blockSide/2;
+        let blockBottom = pixelY + blockSide/2;
+        let blockLeft = canvas.width/2 - blockSide/2;
+
+        // Рисуем пружину
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2, anchorY);
+        let coils = 15;
+        let step = (blockTop - anchorY) / coils;
+        for (let i=1; i<=coils; i++) {
+            let offset = (i%2===0) ? 15 : -15;
+            if (i===coils) offset = 0;
+            ctx.lineTo(canvas.width/2 + offset, anchorY + step*i);
+        }
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Рисуем блок
+        ctx.fillStyle = "#f59e0b"; // Оранжевый
+        ctx.fillRect(blockLeft, blockTop, blockSide, blockSide);
+        ctx.strokeStyle = "#b45309";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(blockLeft, blockTop, blockSide, blockSide);
+
+        // Расчет физики для вывода на экран
+        let Fg = m * g;
+        
+        // Доля погружения (от 0 до 1)
+        let subFraction = 0;
+        if (blockBottom > waterLevelY) {
+            subFraction = (blockBottom - waterLevelY) / blockSide;
+            if (blockTop >= waterLevelY) subFraction = 1;
+        }
+        
+        let Fa = rhoL * g * V * subFraction;
+        let Fspring = -k * (y - L0); // Направлена вверх, если растянута
+        let Fnet = Fg - Fa + Fspring;
+
+        // Вывод инфы
+        let status = `Анализ сил (Ньютоны):\n`;
+        status += `↓ Тяжести (mg): ${Fg.toFixed(1)} Н\n`;
+        status += `↑ Архимеда (F_a): ${Fa.toFixed(1)} Н (Погружение: ${(subFraction*100).toFixed(0)}%)\n`;
+        let sprDir = Fspring < 0 ? "↑" : "↓";
+        status += `${sprDir} Упругости (-kx): ${Math.abs(Fspring).toFixed(1)} Н\n`;
+        status += `\nРавнодействующая: ${Math.abs(Fnet).toFixed(2)} Н `;
+        status += (Math.abs(Fnet) < 0.1 && Math.abs(v) < 0.01) ? "(РАВНОВЕСИЕ)" : "(В ДВИЖЕНИИ)";
+        
+        infoText.innerText = status;
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        // Физический шаг (dt)
+        let dt = 0.016; // 60 fps
+        
+        let pixelY = anchorY + y * scale;
+        let blockTop = pixelY - blockSide/2;
+        let blockBottom = pixelY + blockSide/2;
+
+        let subFraction = 0;
+        if (blockBottom > waterLevelY) {
+            subFraction = (blockBottom - waterLevelY) / blockSide;
+            if (blockTop >= waterLevelY) subFraction = 1;
+        }
+
+        let Fa = rhoL * g * V * subFraction;
+        let Fspring = -k * (y - L0);
+        let Fg = m * g;
+        
+        // Демпфирование (сопротивление среды)
+        let damping = (subFraction > 0) ? 8 : 1; // В воде трение больше
+        let Fdrag = -damping * v;
+
+        // Второй закон Ньютона: a = F/m
+        let a = (Fg - Fa + Fspring + Fdrag) / m;
+        
+        // Интегрирование Эйлера
+        v += a * dt;
+        y += v * dt;
+
+        draw();
+
+        // Останавливаем анимацию, если система успокоилась
+        if (Math.abs(v) > 0.001 || Math.abs(a) > 0.05) {
+            animId = requestAnimationFrame(loop);
+        } else {
+            v = 0;
+            draw();
+            isRunning = false;
+            btnStart.innerText = "Отпустить груз";
+        }
+    }
+
+    btnStart.addEventListener('click', () => {
+        if (isRunning) {
+            isRunning = false;
+            cancelAnimationFrame(animId);
+            btnStart.innerText = "Продолжить";
+        } else {
+            isRunning = true;
+            btnStart.innerText = "Пауза";
+            loop();
+        }
+    });
+
+    btnReset.addEventListener('click', () => {
+        isRunning = false;
+        cancelAnimationFrame(animId);
+        btnStart.innerText = "Отпустить груз";
+        y = L0; // Возвращаем пружину в недеформированное состояние
+        v = 0;
+        updateInputs();
+        infoText.innerText = "Нажмите 'Отпустить груз', чтобы запустить физический движок.";
+    });
+
+    // Инициализация
+    y = L0;
+    updateInputs();
+
+    /* =========================================
+       ЗАДАЧИ A, B, C (ПРОВЕРКА)
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        const inputVal = parseFloat(document.getElementById(id + '-input').value);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    /* =========================================
+       ИТОГОВЫЙ ТЕСТ (ПРОВЕРКА)
+       ========================================= */
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Силы упругости и трения имеют электромагнитную природу (взаимодействие электронных оболочек атомов).",
+            "2. Сила упругости всегда направлена против деформации (знак минус в законе Гука).",
+            "3. Сила трения покоя (максимальная) немного больше силы трения скольжения, поэтому сдвинуть тяжелый шкаф с места сложнее, чем тащить его потом.",
+            "4. В свободно падающем лифте наступает невесомость. Исчезает гидростатическое давление, выталкивающая сила Архимеда становится равной нулю.",
+            "5. При покое на наклонной плоскости сила трения покоя уравновешивает скатывающую силу: F_{тр} = mg*sin(α)."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор сложных вопросов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречная работа! Уровень 10 класса пройден на отлично.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

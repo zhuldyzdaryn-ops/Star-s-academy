@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Первый закон термодинамики — 10 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #f59e0b; /* Оранжевый (Тепло/Энергия) */
+            --primary-hover: #d97706;
+            --accent: #3b82f6; /* Синий (Работа) */
+            --success: #10b981; /* Зеленый (Внутренняя энергия) */
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #fbbf24;
+                --primary-hover: #f59e0b;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+        button:disabled { background-color: var(--border); cursor: not-allowed; color: var(--text-muted); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; align-items: center;}
+        canvas {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; font-size: 0.9rem;}
+
+        /* Энергетические бары */
+        .energy-bars { margin-top: 15px; width: 100%; }
+        .bar-row { display: flex; align-items: center; margin-bottom: 8px; }
+        .bar-label { width: 40px; font-weight: bold; }
+        .bar-container-outer { flex: 1; background: var(--border); height: 20px; border-radius: 10px; position: relative; overflow: hidden; }
+        .bar-fill { height: 100%; width: 0%; transition: width 0.3s ease; position: absolute; left: 50%; }
+        .bar-fill.positive { background: var(--success); }
+        .bar-fill.negative { background: var(--danger); right: 50%; left: auto; }
+        
+        .bar-fill.q-color { background: var(--primary); }
+        .bar-fill.u-color { background: var(--success); }
+        .bar-fill.a-color { background: var(--accent); }
+
+        .bar-value { width: 60px; text-align: right; font-family: monospace; font-size: 1rem; font-weight: bold;}
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Первый закон термодинамики</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Закон сохранения энергии гласит: энергия не берется из ниоткуда и не исчезает в никуда. В термодинамике этот великий принцип принимает свою самую знаменитую форму.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ПЕРВЫЙ ЗАКОН -->
+    <section class="card">
+        <h2>1. Формулировка Первого закона термодинамики</h2>
+        <p>Мы уже знаем, что изменить внутреннюю энергию (&Delta;U) системы можно двумя способами: передав ей количество теплоты (Q) или совершив над ней механическую работу. Если мы подводим тепло к газу, куда оно расходуется?</p>
+        <p><b>Первый закон термодинамики:</b> Количество теплоты (Q), переданное системе, идет на изменение ее внутренней энергии (&Delta;U) и на совершение системой работы (A') против внешних сил.</p>
+        <div class="formula">
+            <b>Q = &Delta;U + A'</b>
+        </div>
+        <p><b>Правило знаков (очень важно!):</b></p>
+        <ul>
+            <li><b>Q > 0</b>: система получает тепло; <b>Q < 0</b>: система отдает тепло.</li>
+            <li><b>&Delta;U > 0</b>: газ нагревается; <b>&Delta;U < 0</b>: газ охлаждается.</li>
+            <li><b>A' > 0</b>: газ расширяется (совершает работу); <b>A' < 0</b>: газ сжимают внешние силы.</li>
+        </ul>
+        <p><i>Альтернативная запись:</i> Если работу совершает не газ (A'), а внешние силы над газом (A), то A = &minus;A'. Тогда первый закон запишется так: <b>&Delta;U = Q + A</b>.</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ПРИМЕНЕНИЕ К ИЗОПРОЦЕССАМ -->
+    <section class="card">
+        <h2>2. Применение к изопроцессам</h2>
+        <p>Если один из параметров (p, V, T) зафиксирован, первый закон заметно упрощается:</p>
+        
+        <div class="task-block" style="border-left-color: var(--accent);">
+            <h3>1. Изохорный процесс (V = const)</h3>
+            <p>Так как объем не меняется (&Delta;V = 0), газ не может двигать поршень, следовательно <b>A' = 0</b>. Вся теплота идет только на нагрев:</p>
+            <div style="font-family: monospace; font-size: 1.2rem; text-align: center; font-weight: bold;">Q = &Delta;U</div>
+        </div>
+
+        <div class="task-block" style="border-left-color: var(--primary);">
+            <h3>2. Изотермический процесс (T = const)</h3>
+            <p>Так как температура неизменна, внутренняя энергия тоже не меняется (<b>&Delta;U = 0</b>). Все переданное тепло целиком превращается в механическую работу (идеальная машина!):</p>
+            <div style="font-family: monospace; font-size: 1.2rem; text-align: center; font-weight: bold;">Q = A'</div>
+        </div>
+
+        <div class="task-block" style="border-left-color: var(--text-main);">
+            <h3>3. Изобарный процесс (p = const)</h3>
+            <p>Здесь меняются и объем, и температура. Подведенное тепло делится на две части: газ и нагревается, и расширяется.</p>
+            <div style="font-family: monospace; font-size: 1.2rem; text-align: center; font-weight: bold;">Q = &Delta;U + A'</div>
+        </div>
+
+        <div class="task-block" style="border-left-color: var(--danger);">
+            <h3>4. Адиабатный процесс (Q = 0)</h3>
+            <p>Это процесс, протекающий в теплоизолированной системе (или очень быстро, так что газ не успевает обменяться теплом). Теплообмена нет, <b>Q = 0</b>. Следовательно, 0 = &Delta;U + A', или:</p>
+            <div style="font-family: monospace; font-size: 1.2rem; text-align: center; font-weight: bold;">A' = &minus;&Delta;U</div>
+            <p><i>Вывод:</i> Если газ совершает работу адиабатно (расширяется), он делает это за счет своей внутренней энергии, поэтому <b>газ охлаждается</b>! (Пример: снежок из огнетушителя).</p>
+        </div>
+    </section>
+
+    <!-- 4) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>3. Интерактивная модель: Баланс энергий</h2>
+        <p>Выберите термодинамический процесс. Нажмите «Запустить», чтобы передать газу порцию тепла (или дать ему расшириться). Наблюдайте, как распределяется энергия Q между изменением внутренней энергии (&Delta;U) и работой (A').</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-process">Процесс:</label>
+                    <select id="sim-process">
+                        <option value="isochoric">Изохорный (V=const)</option>
+                        <option value="isothermal">Изотермический (T=const)</option>
+                        <option value="isobaric" selected>Изобарный (p=const)</option>
+                        <option value="adiabatic">Адиабатный (Q=0)</option>
+                    </select>
+                </div>
+                
+                <button id="btn-action" style="width: 100%; margin-bottom: 10px;">🔥 Подвести тепло (Q)</button>
+                <button id="btn-reset" class="secondary" style="width: 100%;">Сбросить</button>
+
+                <div style="margin-top: 20px; font-family: monospace; text-align: center; font-size: 1.1rem;">
+                    <b>Уравнение:</b><br>
+                    <span id="eq-q" style="color:var(--primary);">Q</span> = 
+                    <span id="eq-u" style="color:var(--success);">&Delta;U</span> + 
+                    <span id="eq-a" style="color:var(--accent);">A'</span>
+                </div>
+
+                <div class="energy-bars">
+                    <!-- Q Bar -->
+                    <div class="bar-row">
+                        <div class="bar-label" style="color:var(--primary);">Q:</div>
+                        <div class="bar-container-outer">
+                            <div class="bar-fill q-color" id="bar-q" style="width: 0%; left: 0%;"></div>
+                        </div>
+                        <div class="bar-value" id="val-q">0 Дж</div>
+                    </div>
+                    <!-- ΔU Bar -->
+                    <div class="bar-row">
+                        <div class="bar-label" style="color:var(--success);">&Delta;U:</div>
+                        <div class="bar-container-outer">
+                            <div class="bar-fill u-color" id="bar-u" style="width: 0%; left: 50%;"></div>
+                        </div>
+                        <div class="bar-value" id="val-u">0 Дж</div>
+                    </div>
+                    <!-- A' Bar -->
+                    <div class="bar-row">
+                        <div class="bar-label" style="color:var(--accent);">A':</div>
+                        <div class="bar-container-outer">
+                            <div class="bar-fill a-color" id="bar-a" style="width: 0%; left: 50%;"></div>
+                        </div>
+                        <div class="bar-value" id="val-a">0 Дж</div>
+                    </div>
+                    <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">
+                        <span style="float:left;">&minus; Охлаждение/Сжатие</span>
+                        <span style="float:right;">Нагрев/Расширение +</span>
+                        <div style="clear:both;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="300" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Изобарный процесс: Тепло идет и на нагрев, и на поднятие поршня.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>4. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Идеальному одноатомному газу передали количество теплоты Q = 500 Дж. При этом газ расширился при постоянном давлении (изобарно). Какую работу совершил газ? Как изменилась его внутренняя энергия?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                Q = 500 Дж<br>
+                p = const<br>
+                <b>Найти:</b> A' — ?, &Delta;U — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                Для изобарного процесса одноатомного газа есть жесткое соотношение. Вспомним, что:<br>
+                &Delta;U = <sup>3</sup>/<sub>2</sub> &nu;R&Delta;T = 1.5 &middot; p&Delta;V.<br>
+                А работа A' = p&Delta;V.<br>
+                Следовательно, <b>&Delta;U = 1.5 &middot; A'</b>.</p>
+
+                <p>Запишем первый закон термодинамики:<br>
+                Q = &Delta;U + A'<br>
+                Q = 1.5 &middot; A' + 1 &middot; A' = <b>2.5 &middot; A'</b>.</p>
+                
+                <p>Теперь легко найти работу:<br>
+                A' = Q / 2.5 = 500 / 2.5 = <b>200 Дж</b>.</p>
+
+                <p>А изменение внутренней энергии:<br>
+                &Delta;U = Q - A' = 500 - 200 = <b>300 Дж</b>.</p>
+                
+                <p><b>Ответ:</b> Газ совершил работу 200 Дж, а 300 Дж пошли на увеличение его внутренней энергии.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>5. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Адиабатный процесс)</h3>
+            <p>Воздух в цилиндре дизельного двигателя быстро и сильно сжимают поршнем (теплообменом можно пренебречь, Q=0). Работа внешних сил над газом составила A = 400 Дж (или A' = -400 Дж). Как изменилась внутренняя энергия воздуха?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите значение &Delta;U в Джоулях:</i></p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 400, 0, 'Первый закон: 0 = ΔU + A\'. Значит ΔU = -A\'. Так как газ сжимают, его работа A\' = -400. Следовательно, ΔU = -(-400) = +400 Дж. Газ нагрелся!')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает условие адиабатного процесса (Q=0).</li>
+                    <li>Верно применяет первый закон термодинамики со знаками.</li>
+                    <li>Понимает, что при быстром сжатии газ нагревается.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Изотермический процесс)</h3>
+            <p>Газу в ходе изотермического расширения (T = const) передали количество теплоты 800 Дж. Какую <b>работу</b> (в Джоулях) совершил при этом газ?</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в Дж"> 
+            <button onclick="checkTask('taskB', 800, 0, 'Изотермический процесс означает, что ΔU = 0. По первому закону Q = 0 + A\'. Значит вся теплота пошла на работу.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает, что при T=const внутренняя энергия идеального газа не меняется.</li>
+                    <li>Сводит уравнение первого закона к виду Q = A'.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Изохорное охлаждение)</h3>
+            <p>Идеальный одноатомный газ объемом 10 л охладили в закрытом баллоне (V=const). Давление газа при этом упало на &Delta;p = 50 кПа. Какое <b>количество теплоты</b> (в Джоулях) отдал газ? <br><i>(Ответ введите положительным числом, как модуль отданного тепла).</i></p>
+            <input type="number" id="taskC-input" placeholder="Ответ в Дж"> 
+            <button onclick="checkTask('taskC', 750, 0, 'Процесс изохорный (A\'=0), значит Q = ΔU. Изменение внутренней энергии ΔU = 1.5 * Δp * V. Объем V = 0.01 м³. Δp = -50000 Па. ΔU = 1.5 * (-50000) * 0.01 = -750 Дж. Газ отдал 750 Дж.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Определяет, что работа равна нулю.</li>
+                    <li>Использует формулу внутренней энергии через давление и объем (ΔU = 1.5 V Δp).</li>
+                    <li>Свободно переводит единицы (кПа в Па, литры в м³).</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>6. Рефлексия</h2>
+        <p>Что вы поняли из этой темы?</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я запомнил(а) универсальную формулу Q = &Delta;U + A'.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я умею "вычеркивать" ненужные слагаемые в зависимости от изопроцесса (например, A'=0 при изохорном).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я понял(а) парадокс адиабатного сжатия: мы не греем газ огнем, но он нагревается из-за совершенной над ним механической работы.</label>
+        </div>
+        <button onclick="alert('Молодцы! Эти знания — фундамент для понимания того, как работают двигатели внутреннего сгорания и холодильники.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 8) ТЕСТ -->
+    <section class="card">
+        <h2>7. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Как записывается первый закон термодинамики?</b></p>
+                <label><input type="radio" name="q1" value="0"> A' = Q + &Delta;U</label>
+                <label><input type="radio" name="q1" value="0"> &Delta;U = Q + A'</label>
+                <label><input type="radio" name="q1" value="1"> Q = &Delta;U + A'</label>
+                <label><input type="radio" name="q1" value="0"> Q = &Delta;U &middot; A'</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В каком процессе всё переданное газу количество теплоты расходуется только на совершение работы?</b></p>
+                <label><input type="radio" name="q2" value="0"> В изохорном.</label>
+                <label><input type="radio" name="q2" value="1"> В изотермическом.</label>
+                <label><input type="radio" name="q2" value="0"> В изобарном.</label>
+                <label><input type="radio" name="q2" value="0"> В адиабатном.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. В ходе адиабатного расширения (Q=0) газ совершает положительную работу (A' > 0). Что происходит с его температурой?</b></p>
+                <label><input type="radio" name="q3" value="0"> Температура повышается.</label>
+                <label><input type="radio" name="q3" value="1"> Температура понижается.</label>
+                <label><input type="radio" name="q3" value="0"> Температура не изменяется.</label>
+                <label><input type="radio" name="q3" value="0"> Газ превращается в жидкость немедленно.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Газу передали количество теплоты 300 Дж, и он совершил работу 100 Дж. Чему равно изменение его внутренней энергии?</b></p>
+                <label><input type="radio" name="q4" value="0"> 400 Дж.</label>
+                <label><input type="radio" name="q4" value="0"> -200 Дж.</label>
+                <label><input type="radio" name="q4" value="1"> 200 Дж.</label>
+                <label><input type="radio" name="q4" value="0"> 100 Дж.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Для какого процесса справедлива запись первого закона термодинамики в виде Q = &Delta;U?</b></p>
+                <label><input type="radio" name="q5" value="1"> Изохорный (нагревание в закрытом баллоне).</label>
+                <label><input type="radio" name="q5" value="0"> Изобарный (нагревание под свободным поршнем).</label>
+                <label><input type="radio" name="q5" value="0"> Изотермический (медленное расширение).</label>
+                <label><input type="radio" name="q5" value="0"> Адиабатный (быстрое сжатие).</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ГАЗ, ПОРШЕНЬ И БАРЫ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const selProcess = document.getElementById('sim-process');
+    const btnAction = document.getElementById('btn-action');
+    const btnReset = document.getElementById('btn-reset');
+    
+    // UI Elements for Bars
+    const barQ = document.getElementById('bar-q');
+    const barU = document.getElementById('bar-u');
+    const barA = document.getElementById('bar-a');
+    
+    const valQ = document.getElementById('val-q');
+    const valU = document.getElementById('val-u');
+    const valA = document.getElementById('val-a');
+
+    const infoText = document.getElementById('sim-info');
+
+    // Simulation State
+    let state = {
+        process: 'isobaric',
+        isAnimating: false,
+        progress: 0, // 0 to 1
+        
+        // Base values (visual)
+        pistonY_base: 150,
+        temp_base: 300,
+        
+        // Current values
+        pistonY: 150,
+        temp: 300,
+        fireOpacity: 0,
+        
+        // Energies (arbitrary units for visualization, max 100)
+        q: 0,
+        du: 0,
+        a: 0
+    };
+
+    const targetEnergies = {
+        'isochoric': { q: 100, du: 100, a: 0, targetPiston: 150, targetTemp: 600, btnText: "🔥 Подвести тепло (Q)", info: "Изохорный: Поршень закреплен. Вся теплота Q идет на увеличение энергии ΔU (нагрев)." },
+        'isothermal': { q: 100, du: 0, a: 100, targetPiston: 50, targetTemp: 300, btnText: "🔥 Подвести тепло (медленно)", info: "Изотермический: Температура постоянна (ΔU=0). Теплота Q целиком уходит на работу A' (расширение)." },
+        'isobaric': { q: 100, du: 60, a: 40, targetPiston: 90, targetTemp: 500, btnText: "🔥 Подвести тепло (Q)", info: "Изобарный: Теплота Q делится. Часть (ΔU) идет на нагрев газа, часть (A') на подъем поршня." },
+        'adiabatic': { q: 0, du: -60, a: 60, targetPiston: 50, targetTemp: 150, btnText: "⏩ Резко отпустить поршень", info: "Адиабатный: Тепла нет (Q=0). Газ расширяется (A'>0) за счет своей энергии (ΔU<0). Газ охлаждается!" }
+    };
+
+    let animId;
+    let particles = [];
+    const numParticles = 80;
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
+            particles.push({
+                x: 100 + Math.random() * 100,
+                y: state.pistonY_base + Math.random() * (300 - state.pistonY_base),
+                vx: (Math.random() - 0.5) * 4,
+                vy: (Math.random() - 0.5) * 4,
+                speedBase: Math.random() + 0.5
+            });
+        }
+    }
+
+    function resetSimulation() {
+        cancelAnimationFrame(animId);
+        state.isAnimating = false;
+        state.progress = 0;
+        state.pistonY = state.pistonY_base;
+        state.temp = state.temp_base;
+        state.fireOpacity = 0;
+        state.q = 0;
+        state.du = 0;
+        state.a = 0;
+        
+        state.process = selProcess.value;
+        let config = targetEnergies[state.process];
+        btnAction.innerText = config.btnText;
+        infoText.innerText = config.info;
+        btnAction.disabled = false;
+        
+        updateBars();
+        initParticles();
+        draw();
+    }
+
+    selProcess.addEventListener('change', resetSimulation);
+
+    btnAction.addEventListener('click', () => {
+        if (state.isAnimating || state.progress >= 1) return;
+        state.isAnimating = true;
+        btnAction.disabled = true;
+        loop();
+    });
+
+    btnReset.addEventListener('click', resetSimulation);
+
+    function updateBars() {
+        // Q is always positive here (starts from left 0 to 100%)
+        barQ.style.width = Math.abs(state.q) + "%";
+        valQ.innerText = Math.round(state.q * 10) + " Дж";
+
+        // dU and A' are centered (from 50%)
+        if (state.du >= 0) {
+            barU.className = "bar-fill u-color positive";
+            barU.style.width = (state.du / 2) + "%"; // Scaled to fit half-bar
+        } else {
+            barU.className = "bar-fill u-color negative";
+            barU.style.width = (Math.abs(state.du) / 2) + "%";
+        }
+        valU.innerText = Math.round(state.du * 10) + " Дж";
+
+        if (state.a >= 0) {
+            barA.className = "bar-fill a-color positive";
+            barA.style.width = (state.a / 2) + "%";
+        } else {
+            barA.className = "bar-fill a-color negative";
+            barA.style.width = (Math.abs(state.a) / 2) + "%";
+        }
+        valA.innerText = Math.round(state.a * 10) + " Дж";
+    }
+
+    function draw() {
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Cylinder walls
+        const cylX = 80;
+        const cylW = 140;
+        const cylH = 280;
+        const cylY = 20;
+
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(cylX, cylY);
+        ctx.lineTo(cylX, cylY + cylH);
+        ctx.lineTo(cylX + cylW, cylY + cylH);
+        ctx.lineTo(cylX + cylW, cylY);
+        ctx.stroke();
+
+        // Gas color (temperature dependent)
+        let heatRatio = (state.temp - 150) / 450; // 0 (cold) to 1 (hot)
+        if (heatRatio < 0) heatRatio = 0; if (heatRatio > 1) heatRatio = 1;
+        let r = Math.floor(100 + heatRatio * 155);
+        let b = Math.floor(255 - heatRatio * 200);
+        
+        ctx.fillStyle = `rgba(${r}, 50, ${b}, 0.2)`;
+        ctx.fillRect(cylX + 3, state.pistonY, cylW - 6, (cylY + cylH) - state.pistonY - 3);
+
+        // Fire (if heating)
+        if (state.fireOpacity > 0) {
+            ctx.fillStyle = `rgba(239, 68, 68, ${state.fireOpacity})`;
+            ctx.beginPath();
+            ctx.moveTo(cylX + 20, cylY + cylH + 10);
+            ctx.lineTo(cylX + cylW/2, cylY + cylH - 10 + Math.random()*15); // flickering
+            ctx.lineTo(cylX + cylW - 20, cylY + cylH + 10);
+            ctx.fill();
+            
+            ctx.fillStyle = `rgba(245, 158, 11, ${state.fireOpacity})`;
+            ctx.beginPath();
+            ctx.moveTo(cylX + 40, cylY + cylH + 10);
+            ctx.lineTo(cylX + cylW/2, cylY + cylH - 5 + Math.random()*10);
+            ctx.lineTo(cylX + cylW - 40, cylY + cylH + 10);
+            ctx.fill();
+        }
+
+        // Piston
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(cylX + 3, state.pistonY - 20, cylW - 6, 20);
+        // Piston Rod
+        ctx.fillRect(cylX + cylW/2 - 5, 0, 10, state.pistonY - 20);
+        
+        // Piston Locking mechanisms (for isochoric)
+        if (state.process === 'isochoric') {
+            ctx.fillStyle = "#ef4444";
+            ctx.fillRect(cylX - 10, state.pistonY_base - 20, 15, 10);
+            ctx.fillRect(cylX + cylW - 5, state.pistonY_base - 20, 15, 10);
+        }
+
+        // Particles
+        ctx.fillStyle = `rgb(${r}, 100, ${b})`;
+        let speedMult = state.temp / 300;
+        
+        for (let p of particles) {
+            if (state.isAnimating || state.progress > 0) {
+                p.x += p.vx * speedMult;
+                p.y += p.vy * speedMult;
+
+                if (p.x < cylX + 5) { p.x = cylX + 5; p.vx *= -1; }
+                if (p.x > cylX + cylW - 5) { p.x = cylX + cylW - 5; p.vx *= -1; }
+                if (p.y < state.pistonY + 5) { p.y = state.pistonY + 5; p.vy *= -1; }
+                if (p.y > cylY + cylH - 5) { p.y = cylY + cylH - 5; p.vy *= -1; }
+            }
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw weights for isobaric
+        if (state.process === 'isobaric') {
+             ctx.fillStyle = "#475569";
+             ctx.fillRect(cylX + cylW/2 - 25, state.pistonY - 35, 20, 15);
+             ctx.fillRect(cylX + cylW/2 + 5, state.pistonY - 35, 20, 15);
+        }
+    }
+
+    function loop() {
+        if (!state.isAnimating) return;
+
+        state.progress += 0.005; // Animation speed
+        if (state.progress > 1) state.progress = 1;
+
+        let config = targetEnergies[state.process];
+        
+        // Update physical state visually
+        state.pistonY = state.pistonY_base + (config.targetPiston - state.pistonY_base) * state.progress;
+        state.temp = state.temp_base + (config.targetTemp - state.temp_base) * state.progress;
+        
+        // Update energies
+        state.q = config.q * state.progress;
+        state.du = config.du * state.progress;
+        state.a = config.a * state.progress;
+
+        // Visual effects
+        if (config.q > 0 && state.progress < 1) {
+            state.fireOpacity = 1;
+        } else {
+            state.fireOpacity = 0;
+        }
+
+        updateBars();
+        draw();
+
+        if (state.progress < 1) {
+            animId = requestAnimationFrame(loop);
+        } else {
+            state.isAnimating = false;
+        }
+    }
+
+    // Initial setup
+    resetSimulation();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Правильная запись первого закона: Q = ΔU + A'. Подведенная теплота идет на изменение внутренней энергии и работу газа.",
+            "2. В изотермическом процессе температура постоянна, поэтому ΔU = 0. Весь тепловой поток превращается в работу (Q = A').",
+            "3. Адиабатное расширение происходит без теплообмена (Q=0). По закону 0 = ΔU + A', следовательно ΔU = -A'. Газ тратит внутреннюю энергию на работу и поэтому охлаждается.",
+            "4. Q = ΔU + A'. Отсюда ΔU = Q - A' = 300 - 100 = 200 Дж.",
+            "5. Формула Q = ΔU верна, когда A' = 0. Работа газа равна нулю только если его объем не меняется, то есть в изохорном процессе."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы в совершенстве овладели первым законом термодинамики.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

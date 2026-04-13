@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Движение под углом к горизонту | Көкжиекке бұрыш жасай лақтырылған дененің қозғалысы</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Language display logic */
+        body[data-lang="ru"] .lang-kz { display: none; }
+        body[data-lang="kz"] .lang-ru { display: none; }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Active nav link style */
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right: 3px solid #2563eb;
+            font-weight: 600;
+        }
+
+        /* Practice select styles */
+        .practice-select {
+            appearance: none;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 2rem 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+            transition: all 0.2s;
+        }
+        .practice-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .practice-select.correct { border-color: #10b981; background-color: #ecfdf5; color: #047857; }
+        .practice-select.incorrect { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+    </style>
+</head>
+<body data-lang="ru" class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-atom text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 hidden sm:block">
+                    <span class="lang-ru">Физика: Кинематика</span>
+                    <span class="lang-kz">Физика: Кинематика</span>
+                </h1>
+            </div>
+            
+            <!-- Language Toggle -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button onclick="setLang('ru')" id="btn-ru" class="px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all">RU</button>
+                <button onclick="setLang('kz')" id="btn-kz" class="px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all">KZ</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <nav class="sticky top-24 bg-white rounded-xl shadow-sm border border-slate-100 p-4 sidebar-scroll max-h-[calc(100vh-8rem)] overflow-y-auto">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">
+                    <span class="lang-ru">Содержание</span>
+                    <span class="lang-kz">Мазмұны</span>
+                </h2>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#theory" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-book-open w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Теория</span><span class="lang-kz">Теория</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#simulation" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-desktop w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#practice" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-pen-to-square w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Практика</span><span class="lang-kz">Тәжірибе</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#video" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-brands fa-youtube w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Видеоурок</span><span class="lang-kz">Бейнесабақ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#test" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-list-check w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Тест</span><span class="lang-kz">Тест</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 space-y-12 pb-20">
+            
+            <!-- Title Section -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                    <span class="lang-ru">Движение тела, брошенного под углом к горизонту</span>
+                    <span class="lang-kz">Көкжиекке бұрыш жасай лақтырылған дененің қозғалысы</span>
+                </h1>
+                <p class="text-lg text-slate-600">
+                    <span class="lang-ru">Принцип суперпозиции: сложное движение по параболе разбивается на два простых независимых движения по осям X и Y.</span>
+                    <span class="lang-kz">Суперпозиция принципі: парабола бойымен күрделі қозғалыс X және Y осьтері бойындағы екі қарапайым тәуелсіз қозғалысқа бөлінеді.</span>
+                </p>
+            </div>
+
+            <!-- THEORY SECTION -->
+            <section id="theory" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Теоретическая часть</span>
+                        <span class="lang-kz">Теориялық бөлім</span>
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- X Axis -->
+                    <div class="bg-white rounded-2xl p-6 border border-sky-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-sky-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-sky-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-arrows-left-right"></i>
+                            <span class="lang-ru">По оси X (Горизонталь)</span>
+                            <span class="lang-kz">X осі бойынша (Көлденең)</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">Так как по горизонтали на тело не действуют силы (сопротивлением воздуха пренебрегаем), движение является <b>равномерным</b>. Скорость постоянна.</span>
+                            <span class="lang-kz">Көлденең бағытта денеге күштер әсер етпейтіндіктен (ауа кедергісі ескерілмейді), қозғалыс <b>бірқалыпты</b> болады. Жылдамдық тұрақты.</span>
+                        </p>
+                        <div class="bg-sky-50 p-3 rounded-lg font-mono text-sm text-sky-800 relative z-10">
+                            \[ v_x = v_0 \cos(\alpha) = const \]
+                            \[ x(t) = v_0 \cos(\alpha) \cdot t \]
+                        </div>
+                    </div>
+
+                    <!-- Y Axis -->
+                    <div class="bg-white rounded-2xl p-6 border border-orange-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-orange-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-arrows-up-down"></i>
+                            <span class="lang-ru">По оси Y (Вертикаль)</span>
+                            <span class="lang-kz">Y осі бойынша (Тік)</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">По вертикали на тело действует сила тяжести. Поэтому движение является <b>равноускоренным</b> с ускорением свободного падения \(g\).</span>
+                            <span class="lang-kz">Тік бағытта денеге ауырлық күші әсер етеді. Сондықтан қозғалыс \(g\) еркін түсу үдеуімен <b>теңайнымалы</b> болады.</span>
+                        </p>
+                        <div class="bg-orange-50 p-3 rounded-lg font-mono text-sm text-orange-800 relative z-10">
+                            \[ v_y = v_0 \sin(\alpha) - gt \]
+                            \[ y(t) = v_0 \sin(\alpha) t - \frac{gt^2}{2} \]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Formulas -->
+                <div class="bg-slate-800 rounded-2xl p-6 text-white shadow-md mb-8">
+                    <h3 class="font-bold text-xl mb-4 text-slate-100 border-b border-slate-700 pb-2">
+                        <span class="lang-ru">Основные формулы кинематики полета</span>
+                        <span class="lang-kz">Ұшу кинематикасының негізгі формулалары</span>
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Max Height -->
+                        <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                            <div class="flex items-center gap-2 text-orange-400 mb-2">
+                                <i class="fa-solid fa-arrow-up-right-dots"></i>
+                                <span class="font-bold text-sm uppercase tracking-wider">
+                                    <span class="lang-ru">Макс. высота (H)</span><span class="lang-kz">Макс. биіктік (H)</span>
+                                </span>
+                            </div>
+                            <div class="text-lg">\[ H = \frac{v_0^2 \sin^2 \alpha}{2g} \]</div>
+                        </div>
+
+                        <!-- Flight Time -->
+                        <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                            <div class="flex items-center gap-2 text-green-400 mb-2">
+                                <i class="fa-regular fa-clock"></i>
+                                <span class="font-bold text-sm uppercase tracking-wider">
+                                    <span class="lang-ru">Время полета (t)</span><span class="lang-kz">Ұшу уақыты (t)</span>
+                                </span>
+                            </div>
+                            <div class="text-lg">\[ t = \frac{2v_0 \sin \alpha}{g} \]</div>
+                        </div>
+
+                        <!-- Range -->
+                        <div class="bg-slate-700/50 p-4 rounded-xl border border-slate-600">
+                            <div class="flex items-center gap-2 text-sky-400 mb-2">
+                                <i class="fa-solid fa-ruler-horizontal"></i>
+                                <span class="font-bold text-sm uppercase tracking-wider">
+                                    <span class="lang-ru">Дальность полета (L)</span><span class="lang-kz">Ұшу қашықтығы (L)</span>
+                                </span>
+                            </div>
+                            <div class="text-lg">\[ L = \frac{v_0^2 \sin(2\alpha)}{g} \]</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-sm text-slate-400 bg-slate-900/50 p-3 rounded-lg">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 mr-2"></i>
+                        <span class="lang-ru">Дальность полета \(L\) максимальна при угле броска \(\alpha = 45^\circ\), так как \(\sin(2\cdot 45^\circ) = \sin(90^\circ) = 1\).</span>
+                        <span class="lang-kz">Ұшу қашықтығы \(L\) лақтыру бұрышы \(\alpha = 45^\circ\) болғанда максималды болады, өйткені \(\sin(2\cdot 45^\circ) = \sin(90^\circ) = 1\).</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIMULATION SECTION -->
+            <section id="simulation" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">2</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Интерактивная пушка</span>
+                        <span class="lang-kz">Интерактивті зеңбірек</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <p class="text-sm text-slate-600 font-medium">
+                            <i class="fa-solid fa-circle-info text-purple-500 mr-1"></i>
+                            <span class="lang-ru">Настройте параметры и нажмите «Запуск». Наблюдайте за векторами скорости \(v_x\) и \(v_y\).</span>
+                            <span class="lang-kz">Параметрлерді реттеп, «Жіберу» түймесін басыңыз. \(v_x\) және \(v_y\) жылдамдық векторларын бақылаңыз.</span>
+                        </p>
+                        <button id="btn-fire" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-fire"></i>
+                            <span class="lang-ru">Запуск</span><span class="lang-kz">Жіберу</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-col lg:flex-row">
+                        <!-- Canvas -->
+                        <div class="w-full lg:w-3/4 bg-sky-50 relative h-[400px] border-b lg:border-b-0 lg:border-r border-slate-200 overflow-hidden" id="canvas-container">
+                            <canvas id="simCanvas" class="block w-full h-full"></canvas>
+                            
+                            <!-- Real-time HUD -->
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur rounded-lg p-3 border border-slate-200 shadow-sm text-sm w-48 font-mono">
+                                <div class="font-bold text-slate-800 mb-2 border-b border-slate-200 pb-1">
+                                    <span class="lang-ru">Телеметрия</span><span class="lang-kz">Телеметрия</span>
+                                </div>
+                                <div class="flex justify-between mb-1 text-slate-600"><span>t:</span> <span id="hud-t" class="font-bold">0.00 с</span></div>
+                                <div class="flex justify-between mb-1 text-sky-600"><span>x:</span> <span id="hud-x" class="font-bold">0.0 м</span></div>
+                                <div class="flex justify-between mb-1 text-orange-600"><span>y:</span> <span id="hud-y" class="font-bold">0.0 м</span></div>
+                                <div class="flex justify-between mb-1 text-blue-600"><span>\(v_x\):</span> <span id="hud-vx" class="font-bold">0.0 м/с</span></div>
+                                <div class="flex justify-between text-red-600"><span>\(v_y\):</span> <span id="hud-vy" class="font-bold">0.0 м/с</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="w-full lg:w-1/4 p-6 bg-white flex flex-col gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                    <span><span class="lang-ru">Скорость (\(v_0\))</span><span class="lang-kz">Жылдамдық (\(v_0\))</span></span>
+                                    <span id="val-v0" class="text-blue-600">20 м/с</span>
+                                </label>
+                                <input type="range" id="slider-v0" min="5" max="30" step="1" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                    <span><span class="lang-ru">Угол (\(\alpha\))</span><span class="lang-kz">Бұрыш (\(\alpha\))</span></span>
+                                    <span id="val-angle" class="text-purple-600">45°</span>
+                                </label>
+                                <input type="range" id="slider-angle" min="10" max="85" step="1" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-purple-600">
+                            </div>
+
+                            <div class="mt-auto bg-slate-100 rounded-lg p-3 text-sm text-slate-700">
+                                <div class="font-bold mb-1 border-b border-slate-200 pb-1">
+                                    <span class="lang-ru">Расчетные данные</span><span class="lang-kz">Есептелген деректер</span>
+                                </div>
+                                <div class="flex justify-between"><span>\(L_{max}\):</span> <span id="calc-l" class="font-bold">40.8 м</span></div>
+                                <div class="flex justify-between"><span>\(H_{max}\):</span> <span id="calc-h" class="font-bold">10.2 м</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRACTICE SECTION -->
+            <section id="practice" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">3</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Практическое задание</span>
+                        <span class="lang-kz">Тәжірибелік тапсырма</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                    <div class="mb-6 pb-6 border-b border-slate-100 text-lg leading-relaxed text-slate-700">
+                        <span class="lang-ru">
+                            При движении тела, брошенного под углом к горизонту (без сопротивления воздуха), его траекторией является 
+                            <select class="practice-select mx-1" data-answer="парабола">
+                                <option value="">[выберите]</option>
+                                <option value="прямая">прямая</option>
+                                <option value="окружность">окружность</option>
+                                <option value="парабола">парабола</option>
+                            </select>. 
+                            По горизонтали (ось X) скорость тела 
+                            <select class="practice-select mx-1" data-answer="не изменяется">
+                                <option value="">[выберите]</option>
+                                <option value="растет">растет</option>
+                                <option value="не изменяется">не изменяется</option>
+                                <option value="уменьшается">уменьшается</option>
+                            </select>, 
+                            поэтому движение является равномерным. В высшей точке траектории вертикальная компонента скорости \(v_y\) равна 
+                            <select class="practice-select mx-1" data-answer="нулю">
+                                <option value="">[выберите]</option>
+                                <option value="нулю">нулю</option>
+                                <option value="максимуму">максимуму</option>
+                                <option value="g">g</option>
+                            </select>.
+                        </span>
+                        <span class="lang-kz">
+                            Көкжиекке бұрыш жасай лақтырылған дененің (ауа кедергісінсіз) траекториясы 
+                            <select class="practice-select mx-1" data-answer="парабола">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="түзу">түзу</option>
+                                <option value="шеңбер">шеңбер</option>
+                                <option value="парабола">парабола</option>
+                            </select> 
+                            болып табылады. Көлденең бағытта (X осі) дененің жылдамдығы 
+                            <select class="practice-select mx-1" data-answer="өзгермейді">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="өседі">өседі</option>
+                                <option value="өзгермейді">өзгермейді</option>
+                                <option value="кемиді">кемиді</option>
+                            </select>, 
+                            сондықтан қозғалыс бірқалыпты болады. Траекторияның ең жоғарғы нүктесінде жылдамдықтың тік құрамдас бөлігі \(v_y\) 
+                            <select class="practice-select mx-1" data-answer="нөлге">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="нөлге">нөлге</option>
+                                <option value="максимумға">максимумға</option>
+                                <option value="g">g</option>
+                            </select> тең.
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button onclick="checkPractice()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                            <i class="fa-solid fa-check-double mr-2"></i>
+                            <span class="lang-ru">Проверить ответы</span>
+                            <span class="lang-kz">Жауаптарды тексеру</span>
+                        </button>
+                        <div id="practice-result" class="font-bold hidden"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIDEO SECTION -->
+            <section id="video" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">4</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Видеоматериалы</span>
+                        <span class="lang-kz">Бейнематериалдар</span>
+                    </h2>
+                </div>
+
+                <a href="https://www.youtube.com/results?search_query=Движение+тела+брошенного+под+углом+к+горизонту+физика" target="_blank" rel="noopener noreferrer" 
+                   class="group block bg-white rounded-2xl p-6 border border-slate-200 hover:border-red-300 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 shrink-0 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors text-red-600 text-3xl">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-red-600 transition-colors">
+                                <span class="lang-ru">Найти видеоуроки на YouTube</span>
+                                <span class="lang-kz">YouTube-тан бейнесабақтарды табу</span>
+                            </h3>
+                            <p class="text-slate-500 text-sm">
+                                <span class="lang-ru">Нажмите, чтобы открыть результаты поиска по теме движения под углом.</span>
+                                <span class="lang-kz">Бұрышпен қозғалыс тақырыбы бойынша іздеу нәтижелерін ашу үшін басыңыз.</span>
+                            </p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right ml-auto text-slate-400 group-hover:text-red-500 transition-colors"></i>
+                    </div>
+                </a>
+            </section>
+
+            <!-- TEST SECTION -->
+            <section id="test" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">5</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Тест для самопроверки</span>
+                        <span class="lang-kz">Өзін-өзі тексеру тесті</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                    <form id="quiz-form" class="space-y-8">
+                        
+                        <!-- Question 1 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">1. Какую форму имеет траектория тела, брошенного под углом к горизонту (без учета сопротивления воздуха)?</span>
+                                <span class="lang-kz">1. Көкжиекке бұрыш жасай лақтырылған дененің траекториясы қандай пішінге ие (ауа кедергісінсіз)?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Парабола</span><span class="lang-kz">Парабола</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Дуга окружности</span><span class="lang-kz">Шеңбер доғасы</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Прямая линия</span><span class="lang-kz">Түзу сызық</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-question" data-correct="b">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">2. Как меняется горизонтальная составляющая скорости (\(v_x\)) во время полета?</span>
+                                <span class="lang-kz">2. Ұшу кезінде жылдамдықтың көлденең құрамдас бөлігі (\(v_x\)) қалай өзгереді?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Уменьшается до нуля</span><span class="lang-kz">Нөлге дейін кемиді</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Остается неизменной</span><span class="lang-kz">Өзгеріссіз қалады</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Увеличивается</span><span class="lang-kz">Артады</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-question" data-correct="c">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">3. При каком угле броска (к горизонту) дальность полета будет максимальной?</span>
+                                <span class="lang-kz">3. Қандай лақтыру бұрышында (көкжиекке) ұшу қашықтығы максималды болады?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">30°</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">60°</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">45°</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">4. Чему равно ускорение тела в наивысшей точке траектории?</span>
+                                <span class="lang-kz">4. Траекторияның ең жоғарғы нүктесінде дененің үдеуі неге тең?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Ускорению свободного падения (g)</span><span class="lang-kz">Еркін түсу үдеуіне (g)</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Нулю</span><span class="lang-kz">Нөлге</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Оно зависит от начальной скорости</span><span class="lang-kz">Ол бастапқы жылдамдыққа байланысты</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="quiz-question" data-correct="c">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">5. Тело брошено со скоростью \(v_0 = 20\) м/с под углом 30° к горизонту. Найдите максимальную высоту подъема (g ≈ 10 м/с², sin 30° = 0.5).</span>
+                                <span class="lang-kz">5. Дене \(v_0 = 20\) м/с жылдамдықпен көкжиекке 30° бұрыш жасай лақтырылды. Максималды көтерілу биіктігін табыңыз (g ≈ 10 м/с², sin 30° = 0.5).</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">20 м</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">10 м</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">5 м</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex items-center gap-4">
+                            <button type="button" onclick="checkQuiz()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                                <span class="lang-ru">Завершить тест</span>
+                                <span class="lang-kz">Тестті аяқтау</span>
+                            </button>
+                            <div id="quiz-result" class="font-bold text-lg hidden"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // --- 1. Language Toggle Logic ---
+        function setLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            
+            const btnRu = document.getElementById('btn-ru');
+            const btnKz = document.getElementById('btn-kz');
+            
+            if (lang === 'ru') {
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            } else {
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            }
+        }
+
+        // --- 2. Sidebar Scroll Spy ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            if(navLinks.length > 0) navLinks[0].classList.add('active');
+            
+            // Init simulation
+            initSimulation();
+        });
+
+        // --- 3. Practice Check Logic ---
+        function checkPractice() {
+            const selects = document.querySelectorAll('.practice-select');
+            let correctCount = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            selects.forEach(select => {
+                select.classList.remove('correct', 'incorrect');
+                const expected = select.getAttribute('data-answer');
+                const selected = select.value;
+
+                if (selected === expected) {
+                    select.classList.add('correct');
+                    correctCount++;
+                } else if (selected !== "") {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const resultDiv = document.getElementById('practice-result');
+            resultDiv.classList.remove('hidden', 'text-emerald-600', 'text-amber-600');
+            
+            if (correctCount === 3) {
+                resultDiv.classList.add('text-emerald-600');
+                resultDiv.innerHTML = `<i class="fa-solid fa-star mr-1"></i> ` + (isRu ? 'Отлично! 3/3 баллов' : 'Керемет! 3/3 балл');
+            } else {
+                resultDiv.classList.add('text-amber-600');
+                resultDiv.innerHTML = isRu ? `Набрано баллов: ${correctCount}/3` : `Жинаған балл: ${correctCount}/3`;
+            }
+        }
+
+        // --- 4. Quiz Check Logic ---
+        function checkQuiz() {
+            const questions = document.querySelectorAll('.quiz-question');
+            const totalQuestions = questions.length;
+            let score = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            questions.forEach((q, index) => {
+                const correctAns = q.getAttribute('data-correct');
+                const selected = q.querySelector(`input[name="q${index + 1}"]:checked`);
+                
+                q.querySelectorAll('label').forEach(lbl => lbl.classList.remove('bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200'));
+
+                if (selected) {
+                    if (selected.value === correctAns) {
+                        score++;
+                        selected.closest('label').classList.add('bg-green-50', 'border-green-200');
+                    } else {
+                        selected.closest('label').classList.add('bg-red-50', 'border-red-200');
+                        q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                    }
+                } else {
+                     q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                }
+            });
+
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden', 'text-indigo-600', 'text-slate-600');
+            
+            if (score === totalQuestions) {
+                resultDiv.classList.add('text-indigo-600');
+                resultDiv.innerHTML = isRu ? `🎉 ${score} из ${totalQuestions}! Идеально!` : `🎉 ${totalQuestions}-тен ${score}! Керемет!`;
+            } else {
+                resultDiv.classList.add('text-slate-600');
+                resultDiv.innerHTML = isRu ? `Ваш результат: ${score} из ${totalQuestions}` : `Сіздің нәтижеңіз: ${totalQuestions}-тен ${score}`;
+            }
+        }
+
+        // --- 5. Interactive Simulation Logic (Canvas) ---
+        function initSimulation() {
+            const canvas = document.getElementById('simCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('canvas-container');
+            
+            function resize() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Controls
+            const sliderV0 = document.getElementById('slider-v0');
+            const sliderAngle = document.getElementById('slider-angle');
+            const valV0 = document.getElementById('val-v0');
+            const valAngle = document.getElementById('val-angle');
+            const btnFire = document.getElementById('btn-fire');
+
+            // HUD
+            const hudT = document.getElementById('hud-t');
+            const hudX = document.getElementById('hud-x');
+            const hudY = document.getElementById('hud-y');
+            const hudVx = document.getElementById('hud-vx');
+            const hudVy = document.getElementById('hud-vy');
+            const calcL = document.getElementById('calc-l');
+            const calcH = document.getElementById('calc-h');
+
+            // Physics state
+            const g = 9.81;
+            let v0 = parseFloat(sliderV0.value);
+            let angleDeg = parseFloat(sliderAngle.value);
+            let angleRad = angleDeg * Math.PI / 180;
+            
+            let isAnimating = false;
+            let time = 0;
+            let path = []; // stores {x, y} for drawing the trail
+            
+            // Visual Scale: Max Range possible is at 30m/s, 45deg -> L = 900/9.81 ≈ 92m.
+            // Let's make 100 logical meters fit in the canvas width with some padding.
+            let metersPerPixel = 1;
+
+            function calculateTheoreticals() {
+                v0 = parseFloat(sliderV0.value);
+                angleDeg = parseFloat(sliderAngle.value);
+                angleRad = angleDeg * Math.PI / 180;
+                
+                valV0.textContent = v0 + ' м/с';
+                valAngle.textContent = angleDeg + '°';
+
+                const L = (v0 * v0 * Math.sin(2 * angleRad)) / g;
+                const H = (v0 * v0 * Math.sin(angleRad) * Math.sin(angleRad)) / (2 * g);
+                
+                calcL.textContent = L.toFixed(1) + ' м';
+                calcH.textContent = H.toFixed(1) + ' м';
+            }
+
+            function resetSimulation() {
+                isAnimating = false;
+                time = 0;
+                path = [];
+                updateHUD(0, 0, 0, v0 * Math.cos(angleRad), v0 * Math.sin(angleRad));
+                drawStaticScene();
+            }
+
+            function fire() {
+                calculateTheoreticals();
+                resetSimulation();
+                isAnimating = true;
+                
+                // Adjust scale dynamically based on canvas width to fit max range
+                const maxTheoreticalRange = 100; // safe margin
+                metersPerPixel = maxTheoreticalRange / (canvas.width - 60); 
+
+                lastFrameTime = performance.now();
+                requestAnimationFrame(animationLoop);
+            }
+
+            sliderV0.addEventListener('input', () => { calculateTheoreticals(); resetSimulation(); });
+            sliderAngle.addEventListener('input', () => { calculateTheoreticals(); resetSimulation(); });
+            btnFire.addEventListener('click', fire);
+
+            let lastFrameTime = 0;
+            const timeScale = 1; // Real time
+
+            function updateHUD(t, x, y, vx, vy) {
+                hudT.textContent = t.toFixed(2) + ' с';
+                hudX.textContent = x.toFixed(1) + ' м';
+                hudY.textContent = y.toFixed(1) + ' м';
+                hudVx.textContent = vx.toFixed(1) + ' м/с';
+                hudVy.textContent = Math.abs(vy).toFixed(1) + ' м/с ' + (vy < 0 ? '↓' : '↑');
+            }
+
+            // Draw functions
+            const originX = 30; // 30px from left
+            
+            function drawStaticScene() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                const groundY = canvas.height - 40;
+
+                // Draw Ground
+                ctx.fillStyle = '#bbf7d0'; // green-200
+                ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+                ctx.strokeStyle = '#22c55e'; // green-500
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, groundY);
+                ctx.lineTo(canvas.width, groundY);
+                ctx.stroke();
+
+                // Draw Cannon Base
+                ctx.fillStyle = '#64748b'; // slate-500
+                ctx.beginPath();
+                ctx.arc(originX, groundY, 15, Math.PI, 0);
+                ctx.fill();
+
+                // Draw Cannon Barrel
+                ctx.save();
+                ctx.translate(originX, groundY);
+                ctx.rotate(-angleRad); // negative because canvas Y is down
+                ctx.fillStyle = '#334155'; // slate-700
+                ctx.fillRect(0, -6, 30, 12);
+                ctx.restore();
+
+                // If not animating, draw preview vector
+                if (!isAnimating && time === 0) {
+                    const vx = v0 * Math.cos(angleRad);
+                    const vy = v0 * Math.sin(angleRad);
+                    const drawLen = 50; // pixels for preview
+                    drawArrow(ctx, originX, groundY, 
+                              originX + drawLen * Math.cos(-angleRad), 
+                              groundY + drawLen * Math.sin(-angleRad), 
+                              '#cbd5e1', 2, true); // dashed preview
+                }
+            }
+
+            function animationLoop(timestamp) {
+                if (!isAnimating) return;
+
+                const dt = (timestamp - lastFrameTime) / 1000 * timeScale;
+                lastFrameTime = timestamp;
+                time += dt;
+
+                const groundY = canvas.height - 40;
+                
+                // Physics equations
+                const x = v0 * Math.cos(angleRad) * time;
+                const y = v0 * Math.sin(angleRad) * time - 0.5 * g * time * time;
+                
+                const vx = v0 * Math.cos(angleRad);
+                const vy = v0 * Math.sin(angleRad) - g * time;
+
+                // Stop condition (hit the ground)
+                if (y < 0 && time > 0.1) {
+                    isAnimating = false;
+                    updateHUD(time, x, 0, vx, 0); // clamp y to 0 at end
+                    // Final draw
+                    drawFrame(x, 0, vx, -vy); // Use vy before impact for arrow
+                    return; 
+                }
+
+                updateHUD(time, x, y, vx, vy);
+                path.push({x: x, y: y});
+                drawFrame(x, y, vx, vy);
+
+                requestAnimationFrame(animationLoop);
+            }
+
+            function drawFrame(physX, physY, vx, vy) {
+                drawStaticScene();
+                const groundY = canvas.height - 40;
+
+                // Screen coordinates mapping
+                const px = originX + physX / metersPerPixel;
+                const py = groundY - physY / metersPerPixel;
+
+                // Draw Trail
+                ctx.beginPath();
+                ctx.strokeStyle = '#fbbf24'; // amber-400
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                if (path.length > 0) {
+                    ctx.moveTo(originX, groundY);
+                    for (let p of path) {
+                        ctx.lineTo(originX + p.x / metersPerPixel, groundY - p.y / metersPerPixel);
+                    }
+                    if (isAnimating) {
+                        ctx.lineTo(px, py);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset
+
+                // Draw Projectile
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#ef4444'; // red-500
+                ctx.fill();
+
+                // Draw Velocity Vectors
+                const vScale = 3; // pixels per m/s for drawing arrows
+                
+                // Vx (Blue)
+                drawArrow(ctx, px, py, px + vx * vScale, py, '#3b82f6', 2);
+                
+                // Vy (Orange) -> Note: -vy because screen Y is inverted
+                drawArrow(ctx, px, py, px, py - vy * vScale, '#f97316', 2);
+                
+                // V total (Purple)
+                drawArrow(ctx, px, py, px + vx * vScale, py - vy * vScale, '#a855f7', 2);
+            }
+
+            function drawArrow(ctx, fromx, fromy, tox, toy, color, width, isDashed=false) {
+                const headlen = 8;
+                const dx = tox - fromx;
+                const dy = toy - fromy;
+                const angle = Math.atan2(dy, dx);
+                
+                // Don't draw if length is negligible (e.g. vy at peak)
+                if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+                ctx.beginPath();
+                ctx.moveTo(fromx, fromy);
+                ctx.lineTo(tox, toy);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                if(isDashed) ctx.setLineDash([4, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                ctx.beginPath();
+                ctx.moveTo(tox, toy);
+                ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+                ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+                ctx.lineTo(tox, toy);
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+
+            // Init call to set layout
+            calculateTheoreticals();
+            resetSimulation();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Адиабатный процесс. Уравнение Пуассона — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #ec4899; /* Розовый/Малиновый */
+            --primary-hover: #db2777;
+            --accent: #14b8a6; /* Бирюзовый */
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #f472b6;
+                --primary-hover: #ec4899;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%; overflow-x: auto;}
+        canvas {
+            width: 100%;
+            max-width: 650px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Адиабатный процесс. Уравнение Пуассона — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Что происходит с газом, если его сжать или расширить так быстро, что он не успеет обменяться теплом с окружающей средой? Почему при открывании бутылки с газировкой над горлышком появляется туман? Ответ кроется в адиабатном процессе.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: АДИАБАТНЫЙ ПРОЦЕСС -->
+    <section class="card">
+        <h2>1. Что такое адиабатный процесс?</h2>
+        <p><b>Адиабатным</b> называется термодинамический процесс, происходящий без теплообмена с окружающей средой. То есть, количество теплоты <b>Q = 0</b>.</p>
+        <p>В реальности абсолютно теплоизолированных стенок не бывает. Но процесс можно считать адиабатным, если он протекает <b>очень быстро</b>. За доли секунды газ просто не успевает передать или получить тепло.</p>
+        
+        <p>Применим Первый закон термодинамики (Q = &Delta;U + A') к этому процессу:</p>
+        <div class="formula">
+            0 = &Delta;U + A' &nbsp;&nbsp;&nbsp; &rArr; &nbsp;&nbsp;&nbsp; <b>A' = &minus;&Delta;U</b>
+        </div>
+        
+        <h3>Два важных следствия:</h3>
+        <ol>
+            <li><b>Адиабатное расширение (A' > 0):</b> Газ совершает работу, расталкивая стенки, исключительно за счет собственной внутренней энергии. Энергия убывает (&Delta;U < 0), поэтому <b>газ охлаждается</b>.</li>
+            <li><b>Адиабатное сжатие (A' < 0):</b> Внешние силы совершают работу над газом, "вгоняя" в него энергию. Так как отдать её некуда, внутренняя энергия растет (&Delta;U > 0), и <b>газ нагревается</b>.</li>
+        </ol>
+        
+        <p><b>Примеры в жизни:</b><br>
+        - <i>Дизельный двигатель:</i> Поршень сжимает воздух так быстро, что он адиабатно нагревается до температуры в сотни градусов, от чего впрыснутое топливо воспламеняется само, без искры.<br>
+        - <i>Образование облаков:</i> Теплый влажный воздух поднимается вверх, попадает в зону низкого давления, быстро расширяется и охлаждается. Водяной пар конденсируется — появляется туман (облако).</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: УРАВНЕНИЕ ПУАССОНА -->
+    <section class="card">
+        <h2>2. Уравнение Пуассона (Уравнение адиабаты)</h2>
+        <p>Для изотермического процесса (T=const) связь давления и объема описывается законом Бойля-Мариотта: p&middot;V = const. <br>
+        Для адиабатного процесса зависимость иная. Французский физик С. Д. Пуассон вывел уравнение, которое носит его имя:</p>
+        
+        <div class="formula">
+            <b>p &middot; V<sup>&gamma;</sup> = const</b>
+        </div>
+        
+        <p>Где <b>&gamma;</b> (гамма) — это <b>показатель адиабаты</b> (или коэффициент Пуассона). Он зависит от строения молекул газа:</p>
+        <ul>
+            <li>Для <b>одноатомных</b> газов (гелий, неон, аргон): &gamma; = 5/3 &approx; 1.67</li>
+            <li>Для <b>двухатомных</b> газов (воздух, кислород, азот): &gamma; = 7/5 = 1.4</li>
+            <li>Для <b>многоатомных</b> газов (углекислый газ, метан): &gamma; = 4/3 &approx; 1.33</li>
+        </ul>
+        
+        <p>Так как &gamma; всегда больше 1, то в координатах p-V кривая адиабаты (p ~ 1/V<sup>&gamma;</sup>) идет <b>круче</b>, чем кривая изотермы (p ~ 1/V).</p>
+    </section>
+
+    <!-- 4) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>3. Интерактивная модель: Изотерма vs Адиабата</h2>
+        <p>В цилиндре находится воздух (двухатомный газ, &gamma; = 1.4). С помощью ползунка изменяйте объем газа. Переключайтесь между изотермическим (медленным) и адиабатным (быстрым) процессами, чтобы увидеть разницу в изменении давления и температуры.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label>Режим процесса:</label>
+                    <select id="sim-mode" style="width: 100%; margin-top: 5px;">
+                        <option value="isothermal">Медленно: Изотермический (T = const)</option>
+                        <option value="adiabatic" selected>Быстро: Адиабатный (Q = 0)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group" style="margin-top: 20px;">
+                    <label for="sim-vol">Текущий объем (V): <span id="val-vol">10</span> л</label>
+                    <input type="range" id="sim-vol" min="5" max="25" value="10" step="0.5">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text-muted);">
+                        <span>Сжатие</span><span>Расширение</span>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 20px; font-family: monospace;">
+                    <div>Давление (p): <span id="val-p" style="color:var(--primary); font-weight:bold; font-size: 1.1rem;">100</span> кПа</div>
+                    <div style="margin-top: 10px;">Температура (T): <span id="val-t" style="color:var(--accent); font-weight:bold; font-size: 1.1rem;">300</span> К</div>
+                </div>
+                
+                <button id="btn-reset" class="secondary" style="width: 100%; margin-top: 15px;">Вернуть в исходное состояние</button>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="graphCanvas" width="600" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Адиабата всегда круче изотермы. При адиабатном сжатии давление растет быстрее из-за дополнительного нагрева газа.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>4. Пример решения задачи (Адиабатное сжатие)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Идеальный одноатомный газ (&gamma; = 5/3) адиабатно сжимают так, что его объем уменьшается в 8 раз (V<sub>2</sub> = V<sub>1</sub> / 8). Во сколько раз изменится его абсолютная температура?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                Q = 0<br>
+                &gamma; = 5/3<br>
+                V<sub>1</sub> / V<sub>2</sub> = 8<br>
+                <b>Найти:</b> T<sub>2</sub> / T<sub>1</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                1. Для адиабатного процесса, помимо уравнения Пуассона (p&middot;V<sup>&gamma;</sup>=const), есть формула связи температуры и объема:<br>
+                <b>T<sub>1</sub> &middot; V<sub>1</sub><sup>&gamma;-1</sup> = T<sub>2</sub> &middot; V<sub>2</sub><sup>&gamma;-1</sup></b></p>
+                
+                <p>2. Выразим отношение температур:<br>
+                T<sub>2</sub> / T<sub>1</sub> = (V<sub>1</sub> / V<sub>2</sub>)<sup>&gamma;-1</sup></p>
+                
+                <p>3. Вычислим степень: &gamma; - 1 = 5/3 - 1 = 2/3.</p>
+                
+                <p>4. Подставим значения:<br>
+                T<sub>2</sub> / T<sub>1</sub> = 8<sup>2/3</sup></p>
+                
+                <p>5. Возвести в степень 2/3 — значит сначала извлечь кубический корень, а затем возвести в квадрат:<br>
+                &sup3;&radic;8 = 2.<br>
+                2<sup>2</sup> = 4.</p>
+                
+                <p><b>Ответ:</b> Температура газа увеличится ровно в 4 раза. (Например, с 300 К до 1200 К!).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>5. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Анализ теории)</h3>
+            <p>На рисунке или графике из одной начальной точки проведены линии изотермического и адиабатного расширения (объем увеличивается). Какая линия пойдет <b>ниже</b>?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите номер ответа:</i> 1 - Изотерма; 2 - Адиабата.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 2, 0, 'При изотермическом расширении давление падает только из-за роста объема. При адиабатном расширении давление падает и из-за роста объема, и из-за охлаждения газа. Поэтому адиабата падает быстрее (круче) и окажется ниже.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает различие графиков изотермы и адиабаты.</li>
+                    <li>Понимает физическую причину более резкого падения давления при адиабатном расширении.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Внутренняя энергия)</h3>
+            <p>Газ совершил работу A' = 300 Дж в процессе адиабатного расширения. Как изменилась его внутренняя энергия &Delta;U (в Джоулях)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Укажите значение со знаком (например, -100 или 100).</i></p>
+            <input type="number" id="taskB-input" placeholder="Ответ со знаком"> 
+            <button onclick="checkTask('taskB', -300, 0, 'Первый закон для адиабатного процесса: Q = 0 = ΔU + A\'. Отсюда ΔU = -A\'. Если A\' = 300 Дж, то ΔU = -300 Дж.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Применяет первый закон термодинамики к адиабатному процессу.</li>
+                    <li>Правильно использует правило знаков (убыль энергии = минус).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Показатель адиабаты)</h3>
+            <p>Известно, что для некоторого газа молярная теплоемкость при постоянном давлении C<sub>p</sub> = 29.1 Дж/(моль&middot;К), а при постоянном объеме C<sub>v</sub> = 20.8 Дж/(моль&middot;К). <br>Найдите <b>показатель адиабаты &gamma;</b> для этого газа. Округлите ответ до одного знака после запятой.</p>
+            <input type="number" id="taskC-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 1.4, 0.05, 'Показатель адиабаты γ — это отношение теплоемкостей: γ = Cp / Cv. Разделите 29.1 на 20.8.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает физический смысл показателя адиабаты (&gamma;).</li>
+                    <li>Вычисляет отношение теплоемкостей.</li>
+                    <li>Делает вывод о строении молекулы (1.4 — это двухатомный газ, например, воздух).</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>6. Рефлексия</h2>
+        <p>Отметьте изученные положения:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что адиабатный процесс протекает без теплообмена (очень быстро).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я запомнил(а), что при адиабатном сжатии газ нагревается, а при расширении — охлаждается.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я знаю, что на графике p-V адиабата идет круче изотермы (уравнение Пуассона содержит степень &gamma; > 1).</label>
+        </div>
+        <button onclick="alert('Отличная работа! Теперь вы готовы к изучению циклов тепловых двигателей, где адиабатный процесс играет важнейшую роль.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 8) ТЕСТ -->
+    <section class="card">
+        <h2>7. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Какой процесс в термодинамике называется адиабатным?</b></p>
+                <label><input type="radio" name="q1" value="0"> Процесс, происходящий при постоянной температуре.</label>
+                <label><input type="radio" name="q1" value="1"> Процесс, протекающий без теплообмена с окружающей средой.</label>
+                <label><input type="radio" name="q1" value="0"> Процесс, при котором газ не совершает работу.</label>
+                <label><input type="radio" name="q1" value="0"> Любой процесс расширения газа.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Выберите верную формулу Первого закона термодинамики для адиабатного процесса:</b></p>
+                <label><input type="radio" name="q2" value="0"> Q = &Delta;U</label>
+                <label><input type="radio" name="q2" value="0"> Q = A'</label>
+                <label><input type="radio" name="q2" value="1"> A' = &minus;&Delta;U</label>
+                <label><input type="radio" name="q2" value="0"> &Delta;U = 0</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как изменяется температура идеального газа при адиабатном расширении?</b></p>
+                <label><input type="radio" name="q3" value="0"> Повышается.</label>
+                <label><input type="radio" name="q3" value="1"> Понижается.</label>
+                <label><input type="radio" name="q3" value="0"> Остается постоянной.</label>
+                <label><input type="radio" name="q3" value="0"> Повышается, затем понижается.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Уравнение Пуассона связывает макроскопические параметры адиабатного процесса. Как оно записывается?</b></p>
+                <label><input type="radio" name="q4" value="0"> p &middot; V = const</label>
+                <label><input type="radio" name="q4" value="1"> p &middot; V<sup>&gamma;</sup> = const</label>
+                <label><input type="radio" name="q4" value="0"> V / T = const</label>
+                <label><input type="radio" name="q4" value="0"> p / T = const</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Почему показатель адиабаты &gamma; всегда больше единицы?</b></p>
+                <label><input type="radio" name="q5" value="1"> Потому что теплоемкость при постоянном давлении (Cp) всегда больше теплоемкости при постоянном объеме (Cv).</label>
+                <label><input type="radio" name="q5" value="0"> Потому что объем газа не может быть отрицательным.</label>
+                <label><input type="radio" name="q5" value="0"> Потому что газ состоит из молекул.</label>
+                <label><input type="radio" name="q5" value="0"> Потому что адиабата на графике выглядит как прямая линия.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ГРАФИК И ПОРШЕНЬ
+       ========================================= */
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const selMode = document.getElementById('sim-mode');
+    const inVol = document.getElementById('sim-vol');
+    const btnReset = document.getElementById('btn-reset');
+    
+    const valVol = document.getElementById('val-vol');
+    const valP = document.getElementById('val-p');
+    const valT = document.getElementById('val-t');
+
+    // Начальные параметры состояния (Точка 0)
+    const V0 = 10;   // л
+    const p0 = 100;  // кПа
+    const T0 = 300;  // К
+    const gamma = 1.4; // Двухатомный газ (воздух)
+
+    // Текущие параметры
+    let currentV = V0;
+    let currentP = p0;
+    let currentT = T0;
+    let currentMode = 'adiabatic'; // 'isothermal' or 'adiabatic'
+
+    // Геометрия Canvas: Левая часть - Поршень (200px), Правая часть - График (400px)
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const splitX = 200; // Разделитель
+    
+    // График координаты
+    const gMargin = 40;
+    const gX = splitX + gMargin;
+    const gY = ch - gMargin;
+    const gW = cw - splitX - gMargin * 2;
+    const gH = ch - gMargin * 2;
+    
+    // Максимумы для осей
+    const maxV = 28;
+    const maxP = 350;
+
+    function getPx_V(v) { return gX + (v / maxV) * gW; }
+    function getPx_P(p) { return gY - (p / maxP) * gH; }
+
+    // Расчеты состояний
+    function calculateState(v, mode) {
+        if (mode === 'isothermal') {
+            // p*V = const = p0*V0
+            let p = (p0 * V0) / v;
+            return { p: p, t: T0 };
+        } else {
+            // p*V^gamma = const = p0 * V0^gamma
+            let p = p0 * Math.pow(V0 / v, gamma);
+            // T*V^(gamma-1) = const
+            let t = T0 * Math.pow(V0 / v, gamma - 1);
+            return { p: p, t: t };
+        }
+    }
+
+    function updateSimulation() {
+        currentV = parseFloat(inVol.value);
+        currentMode = selMode.value;
+        
+        let state = calculateState(currentV, currentMode);
+        currentP = state.p;
+        currentT = state.t;
+
+        // Обновление текста
+        valVol.innerText = currentV.toFixed(1);
+        valP.innerText = currentP.toFixed(0);
+        valT.innerText = currentT.toFixed(0);
+
+        draw();
+    }
+
+    [inVol, selMode].forEach(el => el.addEventListener('input', updateSimulation));
+    
+    btnReset.addEventListener('click', () => {
+        inVol.value = V0;
+        updateSimulation();
+    });
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // ==========================================
+        // 1. Отрисовка Цилиндра и Поршня (Левая часть)
+        // ==========================================
+        const cylX = 50;
+        const cylW = 100;
+        const cylBaseY = ch - 30;
+        const cylMaxH = ch - 80; // Высота цилиндра
+        
+        // Рисуем стенки цилиндра
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cylX, 30);
+        ctx.lineTo(cylX, cylBaseY);
+        ctx.lineTo(cylX + cylW, cylBaseY);
+        ctx.lineTo(cylX + cylW, 30);
+        ctx.stroke();
+
+        // Высота поршня пропорциональна объему (V: 5 to 25 -> H)
+        let pistonH = (currentV / maxV) * cylMaxH;
+        let pistonY = cylBaseY - pistonH;
+
+        // Цвет газа зависит от температуры (300K - нейтральный, холоднее - синий, горячее - красный)
+        let heatRatio = (currentT - 150) / 450; // 0=150K, 1=600K
+        if (heatRatio < 0) heatRatio = 0; if (heatRatio > 1) heatRatio = 1;
+        let r = Math.floor(100 + heatRatio * 155);
+        let b = Math.floor(255 - heatRatio * 200);
+        
+        ctx.fillStyle = `rgba(${r}, 80, ${b}, 0.3)`;
+        ctx.fillRect(cylX + 2, pistonY, cylW - 4, pistonH - 2);
+
+        // Рисуем сам поршень
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(cylX + 2, pistonY - 15, cylW - 4, 15);
+        ctx.strokeRect(cylX + 2, pistonY - 15, cylW - 4, 15);
+        // Шток
+        ctx.fillRect(cylX + cylW/2 - 4, 10, 8, pistonY - 25);
+
+        // Разделительная линия
+        ctx.beginPath();
+        ctx.moveTo(splitX, 10);
+        ctx.lineTo(splitX, ch - 10);
+        ctx.strokeStyle = "var(--border)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+
+        // ==========================================
+        // 2. Отрисовка Графика (Правая часть)
+        // ==========================================
+        
+        // Оси
+        ctx.beginPath();
+        ctx.moveTo(gX, gY - gH - 10);
+        ctx.lineTo(gX, gY);
+        ctx.lineTo(gX + gW + 10, gY);
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Подписи осей
+        ctx.fillStyle = "var(--text-main)";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText("p (кПа)", gX - 30, gY - gH - 15);
+        ctx.fillText("V (л)", gX + gW + 10, gY + 5);
+
+        // Рисуем теоретические кривые от начальной точки
+        // Изотерма (Синяя пунктирная)
+        ctx.beginPath();
+        for (let v = 5; v <= maxV; v += 0.5) {
+            let p_iso = (p0 * V0) / v;
+            if (v === 5) ctx.moveTo(getPx_V(v), getPx_P(p_iso));
+            else ctx.lineTo(getPx_V(v), getPx_P(p_iso));
+        }
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "var(--accent)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Адиабата (Розовая сплошная)
+        ctx.beginPath();
+        for (let v = 5; v <= maxV; v += 0.5) {
+            let p_ad = p0 * Math.pow(V0 / v, gamma);
+            if (v === 5) ctx.moveTo(getPx_V(v), getPx_P(p_ad));
+            else ctx.lineTo(getPx_V(v), getPx_P(p_ad));
+        }
+        ctx.setLineDash([]);
+        ctx.strokeStyle = "var(--primary)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Отрисовка начальной точки
+        ctx.beginPath();
+        ctx.arc(getPx_V(V0), getPx_P(p0), 5, 0, Math.PI*2);
+        ctx.fillStyle = "var(--text-muted)";
+        ctx.fill();
+        ctx.fillText("Начало", getPx_V(V0) + 10, getPx_P(p0) - 5);
+
+        // Отрисовка текущей точки
+        let activeColor = currentMode === 'adiabatic' ? "var(--primary)" : "var(--accent)";
+        ctx.beginPath();
+        ctx.arc(getPx_V(currentV), getPx_P(currentP), 7, 0, Math.PI*2);
+        ctx.fillStyle = activeColor;
+        ctx.fill();
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Проекции на оси
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(getPx_V(currentV), getPx_P(currentP));
+        ctx.lineTo(getPx_V(currentV), gY);
+        ctx.moveTo(getPx_V(currentV), getPx_P(currentP));
+        ctx.lineTo(gX, getPx_P(currentP));
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Легенда
+        ctx.font = "12px Arial";
+        ctx.fillStyle = "var(--accent)";
+        ctx.fillText("--- Изотерма", gX + gW - 80, gY - gH + 20);
+        ctx.fillStyle = "var(--primary)";
+        ctx.fillText("— Адиабата", gX + gW - 80, gY - gH + 40);
+    }
+
+    // Инициализация
+    updateSimulation();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Адиабатный процесс — это процесс без теплообмена (Q = 0). Он происходит либо в теплоизолированной системе, либо очень быстро.",
+            "2. По первому закону термодинамики Q = ΔU + A'. Если Q = 0, то 0 = ΔU + A', следовательно A' = -ΔU.",
+            "3. При адиабатном расширении газ совершает работу за счет своей внутренней энергии (A' > 0, следовательно ΔU < 0). Раз внутренняя энергия падает, температура понижается.",
+            "4. Уравнение Пуассона описывает адиабату в координатах p-V и записывается как p·V^γ = const.",
+            "5. Показатель адиабаты γ = Cp / Cv. Теплоемкость при постоянном давлении (Cp) всегда больше Cv, так как газу при изобарном нагревании нужно совершать работу, что требует дополнительной энергии."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы в совершенстве овладели темой адиабатных процессов.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

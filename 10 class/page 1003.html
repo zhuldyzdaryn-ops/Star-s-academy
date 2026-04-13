@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уравнения кинематики равноускоренного движения</title>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --primary-light: #ede9fe;
+            --border-color: #cbd5e1;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --warning: #f59e0b;
+            --formula-bg: #f8fafc;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; }
+
+        /* --- ШАПКА --- */
+        .top-header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 12px 20px; display: flex; justify-content: flex-end; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .lang-toggle { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
+        .lang-toggle span { cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        .lang-toggle span.active { color: var(--primary); }
+        .switch { position: relative; display: inline-block; width: 44px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border-color); border-radius: 22px; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: .4s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        body.lang-kz .lang-ru { display: none !important; }
+        body:not(.lang-kz) .lang-kz { display: none !important; }
+
+        /* --- МАКЕТ --- */
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; display: flex; gap: 20px; align-items: flex-start; }
+        .main-content { flex: 1; background-color: var(--bg-card); border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); min-width: 0; }
+        .sidebar { width: 280px; background-color: var(--bg-card); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); position: sticky; top: 70px; flex-shrink: 0; }
+
+        .breadcrumbs { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; }
+        .breadcrumbs a { color: var(--primary); text-decoration: none; }
+        
+        h1 { font-size: 1.8rem; margin-bottom: 20px; color: #0f172a; line-height: 1.3;}
+        h2 { font-size: 1.4rem; margin-top: 35px; margin-bottom: 15px; color: #1e293b; border-bottom: 2px solid var(--primary-light); padding-bottom: 5px; }
+        h3 { font-size: 1.15rem; margin-bottom: 10px; color: var(--primary); margin-top: 20px;}
+
+        /* --- БЛОКИ ТЕОРИИ --- */
+        .alert-box { background-color: var(--primary-light); border-left: 4px solid var(--primary); padding: 15px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+        .info-card { border: 1px solid var(--border-color); padding: 18px; border-radius: 8px; background: #fafafa; margin-bottom: 15px; }
+        
+        .formula-box { background-color: var(--formula-bg); border: 1px dashed var(--border-color); padding: 15px; border-radius: 8px; text-align: center; margin: 15px 0; font-size: 1.3rem; font-family: 'Cambria Math', 'Times New Roman', serif; overflow-x: auto;}
+        .formula-box span.math { font-style: italic; }
+        .formula-box .fraction { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; font-size: 1.1rem; }
+        .formula-box .fraction > span { display: block; padding: 2px; }
+        .formula-box .fraction span.top { border-bottom: 1px solid #000; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        /* --- САЙДБАР --- */
+        .toc-title { font-size: 0.85rem; text-transform: uppercase; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; letter-spacing: 0.5px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin-bottom: 5px; }
+        .toc-list a { text-decoration: none; color: var(--text-main); display: block; padding: 8px 12px; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem; }
+        .toc-list a.active, .toc-list a:hover { background-color: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+        /* --- КНОПКИ И ТЕСТЫ --- */
+        .btn { background-color: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .btn:hover { background-color: var(--primary-hover); }
+        select.dropdown-select { padding: 4px 8px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; color: var(--primary); font-weight: bold; outline: none; background: #fff; cursor: pointer; }
+        .correct { border-color: var(--success) !important; background-color: var(--success-light) !important; color: var(--success) !important; }
+        .wrong { border-color: var(--danger) !important; background-color: var(--danger-light) !important; color: var(--danger) !important; }
+        
+        .test-q { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
+        .test-q:last-child { border-bottom: none; }
+        .test-options { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .test-options label { display: flex; align-items: flex-start; gap: 10px; background: #fafafa; padding: 12px 15px; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; }
+        .result-box { margin-top: 15px; padding: 15px; border-radius: 6px; font-weight: bold; display: none; }
+
+        /* --- СИМУЛЯЦИЯ --- */
+        .sim-container { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; background: #ffffff; }
+        .controls-panel { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; align-items: center;}
+        .control-group { display: flex; flex-direction: column; gap: 5px; min-width: 150px; }
+        .control-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); }
+        .control-group input[type=range] { width: 100%; accent-color: var(--primary); }
+        .val-display { font-weight: bold; color: var(--primary); }
+        
+        .sim-car-area { background: #e2e8f0; border-radius: 8px; height: 120px; position: relative; overflow: hidden; margin-bottom: 20px; border: 1px solid var(--border-color); }
+        #car { position: absolute; bottom: 20px; left: 10px; width: 60px; height: 30px; background: var(--primary); border-radius: 5px 15px 5px 5px; transition: transform 0.05s linear; z-index: 2;}
+        .wheel { position: absolute; bottom: -5px; width: 14px; height: 14px; background: #1e293b; border-radius: 50%; border: 2px solid #cbd5e1; }
+        .wheel.left { left: 8px; } .wheel.right { right: 8px; }
+        .road-line { position: absolute; bottom: 15px; width: 100%; height: 2px; border-bottom: 2px dashed #94a3b8; }
+        
+        .graphs-area { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .graph-wrapper { border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; text-align: center; }
+        .graph-wrapper canvas { max-width: 100%; background: #fff; }
+
+        /* --- БЛОК YOUTUBE --- */
+        .youtube-banner { display: flex; align-items: center; gap: 20px; background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%); border: 1px solid #fecdd3; padding: 20px; border-radius: 10px; margin-top: 15px; }
+        .youtube-banner-text { flex: 1; }
+        .youtube-btn { background-color: #ef4444; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s; white-space: nowrap; font-size: 0.95rem; }
+        .youtube-btn:hover { background-color: #dc2626; }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; position: static; margin-bottom: 20px; }
+            .graphs-area { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .youtube-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<header class="top-header">
+    <div class="lang-toggle">
+        <span id="label-ru" class="active" onclick="document.getElementById('langToggle').checked = false; toggleLang();">RU</span>
+        <label class="switch">
+            <input type="checkbox" id="langToggle" onchange="toggleLang()">
+            <span class="slider"></span>
+        </label>
+        <span id="label-kz" onclick="document.getElementById('langToggle').checked = true; toggleLang();">KZ</span>
+    </div>
+</header>
+
+<div class="container">
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <span class="lang-ru"><a href="#">Главная</a> > <a href="#">Физика</a> > <a href="#">10 класс</a> > Уравнения кинематики</span>
+            <span class="lang-kz"><a href="#">Басты бет</a> > <a href="#">Физика</a> > <a href="#">10 сынып</a> > Кинематика теңдеулері</span>
+        </div>
+
+        <h1>
+            <span class="lang-ru">Урок 3. Основные понятия и уравнения кинематики равноускоренного движения</span>
+            <span class="lang-kz">3-сабақ. Теңайнымалы қозғалыс кинематикасының негізгі ұғымдары мен теңдеулері</span>
+        </h1>
+
+        <!-- 1. УСКОРЕНИЕ -->
+        <section id="acceleration" class="content-section">
+            <h2>
+                <span class="lang-ru">Равноускоренное движение и Ускорение</span>
+                <span class="lang-kz">Теңайнымалы қозғалыс және Үдеу</span>
+            </h2>
+            <p>
+                <span class="lang-ru">Если скорость тела меняется, движение называют <strong>неравномерным</strong>. Самый простой вид неравномерного движения — это движение, при котором скорость за любые равные промежутки времени изменяется на одну и ту же величину.</span>
+                <span class="lang-kz">Егер дененің жылдамдығы өзгерсе, қозғалыс <strong>бірқалыпты емес</strong> деп аталады. Бірқалыпты емес қозғалыстың ең қарапайым түри — кез келген тең уақыт аралығында жылдамдық бірдей шамаға өзгеретін қозғалыс.</span>
+            </p>
+
+            <div class="alert-box">
+                <span class="lang-ru"><strong>Равноускоренное движение</strong> — это движение, при котором ускорение тела остается постоянным по модулю и направлению (a = const).</span>
+                <span class="lang-kz"><strong>Теңайнымалы қозғалыс</strong> — бұл дененің үдеуі модульі және бағыты бойынша тұрақты болып қалатын қозғалыс (a = const).</span>
+            </div>
+
+            <div class="info-card">
+                <h3>
+                    <span class="lang-ru">Ускорение (a)</span>
+                    <span class="lang-kz">Үдеу (a)</span>
+                </h3>
+                <p>
+                    <span class="lang-ru">Физическая величина, характеризующая быстроту изменения скорости. Показывает, на сколько меняется скорость за 1 секунду.</span>
+                    <span class="lang-kz">Жылдамдықтың өзгеру шапшаңдығын сипаттайтын физикалық шама. Ол 1 секундта жылдамдықтың қаншаға өзгеретінін көрсетеді.</span>
+                </p>
+                
+                <div class="formula-box">
+                    <span class="math">a<sub>x</sub></span> = 
+                    <div class="fraction">
+                        <span class="top"><span class="math">v<sub>x</sub> - v<sub>0x</sub></span></span>
+                        <span><span class="math">t</span></span>
+                    </div>
+                </div>
+                <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                    <span class="lang-ru">Единица измерения ускорения в СИ: <strong>[м/с²]</strong></span>
+                    <span class="lang-kz">ХБЖ-дегі үдеудің өлшем бірлігі: <strong>[м/с²]</strong></span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 2. УРАВНЕНИЯ -->
+        <section id="equations" class="content-section">
+            <h2>
+                <span class="lang-ru">Уравнения скорости и перемещения</span>
+                <span class="lang-kz">Жылдамдық және орын ауыстыру теңдеулері</span>
+            </h2>
+
+            <div class="grid-2">
+                <div class="info-card" style="border-top: 4px solid var(--primary);">
+                    <h4><span class="lang-ru">Уравнение скорости</span><span class="lang-kz">Жылдамдық теңдеуі</span></h4>
+                    <div class="formula-box" style="font-size: 1.1rem; padding: 10px;">
+                        <span class="math">v<sub>x</sub>(t) = v<sub>0x</sub> + a<sub>x</sub>t</span>
+                    </div>
+                    <p style="font-size: 0.9rem;">
+                        <span class="lang-ru">Графиком проекции скорости v<sub>x</sub>(t) является <strong>прямая линия</strong>. Чем больше ускорение, тем больше угол наклона графика к оси времени.</span>
+                        <span class="lang-kz">v<sub>x</sub>(t) жылдамдық проекциясының графигі <strong>түзу сызық</strong> болып табылады. Үдеу неғұрлым үлкен болса, графиктің уақыт осіне көлбеу бұрышы соғұрлым үлкен болады.</span>
+                    </p>
+                </div>
+
+                <div class="info-card" style="border-top: 4px solid var(--warning);">
+                    <h4><span class="lang-ru">Уравнение перемещения</span><span class="lang-kz">Орын ауыстыру теңдеуі</span></h4>
+                    <div class="formula-box" style="font-size: 1.1rem; padding: 10px;">
+                        <span class="math">s<sub>x</sub>(t) = v<sub>0x</sub>t + </span>
+                        <div class="fraction">
+                            <span class="top"><span class="math">a<sub>x</sub>t<sup>2</sup></span></span>
+                            <span>2</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem;">
+                        <span class="lang-ru">Графиком перемещения является <strong>парабола</strong>.</span>
+                        <span class="lang-kz">Орын ауыстыру графигі <strong>парабола</strong> болып табылады.</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-card" style="margin-top: 20px;">
+                <h4><span class="lang-ru">Уравнение координаты (Основное уравнение кинематики)</span><span class="lang-kz">Координата теңдеуі (Кинематиканың негізгі теңдеуі)</span></h4>
+                <div class="formula-box" style="border-color: var(--primary);">
+                    <span class="math">x(t) = x<sub>0</sub> + v<sub>0x</sub>t + </span>
+                    <div class="fraction">
+                        <span class="top"><span class="math">a<sub>x</sub>t<sup>2</sup></span></span>
+                        <span>2</span>
+                    </div>
+                </div>
+                <p>
+                    <span class="lang-ru">Где x<sub>0</sub> — начальная координата тела. Это уравнение позволяет найти положение тела в любой момент времени t.</span>
+                    <span class="lang-kz">Мұндағы x<sub>0</sub> — дененің бастапқы координатасы. Бұл теңдеу кез келген t уақыт мезетінде дененің орнын табуға мүмкіндік береді.</span>
+                </p>
+            </div>
+
+            <div class="alert-box">
+                <strong><span class="lang-ru">Безвременная формула:</span><span class="lang-kz">Уақытсыз формула:</span></strong>
+                <span class="lang-ru"> Если в задаче не дано время и его не нужно искать, удобно использовать формулу:</span>
+                <span class="lang-kz"> Егер есепте уақыт берілмесе және оны табу қажет болмаса, мына формуланы қолданған ыңғайлы:</span>
+                <div class="formula-box" style="background: none; border: none; padding: 5px; margin: 5px;">
+                    <span class="math">s<sub>x</sub> = </span>
+                    <div class="fraction">
+                        <span class="top"><span class="math">v<sub>x</sub><sup>2</sup> - v<sub>0x</sub><sup>2</sup></span></span>
+                        <span><span class="math">2a<sub>x</sub></span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. СИМУЛЯЦИЯ И ГРАФИКИ -->
+        <section id="simulation" class="content-section">
+            <h2>
+                <span class="lang-ru">Интерактивная симуляция и графики</span>
+                <span class="lang-kz">Интерактивті симуляция және графиктер</span>
+            </h2>
+            <p style="margin-bottom: 15px;">
+                <span class="lang-ru">Задайте начальную скорость (v<sub>0</sub>) и ускорение (a). Нажмите "Старт", чтобы увидеть движение автомобиля и построение графиков в реальном времени.</span>
+                <span class="lang-kz">Бастапқы жылдамдықты (v<sub>0</sub>) және үдеуді (a) орнатыңыз. Автомобильдің қозғалысын және нақты уақытта графиктердің құрылуын көру үшін "Бастау" түймесін басыңыз.</span>
+            </p>
+
+            <div class="sim-container">
+                <div class="controls-panel">
+                    <div class="control-group">
+                        <label><span class="lang-ru">Нач. скорость</span><span class="lang-kz">Баст. жылдамдық</span> v₀: <span id="v0-val" class="val-display">0</span> м/с</label>
+                        <input type="range" id="sim-v0" min="-10" max="10" step="1" value="0" oninput="updateSimParams()">
+                    </div>
+                    <div class="control-group">
+                        <label><span class="lang-ru">Ускорение</span><span class="lang-kz">Үдеу</span> a: <span id="a-val" class="val-display">2</span> м/с²</label>
+                        <input type="range" id="sim-a" min="-5" max="5" step="0.5" value="2" oninput="updateSimParams()">
+                    </div>
+                    <div>
+                        <button class="btn" id="btn-start" onclick="toggleSim()">
+                            <span class="lang-ru">Старт</span><span class="lang-kz">Бастау</span>
+                        </button>
+                        <button class="btn" style="background: var(--text-muted);" onclick="resetSim()">
+                            <span class="lang-ru">Сброс</span><span class="lang-kz">Қалпына келтіру</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Анимация машинки -->
+                <div class="sim-car-area">
+                    <div class="road-line"></div>
+                    <!-- Метки оси X -->
+                    <div style="position: absolute; bottom: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 10px; font-size: 0.8rem; color: #64748b;">
+                        <span>0 м</span><span>50 м</span><span>100 м</span><span>150 м</span><span>200 м</span>
+                    </div>
+                    <div id="car">
+                        <div class="wheel left"></div>
+                        <div class="wheel right"></div>
+                    </div>
+                </div>
+
+                <!-- Графики -->
+                <div class="graphs-area">
+                    <div class="graph-wrapper">
+                        <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted);">
+                            <span class="lang-ru">График скорости: v(t)</span><span class="lang-kz">Жылдамдық графигі: v(t)</span>
+                        </h4>
+                        <canvas id="graphV" width="400" height="200"></canvas>
+                    </div>
+                    <div class="graph-wrapper">
+                        <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted);">
+                            <span class="lang-ru">График перемещения: s(t)</span><span class="lang-kz">Орын ауыстыру графигі: s(t)</span>
+                        </h4>
+                        <canvas id="graphS" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ПРАКТИКА -->
+        <section id="practice" class="content-section">
+            <h2>
+                <span class="lang-ru">Анализ уравнений движения (Практика)</span>
+                <span class="lang-kz">Қозғалыс теңдеулерін талдау (Практика)</span>
+            </h2>
+            <p style="margin-bottom: 20px;">
+                <span class="lang-ru">В 10 классе важно уметь "читать" уравнения движения. Вспомним стандартный вид: <strong>x(t) = x<sub>0</sub> + v<sub>0</sub>t + at<sup>2</sup>/2</strong>. Обратите внимание, что перед t<sup>2</sup> стоит половина ускорения!</span>
+                <span class="lang-kz">10 сыныпта қозғалыс теңдеулерін "оқи" білу маңызды. Стандартты түрін еске түсірейік: <strong>x(t) = x<sub>0</sub> + v<sub>0</sub>t + at<sup>2</sup>/2</strong>. Назар аударыңыз, t<sup>2</sup> алдында үдеудің жартысы тұрады!</span>
+            </p>
+
+            <div class="info-card">
+                <p>
+                    <span class="lang-ru"><strong>Задача 1.</strong> Дано уравнение движения: <strong>x = 10 - 4t + 3t²</strong>.</span>
+                    <span class="lang-kz"><strong>1-есеп.</strong> Қозғалыс теңдеуі берілген: <strong>x = 10 - 4t + 3t²</strong>.</span>
+                </p>
+                <div style="margin-top: 10px;">
+                    <span class="lang-ru">Начальная координата x<sub>0</sub> = </span><span class="lang-kz">Бастапқы координата x<sub>0</sub> = </span>
+                    <select class="dropdown-select" id="p1_x0">
+                        <option value="none">...</option> <option value="10">10 м</option> <option value="-4">-4 м</option>
+                    </select>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="lang-ru">Проекция нач. скорости v<sub>0x</sub> = </span><span class="lang-kz">Баст. жылдамдық проекциясы v<sub>0x</sub> = </span>
+                    <select class="dropdown-select" id="p1_v0">
+                        <option value="none">...</option> <option value="3">3 м/с</option> <option value="-4">-4 м/с</option>
+                    </select>
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="lang-ru">Проекция ускорения a<sub>x</sub> = </span><span class="lang-kz">Үдеу проекциясы a<sub>x</sub> = </span>
+                    <select class="dropdown-select" id="p1_a">
+                        <option value="none">...</option> <option value="3">3 м/с²</option> <option value="6">6 м/с²</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn" onclick="checkPractice()">
+                <span class="lang-ru">Проверить</span><span class="lang-kz">Тексеру</span>
+            </button>
+            <div id="practiceResult" class="result-box"></div>
+
+            <!-- ДЕСКРИПТОРЫ ОЦЕНИВАНИЯ -->
+            <div class="descriptors-box" style="margin-top: 25px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <h4 style="color: var(--text-main); margin-bottom: 10px; font-size: 1rem;">
+                    <span class="lang-ru">Дескрипторы оценивания к задаче:</span>
+                    <span class="lang-kz">Есепті бағалау дескрипторлары:</span>
+                </h4>
+                <ul style="margin-left: 20px; font-size: 0.95rem; color: var(--text-muted);">
+                    <li>
+                        <span class="lang-ru">Определяет начальную координату тела по уравнению (1 балл)</span>
+                        <span class="lang-kz">Теңдеу бойынша дененің бастапқы координатасын анықтайды (1 ұпай)</span>
+                    </li>
+                    <li>
+                        <span class="lang-ru">Определяет проекцию начальной скорости с учетом знака (1 балл)</span>
+                        <span class="lang-kz">Таңбасын ескере отырып, бастапқы жылдамдық проекциясын анықтайды (1 ұпай)</span>
+                    </li>
+                    <li>
+                        <span class="lang-ru">Вычисляет проекцию ускорения, учитывая коэффициент 1/2 перед t² (1 балл)</span>
+                        <span class="lang-kz">t² алдындағы 1/2 коэффициентін ескере отырып, үдеу проекциясын есептейді (1 ұпай)</span>
+                    </li>
+                </ul>
+                <p style="margin-top: 10px; font-weight: bold; font-size: 0.95rem; color: var(--primary);">
+                    <span class="lang-ru">Итого: 3 балла</span>
+                    <span class="lang-kz">Барлығы: 3 ұпай</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 5. ВИДЕОУРОК (БЛОК-ССЫЛКА) -->
+        <section id="video" class="content-section">
+            <h2>
+                <span class="lang-ru">Дополнительный материал (Видеоурок)</span>
+                <span class="lang-kz">Қосымша материал (Бейнесабақ)</span>
+            </h2>
+            
+            <div class="youtube-banner">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="#ef4444" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.86-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15V9l6,3L10,15z"/>
+                </svg>
+                <div class="youtube-banner-text">
+                    <h4 style="margin-bottom: 5px; color: #991b1b; font-size: 1.1rem;">
+                        <span class="lang-ru">Изучите тему глубже на YouTube</span>
+                        <span class="lang-kz">Тақырыпты YouTube-те тереңірек зерттеңіз</span>
+                    </h4>
+                    <p style="font-size: 0.95rem; color: #7f1d1d; margin-bottom: 0;">
+                        <span class="lang-ru">Посмотрите обучающие видеоролики с подробным разбором графиков и задач по кинематике.</span>
+                        <span class="lang-kz">Кинематика бойынша графиктер мен есептерді егжей-тегжейлі талдайтын оқу бейнероликтерін көріңіз.</span>
+                    </p>
+                </div>
+                <a href="https://www.youtube.com/results?search_query=равноускоренное+движение+10+класс+физика" target="_blank" class="youtube-btn">
+                    <span class="lang-ru">Найти видео</span>
+                    <span class="lang-kz">Бейнені табу</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- 6. ТЕСТОВЫЕ ВОПРОСЫ -->
+        <section id="test" class="content-section">
+            <h2>
+                <span class="lang-ru">Тест для самопроверки</span>
+                <span class="lang-kz">Өзін-өзі тексеру тесті</span>
+            </h2>
+            
+            <div class="test-q" data-ans="3">
+                <h4>
+                    <span class="lang-ru">1. Единица измерения ускорения в СИ:</span>
+                    <span class="lang-kz">1. ХБЖ-дегі үдеудің өлшем бірлігі:</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q1" value="1"> <span>м/с</span></label>
+                    <label><input type="radio" name="q1" value="2"> <span>м²</span></label>
+                    <label><input type="radio" name="q1" value="3"> <span>м/с²</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="1">
+                <h4>
+                    <span class="lang-ru">2. Как выглядит график скорости v(t) при равноускоренном движении?</span>
+                    <span class="lang-kz">2. Теңайнымалы қозғалыстағы жылдамдық графигі v(t) қандай болады?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q2" value="1"> <span class="lang-ru">Прямая линия, наклоненная к оси времени</span><span class="lang-kz">Уақыт осіне көлбеу түзу сызық</span></label>
+                    <label><input type="radio" name="q2" value="2"> <span class="lang-ru">Парабола</span><span class="lang-kz">Парабола</span></label>
+                    <label><input type="radio" name="q2" value="3"> <span class="lang-ru">Прямая, параллельная оси времени (горизонтальная)</span><span class="lang-kz">Уақыт осіне параллель түзу (горизонталь)</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="2">
+                <h4>
+                    <span class="lang-ru">3. Тело начинает движение из состояния покоя (v<sub>0</sub> = 0) с ускорением 2 м/с². Какой путь оно пройдет за 3 секунды?</span>
+                    <span class="lang-kz">3. Дене тыныштық күйінен (v<sub>0</sub> = 0) 2 м/с² үдеумен қозғала бастайды. Ол 3 секундта қандай жол жүреді?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q3" value="1"> <span>6 м</span></label>
+                    <label><input type="radio" name="q3" value="2"> <span>9 м</span></label>
+                    <label><input type="radio" name="q3" value="3"> <span>18 м</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="1">
+                <h4>
+                    <span class="lang-ru">4. Уравнение скорости имеет вид v = 5 - 2t. Чему равно ускорение?</span>
+                    <span class="lang-kz">4. Жылдамдық теңдеуі v = 5 - 2t түрінде берілген. Үдеу неге тең?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q4" value="1"> <span>-2 м/с²</span></label>
+                    <label><input type="radio" name="q4" value="2"> <span>5 м/с²</span></label>
+                    <label><input type="radio" name="q4" value="3"> <span>2 м/с²</span></label>
+                </div>
+            </div>
+
+            <div class="test-q" data-ans="3">
+                <h4>
+                    <span class="lang-ru">5. Какая физическая величина геометрически равна площади фигуры под графиком зависимости v(t)?</span>
+                    <span class="lang-kz">5. v(t) тәуелділік графигінің астындағы фигураның ауданы геометриялық тұрғыдан қандай физикалық шамаға тең?</span>
+                </h4>
+                <div class="test-options">
+                    <label><input type="radio" name="q5" value="1"> <span class="lang-ru">Ускорение</span><span class="lang-kz">Үдеу</span></label>
+                    <label><input type="radio" name="q5" value="2"> <span class="lang-ru">Координата</span><span class="lang-kz">Координата</span></label>
+                    <label><input type="radio" name="q5" value="3"> <span class="lang-ru">Перемещение</span><span class="lang-kz">Орын ауыстыру</span></label>
+                </div>
+            </div>
+
+            <button class="btn" onclick="checkTest()">
+                <span class="lang-ru">Завершить тест</span><span class="lang-kz">Тестті аяқтау</span>
+            </button>
+            <div id="testResult" class="result-box"></div>
+        </section>
+
+    </main>
+
+    <!-- САЙДБАР -->
+    <aside class="sidebar">
+        <div class="toc-title">
+            <span class="lang-ru">Содержание</span>
+            <span class="lang-kz">Мазмұны</span>
+        </div>
+        <ul class="toc-list">
+            <li><a href="#acceleration" class="nav-link"><span class="lang-ru">Ускорение</span><span class="lang-kz">Үдеу</span></a></li>
+            <li><a href="#equations" class="nav-link"><span class="lang-ru">Уравнения кинематики</span><span class="lang-kz">Кинематика теңдеулері</span></a></li>
+            <li><a href="#simulation" class="nav-link"><span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span></a></li>
+            <li><a href="#practice" class="nav-link"><span class="lang-ru">Практика</span><span class="lang-kz">Практика</span></a></li>
+            <li><a href="#video" class="nav-link"><span class="lang-ru">Видеоурок</span><span class="lang-kz">Бейнесабақ</span></a></li>
+            <li><a href="#test" class="nav-link"><span class="lang-ru">Тест</span><span class="lang-kz">Тест</span></a></li>
+        </ul>
+    </aside>
+</div>
+
+<script>
+    // --- ЯЗЫКОВОЙ ПЕРЕКЛЮЧАТЕЛЬ ---
+    let currentLang = 'ru';
+    function toggleLang() {
+        const isKz = document.getElementById('langToggle').checked;
+        currentLang = isKz ? 'kz' : 'ru';
+        document.body.classList.toggle('lang-kz', isKz);
+        document.getElementById('label-ru').classList.toggle('active', !isKz);
+        document.getElementById('label-kz').classList.toggle('active', isKz);
+        document.getElementById('practiceResult').style.display = 'none';
+        document.getElementById('testResult').style.display = 'none';
+        
+        // Обновляем текст кнопки симуляции
+        const btn = document.getElementById('btn-start');
+        if (isRunning) {
+            btn.innerHTML = t("Пауза", "Кідірту");
+        } else {
+            btn.innerHTML = t("Старт", "Бастау");
+        }
+        drawGraphs(); // перерисовка с новыми метками
+    }
+    function t(ruText, kzText) { return currentLang === 'ru' ? ruText : kzText; }
+
+    // --- ПОДСВЕТКА СОДЕРЖАНИЯ ---
+    const sections = document.querySelectorAll('.content-section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            if (scrollY >= section.offsetTop - 150) current = section.getAttribute('id');
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) link.classList.add('active');
+        });
+    });
+
+    // --- СИМУЛЯЦИЯ ---
+    let simV0 = 0;
+    let simA = 2;
+    let time = 0;
+    let isRunning = false;
+    let animId;
+    let historyData = []; // {t, v, s}
+
+    const carEl = document.getElementById('car');
+    const cvsV = document.getElementById('graphV');
+    const ctxV = cvsV.getContext('2d');
+    const cvsS = document.getElementById('graphS');
+    const ctxS = cvsS.getContext('2d');
+
+    // Настройки масштаба графиков
+    const maxTime = 10; // секунд
+    const maxX = 200; // метров (по ширине дороги)
+
+    function updateSimParams() {
+        simV0 = parseFloat(document.getElementById('sim-v0').value);
+        simA = parseFloat(document.getElementById('sim-a').value);
+        document.getElementById('v0-val').textContent = simV0;
+        document.getElementById('a-val').textContent = simA;
+        
+        if (!isRunning && time === 0) {
+            historyData = [];
+            drawGraphs();
+        }
+    }
+
+    function toggleSim() {
+        const btn = document.getElementById('btn-start');
+        if (isRunning) {
+            isRunning = false;
+            cancelAnimationFrame(animId);
+            btn.innerHTML = t("Продолжить", "Жалғастыру");
+            btn.style.backgroundColor = "var(--primary)";
+        } else {
+            isRunning = true;
+            btn.innerHTML = t("Пауза", "Кідірту");
+            btn.style.backgroundColor = "var(--warning)";
+            lastTimestamp = performance.now();
+            animId = requestAnimationFrame(step);
+        }
+    }
+
+    function resetSim() {
+        isRunning = false;
+        cancelAnimationFrame(animId);
+        time = 0;
+        historyData = [];
+        updateSimParams();
+        carEl.style.transform = `translateX(0px)`;
+        const btn = document.getElementById('btn-start');
+        btn.innerHTML = t("Старт", "Бастау");
+        btn.style.backgroundColor = "var(--primary)";
+        drawGraphs();
+    }
+
+    let lastTimestamp = 0;
+    function step(timestamp) {
+        if (!isRunning) return;
+        
+        const dt = (timestamp - lastTimestamp) / 1000; 
+        lastTimestamp = timestamp;
+        time += dt;
+        
+        let currentS = simV0 * time + 0.5 * simA * time * time;
+        let currentV = simV0 + simA * time;
+        historyData.push({t: time, v: currentV, s: currentS});
+        
+        let pxPos = currentS * 3; 
+        
+        if (time > maxTime || currentS > 200 || currentS < -20) {
+            toggleSim();
+            carEl.style.transform = `translateX(${Math.max(-20, Math.min(pxPos, 600))}px)`;
+        } else {
+            carEl.style.transform = `translateX(${pxPos}px)`;
+            drawGraphs();
+            animId = requestAnimationFrame(step);
+        }
+    }
+
+    function drawAxes(ctx, canvas, titleY, maxY, minY = 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1; ctx.font = '12px Arial'; ctx.fillStyle = '#64748b';
+        const padX = 30; const padY = 20;
+        const w = canvas.width - padX * 2; const h = canvas.height - padY * 2;
+        const originY = canvas.height - padY - (0 - minY) / (maxY - minY) * h; 
+
+        ctx.beginPath(); ctx.moveTo(padX, originY); ctx.lineTo(canvas.width - padX + 10, originY); ctx.stroke();
+        ctx.fillText("t, c", canvas.width - padX + 5, originY - 5);
+
+        ctx.beginPath(); ctx.moveTo(padX, padY - 10); ctx.lineTo(padX, canvas.height - padY); ctx.stroke();
+        ctx.fillText(titleY, padX - 10, padY - 15);
+
+        for(let i=0; i<=maxTime; i+=2) {
+            let x = padX + (i / maxTime) * w;
+            ctx.fillText(i, x - 3, originY + 15);
+            ctx.beginPath(); ctx.moveTo(x, originY-3); ctx.lineTo(x, originY+3); ctx.stroke();
+        }
+        return { padX, padY, w, h, originY };
+    }
+
+    function drawGraphs() {
+        const vMax = 40; const vMin = -20;
+        const axV = drawAxes(ctxV, cvsV, "v", vMax, vMin);
+        const sMax = 200; const sMin = -20;
+        const axS = drawAxes(ctxS, cvsS, "s", sMax, sMin);
+
+        if (historyData.length === 0) return;
+
+        ctxV.strokeStyle = '#8b5cf6'; ctxV.lineWidth = 2; ctxV.beginPath();
+        for(let i=0; i<historyData.length; i++) {
+            let d = historyData[i];
+            let px = axV.padX + (d.t / maxTime) * axV.w;
+            let py = axV.originY - (d.v / (vMax - vMin)) * axV.h;
+            if(i===0) ctxV.moveTo(px, py); else ctxV.lineTo(px, py);
+        }
+        ctxV.stroke();
+
+        ctxS.strokeStyle = '#f59e0b'; ctxS.lineWidth = 2; ctxS.beginPath();
+        for(let i=0; i<historyData.length; i++) {
+            let d = historyData[i];
+            let px = axS.padX + (d.t / maxTime) * axS.w;
+            let py = axS.originY - (d.s / (sMax - sMin)) * axS.h;
+            if(i===0) ctxS.moveTo(px, py); else ctxS.lineTo(px, py);
+        }
+        ctxS.stroke();
+    }
+
+    window.onload = () => { drawGraphs(); };
+
+    // --- ПРОВЕРКА ПРАКТИКИ ---
+    window.checkPractice = function() {
+        const ans = { p1_x0: '10', p1_v0: '-4', p1_a: '6' };
+        let c = 0;
+        for(let id in ans) {
+            const el = document.getElementById(id);
+            el.classList.remove('correct', 'wrong');
+            if(el.value === ans[id]) { el.classList.add('correct'); c++; } 
+            else if (el.value !== 'none') el.classList.add('wrong');
+        }
+        const r = document.getElementById('practiceResult'); r.style.display = 'block';
+        if(c === 3) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t("Отлично! Вы правильно определили ускорение (a = 2 * 3 = 6).", "Тамаша! Сіз үдеуді дұрыс анықтадыңыз (a = 2 * 3 = 6).");
+        } else {
+            r.style.backgroundColor = 'var(--danger-light)'; r.style.color = 'var(--danger)';
+            r.innerHTML = t("Есть ошибки. Вспомните, что перед t² стоит a/2 !", "Қателер бар. t² алдында a/2 тұратынын еске түсіріңіз!");
+        }
+    }
+
+    // --- ПРОВЕРКА ТЕСТА ---
+    window.checkTest = function() {
+        let score = 0; const total = 5;
+        document.querySelectorAll('.test-q').forEach((q) => {
+            const corr = q.getAttribute('data-ans');
+            const sel = q.querySelector('input:checked');
+            if (sel && sel.value === corr) score++;
+        });
+        const r = document.getElementById('testResult'); r.style.display = 'block';
+        if (score === total) {
+            r.style.backgroundColor = 'var(--success-light)'; r.style.color = 'var(--success)';
+            r.innerHTML = t(`Идеально! ${score} из ${total}. Материал усвоен.`, `Керемет! ${total} ішінен ${score}. Материал меңгерілді.`);
+        } else {
+            r.style.backgroundColor = 'var(--warning)'; r.style.color = '#fff';
+            r.innerHTML = t(`Ваш результат: ${score} из ${total}. Повторите теорию.`, `Сіздің нәтижеңіз: ${total} ішінен ${score}. Теорияны қайталаңыз.`);
+        }
+    };
+</script>
+</body>
+</html>

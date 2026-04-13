@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Момент импульса. Динамика вращения — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #8b5cf6; /* Фиолетовый */
+            --primary-hover: #7c3aed;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #a78bfa;
+                --primary-hover: #c4b5fd;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #1e293b; /* Тёмный фон для контраста */
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Момент импульса и динамика вращения — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Как кошка всегда приземляется на лапы? Почему вертолету нужен хвостовой винт? Как фигуристка ускоряет свое вращение, не отталкиваясь ото льда? 
+            Ответы кроются в одном из самых красивых и фундаментальных законов Вселенной — законе сохранения момента импульса!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Основные понятия и свойства пространства</h2>
+        <ul>
+            <li><b>Основное уравнение динамики вращательного движения:</b> Угловое ускорение тела прямо пропорционально приложенному моменту силы и обратно пропорционально моменту инерции. Это полная аналогия второго закона Ньютона (F = ma) для вращения.</li>
+            <li><b>Момент импульса (L):</b> Мера "количества вращательного движения". Вычисляется как произведение момента инерции тела на его угловую скорость.</li>
+            <li><b>Закон сохранения момента импульса:</b> Если суммарный момент внешних сил, действующих на систему, равен нулю, то момент импульса этой системы сохраняется (не изменяется со временем).</li>
+            <li><b>Связь со свойствами пространства (Теорема Нётер):</b> Закон сохранения момента импульса является прямым следствием <b>изотропности пространства</b>. Изотропность означает, что свойства пространства одинаковы во всех направлениях, и физические законы не меняются при повороте системы отсчета на любой угол.</li>
+        </ul>
+    </section>
+
+    <!-- 3) ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section class="card">
+        <h2>2. Примеры применения в жизни</h2>
+        <ul>
+            <li><b>Вращение фигуриста:</b> Начиная вращение (пируэт) с раскинутыми руками, фигурист имеет большой момент инерции. Прижимая руки к телу, он уменьшает свой момент инерции. Чтобы момент импульса остался неизменным, скорость вращения резко возрастает.</li>
+            <li><b>Хвостовой винт вертолета:</b> Основной винт, раскручиваясь в одну сторону, создает момент импульса. По закону сохранения, корпус вертолета стремится закрутиться в противоположную сторону. Хвостовой винт создает компенсирующий момент силы, удерживая корпус на месте.</li>
+            <li><b>Пульсары в космосе:</b> Когда огромная звезда сжимается (коллапсирует) в крошечную нейтронную звезду, её радиус колоссально уменьшается. Закон сохранения момента импульса заставляет её вращаться с невероятной скоростью — сотни оборотов в секунду!</li>
+        </ul>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ -->
+    <section class="card">
+        <h2>3. Формулы и обозначения</h2>
+        <p>Основное уравнение динамики вращательного движения:</p>
+        <div class="formula">
+            <b>M = I &middot; &epsilon;</b>
+        </div>
+        <p>Момент импульса (L):</p>
+        <div class="formula">
+            <b>L = I &middot; &omega;</b>
+        </div>
+        <p>Закон сохранения момента импульса (для двух состояний системы):</p>
+        <div class="formula">
+            <b>I<sub>1</sub> &middot; &omega;<sub>1</sub> = I<sub>2</sub> &middot; &omega;<sub>2</sub> = const</b>
+        </div>
+        <p><b>Обозначения:</b></p>
+        <ul>
+            <li><b>M</b> — момент силы (Н&middot;м)</li>
+            <li><b>I</b> — момент инерции (кг&middot;м<sup>2</sup>)</li>
+            <li><b>&epsilon;</b> (эпсилон) — угловое ускорение (рад/с<sup>2</sup>)</li>
+            <li><b>L</b> — момент импульса (кг&middot;м<sup>2</sup>/с)</li>
+            <li><b>&omega;</b> (омега) — угловая скорость (рад/с)</li>
+        </ul>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Скамья Жуковского</h2>
+        <p>Представьте платформу, вращающуюся без трения, на которой закреплены два подвижных груза. Нажмите "Раскрутить", а затем меняйте радиус расположения грузов ползунком. Наблюдайте, как изменяется скорость вращения для сохранения момента импульса!</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-radius">Положение грузов (Радиус r): <span id="val-radius">2.0</span> м</label>
+                    <input type="range" id="sim-radius" min="0.2" max="2.0" value="2.0" step="0.1">
+                    <small style="color:var(--text-muted)">Сдвигайте ползунок влево, чтобы "прижать руки"</small>
+                </div>
+                
+                <div class="control-group">
+                    <label for="sim-mass">Масса одного груза (m): <span id="val-mass">10</span> кг</label>
+                    <input type="range" id="sim-mass" min="1" max="50" value="10" step="1">
+                    <small style="color:var(--text-muted)">Чем тяжелее груз, тем сильнее эффект изменения R</small>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-spin">Раскрутить (сообщить момент)</button>
+                    <button id="btn-stop" class="secondary">Остановить</button>
+                </div>
+                
+                <div id="sim-status" class="sim-status" style="margin-top: 15px; font-family: monospace; font-size: 1.1rem; color: var(--primary);">
+                    Момент инерции I = <span id="out-i">--</span><br>
+                    Угловая скор. &omega; = <span id="out-w">0</span> рад/с<br>
+                    Момент импульса L = <span id="out-l">0</span>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="400" height="400"></canvas>
+                <p class="sim-status" id="sim-info">Что наблюдаем: При уменьшении радиуса момент инерции (I) падает. Чтобы произведение L = I&middot;&omega; оставалось постоянным, угловая скорость (&omega;) обязана увеличиться.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Человек стоит на скамье Жуковского (вращающейся платформе) и держит в вытянутых руках гантели. Платформа вращается с угловой скоростью 2 рад/с. Суммарный момент инерции человека с гантелями равен 4 кг&middot;м<sup>2</sup>. Человек прижимает гантели к груди, и момент инерции системы уменьшается до 1.6 кг&middot;м<sup>2</sup>. Найдите новую угловую скорость вращения платформы. Трение в оси отсутствует.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                &omega;<sub>1</sub> = 2 рад/с<br>
+                I<sub>1</sub> = 4 кг&middot;м<sup>2</sup><br>
+                I<sub>2</sub> = 1.6 кг&middot;м<sup>2</sup><br>
+                <b>Найти:</b> &omega;<sub>2</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула / Идея:</b><br>
+                Так как трение отсутствует, внешний момент сил равен нулю (M = 0). Выполняется закон сохранения момента импульса:<br>
+                L<sub>1</sub> = L<sub>2</sub>, или I<sub>1</sub> &middot; &omega;<sub>1</sub> = I<sub>2</sub> &middot; &omega;<sub>2</sub>.</p>
+                <p><b>Подстановка и шаги:</b><br>
+                1. Выразим неизвестную угловую скорость: &omega;<sub>2</sub> = (I<sub>1</sub> &middot; &omega;<sub>1</sub>) / I<sub>2</sub><br>
+                2. Найдем начальный момент импульса: L<sub>1</sub> = 4 &middot; 2 = 8 кг&middot;м<sup>2</sup>/с.<br>
+                3. Подставим значения: &omega;<sub>2</sub> = 8 / 1.6<br>
+                4. Вычислим: 80 / 16 = 5.</p>
+                <p><b>Ответ:</b> Новая угловая скорость составит 5 рад/с. Вращение ускорилось в 2.5 раза!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Момент импульса)</h3>
+            <p>Маховик имеет момент инерции 5 кг&middot;м<sup>2</sup> и вращается с угловой скоростью 10 рад/с. Чему равен его <b>момент импульса</b>? Ответ дайте в кг&middot;м<sup>2</sup>/с.</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 50, 0, 'Используйте базовую формулу момента импульса: L = I * ω.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает формулу момента импульса.</li>
+                    <li>Понимает взаимосвязь между моментом инерции и угловой скоростью.</li>
+                    <li>Верно перемножает заданные величины.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Закон сохранения)</h3>
+            <p>Горизонтальная платформа вращается со скоростью 3 рад/с. Её момент инерции равен 10 кг&middot;м<sup>2</sup>. На центр платформы аккуратно роняют диск с моментом инерции 5 кг&middot;м<sup>2</sup> (начальная скорость диска равна нулю). Какой станет <b>новая угловая скорость</b> системы? (Ответ в рад/с).</p>
+            <input type="number" id="taskB-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 2, 0.1, 'Начальный момент импульса L = 10 * 3. Конечный момент инерции стал 10 + 5 = 15. Найдите новую омегу.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает, что момент инерции системы тел складывается (аддитивность).</li>
+                    <li>Применяет закон сохранения момента импульса.</li>
+                    <li>Верно находит неизвестный множитель из уравнения.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Основное уравнение динамики)</h3>
+            <p>К неподвижному колесу с моментом инерции 2 кг&middot;м<sup>2</sup> приложили постоянный момент силы 12 Н&middot;м. Чему будет равно <b>угловое ускорение</b> колеса (&epsilon;)? Ответ дайте в рад/с<sup>2</sup>.</p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 6, 0.1, 'Используйте основное уравнение динамики вращательного движения: M = I * ε.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает основное уравнение динамики вращательного движения.</li>
+                    <li>Умеет выражать угловое ускорение.</li>
+                    <li>Выполняет расчет без ошибок.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) ВИДЕО -->
+    <section class="card">
+        <h2>7. Видео по теме</h2>
+        <p>Для закрепления материала рекомендуем посмотреть видеоразбор теоремы Нётер и законов сохранения с наглядными экспериментами:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=закон+сохранения+момента+импульса+физика+10+класс" target="_blank" class="video-link">
+                ▶ Смотреть видеоуроки на YouTube
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке с видеоматериалами для 10 класса)</p>
+    </section>
+
+    <!-- 9) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>8. Рефлексия</h2>
+        <p>Отметьте, какие из концепций вы усвоили уверенно:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понимаю аналогию между вторым законом Ньютона (F=ma) и основным уравнением вращения (M=I&epsilon;).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я знаю, что изотропность пространства (его симметрия) является причиной сохранения момента импульса.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я смогу объяснить трюк фигуристки с прижатием рук, используя формулы.</label>
+        </div>
+        <button onclick="alert('Отличная работа! Понимание законов сохранения — это ключ к высшей физике.')" style="margin-top: 10px;">Зафиксировать результат</button>
+    </section>
+
+    <!-- 10) ТЕСТ -->
+    <section class="card">
+        <h2>9. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Угловое ускорение тела возникает, если...</b></p>
+                <label><input type="radio" name="q1" value="0"> На него не действуют силы.</label>
+                <label><input type="radio" name="q1" value="0"> У него большая масса.</label>
+                <label><input type="radio" name="q1" value="1"> К нему приложен нескомпенсированный момент внешних сил.</label>
+                <label><input type="radio" name="q1" value="0"> Его момент инерции равен нулю.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. С каким фундаментальным свойством пространства связан закон сохранения момента импульса?</b></p>
+                <label><input type="radio" name="q2" value="0"> Однородность времени.</label>
+                <label><input type="radio" name="q2" value="0"> Однородность пространства.</label>
+                <label><input type="radio" name="q2" value="1"> Изотропность пространства.</label>
+                <label><input type="radio" name="q2" value="0"> Искривление пространства-времени.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как вычисляется момент импульса (L)?</b></p>
+                <label><input type="radio" name="q3" value="1"> L = I &middot; &omega;</label>
+                <label><input type="radio" name="q3" value="0"> L = I &middot; &epsilon;</label>
+                <label><input type="radio" name="q3" value="0"> L = m &middot; v</label>
+                <label><input type="radio" name="q3" value="0"> L = F &middot; r</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что произойдет со скоростью вращения офисного кресла, если вы, кружась на нём с разведенными ногами, резко прижмете колени к себе? (Трением пренебречь).</b></p>
+                <label><input type="radio" name="q4" value="0"> Скорость уменьшится.</label>
+                <label><input type="radio" name="q4" value="1"> Скорость увеличится.</label>
+                <label><input type="radio" name="q4" value="0"> Скорость останется прежней.</label>
+                <label><input type="radio" name="q4" value="0"> Кресло остановится.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. При каком условии момент импульса системы тел сохраняется постоянным?</b></p>
+                <label><input type="radio" name="q5" value="0"> Если тела движутся равномерно.</label>
+                <label><input type="radio" name="q5" value="0"> Если на тела действует постоянная сила трения.</label>
+                <label><input type="radio" name="q5" value="1"> Если суммарный момент внешних сил равен нулю.</label>
+                <label><input type="radio" name="q5" value="0"> Если сумма всех внутренних сил равна нулю.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы
+    const inRadius = document.getElementById('sim-radius');
+    const inMass = document.getElementById('sim-mass');
+    
+    const valRadius = document.getElementById('val-radius');
+    const valMass = document.getElementById('val-mass');
+    
+    const outI = document.getElementById('out-i');
+    const outW = document.getElementById('out-w');
+    const outL = document.getElementById('out-l');
+    
+    const btnSpin = document.getElementById('btn-spin');
+    const btnStop = document.getElementById('btn-stop');
+
+    // Физические параметры системы
+    const I_base = 10; // Момент инерции самой платформы (постоянный)
+    let m = 10; // Масса каждого из 2-х грузов
+    let r = 2.0; // Текущий радиус
+    
+    // Динамика
+    let L_current = 0; // Сохраняемая величина (Момент импульса)
+    let w_current = 0; // Угловая скорость
+    let currentAngle = 0; // Для визуализации вращения
+    
+    let isRunning = false;
+    let animId;
+
+    // Расчет текущего момента инерции (Платформа + 2 груза как мат. точки)
+    function calculateI() {
+        return I_base + 2 * m * (r * r);
+    }
+
+    function updatePhysics() {
+        // Читаем ползунки
+        let new_r = parseFloat(inRadius.value);
+        let new_m = parseFloat(inMass.value);
+        
+        // Если масса изменилась в полете (магически), L должен пересчитаться, чтобы скорость осталась (так логичнее для симуляции)
+        // Но по правилам, меняем только радиус в полете. Если меняют массу, пусть L пересчитается.
+        if (new_m !== m) {
+            m = new_m;
+            let I = calculateI();
+            L_current = I * w_current; // Обновляем L, чтобы омега не скакала при смене массы
+        }
+
+        // Если радиус изменился, то L = const, а omega меняется
+        if (new_r !== r) {
+            r = new_r;
+            if (isRunning && L_current > 0) {
+                let I = calculateI();
+                w_current = L_current / I; // ЗАКОН СОХРАНЕНИЯ В ДЕЙСТВИИ!
+            }
+        }
+
+        valRadius.innerText = r.toFixed(1);
+        valMass.innerText = m;
+        
+        updateOutputs();
+        if (!isRunning) draw();
+    }
+
+    function updateOutputs() {
+        let I = calculateI();
+        outI.innerText = I.toFixed(1);
+        outW.innerText = w_current.toFixed(2);
+        outL.innerText = L_current.toFixed(1);
+    }
+
+    [inRadius, inMass].forEach(el => el.addEventListener('input', updatePhysics));
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let cx = canvas.width / 2;
+        let cy = canvas.height / 2;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(currentAngle);
+
+        // Рисуем базовую платформу
+        ctx.beginPath();
+        ctx.arc(0, 0, 150, 0, Math.PI * 2);
+        ctx.fillStyle = "#334155";
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#475569";
+        ctx.stroke();
+
+        // Рисуем оси/крест для визуализации вращения
+        ctx.beginPath();
+        ctx.moveTo(-150, 0);
+        ctx.lineTo(150, 0);
+        ctx.moveTo(0, -150);
+        ctx.lineTo(0, 150);
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Масштабируем радиус для отрисовки (r от 0.2 до 2.0 -> пиксели от 20 до 140)
+        let drawRadius = 20 + (r / 2.0) * 120;
+        
+        // Визуальный размер груза от массы
+        let boxSize = 10 + (m / 50) * 20;
+
+        // Рисуем штангу для грузов
+        ctx.beginPath();
+        ctx.moveTo(-drawRadius, 0);
+        ctx.lineTo(drawRadius, 0);
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 6;
+        ctx.stroke();
+
+        // Груз 1
+        ctx.fillStyle = "#8b5cf6";
+        ctx.fillRect(-drawRadius - boxSize/2, -boxSize/2, boxSize, boxSize);
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-drawRadius - boxSize/2, -boxSize/2, boxSize, boxSize);
+
+        // Груз 2
+        ctx.fillRect(drawRadius - boxSize/2, -boxSize/2, boxSize, boxSize);
+        ctx.strokeRect(drawRadius - boxSize/2, -boxSize/2, boxSize, boxSize);
+
+        ctx.restore();
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        // Вращаем (dt считаем примерно постоянным 1/60)
+        currentAngle += w_current * 0.05; // 0.05 - масштабный коэффициент времени для визуала
+
+        draw();
+        animId = requestAnimationFrame(loop);
+    }
+
+    btnSpin.addEventListener('click', () => {
+        let I = calculateI();
+        // Даем начальный импульс
+        w_current = 2.0; 
+        L_current = I * w_current;
+        
+        updateOutputs();
+
+        if (!isRunning) {
+            isRunning = true;
+            loop();
+        }
+    });
+
+    btnStop.addEventListener('click', () => {
+        isRunning = false;
+        w_current = 0;
+        L_current = 0;
+        cancelAnimationFrame(animId);
+        updateOutputs();
+        draw();
+    });
+
+    // Инициализация
+    updatePhysics();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        const inputVal = parseFloat(document.getElementById(id + '-input').value);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Основное уравнение: M = I&epsilon;. Для ускорения нужен момент внешних сил.",
+            "2. Изотропность пространства означает равноправие всех направлений поворота, что ведет к сохранению момента импульса (теорема Нётер).",
+            "3. Формула момента импульса: L = I &middot; &omega;.",
+            "4. Прижатие коленей уменьшает момент инерции I. Чтобы L = I&middot;&omega; сохранилось, скорость &omega; увеличивается.",
+            "5. Закон выполняется только если система замкнута, то есть внешний крутящий момент M = 0."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Блестяще! Вы отлично поняли законы сохранения во вращательном движении.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

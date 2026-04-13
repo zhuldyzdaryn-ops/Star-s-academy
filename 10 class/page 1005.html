@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кинематика криволинейного движения | Қисықсызықты қозғалыс кинематикасы</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Language display logic */
+        body[data-lang="ru"] .lang-kz { display: none; }
+        body[data-lang="kz"] .lang-ru { display: none; }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Active nav link style */
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right: 3px solid #2563eb;
+            font-weight: 600;
+        }
+
+        /* Practice select styles */
+        .practice-select {
+            appearance: none;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 2rem 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+            transition: all 0.2s;
+        }
+        .practice-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .practice-select.correct { border-color: #10b981; background-color: #ecfdf5; color: #047857; }
+        .practice-select.incorrect { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+    </style>
+</head>
+<body data-lang="ru" class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-atom text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 hidden sm:block">
+                    <span class="lang-ru">Физика: Кинематика</span>
+                    <span class="lang-kz">Физика: Кинематика</span>
+                </h1>
+            </div>
+            
+            <!-- Language Toggle -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button onclick="setLang('ru')" id="btn-ru" class="px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all">RU</button>
+                <button onclick="setLang('kz')" id="btn-kz" class="px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all">KZ</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <nav class="sticky top-24 bg-white rounded-xl shadow-sm border border-slate-100 p-4 sidebar-scroll max-h-[calc(100vh-8rem)] overflow-y-auto">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">
+                    <span class="lang-ru">Содержание</span>
+                    <span class="lang-kz">Мазмұны</span>
+                </h2>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#theory" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-book-open w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Теория</span><span class="lang-kz">Теория</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#simulation" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-desktop w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#practice" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-pen-to-square w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Практика</span><span class="lang-kz">Тәжірибе</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#video" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-brands fa-youtube w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Видеоурок</span><span class="lang-kz">Бейнесабақ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#test" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-list-check w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Тест</span><span class="lang-kz">Тест</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 space-y-12 pb-20">
+            
+            <!-- Title Section -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                    <span class="lang-ru">Кинематика криволинейного движения</span>
+                    <span class="lang-kz">Қисықсызықты қозғалыс кинематикасы</span>
+                </h1>
+                <p class="text-lg text-slate-600">
+                    <span class="lang-ru">Изучаем движение по окружности, векторы скорости и ускорения, а также связь линейных и угловых величин.</span>
+                    <span class="lang-kz">Шеңбер бойымен қозғалысты, жылдамдық пен үдеу векторларын, сондай-ақ сызықтық және бұрыштық шамалардың байланысын зерттейміз.</span>
+                </p>
+            </div>
+
+            <!-- THEORY SECTION -->
+            <section id="theory" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Теоретическая часть</span>
+                        <span class="lang-kz">Теориялық бөлім</span>
+                    </h2>
+                </div>
+
+                <!-- Concept Blocks -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Velocity -->
+                    <div class="bg-white rounded-2xl p-6 border border-blue-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-blue-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            <span class="lang-ru">Вектор скорости</span>
+                            <span class="lang-kz">Жылдамдық векторы</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">При криволинейном движении вектор скорости \(\vec{v}\) <b>всегда направлен по касательной</b> к траектории в данной точке. Даже если модуль скорости постоянен, направление скорости непрерывно меняется.</span>
+                            <span class="lang-kz">Қисықсызықты қозғалыс кезінде \(\vec{v}\) жылдамдық векторы <b>әрқашан берілген нүктедегі траекторияға жанама бойымен бағытталады</b>. Жылдамдық модулі тұрақты болса да, оның бағыты үздіксіз өзгеріп отырады.</span>
+                        </p>
+                    </div>
+
+                    <!-- Acceleration -->
+                    <div class="bg-white rounded-2xl p-6 border border-red-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-red-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-compress"></i>
+                            <span class="lang-ru">Ускорение (Полное)</span>
+                            <span class="lang-kz">Үдеу (Толық)</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">Полное ускорение \(\vec{a}\) раскладывается на две составляющие:</span>
+                            <span class="lang-kz">Толық үдеу \(\vec{a}\) екі құрамдасқа жіктеледі:</span>
+                        </p>
+                        <ul class="space-y-2 text-sm text-slate-700 relative z-10">
+                            <li><b class="text-red-500">1. Центростремительное (\(a_n\)):</b> <span class="lang-ru">направлено к центру окружности, отвечает за <b>изменение направления</b> скорости.</span><span class="lang-kz">шеңбер орталығына бағытталған, жылдамдықтың <b>бағытының өзгеруіне</b> жауап береді.</span></li>
+                            <li><b class="text-orange-500">2. Тангенциальное (\(a_\tau\)):</b> <span class="lang-ru">направлено по касательной, отвечает за <b>изменение модуля</b> (величины) скорости.</span><span class="lang-kz">жанама бойымен бағытталған, жылдамдықтың <b>модулінің (шамасының) өзгеруіне</b> жауап береді.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Angular Motion Note -->
+                <div class="bg-indigo-600 rounded-2xl p-6 text-white shadow-md mb-8 relative overflow-hidden">
+                    <i class="fa-solid fa-arrows-spin absolute -bottom-4 -right-4 text-8xl text-indigo-500 opacity-50"></i>
+                    <h3 class="font-bold text-xl mb-2 relative z-10">
+                        <span class="lang-ru">Равномерное движение по окружности</span>
+                        <span class="lang-kz">Шеңбер бойымен бірқалыпты қозғалыс</span>
+                    </h3>
+                    <p class="text-indigo-100 text-sm md:text-base relative z-10 mb-4">
+                        <span class="lang-ru">Это движение, при котором модуль линейной скорости постоянен (\(v = const\)), поэтому тангенциальное ускорение равно нулю (\(a_\tau = 0\)). Работает только центростремительное ускорение (\(a_n\)).</span>
+                        <span class="lang-kz">Бұл сызықтық жылдамдық модулі тұрақты болатын қозғалыс (\(v = const\)), сондықтан тангенциалдық үдеу нөлге тең (\(a_\tau = 0\)). Тек центргетартқыш үдеу ғана жұмыс істейді (\(a_n\)).</span>
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+                        <div class="bg-indigo-700/50 p-3 rounded-lg">
+                            <div class="text-xs text-indigo-200 uppercase tracking-wide"><span class="lang-ru">Период (T)</span><span class="lang-kz">Период (T)</span></div>
+                            <div class="font-bold">Время одного оборота [с]</div>
+                            <div class="text-sm">\[ T = \frac{t}{N} \]</div>
+                        </div>
+                        <div class="bg-indigo-700/50 p-3 rounded-lg">
+                            <div class="text-xs text-indigo-200 uppercase tracking-wide"><span class="lang-ru">Частота (ν)</span><span class="lang-kz">Жиілік (ν)</span></div>
+                            <div class="font-bold">Обороты в секунду [Гц]</div>
+                            <div class="text-sm">\[ \nu = \frac{N}{t} = \frac{1}{T} \]</div>
+                        </div>
+                        <div class="bg-indigo-700/50 p-3 rounded-lg">
+                            <div class="text-xs text-indigo-200 uppercase tracking-wide"><span class="lang-ru">Угловая скорость (ω)</span><span class="lang-kz">Бұрыштық жылдамдық (ω)</span></div>
+                            <div class="font-bold">Угол за секунду [рад/с]</div>
+                            <div class="text-sm">\[ \omega = \frac{2\pi}{T} = 2\pi\nu \]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Formulas -->
+                <h3 class="font-bold text-slate-800 mb-4 text-lg">
+                    <span class="lang-ru">Связь линейных и угловых величин</span>
+                    <span class="lang-kz">Сызықтық және бұрыштық шамалардың байланысы</span>
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between">
+                        <div>
+                            <div class="text-sm text-slate-500"><span class="lang-ru">Линейная скорость</span><span class="lang-kz">Сызықтық жылдамдық</span></div>
+                            <div class="text-lg font-bold text-blue-600">\[ v = \omega \cdot R \]</div>
+                        </div>
+                        <i class="fa-solid fa-gauge-high text-blue-100 text-3xl"></i>
+                    </div>
+                    <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between">
+                        <div>
+                            <div class="text-sm text-slate-500"><span class="lang-ru">Центростремительное ускорение</span><span class="lang-kz">Центргетартқыш үдеу</span></div>
+                            <div class="text-lg font-bold text-red-600">\[ a_n = \frac{v^2}{R} = \omega^2 R \]</div>
+                        </div>
+                        <i class="fa-solid fa-bullseye text-red-100 text-3xl"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIMULATION SECTION -->
+            <section id="simulation" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">2</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Интерактивная симуляция</span>
+                        <span class="lang-kz">Интерактивті симуляция</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200">
+                        <p class="text-sm text-slate-600 font-medium">
+                            <i class="fa-solid fa-circle-info text-purple-500 mr-1"></i>
+                            <span class="lang-ru">Изменяйте радиус и скорость, чтобы увидеть, как меняются векторы скорости (синий, по касательной) и ускорения (красный, к центру).</span>
+                            <span class="lang-kz">Жылдамдық (көк, жанама) және үдеу (қызыл, орталыққа) векторларының қалай өзгеретінін көру үшін радиус пен жылдамдықты өзгертіңіз.</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col lg:flex-row">
+                        <!-- Canvas -->
+                        <div class="w-full lg:w-2/3 bg-[#0f172a] relative h-[350px] lg:h-[400px] flex items-center justify-center overflow-hidden" id="canvas-container">
+                            <canvas id="simCanvas" class="block w-full h-full"></canvas>
+                            <!-- Real-time metrics overlay -->
+                            <div class="absolute top-4 left-4 bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 text-white text-sm font-mono">
+                                <div class="mb-1 text-blue-300">v (скорость) = <span id="ui-v">5</span> м/с</div>
+                                <div class="mb-1 text-slate-300">R (радиус) = <span id="ui-r">50</span> м</div>
+                                <div class="mb-1 text-indigo-300">ω (угл. скор) = <span id="ui-w">0.10</span> рад/с</div>
+                                <div class="text-red-400 font-bold">a_n (ускор.) = <span id="ui-a">0.50</span> м/с²</div>
+                            </div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="w-full lg:w-1/3 p-6 bg-white border-l border-slate-200 flex flex-col justify-center gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                    <span><span class="lang-ru">Линейная скорость (\(v\))</span><span class="lang-kz">Сызықтық жылдамдық (\(v\))</span></span>
+                                    <span id="val-v" class="text-blue-600">5 м/с</span>
+                                </label>
+                                <input type="range" id="slider-v" min="1" max="15" step="0.5" value="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                    <span><span class="lang-ru">Радиус окружности (\(R\))</span><span class="lang-kz">Шеңбер радиусы (\(R\))</span></span>
+                                    <span id="val-r" class="text-slate-600">50 м</span>
+                                </label>
+                                <input type="range" id="slider-r" min="30" max="120" step="5" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-600">
+                            </div>
+
+                            <div class="bg-amber-50 rounded-lg p-3 text-sm text-amber-800 border border-amber-200">
+                                <i class="fa-solid fa-lightbulb mr-1 text-amber-500"></i>
+                                <span class="lang-ru">Заметьте: центростремительное ускорение (\(a_n\)) растет в квадрате при увеличении скорости!</span>
+                                <span class="lang-kz">Ескерту: центргетартқыш үдеу (\(a_n\)) жылдамдық артқан сайын квадратталып өседі!</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRACTICE SECTION -->
+            <section id="practice" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">3</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Практическое задание</span>
+                        <span class="lang-kz">Тәжірибелік тапсырма</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                    <div class="mb-6 pb-6 border-b border-slate-100 text-lg leading-relaxed text-slate-700">
+                        <span class="lang-ru">
+                            При равномерном движении материальной точки по окружности, вектор её скорости всегда направлен по 
+                            <select class="practice-select mx-1" data-answer="касательной">
+                                <option value="">[выберите]</option>
+                                <option value="центру">центру</option>
+                                <option value="касательной">касательной</option>
+                                <option value="хорде">хорде</option>
+                            </select> 
+                            к траектории. При этом вектор полного ускорения совпадает с направлением 
+                            <select class="practice-select mx-1" data-answer="к центру">
+                                <option value="">[выберите]</option>
+                                <option value="к центру">к центру</option>
+                                <option value="от центра">от центра</option>
+                                <option value="касательной">касательной</option>
+                            </select> 
+                            окружности, так как тангенциальная составляющая ускорения в данном случае равна 
+                            <select class="practice-select mx-1" data-answer="нулю">
+                                <option value="">[выберите]</option>
+                                <option value="нулю">нулю</option>
+                                <option value="максимуму">максимуму</option>
+                                <option value="константе">константе</option>
+                            </select>.
+                        </span>
+                        <span class="lang-kz">
+                            Материалдық нүктенің шеңбер бойымен бірқалыпты қозғалысы кезінде оның жылдамдық векторы әрқашан траекторияға 
+                            <select class="practice-select mx-1" data-answer="жанама">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="орталыққа">орталыққа</option>
+                                <option value="жанама">жанама</option>
+                                <option value="хордаға">хордаға</option>
+                            </select> 
+                            бойымен бағытталады. Бұл ретте толық үдеу векторы шеңбердің 
+                            <select class="practice-select mx-1" data-answer="орталығына">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="орталығына">орталығына</option>
+                                <option value="орталығынан">орталығынан</option>
+                                <option value="жанамасына">жанамасына</option>
+                            </select> 
+                            бағытпен сәйкес келеді, өйткені бұл жағдайда үдеудің тангенциал құрамдас бөлігі 
+                            <select class="practice-select mx-1" data-answer="нөлге">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="нөлге">нөлге</option>
+                                <option value="максимумға">максимумға</option>
+                                <option value="тұрақтыға">тұрақтыға</option>
+                            </select> тең.
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button onclick="checkPractice()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                            <i class="fa-solid fa-check-double mr-2"></i>
+                            <span class="lang-ru">Проверить ответы</span>
+                            <span class="lang-kz">Жауаптарды тексеру</span>
+                        </button>
+                        <div id="practice-result" class="font-bold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Descriptors Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-3"><span class="lang-ru">Критерий</span><span class="lang-kz">Критерий</span></th>
+                                <th class="px-6 py-3"><span class="lang-ru">Дескриптор</span><span class="lang-kz">Дескриптор</span></th>
+                                <th class="px-6 py-3 text-center"><span class="lang-ru">Балл</span><span class="lang-kz">Балл</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-slate-900" rowspan="3">
+                                    <span class="lang-ru">Понимание векторов криволинейного движения</span>
+                                    <span class="lang-kz">Қисықсызықты қозғалыс векторларын түсіну</span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Верно указывает направление вектора скорости.</span>
+                                    <span class="lang-kz">Жылдамдық векторының бағытын дұрыс көрсетеді.</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Верно указывает направление вектора центростремительного ускорения.</span>
+                                    <span class="lang-kz">Центргетартқыш үдеу векторының бағытын дұрыс көрсетеді.</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Понимает особенность равномерного движения по окружности (\(a_\tau = 0\)).</span>
+                                    <span class="lang-kz">Шеңбер бойымен бірқалыпты қозғалыс ерекшелігін түсінеді (\(a_\tau = 0\)).</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VIDEO SECTION -->
+            <section id="video" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">4</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Видеоматериалы</span>
+                        <span class="lang-kz">Бейнематериалдар</span>
+                    </h2>
+                </div>
+
+                <a href="https://www.youtube.com/results?search_query=Кинематика+криволинейного+движения+движение+по+окружности+физика" target="_blank" rel="noopener noreferrer" 
+                   class="group block bg-white rounded-2xl p-6 border border-slate-200 hover:border-red-300 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 shrink-0 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors text-red-600 text-3xl">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-red-600 transition-colors">
+                                <span class="lang-ru">Найти видеоуроки на YouTube</span>
+                                <span class="lang-kz">YouTube-тан бейнесабақтарды табу</span>
+                            </h3>
+                            <p class="text-slate-500 text-sm">
+                                <span class="lang-ru">Нажмите, чтобы открыть результаты поиска по теме движения по окружности.</span>
+                                <span class="lang-kz">Шеңбер бойымен қозғалыс тақырыбы бойынша іздеу нәтижелерін ашу үшін басыңыз.</span>
+                            </p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right ml-auto text-slate-400 group-hover:text-red-500 transition-colors"></i>
+                    </div>
+                </a>
+            </section>
+
+            <!-- TEST SECTION -->
+            <section id="test" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">5</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Тест для самопроверки</span>
+                        <span class="lang-kz">Өзін-өзі тексеру тесті</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                    <form id="quiz-form" class="space-y-8">
+                        
+                        <!-- Question 1 -->
+                        <div class="quiz-question" data-correct="b">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">1. Куда направлен вектор линейной скорости при движении тела по окружности?</span>
+                                <span class="lang-kz">1. Дененің шеңбер бойымен қозғалысы кезінде сызықтық жылдамдық векторы қайда бағытталған?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">К центру окружности</span><span class="lang-kz">Шеңбер орталығына</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">По касательной к траектории</span><span class="lang-kz">Траекторияға жанама бойымен</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">От центра окружности (по радиусу)</span><span class="lang-kz">Шеңбер орталығынан (радиус бойымен)</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">2. Автомобиль движется по закругленному участку дороги радиусом 100 м со скоростью 20 м/с. Чему равно его центростремительное ускорение?</span>
+                                <span class="lang-kz">2. Автомобиль радиусы 100 м болатын жолдың бұрылыс бөлігімен 20 м/с жылдамдықпен қозғалады. Оның центргетартқыш үдеуі неге тең?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">4 м/с²</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">0.2 м/с²</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">5 м/с²</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-question" data-correct="c">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">3. За что отвечает тангенциальная (касательная) составляющая ускорения?</span>
+                                <span class="lang-kz">3. Үдеудің тангенциалдық (жанама) құрамдас бөлігі неге жауап береді?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">За изменение направления движения.</span><span class="lang-kz">Қозғалыс бағытының өзгеруіне.</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">За изменение радиуса кривизны.</span><span class="lang-kz">Қисықтық радиусының өзгеруіне.</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">За изменение скорости по модулю (разгон или торможение).</span><span class="lang-kz">Жылдамдықтың модулі бойынша өзгеруіне (үдеу немесе тежелу).</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="quiz-question" data-correct="b">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">4. По какой формуле можно рассчитать угловую скорость ω, зная линейную скорость v и радиус R?</span>
+                                <span class="lang-kz">4. Сызықтық жылдамдық v және радиус R белгілі болса, бұрыштық жылдамдықты ω қай формуламен есептеуге болады?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">\( \omega = v \cdot R \)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">\( \omega = \frac{v}{R} \)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">\( \omega = \frac{v^2}{R} \)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">5. Период обращения точки по окружности равен 2 секунды. Какова частота её вращения?</span>
+                                <span class="lang-kz">5. Нүктенің шеңбер бойымен айналу периоды 2 секундқа тең. Оның айналу жиілігі қандай?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">0.5 Гц</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">2 Гц</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">3.14 Гц</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex items-center gap-4">
+                            <button type="button" onclick="checkQuiz()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                                <span class="lang-ru">Завершить тест</span>
+                                <span class="lang-kz">Тестті аяқтау</span>
+                            </button>
+                            <div id="quiz-result" class="font-bold text-lg hidden"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // --- 1. Language Toggle Logic ---
+        function setLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            
+            // Update buttons styling
+            const btnRu = document.getElementById('btn-ru');
+            const btnKz = document.getElementById('btn-kz');
+            
+            if (lang === 'ru') {
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            } else {
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            }
+        }
+
+        // --- 2. Sidebar Scroll Spy ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // Set initial active link
+            if(navLinks.length > 0) navLinks[0].classList.add('active');
+            
+            // Init simulation
+            initSimulation();
+        });
+
+        // --- 3. Practice Check Logic ---
+        function checkPractice() {
+            const selects = document.querySelectorAll('.practice-select');
+            let correctCount = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            selects.forEach(select => {
+                select.classList.remove('correct', 'incorrect');
+                const expected = select.getAttribute('data-answer');
+                const selected = select.value;
+
+                if (selected === expected) {
+                    select.classList.add('correct');
+                    correctCount++;
+                } else if (selected !== "") {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const resultDiv = document.getElementById('practice-result');
+            resultDiv.classList.remove('hidden', 'text-emerald-600', 'text-amber-600');
+            
+            if (correctCount === 3) {
+                resultDiv.classList.add('text-emerald-600');
+                resultDiv.innerHTML = `<i class="fa-solid fa-star mr-1"></i> ` + (isRu ? 'Отлично! 3/3 баллов' : 'Керемет! 3/3 балл');
+            } else {
+                resultDiv.classList.add('text-amber-600');
+                resultDiv.innerHTML = isRu ? `Набрано баллов: ${correctCount}/3` : `Жинаған балл: ${correctCount}/3`;
+            }
+        }
+
+        // --- 4. Quiz Check Logic ---
+        function checkQuiz() {
+            const questions = document.querySelectorAll('.quiz-question');
+            const totalQuestions = questions.length;
+            let score = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            questions.forEach((q, index) => {
+                const correctAns = q.getAttribute('data-correct');
+                const selected = q.querySelector(`input[name="q${index + 1}"]:checked`);
+                
+                // Reset styles
+                q.querySelectorAll('label').forEach(lbl => lbl.classList.remove('bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200'));
+
+                if (selected) {
+                    if (selected.value === correctAns) {
+                        score++;
+                        selected.closest('label').classList.add('bg-green-50', 'border-green-200');
+                    } else {
+                        selected.closest('label').classList.add('bg-red-50', 'border-red-200');
+                        // Highlight correct
+                        q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                    }
+                } else {
+                     q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                }
+            });
+
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden', 'text-indigo-600', 'text-slate-600');
+            
+            if (score === totalQuestions) {
+                resultDiv.classList.add('text-indigo-600');
+                resultDiv.innerHTML = isRu ? `🎉 ${score} из ${totalQuestions}! Идеально!` : `🎉 ${totalQuestions}-тен ${score}! Керемет!`;
+            } else {
+                resultDiv.classList.add('text-slate-600');
+                resultDiv.innerHTML = isRu ? `Ваш результат: ${score} из ${totalQuestions}` : `Сіздің нәтижеңіз: ${totalQuestions}-тен ${score}`;
+            }
+        }
+
+        // --- 5. Interactive Simulation Logic (Canvas) ---
+        function initSimulation() {
+            const canvas = document.getElementById('simCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('canvas-container');
+            
+            function resize() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            const sliderV = document.getElementById('slider-v');
+            const sliderR = document.getElementById('slider-r');
+            const valV = document.getElementById('val-v');
+            const valR = document.getElementById('val-r');
+            
+            const uiV = document.getElementById('ui-v');
+            const uiR = document.getElementById('ui-r');
+            const uiW = document.getElementById('ui-w');
+            const uiA = document.getElementById('ui-a');
+
+            let v = parseFloat(sliderV.value);
+            let r = parseFloat(sliderR.value);
+            let angle = 0; // Current angular position
+            
+            // Pixels to Meters scaling factor for drawing
+            const scale = 1.5; 
+
+            function updateMetrics() {
+                v = parseFloat(sliderV.value);
+                r = parseFloat(sliderR.value);
+                
+                valV.textContent = v + ' м/с';
+                valR.textContent = r + ' м';
+                
+                const w = v / r;
+                const a_n = (v * v) / r;
+
+                uiV.textContent = v.toFixed(1);
+                uiR.textContent = r;
+                uiW.textContent = w.toFixed(2);
+                uiA.textContent = a_n.toFixed(2);
+            }
+
+            sliderV.addEventListener('input', updateMetrics);
+            sliderR.addEventListener('input', updateMetrics);
+            updateMetrics();
+
+            let lastTime = 0;
+            function draw(time) {
+                const dt = (time - lastTime) / 1000 || 0;
+                lastTime = time;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                
+                // Update angle based on angular velocity (w = v/r)
+                // We speed up the visual animation slightly to look better
+                const visualSpeedFactor = 2; 
+                angle += (v / r) * dt * visualSpeedFactor;
+                
+                const visualR = r * scale;
+
+                // 1. Draw Path (Circle)
+                ctx.beginPath();
+                ctx.arc(cx, cy, visualR, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset dash
+
+                // Center Point
+                ctx.beginPath();
+                ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+
+                // 2. Calculate Object Position
+                const objX = cx + visualR * Math.cos(angle);
+                const objY = cy + visualR * Math.sin(angle);
+
+                // 3. Draw Vectors
+                // Velocity Vector (Tangent)
+                // Derivation: dx/dt = -r*sin(a)*da/dt, dy/dt = r*cos(a)*da/dt
+                const vx = -Math.sin(angle);
+                const vy = Math.cos(angle);
+                const vDisplayLength = v * 5; // Scale for visibility
+                drawArrow(ctx, objX, objY, objX + vx * vDisplayLength, objY + vy * vDisplayLength, '#60a5fa', 3); // blue-400
+
+                // Acceleration Vector (Normal / Centripetal)
+                // Directed towards center (-cos(a), -sin(a))
+                const ax = -Math.cos(angle);
+                const ay = -Math.sin(angle);
+                // a_n = v^2/r. Scale for visibility. Cap max length to not overflow screen.
+                let aDisplayLength = ((v * v) / r) * 20; 
+                if (aDisplayLength > visualR - 10) aDisplayLength = visualR - 10; // Don't cross the center visually
+                drawArrow(ctx, objX, objY, objX + ax * aDisplayLength, objY + ay * aDisplayLength, '#f87171', 3); // red-400
+
+                // 4. Draw Object (Ball)
+                ctx.beginPath();
+                ctx.arc(objX, objY, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#fbbf24'; // amber-400
+                ctx.shadowColor = 'rgba(251, 191, 36, 0.5)';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.shadowBlur = 0; // reset
+
+                // Draw Radius line to object
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(objX, objY);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                requestAnimationFrame(draw);
+            }
+            
+            requestAnimationFrame(draw);
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, color, width) {
+            const headlen = 10; // length of head in pixels
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            
+            ctx.beginPath();
+            ctx.moveTo(fromx, fromy);
+            ctx.lineTo(tox, toy);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(tox, toy);
+            ctx.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.lineTo(tox, toy);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+    </script>
+</body>
+</html>

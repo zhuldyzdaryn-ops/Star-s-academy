@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изопроцессы. Графики изопроцессов. Закон Дальтона — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #8b5cf6; /* Фиолетовый (газы) */
+            --primary-hover: #7c3aed;
+            --accent: #f59e0b; /* Оранжевый */
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #a78bfa;
+                --primary-hover: #8b5cf6;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; flex-direction: column; gap: 24px; }
+        .sim-controls { background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 20px; align-items: center;}
+        .control-group { flex: 1; min-width: 200px; }
+        .control-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { width: 100%; overflow-x: auto; text-align: center; }
+        canvas {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            max-width: 100%;
+            height: auto;
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+            border: 1px solid var(--border); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        
+        /* Таблица законов */
+        .laws-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .laws-table th, .laws-table td { border: 1px solid var(--border); padding: 12px; text-align: left; }
+        .laws-table th { background-color: var(--bg-color); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Изопроцессы в газах. Закон Дальтона</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            В реальной жизни редко меняются все параметры газа сразу. Гораздо чаще один из них остается неизменным. Такие процессы подчиняются особым, простым законам. А что если в сосуде находится не один газ, а смесь? Здесь на помощь приходит закон Дальтона!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ И ТАБЛИЦА -->
+    <section class="card">
+        <h2>1. Что такое изопроцесс?</h2>
+        <p><b>Изопроцесс</b> (от греч. «изос» — равный) — это термодинамический процесс, во время которого масса газа и один из его макроскопических параметров (p, V или T) остаются <b>неизменными</b>.</p>
+        <p>Эти законы являются частными случаями уравнения Менделеева-Клапейрона: (p &middot; V) / T = const.</p>
+        
+        <table class="laws-table">
+            <tr>
+                <th>Процесс</th>
+                <th>Константа</th>
+                <th>Название закона</th>
+                <th>Формула</th>
+                <th>Как выглядит график</th>
+            </tr>
+    </table>
+    <p><i>Почему на графиках Гей-Люссака и Шарля линии у абсолютного нуля (T=0) рисуют пунктиром?</i> Потому что при температурах, близких к абсолютному нулю, газ превращается в жидкость (конденсируется), и законы идеального газа перестают работать!</p>
+
+    <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border);">
+    
+    <h2>2. Смеси газов. Закон Дальтона</h2>
+    <p>В природе газы часто смешаны (например, воздух — это смесь азота, кислорода и других газов). Как найти давление такой смеси?</p>
+    <ul>
+        <li><b>Парциальное давление</b> — это давление, которое производил бы газ, входящий в состав смеси, если бы он <b>один</b> занимал весь объем сосуда при той же температуре.</li>
+        <li><b>Закон Дальтона:</b> Давление смеси идеальных газов равно сумме парциальных давлений входящих в нее газов.</li>
+    </ul>
+    <div class="formula">
+        <b>p = p<sub>1</sub> + p<sub>2</sub> + ... + p<sub>n</sub></b>
+    </div>
+    
+    <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 10px;">
+        <div style="text-align: center;">
+            <label>Газ A (p<sub>1</sub>): <span id="val-dalton-p1" style="color:var(--primary); font-weight:bold;">2</span> атм</label><br>
+            <input type="range" id="sim-dalton-p1" min="1" max="5" value="2" step="0.5" style="width: 100px;">
+        </div>
+        <div style="font-size: 1.5rem; font-weight: bold;">+</div>
+        <div style="text-align: center;">
+            <label>Газ B (p<sub>2</sub>): <span id="val-dalton-p2" style="color:var(--accent); font-weight:bold;">3</span> атм</label><br>
+            <input type="range" id="sim-dalton-p2" min="1" max="5" value="3" step="0.5" style="width: 100px;">
+        </div>
+        <div style="font-size: 1.5rem; font-weight: bold;">=</div>
+        <div style="text-align: center;">
+            <label>Смесь (p):</label><br>
+            <span id="val-dalton-total" style="font-size: 1.2rem; color:var(--success); font-weight:bold;">5</span> атм
+        </div>
+    </div>
+</section>
+
+<!-- 3) СИМУЛЯЦИЯ -->
+<section class="card">
+    <h2>3. Визуализатор графиков изопроцессов</h2>
+    <p>Выберите тип изопроцесса. Ползунком изменяйте значение <b>постоянного параметра</b> (например, температуры для изотермы). Наблюдайте, как одновременно перестраиваются все три графика и как по ним движется точка состояния газа.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-process">Тип изопроцесса:</label>
+                    <select id="sim-process">
+                        <option value="isothermal">Изотермический (T = const)</option>
+                        <option value="isobaric">Изобарный (p = const)</option>
+                        <option value="isochoric">Изохорный (V = const)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label id="label-slider" for="sim-slider">Значение константы T: <span id="val-slider">50</span></label>
+                    <input type="range" id="sim-slider" min="20" max="80" value="50" step="5">
+                </div>
+
+                <div class="control-group" style="flex: 0 0 auto;">
+                    <button id="btn-anim">Пауза / Движение</button>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="graphCanvas" width="900" height="300"></canvas>
+                <p class="sim-status">Движущаяся точка показывает, как синхронно меняются параметры газа во всех системах координат.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+<section class="card">
+    <h2>4. Пример решения задачи (Закон Бойля-Мариотта)</h2>
+    <div class="task-block">
+        <p><b>Условие:</b> Пузырек воздуха поднимается со дна озера на поверхность. У дна озера давление составляет 3 атмосферы, а объем пузырька равен 2 мм<sup>3</sup>. У поверхности воды давление равно 1 атмосфере. Каким станет объем пузырька у поверхности, если считать температуру воды везде одинаковой?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                T = const (изотермический процесс)<br>
+                p<sub>1</sub> = 3 атм<br>
+                V<sub>1</sub> = 2 мм<sup>3</sup><br>
+                p<sub>2</sub> = 1 атм<br>
+                <b>Найти:</b> V<sub>2</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула:</b><br>
+                Поскольку температура и масса воздуха в пузырьке неизменны, используем закон Бойля-Мариотта:<br>
+                p<sub>1</sub> &middot; V<sub>1</sub> = p<sub>2</sub> &middot; V<sub>2</sub></p>
+                <p><b>Решение:</b><br>
+                1. Выразим искомый объем: V<sub>2</sub> = (p<sub>1</sub> &middot; V<sub>1</sub>) / p<sub>2</sub>.<br>
+                2. Подставим значения: V<sub>2</sub> = (3 &middot; 2) / 1 = 6 мм<sup>3</sup>.<br>
+                <i>Примечание:</i> Переводить давление в Паскали, а объем в кубометры не обязательно, так как мы берем отношения величин (они сократятся).</p>
+                <p><b>Ответ:</b> Объем пузырька увеличится в 3 раза и станет равен 6 мм<sup>3</sup>. Давление упало — газ расширился.</p>
+        </div>
+    </div>
+</section>
+
+<!-- 5) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+<section class="card">
+    <h2>5. Практика (Задачи A, B, C, D)</h2>
+
+    <!-- Уровень A -->
+    <div class="task-block">
+            <h3>Уровень A (Чтение графиков)</h3>
+            <p>На графике в осях <b>p-T</b> изображен некий процесс. Линия графика представляет собой прямую, выходящую из начала координат (из нуля). Какой это процесс?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите номер ответа:</i> 1 - Изотермический; 2 - Изобарный; 3 - Изохорный.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Прямая из нуля в осях p-T означает, что p пропорционально T. Это закон Шарля — изохорный процесс (V=const).')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+            <b>Дескрипторы:</b>
+            <ul>
+                <li>Знает, что в газовые законы нужно подставлять ТОЛЬКО абсолютную температуру (Кельвины).</li>
+                <li>Применяет закон Шарля для расчета новой температуры в Кельвинах.</li>
+                <li>Верно переводит результат обратно в шкалу Цельсия.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Уровень D (Закон Дальтона) -->
+    <div class="task-block">
+        <h3>Уровень D (Смесь газов)</h3>
+        <p>В баллоне находится смесь кислорода и азота. Общее давление смеси равно 150 кПа. Если бы азот откачали, давление в баллоне упало бы до 60 кПа. Чему равно <b>парциальное давление азота</b> (в кПа)?</p>
+        <input type="number" id="taskD-input" placeholder="Ответ в кПа"> 
+        <button onclick="checkTask('taskD', 90, 0, 'По закону Дальтона общее давление равно сумме парциальных. Если без азота давление 60 кПа (это парциальное давление кислорода), то парциальное давление азота: 150 - 60 = 90 кПа.')">Проверить</button>
+        <div id="taskD-res" class="feedback"></div>
+        <div class="descriptors">
+            <b>Дескрипторы:</b>
+            <ul>
+                <li>Знает формулировку закона Дальтона.</li>
+                <li>Понимает смысл понятия "парциальное давление".</li>
+                <li>Верно вычисляет искомую величину.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- 6) РЕФЛЕКСИЯ -->
+<section class="card">
+    <h2>6. Рефлексия</h2>
+    <p>Проверьте свои знания:</p>
+        <div class="reflection-item">
+        <input type="checkbox" id="ref3">
+        <label for="ref3">Я помню, что в расчетные формулы (V/T = const) температуру нужно подставлять строго в Кельвинах.</label>
+    </div>
+    <div class="reflection-item">
+        <input type="checkbox" id="ref4">
+        <label for="ref4">Я понимаю, что общее давление газовой смеси равно сумме давлений каждого газа в отдельности (Закон Дальтона).</label>
+    </div>
+    <button onclick="alert('Отличная работа! Умение читать графики изопроцессов — ключевой навык при решении задач на термодинамику.')" style="margin-top: 10px;">Завершить урок</button>
+</section>
+
+<!-- 7) ТЕСТ -->
+<section class="card">
+    <h2>7. Итоговый тест</h2>
+    <form id="quiz-form">
+        <div class="test-question">
+                <p><b>1. Какой процесс подчиняется закону Бойля-Мариотта (p &middot; V = const)?</b></p>
+                <label><input type="radio" name="q1" value="0"> Изохорный.</label>
+                <label><input type="radio" name="q1" value="0"> Изобарный.</label>
+                <label><input type="radio" name="q1" value="1"> Изотермический.</label>
+                <label><input type="radio" name="q1" value="0"> Адиабатный.</label>
+            </div>
+
+            <div class="test-question">
+            <p><b>5. На графике p-V изображены две изотермы (две гиперболы) для одной и той же массы газа. Первая лежит выше второй. Что можно сказать об их температурах?</b></p>
+            <label><input type="radio" name="q5" value="1"> Температура первой изотермы выше (T1 > T2).</label>
+            <label><input type="radio" name="q5" value="0"> Температура первой изотермы ниже (T1 < T2).</label>
+            <label><input type="radio" name="q5" value="0"> Температуры равны.</label>
+            <label><input type="radio" name="q5" value="0"> По графику p-V нельзя сравнить температуры.</label>
+        </div>
+
+        <div class="test-question">
+            <p><b>6. Что такое парциальное давление газа в смеси?</b></p>
+            <label><input type="radio" name="q6" value="0"> Давление, которое газ оказывает на поршень при сжатии.</label>
+            <label><input type="radio" name="q6" value="1"> Давление, которое производил бы этот газ, если бы он один занимал весь объем смеси.</label>
+            <label><input type="radio" name="q6" value="0"> Половина от общего давления смеси.</label>
+            <label><input type="radio" name="q6" value="0"> Давление газа при температуре абсолютного нуля.</label>
+        </div>
+
+        <button type="button" onclick="checkQuiz()">Проверить тест</button>
+    </form>
+    <div id="quiz-result" class="test-result"></div>
+</section>
+
+</div>
+
+<script>
+/* =========================================
+   СИМУЛЯЦИЯ НА CANVAS: ГРАФИКИ 3 в 1
+       ========================================= */
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const selProcess = document.getElementById('sim-process');
+    const inSlider = document.getElementById('sim-slider');
+    const labelSlider = document.getElementById('label-slider');
+    const valSlider = document.getElementById('val-slider');
+    const btnAnim = document.getElementById('btn-anim');
+
+    // Параметры симуляции
+    let processType = 'isothermal'; // isothermal, isobaric, isochoric
+    let constValue = 50; // Универсальный ползунок (T, p, V)
+    
+    let isAnimating = true;
+    let animId;
+    let stateParamS = 0; // Параметр состояния от 0 до 1
+    let stateDir = 1;    // Направление движения точки
+
+    // Размеры и координаты 3-х графиков
+    const margin = 30;
+    const w = 300; // Ширина блока для одного графика
+    const h = 300;
+    
+    // Константы для расчетов газа (условно p*V = T)
+    const pMax = 100, VMax = 100, TMax = 10000; 
+
+    function updateParams() {
+        processType = selProcess.value;
+        
+        // Меняем подписи ползунка
+        if (processType === 'isothermal') {
+            labelSlider.innerHTML = `Температура (T = const): <span id="val-slider">${inSlider.value}</span>`;
+            inSlider.min = 20; inSlider.max = 80; // это будет "масштаб" T
+        } else if (processType === 'isobaric') {
+            labelSlider.innerHTML = `Давление (p = const): <span id="val-slider">${inSlider.value}</span>`;
+            inSlider.min = 20; inSlider.max = 80;
+        } else if (processType === 'isochoric') {
+            labelSlider.innerHTML = `Объем (V = const): <span id="val-slider">${inSlider.value}</span>`;
+            inSlider.min = 20; inSlider.max = 80;
+        }
+        
+        constValue = parseFloat(inSlider.value);
+        if(!isAnimating) draw();
+    }
+
+    [selProcess, inSlider].forEach(el => el.addEventListener('input', updateParams));
+
+    btnAnim.addEventListener('click', () => {
+        isAnimating = !isAnimating;
+        if(isAnimating) loop();
+        else cancelAnimationFrame(animId);
+    });
+
+    // Функция рисования осей
+    function drawAxes(ctx, startX, startY, lenX, lenY, labelX, labelY) {
+        ctx.beginPath();
+        // Ось Y
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX, startY - lenY);
+        // Стрелочка Y
+        ctx.lineTo(startX - 5, startY - lenY + 10);
+        ctx.moveTo(startX, startY - lenY);
+        ctx.lineTo(startX + 5, startY - lenY + 10);
+        
+        // Ось X
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(startX + lenX, startY);
+        // Стрелочка X
+        ctx.lineTo(startX + lenX - 10, startY - 5);
+        ctx.moveTo(startX + lenX, startY);
+        ctx.lineTo(startX + lenX - 10, startY + 5);
+        
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "var(--text-main)";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(labelX, startX + lenX - 15, startY + 20);
+        ctx.fillText(labelY, startX - 20, startY - lenY + 15);
+        ctx.fillText("0", startX - 12, startY + 15);
+    }
+
+    // Расчет точки состояния на основе s (0..1)
+    function getState(s) {
+        let p, V, T;
+        // Коэффициент масштабирования (условно)
+        let C = constValue;
+
+        if (processType === 'isothermal') {
+            // T = C * 100. p*V = T.
+            T = C * 100;
+            let Vmin = T / pMax;
+            let Vmax = VMax;
+            V = Vmin + s * (Vmax - Vmin);
+            p = T / V;
+        } else if (processType === 'isobaric') {
+            // p = C
+            p = C;
+            let Tmin = 100; // не доходим до нуля
+            let Tmax = p * VMax;
+            T = Tmin + s * (Tmax - Tmin);
+            V = T / p;
+        } else if (processType === 'isochoric') {
+            // V = C
+            V = C;
+            let Tmin = 100;
+            let Tmax = V * pMax;
+            T = Tmin + s * (Tmax - Tmin);
+            p = T / V;
+        }
+        return {p, V, T};
+    }
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let graphW = 200, graphH = 200;
+        let p1X = 50, p1Y = 250;  // График 1: p-V
+        let p2X = 350, p2Y = 250; // График 2: V-T
+        let p3X = 650, p3Y = 250; // График 3: p-T
+
+        drawAxes(ctx, p1X, p1Y, graphW, graphH, "V", "p");
+        drawAxes(ctx, p2X, p2Y, graphW, graphH, "T", "V");
+        drawAxes(ctx, p3X, p3Y, graphW, graphH, "T", "p");
+
+        // Функция масштабирования координат в пиксели
+        const getPx = (val, max, len) => (val / max) * (len - 20);
+        
+        // Рисуем линии процессов
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "var(--primary)";
+
+        // Собираем точки для линий
+        let pts1 = [], pts2 = [], pts3 = [];
+        let numSteps = 50;
+        
+        for (let i = 0; i <= numSteps; i++) {
+            let st = getState(i / numSteps);
+            pts1.push({x: p1X + getPx(st.V, VMax, graphW), y: p1Y - getPx(st.p, pMax, graphH)});
+            pts2.push({x: p2X + getPx(st.T, TMax, graphW), y: p2Y - getPx(st.V, VMax, graphH)});
+            pts3.push({x: p3X + getPx(st.T, TMax, graphW), y: p3Y - getPx(st.p, pMax, graphH)});
+        }
+
+        // Отрисовка
+        const drawLine = (pts, dashedOriginX, dashedOriginY) => {
+            // Рисуем пунктир к началу координат для T (изобара/изохора)
+            if (dashedOriginX !== undefined) {
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(dashedOriginX, dashedOriginY);
+                ctx.lineTo(pts[0].x, pts[0].y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(pts[0].x, pts[0].y);
+            for(let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+            ctx.stroke();
+        }
+
+        if (processType === 'isothermal') {
+            drawLine(pts1); // p-V гипербола
+            drawLine(pts2); // V-T вертикаль
+            drawLine(pts3); // p-T вертикаль
+        } else if (processType === 'isobaric') {
+            drawLine(pts1); // p-V горизонталь
+            drawLine(pts2, p2X, p2Y); // V-T прямая из нуля (пунктир в начале)
+            drawLine(pts3); // p-T горизонталь
+        } else if (processType === 'isochoric') {
+            drawLine(pts1); // p-V вертикаль
+            drawLine(pts2); // V-T горизонталь
+            drawLine(pts3, p3X, p3Y); // p-T прямая из нуля (пунктир в начале)
+        }
+
+        // Рисуем точку текущего состояния
+        let currentSt = getState(stateParamS);
+        let c1X = p1X + getPx(currentSt.V, VMax, graphW);
+        let c1Y = p1Y - getPx(currentSt.p, pMax, graphH);
+        let c2X = p2X + getPx(currentSt.T, TMax, graphW);
+        let c2Y = p2Y - getPx(currentSt.V, VMax, graphH);
+        let c3X = p3X + getPx(currentSt.T, TMax, graphW);
+        let c3Y = p3Y - getPx(currentSt.p, pMax, graphH);
+
+        ctx.fillStyle = "var(--danger)";
+        ctx.beginPath(); ctx.arc(c1X, c1Y, 6, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(c2X, c2Y, 6, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(c3X, c3Y, 6, 0, Math.PI*2); ctx.fill();
+        
+        // Линии-проекции к осям от точки
+        ctx.setLineDash([3, 3]);
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.lineWidth = 1;
+        
+        const drawProjections = (x, y, startX, startY) => {
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, startY); ctx.stroke(); // к оси X
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(startX, y); ctx.stroke(); // к оси Y
+        }
+        drawProjections(c1X, c1Y, p1X, p1Y);
+        drawProjections(c2X, c2Y, p2X, p2Y);
+        drawProjections(c3X, c3Y, p3X, p3Y);
+        ctx.setLineDash([]);
+    }
+
+    function loop() {
+    if (!isAnimating) return;
+
+    stateParamS += 0.005 * stateDir;
+    if (stateParamS >= 1) { stateParamS = 1; stateDir = -1; }
+    if (stateParamS <= 0) { stateParamS = 0; stateDir = 1; }
+
+    drawGraph();
+    animId = requestAnimationFrame(loop);
+}
+
+// Инициализация
+updateParams();
+loop();
+
+/* =========================================
+   ВИДЖЕТ: ЗАКОН ДАЛЬТОНА
+   ========================================= */
+const inDaltonP1 = document.getElementById('sim-dalton-p1');
+const inDaltonP2 = document.getElementById('sim-dalton-p2');
+const valDaltonP1 = document.getElementById('val-dalton-p1');
+const valDaltonP2 = document.getElementById('val-dalton-p2');
+const valDaltonTotal = document.getElementById('val-dalton-total');
+
+function updateDalton() {
+    let p1 = parseFloat(inDaltonP1.value);
+    let p2 = parseFloat(inDaltonP2.value);
+    valDaltonP1.innerText = p1;
+    valDaltonP2.innerText = p2;
+    valDaltonTotal.innerText = p1 + p2;
+}
+
+if (inDaltonP1 && inDaltonP2) {
+    inDaltonP1.addEventListener('input', updateDalton);
+    inDaltonP2.addEventListener('input', updateDalton);
+}
+
+/* =========================================
+   ЗАДАЧИ И ТЕСТЫ
+   ========================================= */
+function checkTask(id, correctAns, tol, hint) {
+    let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+    const inputVal = parseFloat(rawVal);
+    const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+        resDiv.innerText = "Отлично! Верно.";
+        resDiv.className = "feedback correct-text";
+    } else {
+        resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+        resDiv.className = "feedback incorrect-text";
+    }
+}
+
+function checkQuiz() {
+    const form = document.getElementById('quiz-form');
+    const resDiv = document.getElementById('quiz-result');
+    let score = 0;
+    const total = 6;
+
+    const explanations = [
+        "1. Закон Бойля-Мариотта описывает изотермический процесс (T = const), где p·V = const.",
+        "2. В координатах p-V изохорный процесс (V = const) выглядит как вертикальная линия (объем неизменен, давление меняется).",
+        "3. По закону Гей-Люссака (V/T = const), объем и температура прямо пропорциональны. Увеличение объема означает рост температуры.",
+        "4. Вблизи абсолютного нуля газы конденсируются (превращаются в жидкость), и модель идеального газа перестает быть точной.",
+        "5. Чем выше изотерма на графике p-V, тем бОльшей температуре она соответствует (p = T/V, при одинаковом V давление выше там, где T выше).",
+        "6. Парциальное давление — это давление одного компонента смеси, как если бы других газов в сосуде не было."
+    ];
+
+    let hasUnanswered = false;
+
+    for (let i = 1; i <= total; i++) {
+        const selected = form.querySelector(`input[name="q${i}"]:checked`);
+        if (!selected) {
+            hasUnanswered = true;
+        } else if (selected.value === "1") {
+            score++;
+        }
+    }
+
+    if (hasUnanswered) {
+        alert("Пожалуйста, ответьте на все вопросы теста.");
+        return;
+    }
+
+    resDiv.style.display = "block";
+    resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+    
+    let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+    if (score < total) {
+        resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+    } else {
+        resultHTML += "Безупречный результат! Вы стали мастером чтения графиков изопроцессов.";
+    }
+    resDiv.innerHTML = resultHTML;
+}
+</script>
+
+</body>
+</html>

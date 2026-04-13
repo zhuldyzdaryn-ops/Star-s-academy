@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Внутренняя энергия и Работа. Количество теплоты — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #d946ef; /* Пурпурный (Энергия) */
+            --primary-hover: #c026d3;
+            --accent: #0ea5e9; /* Голубой (Работа/Объем) */
+            --success: #16a34a;
+            --danger: #ef4444; /* Красный (Теплота) */
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #e879f9;
+                --primary-hover: #d946ef;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; align-items: center;}
+        canvas {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+        .data-box { background: var(--card-bg); padding: 10px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 10px;}
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Внутренняя энергия, Работа и Количество теплоты</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Термодинамика — это наука об энергии. Как заставить тепло двигать поршни? Как вычислить скрытую энергию внутри баллона с газом? Три главных "кита" энергетики — это U (энергия), A (работа) и Q (тепло).
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ВНУТРЕННЯЯ ЭНЕРГИЯ -->
+    <section class="card">
+        <h2>1. Внутренняя энергия идеального газа (U)</h2>
+        <p>В механике мы изучали энергию летящего мяча. Но даже если баллон с газом стоит на месте, внутри него бушует невидимый шторм! Молекулы летают со скоростями пуль.</p>
+        <p><b>Внутренняя энергия макроскопического тела</b> — это сумма кинетических энергий хаотического движения всех молекул и потенциальных энергий их взаимодействия.</p>
+        <p>Так как в <i>идеальном газе</i> молекулы не притягиваются (потенциальная энергия равна нулю), то его внутренняя энергия (<b>U</b>) зависит <b>ТОЛЬКО от температуры</b>. Для одноатомного газа (например, гелия, неона):</p>
+        <div class="formula">
+            <b>U = <sup>3</sup>/<sub>2</sub> &middot; &nu; &middot; R &middot; T</b> &nbsp;&nbsp;&nbsp;или&nbsp;&nbsp;&nbsp; <b>U = <sup>3</sup>/<sub>2</sub> &middot; p &middot; V</b>
+        </div>
+        <p><i>Вывод: Изменить внутреннюю энергию можно только двумя способами — передать газу тепло или совершить над ним механическую работу!</i></p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: РАБОТА -->
+    <section class="card">
+        <h2>2. Термодинамическая работа (A)</h2>
+        <p>Газ совершает работу, когда он толкает препятствие (например, поршень в двигателе внутреннего сгорания). Работа газа (обозначается <b>A'</b>) при постоянном давлении (изобарный процесс) рассчитывается как:</p>
+        <div class="formula">
+            <b>A' = p &middot; &Delta;V = p &middot; (V<sub>2</sub> - V<sub>1</sub>)</b>
+        </div>
+        <ul>
+            <li>Если газ расширяется (&Delta;V > 0), работа газа <b>положительна</b> (A' > 0).</li>
+            <li>Если газ сжимают (&Delta;V < 0), работа газа <b>отрицательна</b> (A' < 0). В этом случае говорят, что работу совершают <i>внешние силы</i> над газом (A > 0).</li>
+        </ul>
+        <h3 style="color:var(--danger)">Геометрический смысл работы</h3>
+        <p>Это важнейшее правило: <b>Работа газа численно равна ПЛОЩАДИ фигуры под графиком процесса в координатах p-V!</b></p>
+    </section>
+    
+    <!-- 4) ТЕОРИЯ: КОЛИЧЕСТВО ТЕПЛОТЫ -->
+    <section class="card">
+        <h2>3. Количество теплоты (Q) и Теплоемкость</h2>
+        <p><b>Количество теплоты (Q)</b> — это мера изменения внутренней энергии, происходящего путем теплопередачи (без совершения механической работы).</p>
+        <p>Чтобы нагреть тело, ему нужно передать теплоту. Расчет ведется по формуле:</p>
+        <div class="formula">
+            <b>Q = c &middot; m &middot; &Delta;T</b>
+        </div>
+        <ul>
+            <li><b>c</b> — удельная теплоемкость вещества (Дж / (кг&middot;К)). Показывает, сколько джоулей нужно для нагрева 1 кг вещества на 1 градус. (Например, для воды c = 4200, это очень много!).</li>
+            <li><b>C</b> (большая) = c &middot; M — <i>молярная</i> теплоемкость (Дж / (моль&middot;К)).</li>
+        </ul>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Работа и энергия на графике p-V</h2>
+        <p>Мы находимся в состоянии 1. Изменяйте параметры ползунками, чтобы перевести газ в состояние 2. Наблюдайте, как образуется <b>площадь под графиком (Работа)</b> и как меняется <b>Внутренняя энергия (U)</b>.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <p><b>Состояние 1 (Фиксировано):</b><br>
+                p<sub>1</sub> = 100 кПа, V<sub>1</sub> = 10 л</p>
+                <hr style="margin: 10px 0; border: 1px solid var(--border);">
+                
+                <p><b>Задайте Состояние 2:</b></p>
+                <div class="control-group">
+                    <label for="sim-p2">Конечное давление (p<sub>2</sub>): <span id="val-p2">150</span> кПа</label>
+                    <input type="range" id="sim-p2" min="50" max="300" value="150" step="10">
+                </div>
+                
+                <div class="control-group">
+                    <label for="sim-v2">Конечный объем (V<sub>2</sub>): <span id="val-v2">30</span> л</label>
+                    <input type="range" id="sim-v2" min="5" max="50" value="30" step="1">
+                </div>
+
+                <div class="data-box">
+                    <div><b>Анализ процесса (1 &rarr; 2):</b></div>
+                    <div style="margin-top: 8px;">Изменение внутр. энергии (&Delta;U):<br>
+                        <span id="out-du" style="color:var(--primary); font-weight:bold; font-size:1.1rem;">--</span> Дж
+                    </div>
+                    <div style="margin-top: 8px;">Работа газа (A' = Площадь):<br>
+                        <span id="out-a" style="color:var(--accent); font-weight:bold; font-size:1.1rem;">--</span> Дж
+                    </div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="graphCanvas" width="450" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Закрашенная синим область — это реальная механическая работа (в Джоулях), которую совершил газ при расширении.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи (Геометрический смысл)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Идеальный одноатомный газ перевели из состояния 1 (p<sub>1</sub>=100 кПа, V<sub>1</sub>=2 л) в состояние 2 (p<sub>2</sub>=300 кПа, V<sub>2</sub>=5 л) так, что график процесса в осях p-V представляет собой прямую линию. Какую работу совершил газ? Как изменилась его внутренняя энергия?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                p<sub>1</sub> = 1 &middot; 10<sup>5</sup> Па, V<sub>1</sub> = 2 &middot; 10<sup>-3</sup> м<sup>3</sup><br>
+                p<sub>2</sub> = 3 &middot; 10<sup>5</sup> Па, V<sub>2</sub> = 5 &middot; 10<sup>-3</sup> м<sup>3</sup><br>
+                <b>Найти:</b> A' — ?, &Delta;U — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>1. Находим работу (A'):</b><br>
+                График — прямая линия. Площадь под ней — это площадь прямоугольной трапеции.<br>
+                Формула площади трапеции: S = <sup>(основание_1 + основание_2)</sup>/<sub>2</sub> &middot; высота.<br>
+                Основания — это давления (p<sub>1</sub> и p<sub>2</sub>), высота — это изменение объема (&Delta;V = V<sub>2</sub> - V<sub>1</sub>).<br>
+                A' = <sup>(100 + 300)</sup>/<sub>2</sub> &middot; 10<sup>3</sup> &middot; (5 - 2) &middot; 10<sup>-3</sup><br>
+                <i>Секрет: 10<sup>3</sup> (от кПа) и 10<sup>-3</sup> (от литров) сокращаются!</i><br>
+                A' = <sup>400</sup>/<sub>2</sub> &middot; 3 = 200 &middot; 3 = <b>600 Дж</b>.</p>
+
+                <p><b>2. Находим изменение внутренней энергии (&Delta;U):</b><br>
+                Используем формулу U = 1.5 &middot; p &middot; V.<br>
+                &Delta;U = U<sub>2</sub> - U<sub>1</sub> = 1.5 &middot; (p<sub>2</sub>V<sub>2</sub> - p<sub>1</sub>V<sub>1</sub>)<br>
+                &Delta;U = 1.5 &middot; (300 &middot; 5 - 100 &middot; 2) = 1.5 &middot; (1500 - 200) = 1.5 &middot; 1300 = <b>1950 Дж</b>.</p>
+                
+                <p><b>Ответ:</b> Газ совершил работу 600 Дж, а его внутренняя энергия увеличилась на 1950 Дж.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Анализ изопроцессов)</h3>
+            <p>Идеальный одноатомный газ <b>изотермически</b> (T = const) расширился. Как при этом изменилась его внутренняя энергия (U)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите номер ответа:</i> 1 - Увеличилась; 2 - Уменьшилась; 3 - Не изменилась.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Внутренняя энергия идеального газа зависит ТОЛЬКО от температуры (U ~ T). Если T не меняется, то и U не меняется (ΔU = 0).')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает зависимость внутренней энергии от температуры.</li>
+                    <li>Понимает суть изотермического процесса.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет работы)</h3>
+            <p>Газ изобарно расширяется при давлении p = 200 кПа. Его объем увеличился на &Delta;V = 5 литров. Какую <b>работу</b> (в Джоулях) совершил газ?</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в Дж"> 
+            <button onclick="checkTask('taskB', 1000, 0, 'A = p * ΔV. При умножении кПа (тысячи Па) на литры (тысячные доли кубометра), приставки кило- и милли- взаимно уничтожаются. Просто умножьте 200 на 5.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Применяет формулу работы при изобарном процессе.</li>
+                    <li>Помнит хитрость взаимного сокращения приставок (кПа * л = Дж).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Теплоемкость)</h3>
+            <p>В стальной котел массой 10 кг налили 20 кг воды. Какое <b>количество теплоты</b> (в кДж) потребуется, чтобы нагреть и котел, и воду на &Delta;T = 50 &deg;C? <br>Удельная теплоемкость стали c<sub>1</sub> = 500 Дж/(кг&middot;К), воды c<sub>2</sub> = 4200 Дж/(кг&middot;К).</p>
+            <input type="number" id="taskC-input" placeholder="Ответ в кДж"> 
+            <button onclick="checkTask('taskC', 4450, 0, 'Теплота пойдет на оба тела. Q = Q_котел + Q_вода = c1*m1*ΔT + c2*m2*ΔT = 500*10*50 + 4200*20*50 = 250000 + 4200000 = 4450000 Дж. Переведите в кДж (разделите на 1000).')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает принцип сложения количеств теплоты для составных систем.</li>
+                    <li>Верно применяет формулу Q = cmΔT.</li>
+                    <li>Свободно переводит Дж в кДж.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <p>Отметьте, что вы усвоили из этого урока:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что потенциальная энергия молекул идеального газа равна нулю, поэтому U зависит только от T.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я запомнил(а), что работа газа — это площадь фигуры под графиком в осях p-V.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я знаю, как рассчитать количество теплоты (Q = cmΔT) для нагревания тела.</label>
+        </div>
+        <button onclick="alert('Молодцы! Эти понятия — U, A и Q — это алфавит термодинамики. На следующем уроке мы свяжем их вместе в Первом начале термодинамики.')" style="margin-top: 10px;">Подтвердить результат</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. От каких макроскопических параметров зависит внутренняя энергия данной массы идеального одноатомного газа?</b></p>
+                <label><input type="radio" name="q1" value="0"> Только от давления.</label>
+                <label><input type="radio" name="q1" value="0"> Только от объема.</label>
+                <label><input type="radio" name="q1" value="1"> Только от температуры.</label>
+                <label><input type="radio" name="q1" value="0"> От давления и объема.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Газ изохорно нагревают (V = const). Совершает ли газ работу в этом процессе?</b></p>
+                <label><input type="radio" name="q2" value="0"> Да, так как растет давление.</label>
+                <label><input type="radio" name="q2" value="1"> Нет, так как объем не изменяется (&Delta;V = 0).</label>
+                <label><input type="radio" name="q2" value="0"> Работа отрицательна.</label>
+                <label><input type="radio" name="q2" value="0"> Зависит от того, какой это газ.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как графически определяется работа газа при переходе из состояния 1 в состояние 2 в координатах p-V?</b></p>
+                <label><input type="radio" name="q3" value="0"> Как длина линии от точки 1 до точки 2.</label>
+                <label><input type="radio" name="q3" value="1"> Как площадь фигуры под графиком процесса.</label>
+                <label><input type="radio" name="q3" value="0"> Как тангенс угла наклона графика.</label>
+                <label><input type="radio" name="q3" value="0"> Как разность координат p2 и p1.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что означает физическая величина «Удельная теплоемкость вещества» (c)?</b></p>
+                <label><input type="radio" name="q4" value="0"> Количество теплоты, необходимое для плавления 1 кг вещества.</label>
+                <label><input type="radio" name="q4" value="0"> Энергия, выделяемая при сгорании 1 кг топлива.</label>
+                <label><input type="radio" name="q4" value="1"> Количество теплоты, необходимое для нагревания 1 кг вещества на 1 Кельвин (или 1 °C).</label>
+                <label><input type="radio" name="q4" value="0"> Теплота, которую выделяет человек за 1 секунду.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Формула для вычисления изменения внутренней энергии идеального одноатомного газа:</b></p>
+                <label><input type="radio" name="q5" value="0"> &Delta;U = p &middot; &Delta;V</label>
+                <label><input type="radio" name="q5" value="1"> &Delta;U = <sup>3</sup>/<sub>2</sub> &middot; &nu; &middot; R &middot; &Delta;T</label>
+                <label><input type="radio" name="q5" value="0"> &Delta;U = c &middot; m &middot; &Delta;T</label>
+                <label><input type="radio" name="q5" value="0"> &Delta;U = <sup>1</sup>/<sub>2</sub> &middot; m &middot; v<sup>2</sup></label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ГРАФИК p-V и РАБОТА
+       ========================================= */
+    const canvas = document.getElementById('graphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const inP2 = document.getElementById('sim-p2');
+    const inV2 = document.getElementById('sim-v2');
+    const valP2 = document.getElementById('val-p2');
+    const valV2 = document.getElementById('val-v2');
+    
+    const outDU = document.getElementById('out-du');
+    const outA = document.getElementById('out-a');
+
+    // Параметры состояний
+    const p1 = 100; // кПа
+    const V1 = 10;  // л
+    let p2 = 150;
+    let V2 = 30;
+
+    // Параметры графика
+    const margin = 40;
+    const w = canvas.width - margin * 2;
+    const h = canvas.height - margin * 2;
+    
+    // Максимальные значения для осей
+    const maxP = 350;
+    const maxV = 60;
+
+    // Функция перевода физических координат в пиксели
+    function getX(v) { return margin + (v / maxV) * w; }
+    function getY(p) { return canvas.height - margin - (p / maxP) * h; }
+
+    function updateSimulation() {
+        p2 = parseInt(inP2.value);
+        V2 = parseInt(inV2.value);
+        
+        valP2.innerText = p2;
+        valV2.innerText = V2;
+
+        // РАСЧЕТЫ
+        // Секрет физики: кПа * л = (10^3 Па) * (10^-3 м^3) = 1 Дж.
+        // Поэтому мы можем просто перемножать эти значения и получать чистые Джоули!
+        
+        // 1. Работа (A) - Площадь трапеции
+        let work = 0.5 * (p1 + p2) * (V2 - V1);
+        
+        // 2. Изменение внутр. энергии (dU = U2 - U1)
+        let U1 = 1.5 * p1 * V1;
+        let U2 = 1.5 * p2 * V2;
+        let dU = U2 - U1;
+
+        // Вывод на экран
+        outA.innerText = work.toFixed(0);
+        outDU.innerText = dU.toFixed(0);
+        
+        // Изменение цвета, если работа отрицательная (сжатие)
+        if (work < 0) {
+            outA.style.color = "var(--danger)";
+        } else {
+            outA.style.color = "var(--accent)";
+        }
+
+        drawGraph();
+    }
+
+    [inP2, inV2].forEach(el => el.addEventListener('input', updateSimulation));
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. Оси
+        ctx.beginPath();
+        ctx.moveTo(margin, margin - 20); // Y
+        ctx.lineTo(margin, canvas.height - margin);
+        ctx.lineTo(canvas.width - margin + 20, canvas.height - margin); // X
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Стрелочки
+        ctx.beginPath();
+        ctx.moveTo(margin - 5, margin - 10); ctx.lineTo(margin, margin - 20); ctx.lineTo(margin + 5, margin - 10);
+        ctx.fillStyle = "var(--text-main)"; ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(canvas.width - margin + 10, canvas.height - margin - 5); 
+        ctx.lineTo(canvas.width - margin + 20, canvas.height - margin); 
+        ctx.lineTo(canvas.width - margin + 10, canvas.height - margin + 5);
+        ctx.fill();
+
+        // Подписи осей
+        ctx.font = "bold 14px Arial";
+        ctx.fillText("p (кПа)", margin - 30, margin - 25);
+        ctx.fillText("V (л)", canvas.width - margin + 15, canvas.height - margin + 20);
+        ctx.fillText("0", margin - 15, canvas.height - margin + 15);
+
+        // 2. Сетка
+        ctx.strokeStyle = "var(--border)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        // Гор
+        for(let p=100; p<=300; p+=100) {
+            ctx.beginPath(); ctx.moveTo(margin, getY(p)); ctx.lineTo(margin + w, getY(p)); ctx.stroke();
+            ctx.fillText(p, margin - 30, getY(p) + 5);
+        }
+        // Верт
+        for(let v=10; v<=50; v+=10) {
+            ctx.beginPath(); ctx.moveTo(getX(v), canvas.height - margin); ctx.lineTo(getX(v), margin); ctx.stroke();
+            ctx.fillText(v, getX(v) - 8, canvas.height - margin + 15);
+        }
+        ctx.setLineDash([]);
+
+        // 3. Закрашиваем площадь (Работу)
+        ctx.beginPath();
+        ctx.moveTo(getX(V1), getY(0));
+        ctx.lineTo(getX(V1), getY(p1));
+        ctx.lineTo(getX(V2), getY(p2));
+        ctx.lineTo(getX(V2), getY(0));
+        ctx.closePath();
+        
+        // Цвет площади зависит от знака работы
+        if (V2 >= V1) {
+            ctx.fillStyle = "rgba(14, 165, 233, 0.2)"; // Голубой (Расширение, А>0)
+        } else {
+            ctx.fillStyle = "rgba(239, 68, 68, 0.2)"; // Красный (Сжатие, А<0)
+        }
+        ctx.fill();
+
+        // 4. Линия процесса
+        ctx.beginPath();
+        ctx.moveTo(getX(V1), getY(p1));
+        ctx.lineTo(getX(V2), getY(p2));
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // 5. Точки состояний
+        // Точка 1
+        ctx.beginPath();
+        ctx.arc(getX(V1), getY(p1), 6, 0, Math.PI*2);
+        ctx.fillStyle = "var(--text-muted)";
+        ctx.fill();
+        ctx.fillStyle = "var(--text-main)";
+        ctx.fillText("1", getX(V1) - 15, getY(p1) - 10);
+
+        // Точка 2
+        ctx.beginPath();
+        ctx.arc(getX(V2), getY(p2), 6, 0, Math.PI*2);
+        ctx.fillStyle = "var(--primary)";
+        ctx.fill();
+        ctx.fillText("2", getX(V2) + 10, getY(p2) - 10);
+
+        // Надпись "Работа" на площади
+        if (Math.abs(V2 - V1) > 5) { // Рисуем, только если площадь достаточно широкая
+            ctx.fillStyle = (V2 >= V1) ? "var(--accent)" : "var(--danger)";
+            ctx.font = "bold 16px Arial";
+            let textX = getX(V1) + (getX(V2) - getX(V1))/2 - 20;
+            let textY = canvas.height - margin - 20;
+            ctx.fillText("A'", textX, textY);
+        }
+    }
+
+    // Инициализация
+    updateSimulation();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. В модели идеального газа молекулы не взаимодействуют на расстоянии (потенциальная энергия равна 0). Поэтому внутренняя энергия U = 3/2 νRT зависит исключительно от температуры (T).",
+            "2. Формула работы A = p * ΔV. Если процесс изохорный (V = const), то изменение объема ΔV равно нулю, следовательно, работа газа не совершается (A = 0).",
+            "3. Геометрический смысл работы в термодинамике: работа численно равна площади фигуры под графиком зависимости давления от объема (p-V).",
+            "4. Удельная теплоемкость (c) — это табличная величина, показывающая, сколько Джоулей теплоты нужно подвести к 1 килограмму вещества, чтобы его температура повысилась на 1 градус.",
+            "5. Правильная формула для одноатомного газа: ΔU = 3/2 · ν · R · ΔT. Именно она связывает макроскопическое изменение температуры с изменением внутренней энергии."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично освоили базовые энергетические понятия термодинамики.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

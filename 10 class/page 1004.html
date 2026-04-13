@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принцип относительности Галилея | Галилейдің салыстырмалылық принципі</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MathJax for formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Language display logic */
+        body[data-lang="ru"] .lang-kz { display: none; }
+        body[data-lang="kz"] .lang-ru { display: none; }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Active nav link style */
+        .nav-link.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right: 3px solid #2563eb;
+            font-weight: 600;
+        }
+
+        /* Practice select styles */
+        .practice-select {
+            appearance: none;
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 0.25rem 2rem 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            color: #1e293b;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1em;
+            transition: all 0.2s;
+        }
+        .practice-select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .practice-select.correct { border-color: #10b981; background-color: #ecfdf5; color: #047857; }
+        .practice-select.incorrect { border-color: #ef4444; background-color: #fef2f2; color: #b91c1c; }
+    </style>
+</head>
+<body data-lang="ru" class="bg-slate-50 text-slate-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-atom text-xl"></i>
+                </div>
+                <h1 class="text-xl font-bold text-slate-900 hidden sm:block">
+                    <span class="lang-ru">Физика: Кинематика</span>
+                    <span class="lang-kz">Физика: Кинематика</span>
+                </h1>
+            </div>
+            
+            <!-- Language Toggle -->
+            <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button onclick="setLang('ru')" id="btn-ru" class="px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all">RU</button>
+                <button onclick="setLang('kz')" id="btn-kz" class="px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all">KZ</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Navigation (Hidden on Mobile) -->
+        <aside class="hidden md:block w-64 shrink-0">
+            <nav class="sticky top-24 bg-white rounded-xl shadow-sm border border-slate-100 p-4 sidebar-scroll max-h-[calc(100vh-8rem)] overflow-y-auto">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-3">
+                    <span class="lang-ru">Содержание</span>
+                    <span class="lang-kz">Мазмұны</span>
+                </h2>
+                <ul class="space-y-1">
+                    <li>
+                        <a href="#theory" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-book-open w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Теория</span><span class="lang-kz">Теория</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#simulation" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-desktop w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Симуляция</span><span class="lang-kz">Симуляция</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#practice" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-pen-to-square w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Практика</span><span class="lang-kz">Тәжірибе</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#video" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-brands fa-youtube w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Видеоурок</span><span class="lang-kz">Бейнесабақ</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#test" class="nav-link block px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
+                            <i class="fa-solid fa-list-check w-5 text-center mr-2 opacity-70"></i>
+                            <span class="lang-ru">Тест</span><span class="lang-kz">Тест</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 space-y-12 pb-20">
+            
+            <!-- Title Section -->
+            <div class="mb-8">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                    <span class="lang-ru">Инвариантные и относительные физические величины. Принцип относительности Галилея</span>
+                    <span class="lang-kz">Инвариантты және салыстырмалы физикалық шамалар. Галилейдің салыстырмалылық принципі</span>
+                </h1>
+                <p class="text-lg text-slate-600">
+                    <span class="lang-ru">Изучаем, какие величины меняются при переходе из одной системы отсчета в другую, а какие остаются неизменными.</span>
+                    <span class="lang-kz">Бір санақ жүйесінен екіншісіне өткенде қандай шамалар өзгеретінін, ал қандайы тұрақты қалатынын зерттейміз.</span>
+                </p>
+            </div>
+
+            <!-- THEORY SECTION -->
+            <section id="theory" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">1</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Теоретическая часть</span>
+                        <span class="lang-kz">Теориялық бөлім</span>
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Relative Quantities -->
+                    <div class="bg-white rounded-2xl p-6 border border-amber-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-amber-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span class="lang-ru">Относительные величины</span>
+                            <span class="lang-kz">Салыстырмалы шамалар</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">Это величины, значения которых <b>зависят от выбора системы отсчета (СО)</b>. В разных СО они могут быть разными.</span>
+                            <span class="lang-kz">Бұл мәндері <b>санақ жүйесін (СЖ) таңдауға тәуелді</b> болатын шамалар. Әртүрлі СЖ-де олар әртүрлі болуы мүмкін.</span>
+                        </p>
+                        <ul class="space-y-2 text-sm text-slate-700 relative z-10">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1"></i> <span class="lang-ru">Координаты (\(x, y, z\))</span><span class="lang-kz">Координаталар (\(x, y, z\))</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1"></i> <span class="lang-ru">Скорость (\(\vec{v}\))</span><span class="lang-kz">Жылдамдық (\(\vec{v}\))</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1"></i> <span class="lang-ru">Траектория и путь</span><span class="lang-kz">Траектория және жол</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-amber-500 mt-1"></i> <span class="lang-ru">Кинетическая энергия (\(E_k\))</span><span class="lang-kz">Кинетикалық энергия (\(E_k\))</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Invariant Quantities -->
+                    <div class="bg-white rounded-2xl p-6 border border-emerald-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-50 rounded-bl-full -z-0 opacity-50"></div>
+                        <h3 class="text-lg font-bold text-emerald-600 mb-3 flex items-center gap-2 relative z-10">
+                            <i class="fa-solid fa-anchor"></i>
+                            <span class="lang-ru">Инвариантные величины</span>
+                            <span class="lang-kz">Инвариантты шамалар</span>
+                        </h3>
+                        <p class="text-slate-600 mb-4 relative z-10 text-sm">
+                            <span class="lang-ru">Это величины, значения которых <b>одинаковы во всех инерциальных системах отсчета</b> (при скоростях \(v \ll c\)).</span>
+                            <span class="lang-kz">Бұл мәндері <b>барлық инерциалдық санақ жүйелерінде бірдей</b> болатын шамалар (\(v \ll c\) жылдамдықтарда).</span>
+                        </p>
+                        <ul class="space-y-2 text-sm text-slate-700 relative z-10">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> <span class="lang-ru">Масса (\(m\))</span><span class="lang-kz">Масса (\(m\))</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> <span class="lang-ru">Время (\(t\))</span><span class="lang-kz">Уақыт (\(t\))</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> <span class="lang-ru">Ускорение (\(\vec{a}\))</span><span class="lang-kz">Үдеу (\(\vec{a}\))</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 mt-1"></i> <span class="lang-ru">Сила (\(\vec{F}\)) и расстояние</span><span class="lang-kz">Күш (\(\vec{F}\)) және қашықтық</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Principle Note -->
+                <div class="bg-blue-600 rounded-2xl p-6 text-white shadow-md mb-8 relative overflow-hidden">
+                    <i class="fa-solid fa-quote-right absolute -bottom-4 -right-4 text-8xl text-blue-500 opacity-50"></i>
+                    <h3 class="font-bold text-xl mb-2 relative z-10">
+                        <span class="lang-ru">Принцип относительности Галилея</span>
+                        <span class="lang-kz">Галилейдің салыстырмалылық принципі</span>
+                    </h3>
+                    <p class="text-blue-100 text-lg relative z-10 italic">
+                        <span class="lang-ru">«Все механические явления протекают одинаково во всех инерциальных системах отсчета.»</span>
+                        <span class="lang-kz">«Барлық механикалық құбылыстар барлық инерциалдық санақ жүйелерінде бірдей өтеді.»</span>
+                    </p>
+                </div>
+
+                <!-- Formula Card -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 mb-2">
+                            <span class="lang-ru">Классический закон сложения скоростей</span>
+                            <span class="lang-kz">Жылдамдықтарды қосудың классикалық заңы</span>
+                        </h4>
+                        <p class="text-sm text-slate-600">
+                            <span class="lang-ru">Абсолютная скорость тела (\(\vec{v}_{абс}\)) равна векторной сумме его скорости относительно подвижной СО (\(\vec{v}_{отн}\)) и скорости самой подвижной СО относительно неподвижной (\(\vec{v}_{пер}\)).</span>
+                            <span class="lang-kz">Дененің абсолюттік жылдамдығы (\(\vec{v}_{абс}\)) оның қозғалмалы СЖ-не қатысты жылдамдығының (\(\vec{v}_{отн}\)) және қозғалмалы СЖ-нің қозғалмайтын СЖ-не қатысты жылдамдығының (\(\vec{v}_{пер}\)) векторлық қосындысына тең.</span>
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 px-6 py-4 rounded-xl border border-slate-100 min-w-[250px] text-center">
+                        <div class="text-xl font-bold text-blue-600">
+                            \[ \vec{v}_{абс} = \vec{v}_{отн} + \vec{v}_{пер} \]
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SIMULATION SECTION -->
+            <section id="simulation" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-bold">2</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Интерактивная симуляция</span>
+                        <span class="lang-kz">Интерактивті симуляция</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p class="text-sm text-slate-600 font-medium">
+                            <i class="fa-solid fa-circle-info text-purple-500 mr-1"></i>
+                            <span class="lang-ru">Наблюдаем за скоростью пассажира внутри поезда относительно платформы (Земли).</span>
+                            <span class="lang-kz">Пойыз ішіндегі жолаушының платформаға (Жерге) қатысты жылдамдығын бақылаймыз.</span>
+                        </p>
+                    </div>
+                    
+                    <!-- Canvas Container -->
+                    <div class="w-full bg-sky-50 relative h-[250px] overflow-hidden" id="canvas-container">
+                        <canvas id="simCanvas" class="w-full h-full block"></canvas>
+                        <!-- Speed overlay -->
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur rounded-lg p-3 shadow-sm border border-slate-200 text-sm">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                                <span class="lang-ru">Переносная (Поезд): <b id="ui-u">20</b> м/с</span>
+                                <span class="lang-kz">Тасымалдау (Пойыз): <b id="ui-u-kz">20</b> м/с</span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                <span class="lang-ru">Относительная (Пассажир): <b id="ui-vrel">5</b> м/с</span>
+                                <span class="lang-kz">Салыстырмалы (Жолаушы): <b id="ui-vrel-kz">5</b> м/с</span>
+                            </div>
+                            <hr class="my-1 border-slate-200">
+                            <div class="flex items-center gap-2 text-purple-700 font-bold">
+                                <i class="fa-solid fa-eye"></i>
+                                <span class="lang-ru">Абсолютная (Итог): <b id="ui-vabs">25</b> м/с</span>
+                                <span class="lang-kz">Абсолютті (Қорытынды): <b id="ui-vabs-kz">25</b> м/с</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                <span><span class="lang-ru">Скорость поезда (\(v_{пер}\))</span><span class="lang-kz">Пойыз жылдамдығы (\(v_{пер}\))</span></span>
+                                <span id="val-u" class="text-blue-600">20 м/с</span>
+                            </label>
+                            <input type="range" id="slider-u" min="-30" max="30" value="20" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                            <div class="flex justify-between text-xs text-slate-400 mt-1">
+                                <span>-30 (Влево)</span><span>0</span><span>30 (Вправо)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                <span><span class="lang-ru">Скорость пассажира (\(v_{отн}\))</span><span class="lang-kz">Жолаушы жылдамдығы (\(v_{отн}\))</span></span>
+                                <span id="val-vrel" class="text-amber-600">5 м/с</span>
+                            </label>
+                            <input type="range" id="slider-vrel" min="-10" max="10" value="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                            <div class="flex justify-between text-xs text-slate-400 mt-1">
+                                <span>-10 (К хвосту)</span><span>0</span><span>10 (К носу)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRACTICE SECTION -->
+            <section id="practice" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">3</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Практическое задание</span>
+                        <span class="lang-kz">Тәжірибелік тапсырма</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                    <div class="mb-6 pb-6 border-b border-slate-100 text-lg leading-relaxed text-slate-700">
+                        <span class="lang-ru">
+                            Мальчик плывет на плоту по реке. Скорость течения реки относительно берега — это 
+                            <select class="practice-select mx-1" data-answer="переносная">
+                                <option value="">[выберите]</option>
+                                <option value="абсолютная">абсолютная</option>
+                                <option value="относительная">относительная</option>
+                                <option value="переносная">переносная</option>
+                            </select> 
+                            скорость. Мальчик начинает идти по плоту. Его скорость относительно самого плота — это 
+                            <select class="practice-select mx-1" data-answer="относительная">
+                                <option value="">[выберите]</option>
+                                <option value="абсолютная">абсолютная</option>
+                                <option value="относительная">относительная</option>
+                                <option value="переносная">переносная</option>
+                            </select> 
+                            скорость. В итоге, скорость с которой мальчик перемещается относительно наблюдателя, стоящего на берегу, называется 
+                            <select class="practice-select mx-1" data-answer="абсолютная">
+                                <option value="">[выберите]</option>
+                                <option value="абсолютная">абсолютная</option>
+                                <option value="относительная">относительная</option>
+                                <option value="переносная">переносная</option>
+                            </select> 
+                            скоростью.
+                        </span>
+                        <span class="lang-kz">
+                            Бала өзенде салмен жүзіп келеді. Өзен ағысының жағаға қатысты жылдамдығы — бұл 
+                            <select class="practice-select mx-1" data-answer="тасымалдау">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="абсолютті">абсолютті</option>
+                                <option value="салыстырмалы">салыстырмалы</option>
+                                <option value="тасымалдау">тасымалдау</option>
+                            </select> 
+                            жылдамдық. Бала сал үстімен жүре бастады. Оның салға қатысты жылдамдығы — бұл 
+                            <select class="practice-select mx-1" data-answer="салыстырмалы">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="абсолютті">абсолютті</option>
+                                <option value="салыстырмалы">салыстырмалы</option>
+                                <option value="тасымалдау">тасымалдау</option>
+                            </select> 
+                            жылдамдық. Нәтижесінде, баланың жағада тұрған бақылаушыға қатысты қозғалу жылдамдығы 
+                            <select class="practice-select mx-1" data-answer="абсолютті">
+                                <option value="">[таңдаңыз]</option>
+                                <option value="абсолютті">абсолютті</option>
+                                <option value="салыстырмалы">салыстырмалы</option>
+                                <option value="тасымалдау">тасымалдау</option>
+                            </select> 
+                            жылдамдық деп аталады.
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button onclick="checkPractice()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                            <i class="fa-solid fa-check-double mr-2"></i>
+                            <span class="lang-ru">Проверить ответы</span>
+                            <span class="lang-kz">Жауаптарды тексеру</span>
+                        </button>
+                        <div id="practice-result" class="font-bold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Descriptors Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-3"><span class="lang-ru">Критерий</span><span class="lang-kz">Критерий</span></th>
+                                <th class="px-6 py-3"><span class="lang-ru">Дескриптор</span><span class="lang-kz">Дескриптор</span></th>
+                                <th class="px-6 py-3 text-center"><span class="lang-ru">Балл</span><span class="lang-kz">Балл</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 bg-white">
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-slate-900" rowspan="3">
+                                    <span class="lang-ru">Определение видов скоростей</span>
+                                    <span class="lang-kz">Жылдамдық түрлерін анықтау</span>
+                                </td>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Верно определяет переносную скорость (подвижной СО).</span>
+                                    <span class="lang-kz">Тасымалдау жылдамдығын (қозғалмалы СЖ) дұрыс анықтайды.</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Верно определяет относительную скорость (относительно подвижной СО).</span>
+                                    <span class="lang-kz">Салыстырмалы жылдамдығын (қозғалмалы СЖ-ге қатысты) дұрыс анықтайды.</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-slate-600">
+                                    <span class="lang-ru">Верно определяет абсолютную скорость (относительно земли).</span>
+                                    <span class="lang-kz">Абсолюттік жылдамдығын (жерге қатысты) дұрыс анықтайды.</span>
+                                </td>
+                                <td class="px-6 py-4 text-center font-bold text-emerald-600">1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- VIDEO SECTION -->
+            <section id="video" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold">4</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Видеоматериалы</span>
+                        <span class="lang-kz">Бейнематериалдар</span>
+                    </h2>
+                </div>
+
+                <a href="https://www.youtube.com/results?search_query=Принцип+относительности+Галилея+сложение+скоростей" target="_blank" rel="noopener noreferrer" 
+                   class="group block bg-white rounded-2xl p-6 border border-slate-200 hover:border-red-300 hover:shadow-md transition-all">
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 shrink-0 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors text-red-600 text-3xl">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-1 group-hover:text-red-600 transition-colors">
+                                <span class="lang-ru">Найти видеоуроки на YouTube</span>
+                                <span class="lang-kz">YouTube-тан бейнесабақтарды табу</span>
+                            </h3>
+                            <p class="text-slate-500 text-sm">
+                                <span class="lang-ru">Нажмите, чтобы открыть результаты поиска по запросу «Принцип относительности Галилея сложение скоростей».</span>
+                                <span class="lang-kz">«Галилейдің салыстырмалылық принципі жылдамдықтарды қосу» сұранысы бойынша іздеу нәтижелерін ашу үшін басыңыз.</span>
+                            </p>
+                        </div>
+                        <i class="fa-solid fa-arrow-right ml-auto text-slate-400 group-hover:text-red-500 transition-colors"></i>
+                    </div>
+                </a>
+            </section>
+
+            <!-- TEST SECTION -->
+            <section id="test" class="scroll-mt-24">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">5</div>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        <span class="lang-ru">Тест для самопроверки</span>
+                        <span class="lang-kz">Өзін-өзі тексеру тесті</span>
+                    </h2>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200">
+                    <form id="quiz-form" class="space-y-8">
+                        
+                        <!-- Question 1 -->
+                        <div class="quiz-question" data-correct="b">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">1. Какая из этих величин является инвариантной в классической механике?</span>
+                                <span class="lang-kz">1. Классикалық механикада мына шамалардың қайсысы инвариантты болып табылады?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Скорость</span><span class="lang-kz">Жылдамдық</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Масса</span><span class="lang-kz">Масса</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q1" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Координата</span><span class="lang-kz">Координата</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">2. Поезд едет со скоростью 60 км/ч. Пассажир идет по вагону по ходу поезда со скоростью 5 км/ч. Какова скорость пассажира относительно земли?</span>
+                                <span class="lang-kz">2. Пойыз 60 км/сағ жылдамдықпен жүріп келеді. Жолаушы вагон ішінде пойыз бағытымен 5 км/сағ жылдамдықпен жүріп барады. Жолаушының жерге қатысты жылдамдығы қандай?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">65 км/ч (км/сағ)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">55 км/ч (км/сағ)</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q2" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">60 км/ч (км/сағ)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-question" data-correct="c">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">3. Принцип относительности Галилея утверждает, что:</span>
+                                <span class="lang-kz">3. Галилейдің салыстырмалылық принципі нені тұжырымдайды?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Все тела падают с одинаковым ускорением.</span><span class="lang-kz">Барлық денелер бірдей үдеумен құлайды.</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Скорость света во всех СО одинакова.</span><span class="lang-kz">Барлық СЖ-де жарық жылдамдығы бірдей.</span></span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q3" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700"><span class="lang-ru">Механические законы одинаковы во всех инерциальных СО.</span><span class="lang-kz">Барлық инерциалдық СЖ-де механикалық заңдар бірдей.</span></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="quiz-question" data-correct="b">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">4. Пловец плывет перпендикулярно течению реки. Скорость пловца относительно воды 4 м/с, а скорость течения 3 м/с. Какова абсолютная скорость пловца относительно берега?</span>
+                                <span class="lang-kz">4. Жүзуші өзен ағысына перпендикуляр жүзіп келеді. Жүзушінің суға қатысты жылдамдығы 4 м/с, ал ағыс жылдамдығы 3 м/с. Жүзушінің жағаға қатысты абсолюттік жылдамдығы қандай?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">7 м/с</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">5 м/с</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q4" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">1 м/с</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="quiz-question" data-correct="a">
+                            <p class="font-bold text-slate-800 mb-3">
+                                <span class="lang-ru">5. Вертолет летит горизонтально с постоянной скоростью. Из него выпадает груз. Какова траектория груза относительно земли и относительно пилота вертолета (сопротивлением воздуха пренебречь)?</span>
+                                <span class="lang-kz">5. Тікұшақ тұрақты жылдамдықпен көлденең ұшып келеді. Одан жүк түсіп қалды. Жерге және тікұшақ ұшқышына қатысты жүктің траекториясы қандай болады (ауа кедергісі ескерілмейді)?</span>
+                            </p>
+                            <div class="space-y-2">
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="a" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">
+                                        <span class="lang-ru">Относительно земли - парабола, относительно пилота - прямая (вниз).</span>
+                                        <span class="lang-kz">Жерге қатысты - парабола, ұшқышқа қатысты - түзу (төмен).</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="b" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">
+                                        <span class="lang-ru">Относительно земли - прямая, относительно пилота - парабола.</span>
+                                        <span class="lang-kz">Жерге қатысты - түзу, ұшқышқа қатысты - парабола.</span>
+                                    </span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <input type="radio" name="q5" value="c" class="w-4 h-4 text-indigo-600">
+                                    <span class="text-sm text-slate-700">
+                                        <span class="lang-ru">В обеих системах отсчета - парабола.</span>
+                                        <span class="lang-kz">Екі санақ жүйесінде де - парабола.</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100 flex items-center gap-4">
+                            <button type="button" onclick="checkQuiz()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors shadow-sm">
+                                <span class="lang-ru">Завершить тест</span>
+                                <span class="lang-kz">Тестті аяқтау</span>
+                            </button>
+                            <div id="quiz-result" class="font-bold text-lg hidden"></div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // --- 1. Language Toggle Logic ---
+        function setLang(lang) {
+            document.body.setAttribute('data-lang', lang);
+            
+            // Update buttons styling
+            const btnRu = document.getElementById('btn-ru');
+            const btnKz = document.getElementById('btn-kz');
+            
+            if (lang === 'ru') {
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            } else {
+                btnKz.className = 'px-3 py-1 text-sm font-medium rounded-md bg-white shadow-sm text-blue-600 transition-all';
+                btnRu.className = 'px-3 py-1 text-sm font-medium rounded-md text-slate-500 hover:text-slate-700 transition-all';
+            }
+        }
+
+        // --- 2. Sidebar Scroll Spy ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 150)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // Set initial active link
+            if(navLinks.length > 0) navLinks[0].classList.add('active');
+            
+            // Init simulation
+            initSimulation();
+        });
+
+        // --- 3. Practice Check Logic ---
+        function checkPractice() {
+            const selects = document.querySelectorAll('.practice-select');
+            let correctCount = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            selects.forEach(select => {
+                select.classList.remove('correct', 'incorrect');
+                const expected = select.getAttribute('data-answer');
+                const selected = select.value;
+
+                if (selected === expected) {
+                    select.classList.add('correct');
+                    correctCount++;
+                } else if (selected !== "") {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const resultDiv = document.getElementById('practice-result');
+            resultDiv.classList.remove('hidden', 'text-emerald-600', 'text-amber-600');
+            
+            if (correctCount === 3) {
+                resultDiv.classList.add('text-emerald-600');
+                resultDiv.innerHTML = `<i class="fa-solid fa-star mr-1"></i> ` + (isRu ? 'Отлично! 3/3 баллов' : 'Керемет! 3/3 балл');
+            } else {
+                resultDiv.classList.add('text-amber-600');
+                resultDiv.innerHTML = isRu ? `Набрано баллов: ${correctCount}/3` : `Жинаған балл: ${correctCount}/3`;
+            }
+        }
+
+        // --- 4. Quiz Check Logic ---
+        function checkQuiz() {
+            const questions = document.querySelectorAll('.quiz-question');
+            const totalQuestions = questions.length;
+            let score = 0;
+            const isRu = document.body.getAttribute('data-lang') === 'ru';
+
+            questions.forEach((q, index) => {
+                const correctAns = q.getAttribute('data-correct');
+                const selected = q.querySelector(`input[name="q${index + 1}"]:checked`);
+                
+                // Reset styles
+                q.querySelectorAll('label').forEach(lbl => lbl.classList.remove('bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200'));
+
+                if (selected) {
+                    if (selected.value === correctAns) {
+                        score++;
+                        selected.closest('label').classList.add('bg-green-50', 'border-green-200');
+                    } else {
+                        selected.closest('label').classList.add('bg-red-50', 'border-red-200');
+                        // Highlight correct
+                        q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                    }
+                } else {
+                     q.querySelector(`input[value="${correctAns}"]`).closest('label').classList.add('bg-green-50', 'border-green-200');
+                }
+            });
+
+            const resultDiv = document.getElementById('quiz-result');
+            resultDiv.classList.remove('hidden', 'text-indigo-600', 'text-slate-600');
+            
+            if (score === totalQuestions) {
+                resultDiv.classList.add('text-indigo-600');
+                resultDiv.innerHTML = isRu ? `🎉 ${score} из ${totalQuestions}! Идеально!` : `🎉 ${totalQuestions}-тен ${score}! Керемет!`;
+            } else {
+                resultDiv.classList.add('text-slate-600');
+                resultDiv.innerHTML = isRu ? `Ваш результат: ${score} из ${totalQuestions}` : `Сіздің нәтижеңіз: ${totalQuestions}-тен ${score}`;
+            }
+        }
+
+        // --- 5. Interactive Simulation Logic (Canvas) ---
+        function initSimulation() {
+            const canvas = document.getElementById('simCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.getElementById('canvas-container');
+            
+            // Resize canvas to fit container
+            function resize() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // Sliders and UI
+            const sliderU = document.getElementById('slider-u');
+            const sliderVrel = document.getElementById('slider-vrel');
+            const valU = document.getElementById('val-u');
+            const valVrel = document.getElementById('val-vrel');
+            
+            // Labels in simulation overlay
+            const uiU = document.getElementById('ui-u');
+            const uiVrel = document.getElementById('ui-vrel');
+            const uiVabs = document.getElementById('ui-vabs');
+            const uiUkz = document.getElementById('ui-u-kz');
+            const uiVrelkz = document.getElementById('ui-vrel-kz');
+            const uiVabskz = document.getElementById('ui-vabs-kz');
+
+            // Simulation state
+            let u = parseFloat(sliderU.value); // train speed
+            let v_rel = parseFloat(sliderVrel.value); // passenger speed
+            
+            // Visual state
+            let bgOffset = 0;
+            let passengerX = 0; // Relative to train center
+            const trainWidth = 200;
+            
+            // Event listeners
+            sliderU.addEventListener('input', (e) => {
+                u = parseFloat(e.target.value);
+                valU.textContent = u + ' м/с';
+                updateUI();
+            });
+            sliderVrel.addEventListener('input', (e) => {
+                v_rel = parseFloat(e.target.value);
+                valVrel.textContent = v_rel + ' м/с';
+                updateUI();
+            });
+
+            function updateUI() {
+                const v_abs = u + v_rel;
+                uiU.textContent = u; uiUkz.textContent = u;
+                uiVrel.textContent = v_rel; uiVrelkz.textContent = v_rel;
+                uiVabs.textContent = v_abs; uiVabskz.textContent = v_abs;
+            }
+            updateUI();
+
+            // Animation Loop
+            let lastTime = 0;
+            function draw(time) {
+                const dt = (time - lastTime) / 1000 || 0;
+                lastTime = time;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const w = canvas.width;
+                const h = canvas.height;
+                const groundY = h - 40;
+
+                // 1. Update positions
+                bgOffset -= u * dt * 2; // Background moves opposite to train
+                if (bgOffset <= -100) bgOffset += 100;
+                if (bgOffset > 0) bgOffset -= 100;
+
+                passengerX += v_rel * dt * 2;
+                // Constrain passenger inside the panoramic window bounds
+                if (passengerX > trainWidth/2 - 20) passengerX = trainWidth/2 - 20;
+                if (passengerX < -trainWidth/2 + 20) passengerX = -trainWidth/2 + 20;
+
+                // 2. Draw Background (Ground and Trees)
+                ctx.fillStyle = '#86efac'; // light green
+                ctx.fillRect(0, groundY, w, h - groundY);
+                
+                // Draw moving poles/trees to show train speed
+                ctx.fillStyle = '#64748b'; // slate
+                for(let i = 0; i < w + 100; i += 100) {
+                    const x = i + bgOffset;
+                    ctx.fillRect(x, groundY - 60, 4, 60); // pole
+                }
+
+                // 3. Draw Train (Centered)
+                const trainX = w/2 - trainWidth/2;
+                const trainY = groundY - 60;
+                
+                // Wheels
+                ctx.fillStyle = '#334155';
+                ctx.beginPath(); ctx.arc(trainX + 30, groundY - 10, 10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(trainX + trainWidth - 30, groundY - 10, 10, 0, Math.PI*2); ctx.fill();
+
+                // Train Body
+                ctx.fillStyle = '#3b82f6'; // blue
+                ctx.fillRect(trainX, trainY, trainWidth, 50);
+                
+                // Panoramic Window
+                ctx.fillStyle = '#bae6fd'; // sky blue (light and semi-transparent looking)
+                ctx.fillRect(trainX + 10, trainY + 10, trainWidth - 20, 25);
+
+                // 4. Draw Passenger (Inside the window)
+                const pX = w/2 + passengerX;
+                const pY = trainY + 22; // positioned vertically inside the window
+                
+                ctx.fillStyle = '#f59e0b'; // amber
+                ctx.beginPath();
+                ctx.arc(pX, pY - 6, 6, 0, Math.PI*2); // head
+                ctx.fill();
+                ctx.fillRect(pX - 4, pY, 8, 13); // body
+
+                // 5. Draw Vectors
+                // Вектор поезда (рисуем повыше)
+                drawArrow(ctx, w/2, trainY - 25, u * 2, '#3b82f6', 'v_пер'); 
+                // Вектор пассажира (рисуем чуть ниже вектора поезда, ровно над головой пассажира)
+                drawArrow(ctx, pX, trainY - 10, v_rel * 2, '#f59e0b', 'v_отн'); 
+
+                requestAnimationFrame(draw);
+            }
+            
+            requestAnimationFrame(draw);
+        }
+
+        // Helper function to draw arrow for vectors
+        function drawArrow(ctx, x, y, length, color, label) {
+            if (length === 0) return;
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 3;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + length, y);
+            ctx.stroke();
+            
+            // Arrow head
+            const headlen = 8;
+            const angle = length > 0 ? 0 : Math.PI;
+            ctx.beginPath();
+            ctx.moveTo(x + length, y);
+            ctx.lineTo(x + length - headlen * Math.cos(angle - Math.PI / 6), y - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x + length - headlen * Math.cos(angle + Math.PI / 6), y - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.fill();
+        }
+    </script>
+</body>
+</html>

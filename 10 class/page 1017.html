@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Исследование скорости шарика в вязкой жидкости — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0284c7; /* Синий */
+            --primary-hover: #0369a1;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #38bdf8;
+                --primary-hover: #7dd3fc;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+        button:disabled { background-color: var(--border); cursor: not-allowed; color: var(--text-muted); }
+
+        input[type="range"] { width: 100%; cursor: pointer; margin-top: 8px; }
+        
+        /* Лаборатория */
+        .lab-container { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+        .lab-controls { flex: 1; min-width: 250px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.95rem; }
+        
+        .lab-sim { flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; }
+        .sim-canvas { background-color: #f1f5f9; border-radius: var(--radius); border: 1px solid var(--border); }
+        @media (prefers-color-scheme: dark) { .sim-canvas { background-color: #0f172a; border-color: #475569; } }
+        
+        .lab-data { flex: 2; min-width: 300px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; text-align: center; }
+        th, td { border: 1px solid var(--border); padding: 8px; }
+        th { background-color: var(--border); color: var(--text-main); font-size: 0.9rem; }
+        td { font-family: monospace; font-size: 1rem; }
+
+        .graph-canvas { width: 100%; max-width: 400px; height: 250px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; display: block; margin: 0 auto; }
+
+        .formula { background-color: var(--bg-color); padding: 16px; border-radius: 8px; font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center; margin-bottom: 16px;}
+        .highlight { color: var(--danger); font-weight: bold; }
+        .stopwatch { font-family: monospace; font-size: 1.5rem; color: var(--success); text-align: center; margin: 10px 0; background: #000; padding: 10px; border-radius: 8px;}
+        @media (prefers-color-scheme: dark) { .stopwatch { color: #4ade80; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ШАПКА -->
+    <header class="card">
+        <h1>Виртуальная лаборатория: Исследование скорости падения шарика</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            От чего зависит скорость, с которой частицы оседают в жидкости? Почему мелкие песчинки могут часами мутить воду, а крупные камни тонут мгновенно? Выясним это экспериментально, изучив связь скорости и радиуса!
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Теоретическое введение</h2>
+        <p>Когда шарик падает в вязкой жидкости, на него действуют три силы:</p>
+        <ol>
+            <li><b>Сила тяжести:</b> направлена вниз (F<sub>тяж</sub> = m &middot; g = &rho;<sub>т</sub> &middot; V &middot; g).</li>
+            <li><b>Выталкивающая сила (Архимеда):</b> направлена вверх (F<sub>А</sub> = &rho;<sub>ж</sub> &middot; V &middot; g).</li>
+            <li><b>Сила вязкого трения (сила Стокса):</b> направлена вверх, против движения (F<sub>Стокса</sub> = 6 &middot; &pi; &middot; &eta; &middot; r &middot; v).</li>
+        </ol>
+        <p>В начале падения скорость шарика мала, и он ускоряется. По мере роста скорости увеличивается сила Стокса. Очень скоро наступает момент, когда сумма всех сил становится равной нулю. Ускорение исчезает, и шарик начинает двигаться с постоянной (установившейся) скоростью.</p>
+        
+        <p>Если приравнять силы (F<sub>тяж</sub> = F<sub>А</sub> + F<sub>Стокса</sub>) и выразить скорость (v), получим формулу:</p>
+        <div class="formula">
+            <b>v = [ 2 &middot; g &middot; (&rho;<sub>т</sub> - &rho;<sub>ж</sub>) / (9 &middot; &eta;) ] &middot; r<sup>2</sup></b>
+        </div>
+        <p>Выражение в квадратных скобках — это константа для данных веществ. Значит, <b>скорость прямо пропорциональна квадрату радиуса шарика (v &sim; r<sup>2</sup>)</b>. Наша цель — проверить это экспериментально!</p>
+    </section>
+
+    <!-- ЛАБОРАТОРНАЯ УСТАНОВКА -->
+    <section class="card">
+        <h2>2. Выполнение эксперимента</h2>
+        <p><b>Ход работы:</b><br>
+        1. Установите радиус стального шарика с помощью ползунка.<br>
+        2. Нажмите «Бросить шарик». Секундомер автоматически измерит время (t) прохождения между двумя красными метками (база S = 30 см).<br>
+        3. Результаты (скорость v = S/t и квадрат радиуса r<sup>2</sup>) занесутся в таблицу, а на графике появится точка.<br>
+        4. Повторите опыт для всех радиусов от 1 до 5 мм. Какую линию образуют точки на графике v(r<sup>2</sup>)?</p>
+
+        <div class="lab-container">
+            <!-- Управление -->
+            <div class="lab-controls">
+                <div class="control-group">
+                    <label for="sim-radius">Радиус шарика (r): <span id="val-radius">1</span> мм</label>
+                    <input type="range" id="sim-radius" min="1" max="5" value="1" step="0.5">
+                </div>
+                
+                <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+                    <b>Параметры среды:</b><br>
+                    Жидкость: Глицерин (&eta; = 1.5 Па&middot;с)<br>
+                    Шарик: Сталь (&rho; = 7800 кг/м³)<br>
+                    Расстояние (S): 0.3 м
+                </div>
+
+                <button id="btn-drop" style="width: 100%; margin-bottom: 10px;">Бросить шарик</button>
+                <button id="btn-clear" class="secondary" style="width: 100%;">Очистить данные</button>
+                
+                <div class="stopwatch" id="stopwatch">
+                    0.000 с
+                </div>
+                <p style="text-align:center; font-size:0.8rem; color:var(--text-muted);">Автоматический секундомер</p>
+            </div>
+
+            <!-- Анимация -->
+            <div class="lab-sim">
+                <canvas id="simCanvas" width="150" height="400" class="sim-canvas"></canvas>
+            </div>
+
+            <!-- Данные и график -->
+            <div class="lab-data">
+                <h3 style="margin-top:0;">Журнал наблюдений</h3>
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <th>Опыт</th>
+                            <th>Радиус r (мм)</th>
+                            <th>Квадрат r<sup>2</sup> (мм<sup>2</sup>)</th>
+                            <th>Время t (с)</th>
+                            <th>Скорость v (м/с)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- Данные будут добавляться сюда -->
+                    </tbody>
+                </table>
+                
+                <h3 style="text-align:center; margin-top: 20px;">График зависимости v(r<sup>2</sup>)</h3>
+                <canvas id="graphCanvas" class="graph-canvas" width="400" height="250"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ВЫВОДЫ И ТЕСТ -->
+    <section class="card">
+        <h2>3. Анализ результатов и выводы</h2>
+        
+        <div class="task-block">
+            <h3>Вопрос к исследованию:</h3>
+            <p>Если радиус песчинки в реке увеличить в 2 раза, во сколько раз быстрее она будет оседать на дно? (Основываясь на ваших наблюдениях за графиком).</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ (разы)"> 
+            <button onclick="checkTask('taskA', 4, 0, 'Поскольку v ~ r², увеличение r в 2 раза дает 2² = 4. Скорость возрастет в 4 раза!')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <form id="quiz-form" style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <div class="test-question">
+                <p><b>1. Почему точки на построенном графике v(r<sup>2</sup>) ложатся на прямую линию, исходящую из начала координат?</b></p>
+                <label><input type="radio" name="q1" value="0"> Потому что скорость обратно пропорциональна квадрату радиуса.</label>
+                <label><input type="radio" name="q1" value="1"> Потому что существует прямая пропорциональная зависимость между скоростью и квадратом радиуса.</label>
+                <label><input type="radio" name="q1" value="0"> Потому что ускорение шарика постоянно.</label>
+                <label><input type="radio" name="q1" value="0"> Это случайное совпадение.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Где скорость шарика начинает измеряться секундомером в нашем опыте?</b></p>
+                <label><input type="radio" name="q2" value="0"> Сразу от поверхности жидкости.</label>
+                <label><input type="radio" name="q2" value="1"> Ниже верхней метки, когда шарик уже прекратил ускоряться и движется равномерно.</label>
+                <label><input type="radio" name="q2" value="0"> В самом конце цилиндра.</label>
+                <label><input type="radio" name="q2" value="0"> Секундомер измеряет время падения в воздухе.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Завершить лабораторную работу</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       ВИРТУАЛЬНАЯ ЛАБОРАТОРИЯ: ЛОГИКА
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    const graphCanvas = document.getElementById('graphCanvas');
+    const gCtx = graphCanvas.getContext('2d');
+    
+    // Элементы UI
+    const inRadius = document.getElementById('sim-radius');
+    const valRadius = document.getElementById('val-radius');
+    const btnDrop = document.getElementById('btn-drop');
+    const btnClear = document.getElementById('btn-clear');
+    const stopwatchDisplay = document.getElementById('stopwatch');
+    const tableBody = document.getElementById('table-body');
+
+    // Физические константы
+    const g = 9.8; // м/с^2
+    const rho_b = 7800; // Сталь, кг/м^3
+    const rho_f = 1260; // Глицерин, кг/м^3
+    const eta = 1.5; // Па*с
+
+    // Параметры симуляции
+    const pixelsPerMeter = 800; // 1 метр = 800 пикселей (чтобы 0.5 метра влезло в 400px)
+    const measureDistMeters = 0.3; // 30 см между метками
+    
+    // Координаты (в пикселях)
+    const yTopFluid = 20;
+    const yMarker1 = 80; // Первая метка начала отсчета
+    const yMarker2 = yMarker1 + measureDistMeters * pixelsPerMeter; // Вторая метка
+
+    let r_mm = 1;
+    let r_m = r_mm / 1000;
+    
+    // Состояние шарика
+    let y_m = 0; // в метрах от поверхности жидкости
+    let v_m = 0; // м/с
+    
+    let isFalling = false;
+    let isMeasuring = false;
+    let timerValue = 0; // секунды
+    let lastTime = 0;
+    let animId;
+
+    // База данных опытов
+    let expData = [];
+    let expCounter = 1;
+
+    function init() {
+        r_mm = parseFloat(inRadius.value);
+        valRadius.innerText = r_mm.toFixed(1);
+        drawSim();
+        drawGraph();
+    }
+
+    inRadius.addEventListener('input', () => {
+        if (!isFalling) {
+            r_mm = parseFloat(inRadius.value);
+            valRadius.innerText = r_mm.toFixed(1);
+            drawSim();
+        }
+    });
+
+    // Отрисовка цилиндра и шарика
+    function drawSim() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Жидкость
+        ctx.fillStyle = "rgba(203, 213, 225, 0.6)"; // Глицерин
+        ctx.fillRect(10, yTopFluid, canvas.width - 20, canvas.height - yTopFluid - 10);
+        
+        // Стенки
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(10, 0); ctx.lineTo(10, canvas.height - 10); ctx.lineTo(canvas.width - 10, canvas.height - 10); ctx.lineTo(canvas.width - 10, 0);
+        ctx.stroke();
+
+        // Поверхность
+        ctx.beginPath(); ctx.moveTo(10, yTopFluid); ctx.lineTo(canvas.width - 10, yTopFluid);
+        ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.stroke();
+
+        // Метки
+        ctx.strokeStyle = "rgba(220, 38, 38, 0.8)"; // Красные
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 2;
+        // Метка 1
+        ctx.beginPath(); ctx.moveTo(10, yMarker1); ctx.lineTo(canvas.width - 10, yMarker1); ctx.stroke();
+        // Метка 2
+        ctx.beginPath(); ctx.moveTo(10, yMarker2); ctx.lineTo(canvas.width - 10, yMarker2); ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Текст меток
+        ctx.fillStyle = "var(--danger)";
+        ctx.font = "12px Arial";
+        ctx.fillText("Старт", 15, yMarker1 - 5);
+        ctx.fillText("Стоп (S=0.3м)", 15, yMarker2 - 5);
+
+        // Шарик
+        let py = yTopFluid + y_m * pixelsPerMeter;
+        let r_vis = 3 + r_mm * 2; // Масштабируем радиус визуально
+        
+        // Защита от проваливания за дно
+        if (py + r_vis > canvas.height - 10) py = canvas.height - 10 - r_vis;
+
+        ctx.beginPath();
+        ctx.arc(canvas.width/2, py, r_vis, 0, Math.PI*2);
+        ctx.fillStyle = "#475569"; // Сталь
+        ctx.fill();
+        ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.stroke();
+        
+        // Блик
+        ctx.beginPath();
+        ctx.arc(canvas.width/2 - r_vis*0.3, py - r_vis*0.3, r_vis*0.2, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(255,255,255,0.4)";
+        ctx.fill();
+    }
+
+    // Физический цикл
+    function updatePhysics(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        let dt = (timestamp - lastTime) / 1000; // в секундах
+        lastTime = timestamp;
+        
+        // Ограничиваем dt при уходе со вкладки
+        if (dt > 0.1) dt = 0.016;
+
+        // Физика (интегрируем скорость)
+        r_m = r_mm / 1000;
+        let mass = rho_b * (4/3) * Math.PI * Math.pow(r_m, 3);
+        let Fg = mass * g;
+        let Fa = rho_f * (4/3) * Math.PI * Math.pow(r_m, 3) * g;
+        let Fs = 6 * Math.PI * eta * r_m * v_m;
+        
+        let a = (Fg - Fa - Fs) / mass;
+        v_m += a * dt;
+        y_m += v_m * dt;
+
+        let py = yTopFluid + y_m * pixelsPerMeter;
+
+        // Логика секундомера
+        if (py >= yMarker1 && py <= yMarker2) {
+            if (!isMeasuring) isMeasuring = true;
+            timerValue += dt;
+            stopwatchDisplay.innerText = timerValue.toFixed(3) + " с";
+        } else if (py > yMarker2 && isMeasuring) {
+            isMeasuring = false;
+            stopwatchDisplay.innerText = timerValue.toFixed(3) + " с";
+            finishExperiment();
+        }
+
+        drawSim();
+
+        if (isFalling && py < canvas.height - 20) {
+            animId = requestAnimationFrame(updatePhysics);
+        } else if (py >= canvas.height - 20) {
+            isFalling = false;
+            btnDrop.disabled = false;
+            inRadius.disabled = false;
+        }
+    }
+
+    function finishExperiment() {
+        let r_sq = r_mm * r_mm;
+        let measured_v = measureDistMeters / timerValue; // Экспериментальная скорость
+
+        // Добавляем в данные
+        expData.push({
+            id: expCounter,
+            r: r_mm,
+            r2: r_sq,
+            t: timerValue,
+            v: measured_v
+        });
+        
+        // Обновляем таблицу
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${expCounter}</td>
+            <td>${r_mm.toFixed(1)}</td>
+            <td>${r_sq.toFixed(2)}</td>
+            <td>${timerValue.toFixed(3)}</td>
+            <td class="highlight">${measured_v.toFixed(4)}</td>
+        `;
+        tableBody.appendChild(tr);
+        
+        expCounter++;
+        drawGraph();
+    }
+
+    btnDrop.addEventListener('click', () => {
+        if (isFalling) return;
+        
+        isFalling = true;
+        isMeasuring = false;
+        timerValue = 0;
+        y_m = 0;
+        v_m = 0;
+        lastTime = 0;
+        
+        stopwatchDisplay.innerText = "0.000 с";
+        btnDrop.disabled = true;
+        inRadius.disabled = true;
+        
+        requestAnimationFrame(updatePhysics);
+    });
+
+    btnClear.addEventListener('click', () => {
+        expData = [];
+        expCounter = 1;
+        tableBody.innerHTML = '';
+        drawGraph();
+        stopwatchDisplay.innerText = "0.000 с";
+        y_m = 0;
+        drawSim();
+    });
+
+    // Отрисовка графика
+    function drawGraph() {
+        gCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+        
+        const margin = 40;
+        const width = graphCanvas.width - margin * 2;
+        const height = graphCanvas.height - margin * 2;
+        const startX = margin;
+        const startY = graphCanvas.height - margin;
+
+        // Рисуем оси
+        gCtx.beginPath();
+        gCtx.moveTo(startX, margin - 10);
+        gCtx.lineTo(startX, startY);
+        gCtx.lineTo(startX + width + 10, startY);
+        gCtx.strokeStyle = "var(--text-main)";
+        gCtx.lineWidth = 2;
+        gCtx.stroke();
+        
+        // Стрелочки
+        gCtx.beginPath();
+        gCtx.moveTo(startX - 5, margin); gCtx.lineTo(startX, margin - 10); gCtx.lineTo(startX + 5, margin);
+        gCtx.fill();
+        gCtx.beginPath();
+        gCtx.moveTo(startX + width, startY - 5); gCtx.lineTo(startX + width + 10, startY); gCtx.lineTo(startX + width, startY + 5);
+        gCtx.fill();
+
+        // Подписи осей
+        gCtx.fillStyle = "var(--text-main)";
+        gCtx.font = "12px Arial";
+        gCtx.fillText("v (м/с)", startX + 10, margin - 5);
+        gCtx.fillText("r² (мм²)", startX + width - 20, startY + 20);
+
+        // Определяем максимумы
+        // Max r^2 = 25 (т.к. max r = 5)
+        const maxX = 25;
+        // Max v теорет при r=5 -> (2*9.8*6540/13.5) * 25e-6 ≈ 9495 * 25e-6 ≈ 0.237 м/с. Округлим до 0.25
+        const maxY = 0.25;
+
+        // Сетка
+        gCtx.strokeStyle = "var(--border)";
+        gCtx.lineWidth = 1;
+        gCtx.setLineDash([3, 3]);
+        
+        for(let i=1; i<=5; i++) {
+            // Вертикальные
+            let x = startX + (i*5 / maxX) * width;
+            gCtx.beginPath(); gCtx.moveTo(x, startY); gCtx.lineTo(x, margin); gCtx.stroke();
+            gCtx.fillText(i*5, x - 5, startY + 15);
+            
+            // Горизонтальные
+            let y = startY - (i*0.05 / maxY) * height;
+            gCtx.beginPath(); gCtx.moveTo(startX, y); gCtx.lineTo(startX + width, y); gCtx.stroke();
+            gCtx.fillText((i*0.05).toFixed(2), startX - 35, y + 4);
+        }
+        gCtx.setLineDash([]);
+
+        // Рисуем экспериментальные точки
+        gCtx.fillStyle = "var(--danger)";
+        for(let i=0; i<expData.length; i++) {
+            let pxX = startX + (expData[i].r2 / maxX) * width;
+            let pxY = startY - (expData[i].v / maxY) * height;
+            
+            gCtx.beginPath();
+            gCtx.arc(pxX, pxY, 4, 0, Math.PI*2);
+            gCtx.fill();
+        }
+
+        // Рисуем аппроксимирующую прямую (линию тренда), если точек >= 2
+        if (expData.length >= 2) {
+            // Простейшая аппроксимация, проходящая через (0,0) (ведь при r=0 скорость v=0)
+            // Коэффициент наклона k = sum(r2 * v) / sum(r2 * r2)
+            let sumXY = 0, sumXX = 0;
+            for(let i=0; i<expData.length; i++) {
+                sumXY += expData[i].r2 * expData[i].v;
+                sumXX += expData[i].r2 * expData[i].r2;
+            }
+            let k = sumXY / sumXX;
+            
+            let endX = maxX;
+            let endY = k * maxX;
+            
+            let pxStartX = startX;
+            let pxStartY = startY;
+            let pxEndX = startX + width;
+            let pxEndY = startY - (endY / maxY) * height;
+            
+            // Защита, чтобы линия не ушла за верхнюю границу
+            if (pxEndY < margin) {
+                pxEndY = margin;
+                let adjustedX = (maxY / k);
+                pxEndX = startX + (adjustedX / maxX) * width;
+            }
+
+            gCtx.beginPath();
+            gCtx.moveTo(pxStartX, pxStartY);
+            gCtx.lineTo(pxEndX, pxEndY);
+            gCtx.strokeStyle = "var(--primary)";
+            gCtx.lineWidth = 2;
+            gCtx.stroke();
+        }
+    }
+
+    init();
+
+    /* =========================================
+       ПРОВЕРКА ЗАДАНИЙ И ТЕСТОВ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Экспериментально доказано.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 2;
+
+        const explanations = [
+            "1. График представляет собой прямую, исходящую из начала координат, что математически означает прямую пропорциональную зависимость: v = k * r².",
+            "2. Чтобы измерить именно установившуюся (постоянную) скорость, необходимо дать шарику время на ускорение. Секундомер запускается ниже, когда a = 0."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Ответьте на все вопросы перед завершением работы.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 0 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Оценка за лабораторию: ${score} из ${total}.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Анализ ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Лабораторная работа выполнена успешно! Цель достигнута.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

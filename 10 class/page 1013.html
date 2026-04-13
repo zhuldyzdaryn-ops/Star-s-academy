@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Центр масс. Виды равновесия — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #059669; /* Изумрудный */
+            --primary-hover: #047857;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #34d399;
+                --primary-hover: #6ee7b7;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #020617; border-color: #475569; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Центр масс. Виды равновесия — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Почему Пизанская башня стоит веками и не падает, несмотря на сильный наклон? Как игрушка-неваляшка всегда возвращается в вертикальное положение? Секрет устойчивости кроется в расположении одной особенной точки — центра масс.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Немного теории</h2>
+        <p><b>Центр масс (центр тяжести)</b> — это геометрическая точка, характеризующая распределение масс в теле или системе тел. Если мысленно приложить всю силу к этой точке, тело будет двигаться поступательно, не вращаясь.</p>
+        <p>Для того чтобы тело находилось в равновесии, вертикальная линия, проведенная через центр масс, должна проходить внутри площади опоры тела.</p>
+        <p>Существует три вида равновесия:</p>
+        <ul>
+            <li><b>Устойчивое:</b> При малейшем отклонении возникают силы (или моменты сил), возвращающие тело в исходное положение. Центр масс при отклонении <i>поднимается</i>.</li>
+            <li><b>Неустойчивое:</b> При малом отклонении тело уходит из начального положения всё дальше. Центр масс при отклонении <i>опускается</i>.</li>
+            <li><b>Безразличное:</b> При отклонении тело остается в новом положении. Высота центра масс <i>не изменяется</i>.</li>
+        </ul>
+    </section>
+
+    <!-- 3) ПРИМЕРЫ ИЗ ЖИЗНИ -->
+    <section class="card">
+        <h2>2. Примеры из жизни</h2>
+        <ul>
+            <li><b>Игрушка-неваляшка:</b> Внутри основания неваляшки спрятан тяжелый груз. Её центр масс находится очень низко. Любой наклон заставляет центр масс приподниматься, что создает возвращающий момент (устойчивое равновесие).</li>
+            <li><b>Канатоходцы с длинным шестом:</b> Шест не только увеличивает момент инерции, но и (если он изогнут или провисает вниз) может смещать общий центр масс человека с шестом ниже точки опоры (каната), делая равновесие более устойчивым.</li>
+            <li><b>Пизанская башня:</b> Башня наклонена, но она не падает, потому что проекция её центра масс (вертикальная линия, опущенная вниз) всё ещё находится внутри площади её фундамента. Если наклон увеличится и проекция выйдет за край фундамента — башня рухнет.</li>
+        </ul>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ -->
+    <section class="card">
+        <h2>3. Формулы и обозначения</h2>
+        <p>Координата центра масс X<sub>c</sub> для системы материальных точек на оси X рассчитывается по формуле:</p>
+        <div class="formula">
+            <b>X<sub>c</sub> = (m<sub>1</sub>&middot;x<sub>1</sub> + m<sub>2</sub>&middot;x<sub>2</sub> + ... + m<sub>n</sub>&middot;x<sub>n</sub>) / (m<sub>1</sub> + m<sub>2</sub> + ... + m<sub>n</sub>)</b>
+        </div>
+        <p>Условие равновесия рычага (правило моментов):</p>
+        <div class="formula">
+            <b>F<sub>1</sub> &middot; l<sub>1</sub> = F<sub>2</sub> &middot; l<sub>2</sub></b> &nbsp; или &nbsp; <b>m<sub>1</sub> &middot; x<sub>1</sub> = m<sub>2</sub> &middot; x<sub>2</sub></b>
+        </div>
+        <p><b>Обозначения:</b></p>
+        <ul>
+            <li><b>X<sub>c</sub></b> — координата центра масс (м)</li>
+            <li><b>m<sub>1</sub>, m<sub>2</sub></b> — массы отдельных частей или тел (кг)</li>
+            <li><b>x<sub>1</sub>, x<sub>2</sub></b> — координаты этих масс (м)</li>
+            <li><b>l<sub>1</sub>, l<sub>2</sub></b> — плечи сил (расстояния от точки опоры до линии действия силы) (м)</li>
+        </ul>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Балансировка и Центр Масс</h2>
+        <p>Перед вами доска-рычаг. Перемещайте грузы и меняйте их массу. <br><b>Цель:</b> Сделать так, чтобы общий Центр Масс (отмечен <span style="color:#ef4444; font-weight:bold;">красным крестиком</span>) совпал с точкой опоры (нулем). Если центр масс смещен, доска наклоняется в его сторону.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-m1">Масса синего груза (m<sub>1</sub>): <span id="val-m1">20</span> кг</label>
+                    <input type="range" id="sim-m1" min="5" max="50" value="20" step="5">
+                </div>
+                
+                <div class="control-group">
+                    <label for="sim-x1">Позиция синего (x<sub>1</sub>): <span id="val-x1">-4</span> м</label>
+                    <input type="range" id="sim-x1" min="-5" max="-1" value="-4" step="0.5">
+                </div>
+
+                <div class="control-group" style="margin-top: 20px;">
+                    <label for="sim-m2">Масса зеленого груза (m<sub>2</sub>): <span id="val-m2">40</span> кг</label>
+                    <input type="range" id="sim-m2" min="5" max="50" value="40" step="5">
+                </div>
+
+                <div class="control-group">
+                    <label for="sim-x2">Позиция зеленого (x<sub>2</sub>): <span id="val-x2">3</span> м</label>
+                    <input type="range" id="sim-x2" min="1" max="5" value="3" step="0.5">
+                </div>
+
+                <div id="sim-status" class="sim-status" style="margin-top: 15px; font-family: monospace; font-size: 1.1rem; color: var(--primary);">
+                    Координата X<sub>c</sub> = <span id="out-xc">0.00</span> м
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+                <p class="sim-status" id="sim-info">Что наблюдаем: Система находится в равновесии только тогда, когда общий центр масс (X<sub>c</sub>) находится точно над точкой опоры (X = 0).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> На невесомом стержне закреплены два шарика. Масса первого шарика m<sub>1</sub> = 2 кг, он находится в точке с координатой x<sub>1</sub> = 1 м. Масса второго шарика m<sub>2</sub> = 3 кг, он находится в точке x<sub>2</sub> = 6 м. Найдите координату центра масс этой системы.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                m<sub>1</sub> = 2 кг, x<sub>1</sub> = 1 м<br>
+                m<sub>2</sub> = 3 кг, x<sub>2</sub> = 6 м<br>
+                <b>Найти:</b> X<sub>c</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула:</b><br>
+                X<sub>c</sub> = (m<sub>1</sub>&middot;x<sub>1</sub> + m<sub>2</sub>&middot;x<sub>2</sub>) / (m<sub>1</sub> + m<sub>2</sub>)</p>
+                <p><b>Подстановка и шаги:</b><br>
+                1. Считаем числитель (сумма моментов масс): 2 &middot; 1 + 3 &middot; 6 = 2 + 18 = 20 кг&middot;м.<br>
+                2. Считаем знаменатель (общая масса): 2 + 3 = 5 кг.<br>
+                3. Делим числитель на знаменатель: X<sub>c</sub> = 20 / 5 = 4 м.</p>
+                <p><b>Ответ:</b> Координата центра масс X<sub>c</sub> = 4 м. Заметьте, что центр масс всегда ближе к более тяжелому телу (от 4 м до второго шара всего 2 метра, а до первого — 3 метра).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Базовый: Равновесие рычага)</h3>
+            <p>На левом конце качелей на расстоянии 2 метра от опоры сидит мальчик массой 30 кг. На каком <b>расстоянии</b> (в метрах) от опоры на правом конце должен сесть его папа массой 60 кг, чтобы качели находились в равновесии?</p>
+            <input type="number" id="taskA-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 1, 0, 'Используйте правило моментов: m1 * l1 = m2 * l2. Подставьте: 30 * 2 = 60 * l2.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает условие равновесия рычага (правило моментов).</li>
+                    <li>Понимает обратно пропорциональную зависимость массы и плеча.</li>
+                    <li>Верно решает линейное уравнение с одной неизвестной.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет координаты центра масс)</h3>
+            <p>Две точечные массы m<sub>1</sub> = 10 кг и m<sub>2</sub> = 40 кг расположены на оси X. Координата первой массы x<sub>1</sub> = 0 м (начало координат), координата второй x<sub>2</sub> = 5 м. Найдите координату <b>X<sub>c</sub></b> (в метрах) центра масс этой системы.</p>
+            <input type="number" id="taskB-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 4, 0.1, 'Используйте формулу: Xc = (10*0 + 40*5) / (10 + 40).')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Применяет формулу центра масс для системы материальных точек.</li>
+                    <li>Учитывает, что умножение на координату 0 дает 0.</li>
+                    <li>Верно вычисляет сумму масс и итоговую координату.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: устойчивость)</h3>
+            <p>Однородный куб опирается на грань. Если его немного наклонить, приподняв один край, и отпустить, он вернется на место. Какой это <b>вид равновесия</b>?<br>
+            <i>Введите <b>1</b> (Устойчивое), <b>2</b> (Неустойчивое) или <b>3</b> (Безразличное).</i></p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 1, 0, 'При наклоне куба, опирающегося на ребро, его центр масс приподнимается вверх, а сила тяжести создает момент, возвращающий куб на грань.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает физический смысл видов равновесия.</li>
+                    <li>Анализирует изменение высоты центра масс при отклонении твердого тела от положения равновесия.</li>
+                    <li>Делает верный логический вывод.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) ВИДЕО -->
+    <section class="card">
+        <h2>7. Видео по теме</h2>
+        <p>Для закрепления материала посмотрите подборку наглядных опытов с центром тяжести и балансирующими конструкциями:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=центр+масс+виды+равновесия+физика+10+класс+опыты" target="_blank" class="video-link">
+                ▶ Смотреть видеоопыты на YouTube
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке)</p>
+    </section>
+
+    <!-- 9) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>8. Рефлексия</h2>
+        <p>Оцените, насколько хорошо вы усвоили тему:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я могу своими словами объяснить, что такое центр масс.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я понимаю разницу между устойчивым, неустойчивым и безразличным равновесием.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я умею рассчитывать координату центра масс по формуле.</label>
+        </div>
+        <button onclick="alert('Отличная работа! Умение находить центр масс — основа всей статики и строительства.')" style="margin-top: 10px;">Зафиксировать результат</button>
+    </section>
+
+    <!-- 10) ТЕСТ -->
+    <section class="card">
+        <h2>9. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Центр масс тела — это точка...</b></p>
+                <label><input type="radio" name="q1" value="0"> В которой масса тела равна нулю.</label>
+                <label><input type="radio" name="q1" value="1"> Описывающая поступательное движение тела как движение материальной точки всей массы.</label>
+                <label><input type="radio" name="q1" value="0"> Которая всегда находится строго геометрическом центре тела.</label>
+                <label><input type="radio" name="q1" value="0"> Вокруг которой тело вращается быстрее всего.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Шарик лежит на дне вогнутой сферической чаши. Какое это равновесие?</b></p>
+                <label><input type="radio" name="q2" value="0"> Неустойчивое.</label>
+                <label><input type="radio" name="q2" value="1"> Устойчивое.</label>
+                <label><input type="radio" name="q2" value="0"> Безразличное.</label>
+                <label><input type="radio" name="q2" value="0"> Динамическое.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Главное условие того, что свободно стоящее на поверхности тело (например, шкаф) НЕ опрокинется:</b></p>
+                <label><input type="radio" name="q3" value="0"> Центр масс должен находиться как можно выше.</label>
+                <label><input type="radio" name="q3" value="0"> Масса тела должна быть очень большой.</label>
+                <label><input type="radio" name="q3" value="1"> Вертикаль, опущенная из центра масс, должна пересекать площадь опоры.</label>
+                <label><input type="radio" name="q3" value="0"> Тело должно иметь симметричную форму.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Колесо катится по ровной горизонтальной дороге и останавливается. Каким было его равновесие в состоянии покоя?</b></p>
+                <label><input type="radio" name="q4" value="0"> Устойчивым.</label>
+                <label><input type="radio" name="q4" value="0"> Неустойчивым.</label>
+                <label><input type="radio" name="q4" value="1"> Безразличным.</label>
+                <label><input type="radio" name="q4" value="0"> Абсолютным.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Две массы 5 кг и 15 кг закреплены на концах невесомого стержня длиной 4 м. На каком расстоянии от массы 5 кг находится центр масс?</b></p>
+                <label><input type="radio" name="q5" value="0"> 1 м.</label>
+                <label><input type="radio" name="q5" value="0"> 2 м.</label>
+                <label><input type="radio" name="q5" value="1"> 3 м.</label>
+                <label><input type="radio" name="q5" value="0"> 4 м.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: РЫЧАГ И ЦЕНТР МАСС
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const inM1 = document.getElementById('sim-m1');
+    const inX1 = document.getElementById('sim-x1');
+    const inM2 = document.getElementById('sim-m2');
+    const inX2 = document.getElementById('sim-x2');
+    
+    const valM1 = document.getElementById('val-m1');
+    const valX1 = document.getElementById('val-x1');
+    const valM2 = document.getElementById('val-m2');
+    const valX2 = document.getElementById('val-x2');
+    
+    const outXc = document.getElementById('out-xc');
+
+    // Физические параметры
+    let m1 = 20;
+    let x1 = -4;
+    let m2 = 40;
+    let x2 = 3;
+    let Xc = 0;
+    
+    // Анимация наклона доски
+    let currentAngle = 0;
+    let targetAngle = 0;
+
+    function updatePhysics() {
+        m1 = parseFloat(inM1.value);
+        x1 = parseFloat(inX1.value);
+        m2 = parseFloat(inM2.value);
+        x2 = parseFloat(inX2.value);
+        
+        valM1.innerText = m1;
+        valX1.innerText = x1;
+        valM2.innerText = m2;
+        valX2.innerText = x2;
+
+        // Расчет центра масс (невесомая доска)
+        Xc = (m1 * x1 + m2 * x2) / (m1 + m2);
+        
+        // Отображение с точностью 2 знака
+        outXc.innerText = Xc.toFixed(2);
+        if (Math.abs(Xc) < 0.05) {
+            outXc.style.color = "var(--success)";
+        } else {
+            outXc.style.color = "var(--danger)";
+        }
+
+        // Вычисление целевого угла наклона (чисто визуальная пропорция)
+        // Если Xc > 0, перевешивает вправо (положительный угол)
+        targetAngle = Xc * 10; // 1 метр смещения = 10 градусов наклона
+        
+        // Ограничиваем наклон, чтобы доска не ушла "под землю"
+        if (targetAngle > 25) targetAngle = 25;
+        if (targetAngle < -25) targetAngle = -25;
+    }
+
+    [inM1, inX1, inM2, inX2].forEach(el => el.addEventListener('input', updatePhysics));
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        const cx = canvas.width / 2;
+        const cy = canvas.height - 60; // Точка опоры ближе к низу
+        
+        const pixelsPerMeter = 40; // Масштаб: 1 м = 40 пикселей
+
+        // Плавно меняем угол для анимации падения/балансировки
+        currentAngle += (targetAngle - currentAngle) * 0.1;
+        let angleRad = currentAngle * Math.PI / 180;
+
+        // Рисуем землю
+        ctx.beginPath();
+        ctx.moveTo(0, cy + 30);
+        ctx.lineTo(canvas.width, cy + 30);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Рисуем треугольную опору
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx - 20, cy + 30);
+        ctx.lineTo(cx + 20, cy + 30);
+        ctx.closePath();
+        ctx.fillStyle = "#64748b";
+        ctx.fill();
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angleRad);
+
+        // Рисуем доску-рычаг (от -5м до +5м)
+        const boardLength = 10 * pixelsPerMeter;
+        ctx.fillStyle = "#d97706"; // Деревянный цвет
+        ctx.fillRect(-boardLength/2, -8, boardLength, 16);
+        ctx.strokeStyle = "#b45309";
+        ctx.strokeRect(-boardLength/2, -8, boardLength, 16);
+
+        // Рисуем разметку на доске (каждый метр)
+        ctx.fillStyle = "#000";
+        for (let i = -5; i <= 5; i++) {
+            if (i === 0) continue;
+            ctx.fillRect(i * pixelsPerMeter - 1, -8, 2, 6);
+        }
+
+        // Функция рисования груза
+        function drawMass(m, xPos, color) {
+            let size = 15 + m * 0.5; // Визуальный размер зависит от массы
+            let pxX = xPos * pixelsPerMeter;
+            
+            ctx.fillStyle = color;
+            // Центруем груз на координате X, и ставим его поверх доски
+            ctx.fillRect(pxX - size/2, -8 - size, size, size);
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pxX - size/2, -8 - size, size, size);
+            
+            // Пишем массу
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "12px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText(m + " кг", pxX, -10 - size/2);
+        }
+
+        // Рисуем Груз 1 (Синий)
+        drawMass(m1, x1, "#3b82f6");
+        
+        // Рисуем Груз 2 (Зеленый)
+        drawMass(m2, x2, "#10b981");
+
+        // Отмечаем общий ЦЕНТР МАСС красным крестиком на доске
+        let pxXc = Xc * pixelsPerMeter;
+        ctx.beginPath();
+        ctx.moveTo(pxXc - 8, -8);
+        ctx.lineTo(pxXc + 8, 8);
+        ctx.moveTo(pxXc + 8, -8);
+        ctx.lineTo(pxXc - 8, 8);
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+        ctx.restore();
+
+        // Подпись к крестику (всегда горизонтально)
+        ctx.fillStyle = "#ef4444";
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "center";
+        
+        // Вычисляем координаты крестика на экране после вращения
+        let screenXc = cx + Math.cos(angleRad) * (Xc * pixelsPerMeter) - Math.sin(angleRad) * 0;
+        let screenYc = cy + Math.sin(angleRad) * (Xc * pixelsPerMeter) + Math.cos(angleRad) * 0;
+        
+        ctx.fillText("Ц.М.", screenXc, screenYc - 20);
+
+        requestAnimationFrame(draw);
+    }
+
+    // Инициализация
+    updatePhysics();
+    draw(); // Запуск цикла отрисовки
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        const inputVal = parseFloat(document.getElementById(id + '-input').value);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Центр масс — это точка, движение которой описывает поступательное движение всей системы (будто в ней сосредоточена вся масса).",
+            "2. Устойчивое равновесие: при смещении шарика из центра чаши он поднимается, и сила тяжести возвращает его обратно на дно.",
+            "3. Условие не-опрокидывания: вертикальная линия (проекция силы тяжести), опущенная из центра масс, не должна выходить за границы площади опоры.",
+            "4. Безразличное равновесие: при перекатывании круглого колеса по ровной дороге высота его центра масс не меняется.",
+            "5. Xc = (5*0 + 15*4) / (5 + 15) = 60 / 20 = 3 метра. Центр масс находится на расстоянии 3 м от массы 5 кг (ближе к тяжелому грузу 15 кг)."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречно! Статика и виды равновесия усвоены на 100%.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

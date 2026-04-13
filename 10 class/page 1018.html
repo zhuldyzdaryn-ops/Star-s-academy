@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Температура как мера кинетической энергии — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #ef4444; /* Красный (тепло) */
+            --primary-hover: #dc2626;
+            --accent: #3b82f6; /* Синий (холод) */
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #f87171;
+                --primary-hover: #ef4444;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #0f172a;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Температура как мера кинетической энергии — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Что на самом деле измеряет термометр? Когда мы говорим, что предмет "горячий", мы просто констатируем факт: молекулы этого предмета движутся очень быстро!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Тепловое равновесие и Температура</h2>
+        <p>Если привести в контакт горячее и холодное тела, они будут обмениваться энергией до тех пор, пока их состояния не уравняются. Это состояние называется <b>тепловым равновесием</b>.</p>
+        <p><b>Температура</b> — это физическая величина, характеризующая состояние теплового равновесия системы. У всех тел, находящихся в тепловом равновесии друг с другом, температура одинакова.</p>
+        <p>С точки зрения микромира (молекулярно-кинетической теории), <b>температура — это прямая мера средней кинетической энергии хаотического (теплового) движения молекул.</b></p>
+        <ul>
+            <li>Чем быстрее движутся молекулы, тем выше температура.</li>
+            <li>При охлаждении движение молекул замедляется.</li>
+            <li>Предел охлаждения — состояние, при котором поступательное движение молекул прекращается. Эта точка называется <b>Абсолютным нулем</b>.</li>
+        </ul>
+    </section>
+
+    <!-- 3) ШКАЛЫ И АБСОЛЮТНЫЙ НУЛЬ -->
+    <section class="card">
+        <h2>2. Абсолютная шкала температур (Шкала Кельвина)</h2>
+        <p>Привычная нам шкала Цельсия привязана к свойствам воды (0 &deg;C — замерзание, 100 &deg;C — кипение). В физике удобнее использовать абсолютную шкалу (шкалу Кельвина), которая начинается от абсолютного нуля.</p>
+        <ul>
+            <li><b>Абсолютный нуль:</b> 0 К = &minus;273.15 &deg;C (для простоты расчетов часто берут &minus;273 &deg;C).</li>
+            <li>Цена одного деления (градуса) в шкале Кельвина равна одному градусу Цельсия: <b>&Delta;T = &Delta;t</b>.</li>
+        </ul>
+        <p>Формула связи шкал:</p>
+        <div class="formula">
+            <b>T = t + 273</b> &nbsp;&nbsp;&nbsp; (где T — в Кельвинах, t — в &deg;C)
+        </div>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ И ПОСТОЯННАЯ БОЛЬЦМАНА -->
+    <section class="card">
+        <h2>3. Главное уравнение и Постоянная Больцмана</h2>
+        <p>Связь между макроскопической температурой (T) и микроскопической энергией одной молекулы (E<sub>k</sub>) установил Людвиг Больцман:</p>
+        <div class="formula">
+            <b>E<sub>k</sub> = <sup>3</sup>/<sub>2</sub> &middot; k &middot; T</b>
+        </div>
+        <p>Где <b>k</b> — <b>постоянная Больцмана</b>. Она является своеобразным "мостом" между макро- и микромиром:</p>
+        <div class="formula" style="color: var(--primary);">
+            <b>k = 1.38 &middot; 10<sup>&minus;23</sup> Дж/К</b>
+        </div>
+        
+        <p>Так как кинетическая энергия E<sub>k</sub> = (m<sub>0</sub> &middot; v<sup>2</sup>) / 2, мы можем выразить <b>среднюю квадратичную скорость</b> движения молекулы газа:</p>
+        <div class="formula">
+            <b>v<sub>кв</sub> = &radic;(3 &middot; k &middot; T / m<sub>0</sub>)</b>
+        </div>
+        <p>Из этой формулы видно два важных следствия:</p>
+        <ol>
+            <li>При одной и той же температуре (T = const) <b>легкие молекулы движутся быстрее</b> тяжелых.</li>
+            <li>При нагревании (росте T) скорость молекул увеличивается пропорционально корню квадратному из температуры.</li>
+        </ol>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Скорость молекул газа</h2>
+        <p>В закрытом сосуде находится газ. Выберите тип газа (массу молекул) и изменяйте температуру. Следите за расчетной скоростью молекул и их визуальным поведением.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-gas">Тип газа (молярная масса):</label>
+                    <select id="sim-gas">
+                        <option value="2">Водород (H₂, M = 2 г/моль)</option>
+                        <option value="4">Гелий (He, M = 4 г/моль)</option>
+                        <option value="28">Азот (N₂, M = 28 г/моль)</option>
+                        <option value="32" selected>Кислород (O₂, M = 32 г/моль)</option>
+                        <option value="44">Углекислый газ (CO₂, M = 44 г/моль)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="sim-temp">Температура (T): <span id="val-temp">300</span> К (<span id="val-celsius">27</span> °C)</label>
+                    <input type="range" id="sim-temp" min="10" max="1000" value="300" step="10">
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-toggle">Пауза / Пуск</button>
+                </div>
+                
+                <div id="sim-dashboard" style="background: var(--bg-color); padding: 12px; margin-top: 15px; border-radius: 8px; font-family: monospace; font-size: 0.95rem;">
+                    <b>Показатели молекулы:</b><br>
+                    Кинетическая энергия (E<sub>k</sub>):<br>
+                    <span id="out-ek" style="color:var(--primary); font-weight:bold;">--</span> &middot; 10<sup>&minus;21</sup> Дж<br><br>
+                    Средняя скорость (v<sub>кв</sub>):<br>
+                    <span id="out-v" style="color:var(--success); font-size:1.2rem; font-weight:bold;">--</span> м/с
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="400" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Обратите внимание: даже при комнатной температуре молекулы носятся со скоростями пуль!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Найдите среднюю кинетическую энергию поступательного движения одной молекулы идеального газа при температуре 27 &deg;C. Постоянная Больцмана k = 1.38 &middot; 10<sup>&minus;23</sup> Дж/К.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                t = 27 &deg;C<br>
+                k = 1.38 &middot; 10<sup>&minus;23</sup> Дж/К<br>
+                <b>Найти:</b> E<sub>k</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула и шаги:</b><br>
+                1. Переведем температуру в абсолютную шкалу (Кельвины):<br>
+                T = t + 273 = 27 + 273 = 300 К.<br>
+                2. Запишем основную формулу, связывающую энергию и температуру:<br>
+                E<sub>k</sub> = <sup>3</sup>/<sub>2</sub> &middot; k &middot; T = 1.5 &middot; k &middot; T<br>
+                3. Подставим значения:<br>
+                E<sub>k</sub> = 1.5 &middot; 1.38 &middot; 10<sup>&minus;23</sup> &middot; 300<br>
+                4. Вычислим: 1.5 &middot; 300 = 450. Затем 450 &middot; 1.38 = 621.<br>
+                E<sub>k</sub> = 621 &middot; 10<sup>&minus;23</sup> Дж = 6.21 &middot; 10<sup>&minus;21</sup> Дж.</p>
+                <p><b>Ответ:</b> Средняя кинетическая энергия молекулы равна 6.21 &middot; 10<sup>&minus;21</sup> Дж.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Перевод шкал)</h3>
+            <p>Температура кипения жидкого азота равна &minus;196 &deg;C. Чему равна эта температура по <b>абсолютной шкале Кельвина</b> (в К)?</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ (К)"> 
+            <button onclick="checkTask('taskA', 77, 0, 'Используйте формулу связи шкал: T = t + 273. То есть T = -196 + 273.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает формулу связи шкал Цельсия и Кельвина.</li>
+                    <li>Умеет выполнять алгебраическое сложение с отрицательными числами.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Изменение температуры)</h3>
+            <p>Абсолютную температуру идеального газа увеличили в <b>4 раза</b> (например, с 100 К до 400 К). Во сколько раз увеличилась <b>средняя квадратичная скорость</b> движения его молекул?</p>
+            <input type="number" id="taskB-input" placeholder="Ваш ответ (разы)"> 
+            <button onclick="checkTask('taskB', 2, 0, 'Скорость пропорциональна КОРНЮ квадратному из температуры (v ~ √T). Если Т выросла в 4 раза, скорость выросла в √4 раз.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Анализирует формулу v = √(3kT/m0).</li>
+                    <li>Понимает квадратичную (корневую) зависимость скорости от температуры.</li>
+                    <li>Делает правильный вывод о кратности изменения величины.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Энергия газа)</h3>
+            <p>При какой температуре (в Кельвинах) средняя кинетическая энергия молекулы одноатомного газа будет равна 1.035 &middot; 10<sup>&minus;20</sup> Дж? (Примите k = 1.38 &middot; 10<sup>&minus;23</sup> Дж/К).</p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ (К)"> 
+            <button onclick="checkTask('taskC', 500, 0, 'Из формулы Ek = 1.5 * k * T выразите температуру: T = Ek / (1.5 * k). При делении степеней 10^{-20} / 10^{-23} получится 10^3 = 1000.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Выражает неизвестную величину (T) из основного уравнения.</li>
+                    <li>Умеет делить числа со степенями.</li>
+                    <li>Получает верный численный результат температуры.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <p>Проверьте себя по итогам урока:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я могу перевести температуру из градусов Цельсия в Кельвины и обратно.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я понимаю физический смысл абсолютного нуля (движение молекул прекращается).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я знаю, что при одинаковой температуре легкие молекулы летают быстрее тяжелых.</label>
+        </div>
+        <button onclick="alert('Отлично! Теперь вы знаете, что термометр измеряет не абстрактное «тепло», а вполне реальную кинетическую энергию молекул.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Что характеризует температура с точки зрения молекулярно-кинетической теории?</b></p>
+                <label><input type="radio" name="q1" value="0"> Суммарный объем всех молекул газа.</label>
+                <label><input type="radio" name="q1" value="1"> Среднюю кинетическую энергию хаотического движения молекул.</label>
+                <label><input type="radio" name="q1" value="0"> Потенциальную энергию взаимодействия молекул.</label>
+                <label><input type="radio" name="q1" value="0"> Количество молекул в единице объема.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Чему равна температура абсолютного нуля по шкале Цельсия (приближенно)?</b></p>
+                <label><input type="radio" name="q2" value="0"> 0 &deg;C.</label>
+                <label><input type="radio" name="q2" value="0"> +273 &deg;C.</label>
+                <label><input type="radio" name="q2" value="1"> &minus;273 &deg;C.</label>
+                <label><input type="radio" name="q2" value="0"> &minus;100 &deg;C.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Постоянная Больцмана связывает:</b></p>
+                <label><input type="radio" name="q3" value="0"> Давление и объем газа.</label>
+                <label><input type="radio" name="q3" value="1"> Температуру (в Кельвинах) и среднюю кинетическую энергию одной молекулы.</label>
+                <label><input type="radio" name="q3" value="0"> Массу молекулы и её скорость.</label>
+                <label><input type="radio" name="q3" value="0"> Шкалу Цельсия и Фаренгейта.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. В комнате при температуре 20 &deg;C находятся кислород (O<sub>2</sub>) и водород (H<sub>2</sub>). Молекулы какого газа движутся быстрее?</b></p>
+                <label><input type="radio" name="q4" value="1"> Водорода (так как он легче).</label>
+                <label><input type="radio" name="q4" value="0"> Кислорода (так как он тяжелее).</label>
+                <label><input type="radio" name="q4" value="0"> Скорости молекул обоих газов одинаковы, так как температура одинакова.</label>
+                <label><input type="radio" name="q4" value="0"> Зависит от давления в комнате.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как изменится средняя кинетическая энергия молекул газа, если его абсолютную температуру уменьшить в 3 раза?</b></p>
+                <label><input type="radio" name="q5" value="0"> Уменьшится в 9 раз.</label>
+                <label><input type="radio" name="q5" value="0"> Уменьшится в &radic;3 раз.</label>
+                <label><input type="radio" name="q5" value="1"> Уменьшится в 3 раза.</label>
+                <label><input type="radio" name="q5" value="0"> Не изменится.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: СКОРОСТЬ МОЛЕКУЛ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const selGas = document.getElementById('sim-gas');
+    const inTemp = document.getElementById('sim-temp');
+    
+    const valTemp = document.getElementById('val-temp');
+    const valCelsius = document.getElementById('val-celsius');
+    
+    const outEk = document.getElementById('out-ek');
+    const outV = document.getElementById('out-v');
+    
+    const btnToggle = document.getElementById('btn-toggle');
+
+    let isRunning = true;
+    let animId;
+
+    // Физические константы для расчетов (упрощенные)
+    const k_boltzmann = 1.38e-23;
+    const N_A = 6.02e23;
+    
+    // Состояние системы
+    let tempK = 300;
+    let molarMassGram = 32; // O2 по умолчанию
+    
+    // Частицы
+    const numParticles = 100;
+    let particles = [];
+    
+    // Вычисление реальной скорости (м/с)
+    function calculateRealSpeed() {
+        let m0 = (molarMassGram * 1e-3) / N_A; // масса одной молекулы в кг
+        let v_sq = Math.sqrt((3 * k_boltzmann * tempK) / m0);
+        return v_sq;
+    }
+
+    // Вычисление энергии (в единицах 10^-21 Дж)
+    function calculateEnergy() {
+        let ek = 1.5 * k_boltzmann * tempK;
+        return ek * 1e21; // Перевод для красивого отображения
+    }
+
+    function initParticles() {
+        particles = [];
+        let simSpeed = getVisualSpeed();
+        let pRadius = getVisualRadius();
+
+        for (let i = 0; i < numParticles; i++) {
+            let angle = Math.random() * Math.PI * 2;
+            particles.push({
+                x: pRadius + Math.random() * (canvas.width - 2*pRadius),
+                y: pRadius + Math.random() * (canvas.height - 2*pRadius),
+                vx: Math.cos(angle) * simSpeed,
+                vy: Math.sin(angle) * simSpeed,
+                r: pRadius
+            });
+        }
+    }
+
+    // Визуальная скорость на экране (зависит от реальной)
+    function getVisualSpeed() {
+        let realSpeed = calculateRealSpeed();
+        // Масштабируем: пусть 500 м/с = 3 пикселя за кадр
+        return realSpeed * (3 / 500); 
+    }
+
+    // Визуальный размер молекул зависит от массы (условно)
+    function getVisualRadius() {
+        if (molarMassGram <= 4) return 2; // H2, He
+        if (molarMassGram <= 28) return 4; // N2
+        if (molarMassGram <= 32) return 5; // O2
+        return 6; // CO2
+    }
+
+    function updatePhysics() {
+        tempK = parseInt(inTemp.value);
+        molarMassGram = parseInt(selGas.value);
+        
+        // Обновление UI
+        valTemp.innerText = tempK;
+        valCelsius.innerText = tempK - 273;
+        
+        let ek = calculateEnergy();
+        let v_real = calculateRealSpeed();
+        
+        outEk.innerText = ek.toFixed(2);
+        outV.innerText = v_real.toFixed(0);
+
+        // Обновление частиц (смена размера и скорости без сброса позиций)
+        let newSimSpeed = getVisualSpeed();
+        let newRadius = getVisualRadius();
+        
+        for (let p of particles) {
+            p.r = newRadius;
+            let currentSpeed = Math.hypot(p.vx, p.vy);
+            if (currentSpeed > 0) {
+                p.vx = (p.vx / currentSpeed) * newSimSpeed;
+                p.vy = (p.vy / currentSpeed) * newSimSpeed;
+            } else {
+                let angle = Math.random() * Math.PI * 2;
+                p.vx = Math.cos(angle) * newSimSpeed;
+                p.vy = Math.sin(angle) * newSimSpeed;
+            }
+        }
+
+        if (!isRunning) draw();
+    }
+
+    [inTemp, selGas].forEach(el => el.addEventListener('input', updatePhysics));
+
+    function draw() {
+        // Очистка с цветовым градиентом от температуры
+        // 10K - глубокий синий, 1000K - ярко красный
+        let heatRatio = tempK / 1000;
+        let r = Math.floor(10 + heatRatio * 200);
+        let b = Math.floor(200 - heatRatio * 180);
+        
+        ctx.fillStyle = `rgb(${r}, 20, ${b})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Рисуем частицы
+        ctx.fillStyle = "#ffffff";
+        for (let p of particles) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Легкий эффект свечения/хвоста при больших скоростях
+            if (tempK > 500) {
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p.x - p.vx*2, p.y - p.vy*2);
+                ctx.strokeStyle = "rgba(255,255,255,0.4)";
+                ctx.lineWidth = p.r;
+                ctx.stroke();
+            }
+        }
+        
+        // Текст "Абсолютный нуль", если температура близка к 0
+        if (tempK <= 10) {
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
+            ctx.font = "20px Arial";
+            ctx.textAlign = "center";
+            ctx.fillText("Движение почти остановилось...", canvas.width/2, canvas.height/2);
+        }
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        // Движение частиц
+        for (let p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Упругие столкновения со стенками
+            if (p.x < p.r) { p.x = p.r; p.vx *= -1; }
+            if (p.x > canvas.width - p.r) { p.x = canvas.width - p.r; p.vx *= -1; }
+            if (p.y < p.r) { p.y = p.r; p.vy *= -1; }
+            if (p.y > canvas.height - p.r) { p.y = canvas.height - p.r; p.vy *= -1; }
+        }
+
+        draw();
+        animId = requestAnimationFrame(loop);
+    }
+
+    btnToggle.addEventListener('click', () => {
+        if (isRunning) {
+            isRunning = false;
+            cancelAnimationFrame(animId);
+        } else {
+            isRunning = true;
+            loop();
+        }
+    });
+
+    // Инициализация
+    initParticles();
+    updatePhysics();
+    loop();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Постулат МКТ: абсолютная температура является прямой мерой средней кинетической энергии теплового движения молекул (Ek = 3/2 kT).",
+            "2. Абсолютный нуль (0 Кельвинов) соответствует температуре −273.15 °C. При этой температуре прекращается тепловое движение молекул.",
+            "3. Постоянная Больцмана (k = 1.38·10⁻²³ Дж/К) — это коэффициент пропорциональности в формуле Ek = 3/2 kT.",
+            "4. Скорость зависит от массы: v = √(3kT/m0). При одинаковой температуре легкие молекулы (Водород) движутся намного быстрее тяжелых (Кислород).",
+            "5. Энергия прямо пропорциональна температуре (Ek = 3/2 kT). Если T уменьшается в 3 раза, энергия тоже уменьшается ровно в 3 раза."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили связь температуры и движения частиц.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

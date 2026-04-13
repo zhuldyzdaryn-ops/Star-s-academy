@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Термодинамические системы и состояния — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #ef4444; /* Красный (тепло) */
+            --primary-hover: #dc2626;
+            --accent: #3b82f6; /* Синий (холод) */
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #f87171;
+                --primary-hover: #ef4444;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; }
+        canvas {
+            width: 100%;
+            background-color: #0f172a;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        
+        .badge-eq { background: var(--success); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9rem;}
+        .badge-noneq { background: var(--accent); color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.9rem; animation: pulse 1s infinite;}
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: var(--primary); color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: var(--primary-hover); }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; overflow-x: auto; text-align: center;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Термодинамические системы и параметры — 10 класс</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Термодинамика не интересуется тем, как движется отдельная молекула. Она изучает макроскопические тела как единое целое, оперируя такими понятными нам величинами, как объем, давление и температура.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ (СИСТЕМЫ И ПАРАМЕТРЫ) -->
+    <section class="card">
+        <h2>1. Термодинамические системы и параметры</h2>
+        <p><b>Термодинамическая система</b> — это любое макроскопическое тело или группа тел, которые мы выделяем для изучения (например: газ в баллоне, вода в стакане, двигатель автомобиля). Все остальное называется окружающей средой.</p>
+        <p>Виды термодинамических систем:</p>
+        <ul>
+            <li><b>Изолированная (замкнутая):</b> не обменивается с окружающей средой ни веществом, ни энергией. (Идеальный термос).</li>
+            <li><b>Закрытая:</b> обменивается энергией (теплом), но не обменивается веществом. (Закрытая бутылка с водой на солнце).</li>
+            <li><b>Открытая:</b> обменивается и веществом, и энергией. (Кипящая кастрюля без крышки — уходит пар и поступает тепло).</li>
+        </ul>
+        <p>Состояние системы описывается <b>макроскопическими параметрами (параметрами состояния)</b>. В термодинамике основными параметрами являются:</p>
+        <ul>
+            <li><b>Давление (p)</b> — сила, действующая на единицу площади поверхности.</li>
+            <li><b>Объем (V)</b> — пространство, занимаемое системой.</li>
+            <li><b>Температура (T)</b> — мера средней кинетической энергии молекул (степень "нагретости" тела).</li>
+        </ul>
+    </section>
+
+    <!-- 3) ТЕОРИЯ (СОСТОЯНИЯ) -->
+    <section class="card">
+        <h2>2. Равновесное и неравновесное состояния</h2>
+        <p>Состояние системы может меняться во времени. Термодинамика выделяет два принципиально разных состояния:</p>
+        <ul>
+            <li><b>Равновесное состояние:</b> Состояние, при котором макроскопические параметры (p, V, T) <i>одинаковы во всех частях системы и не изменяются с течением времени</i> (при неизменных внешних условиях). В равновесном состоянии нет потоков вещества или тепла внутри системы.</li>
+            <li><b>Неравновесное состояние:</b> Параметры системы меняются со временем или различны в разных точках системы. Например, в одном углу комнаты воздух горячее, чем в другом.</li>
+        </ul>
+        <p><b>Релаксация</b> — это процесс самопроизвольного перехода термодинамической системы из неравновесного состояния в равновесное. Время, необходимое для этого перехода, называется <i>временем релаксации</i>.</p>
+    </section>
+
+    <!-- 4) ФОРМУЛЫ -->
+    <section class="card">
+        <h2>3. Уравнение состояния</h2>
+        <p>Параметры состояния (p, V, T) связаны между собой. Для простейшей системы — идеального газа — эта связь выражается <b>уравнением Менделеева-Клапейрона</b>:</p>
+        <div class="formula">
+            <b>p &middot; V = &nu; &middot; R &middot; T</b>
+        </div>
+        <p>Или через массу газа:</p>
+        <div class="formula">
+            <b>p &middot; V = (m / M) &middot; R &middot; T</b>
+        </div>
+        <p><b>Обозначения:</b></p>
+        <ul>
+            <li><b>p</b> — давление газа (Па)</li>
+            <li><b>V</b> — объем (м<sup>3</sup>)</li>
+            <li><b>&nu;</b> (ню) — количество вещества (моль)</li>
+            <li><b>m</b> — масса газа (кг), <b>M</b> — молярная масса (кг/моль)</li>
+            <li><b>T</b> — абсолютная температура (в Кельвинах, К). <i>Напомним: T = t&deg;C + 273</i></li>
+            <li><b>R</b> — универсальная газовая постоянная &approx; <b>8.31 Дж/(моль&middot;К)</b></li>
+        </ul>
+        <p><i>Важно:</i> Это уравнение строго применимо только к газам, находящимся в <b>равновесном</b> состоянии!</p>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Состояния и Релаксация</h2>
+        <p>В цилиндре под поршнем находится газ. Изменяйте целевую Температуру и Объем. <br>
+        Обратите внимание: когда вы резко меняете параметры, система переходит в <b>неравновесное состояние</b> (молекулам нужно время, чтобы распределиться и изменить скорость). Процесс перехода к новому равновесию — это <b>релаксация</b>.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label for="sim-temp">Температура среды (T): <span id="val-temp">300</span> К</label>
+                    <input type="range" id="sim-temp" min="100" max="800" value="300" step="10">
+                </div>
+                
+                <div class="control-group">
+                    <label for="sim-vol">Объем цилиндра (V): <span id="val-vol">50</span> л</label>
+                    <input type="range" id="sim-vol" min="20" max="100" value="50" step="5">
+                </div>
+
+                <div id="sim-dashboard" style="background: var(--bg-color); padding: 12px; margin-top: 15px; border-radius: 8px; font-family: monospace; font-size: 0.95rem;">
+                    <b>Состояние системы:</b><br>
+                    <div style="margin-top: 5px; margin-bottom: 10px;">
+                        <span id="state-badge" class="badge-eq">Равновесное</span>
+                    </div>
+                    Температура газа: <span id="out-t" style="color:var(--primary);">300</span> К<br>
+                    Макро-давление (p): <span id="out-p" style="color:var(--accent);">--</span> Па<br>
+                </div>
+                <button id="btn-toggle" style="margin-top: 10px; width: 100%;">Пауза / Пуск</button>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="400" height="350"></canvas>
+                <p class="sim-status" id="sim-info">Давление устанавливается только после завершения процесса релаксации (усреднения ударов).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи (Уравнение состояния)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Идеальный газ количеством вещества 2 моль находится в равновесном состоянии в баллоне объемом 40 литров. Давление газа составляет 124 650 Па. Определите температуру газа в градусах Цельсия. (Примите R = 8.31 Дж/(моль&middot;К)).</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                &nu; = 2 моль<br>
+                V = 40 л = 0.04 м<sup>3</sup><br>
+                p = 124 650 Па<br>
+                R = 8.31 Дж/(моль&middot;К)<br>
+                <b>Найти:</b> t (&deg;C) — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                <p><b>Формула:</b><br>
+                Используем уравнение Менделеева-Клапейрона: p &middot; V = &nu; &middot; R &middot; T.<br>
+                Выразим абсолютную температуру (в Кельвинах):<br>
+                T = (p &middot; V) / (&nu; &middot; R)</p>
+                <p><b>Подстановка и шаги:</b><br>
+                1. T = (124650 &middot; 0.04) / (2 &middot; 8.31)<br>
+                2. Числитель: 124650 &middot; 0.04 = 4986.<br>
+                3. Знаменатель: 2 &middot; 8.31 = 16.62.<br>
+                4. T = 4986 / 16.62 = 300 К.<br>
+                5. Переводим в градусы Цельсия: t = T - 273 = 300 - 273 = 27 &deg;C.</p>
+                <p><b>Ответ:</b> Температура газа равна 27 &deg;C.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Типы систем)</h3>
+            <p>Какой термодинамической системой является обычный надутый воздушный шарик, находящийся в комнате?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите номер правильного ответа:</i><br>
+            1. Изолированная система (не обменивается ни теплом, ни массой).<br>
+            2. Закрытая система (обменивается теплом с комнатой, но не обменивается молекулами воздуха).<br>
+            3. Открытая система (обменивается и тем, и другим).</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 2, 0, 'Шарик нагревается или остывает вместе с комнатой, но воздух из завязанного шарика не выходит.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает определения термодинамических систем.</li>
+                    <li>Способен классифицировать реальные объекты как закрытые системы.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет давления)</h3>
+            <p>В баллоне объемом 0.01 м<sup>3</sup> находится 1 моль идеального газа при температуре 300 К. Вычислите <b>давление</b> газа в баллоне (в Паскалях). Используйте R = 8.31 Дж/(моль&middot;К).</p>
+            <input type="number" id="taskB-input" placeholder="Ваш ответ (Па)"> 
+            <button onclick="checkTask('taskB', 249300, 10, 'Из формулы pV = νRT выразите давление: p = (νRT) / V. Подставьте: (1 * 8.31 * 300) / 0.01.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Знает уравнение Менделеева-Клапейрона.</li>
+                    <li>Умеет выражать искомую величину (давление).</li>
+                    <li>Проводит расчеты без ошибок в порядке величин.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Релаксация)</h3>
+            <p>Мы открыли кран между двумя баллонами. В одном был горячий газ под большим давлением, в другом — холодный под низким. Начнется процесс перемешивания. Будет ли применимо к этой системе <i>в процессе перемешивания</i> уравнение Менделеева-Клапейрона (p&middot;V = &nu;&middot;R&middot;T)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Введите:</i> <b>1</b> (Да, применимо всегда) или <b>0</b> (Нет, неприменимо).</p>
+            <input type="number" id="taskC-input" placeholder="1 или 0"> 
+            <button onclick="checkTask('taskC', 0, 0, 'В процессе перемешивания давление и температура в разных частях системы РАЗЛИЧНЫ (состояние неравновесное). Одной температуры T для всей системы просто не существует в этот момент.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает границы применимости уравнения состояния.</li>
+                    <li>Отличает равновесное состояние от неравновесного.</li>
+                    <li>Осознает, что макропараметры (p, T) теряют смысл для всей системы целиком во время релаксации.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) ВИДЕО -->
+    <section class="card">
+        <h2>7. Видео по теме</h2>
+        <p>Для закрепления материала предлагаем ознакомиться с лекцией об основах термодинамики и параметрах состояния:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=термодинамические+системы+равновесное+состояние+10+класс" target="_blank" class="video-link">
+                ▶ Найти уроки на YouTube
+            </a>
+        </p>
+    </section>
+
+    <!-- 9) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>8. Рефлексия</h2>
+        <p>Проверьте себя по итогам урока:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я могу отличить изолированную систему от закрытой и открытой.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я понимаю, что такое равновесное состояние (когда p, V и T перестали меняться во времени).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я помню формулу p &middot; V = &nu; &middot; R &middot; T и могу выразить из нее неизвестное.</label>
+        </div>
+        <button onclick="alert('Отлично! Понимание состояний — это ключ к изучению газовых законов в следующих темах.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 10) ТЕСТ -->
+    <section class="card">
+        <h2>9. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Какие параметры относятся к макроскопическим параметрам термодинамической системы?</b></p>
+                <label><input type="radio" name="q1" value="0"> Скорость и масса одной молекулы.</label>
+                <label><input type="radio" name="q1" value="1"> Давление, объем, температура.</label>
+                <label><input type="radio" name="q1" value="0"> Ускорение и сила трения.</label>
+                <label><input type="radio" name="q1" value="0"> Постоянная Планка и заряд электрона.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В термос налили горячий чай и плотно закрыли крышку. Какой системой, приближенно, является термос с чаем?</b></p>
+                <label><input type="radio" name="q2" value="0"> Открытой.</label>
+                <label><input type="radio" name="q2" value="1"> Изолированной (замкнутой).</label>
+                <label><input type="radio" name="q2" value="0"> Неравновесной.</label>
+                <label><input type="radio" name="q2" value="0"> Механической.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Состояние, при котором макроскопические параметры системы одинаковы во всех её частях и не меняются со временем (при неизменных внешних условиях), называется:</b></p>
+                <label><input type="radio" name="q3" value="0"> Релаксацией.</label>
+                <label><input type="radio" name="q3" value="0"> Неравновесным состоянием.</label>
+                <label><input type="radio" name="q3" value="1"> Равновесным состоянием.</label>
+                <label><input type="radio" name="q3" value="0"> Идеальным газом.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что такое процесс релаксации в термодинамике?</b></p>
+                <label><input type="radio" name="q4" value="0"> Переход газа из жидкого состояния в твердое.</label>
+                <label><input type="radio" name="q4" value="0"> Процесс сжатия газа под огромным давлением.</label>
+                <label><input type="radio" name="q4" value="1"> Самопроизвольный переход системы из неравновесного состояния в равновесное.</label>
+                <label><input type="radio" name="q4" value="0"> Остановка хаотичного движения молекул.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Уравнение состояния идеального газа (уравнение Менделеева-Клапейрона) записывается как:</b></p>
+                <label><input type="radio" name="q5" value="0"> p / V = &nu;RT</label>
+                <label><input type="radio" name="q5" value="1"> p &middot; V = &nu; &middot; R &middot; T</label>
+                <label><input type="radio" name="q5" value="0"> p + V = R &middot; T</label>
+                <label><input type="radio" name="q5" value="0"> p &middot; T = &nu; &middot; R &middot; V</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ГАЗ В ЦИЛИНДРЕ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Элементы UI
+    const inTemp = document.getElementById('sim-temp');
+    const inVol = document.getElementById('sim-vol');
+    const valTemp = document.getElementById('val-temp');
+    const valVol = document.getElementById('val-vol');
+    
+    const outT = document.getElementById('out-t');
+    const outP = document.getElementById('out-p');
+    const stateBadge = document.getElementById('state-badge');
+    
+    const btnToggle = document.getElementById('btn-toggle');
+
+    let isRunning = true;
+    let animId;
+
+    // Макропараметры системы (Целевые - задаются ползунками)
+    let targetTemp = 300;
+    let targetVol = 50; 
+    
+    // Текущие макропараметры (Моделируют реальное состояние газа)
+    let currentTemp = 300;
+    let currentVol = 50;
+    
+    // Флаг состояния
+    let isEquilibrium = true;
+
+    // Частицы
+    const numParticles = 200;
+    let particles = [];
+    
+    // Геометрия цилиндра
+    const cylWidth = 200;
+    let cylBaseX = 100;
+    let cylBaseY = 300;
+    
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < numParticles; i++) {
+            let angle = Math.random() * Math.PI * 2;
+            let speed = getSpeedForTemp(currentTemp);
+            particles.push({
+                x: cylBaseX + Math.random() * cylWidth,
+                y: cylBaseY - Math.random() * getPistonHeight(currentVol),
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                r: 2
+            });
+        }
+    }
+
+    function getPistonHeight(vol) {
+        // V от 20 до 100. При 100 л высота пусть будет 250px
+        return (vol / 100) * 250;
+    }
+
+    function getSpeedForTemp(temp) {
+        // Эмпирический масштаб для визуализации
+        return Math.sqrt(temp) * 0.15;
+    }
+
+    function updateInputs() {
+        let newTargetTemp = parseInt(inTemp.value);
+        let newTargetVol = parseInt(inVol.value);
+        
+        valTemp.innerText = newTargetTemp;
+        valVol.innerText = newTargetVol;
+        
+        // Если изменили параметры, система выходит из равновесия
+        if (newTargetTemp !== targetTemp || newTargetVol !== targetVol) {
+            targetTemp = newTargetTemp;
+            targetVol = newTargetVol;
+            isEquilibrium = false;
+        }
+    }
+
+    [inTemp, inVol].forEach(el => el.addEventListener('input', updateInputs));
+
+    function draw() {
+        // Очистка
+        ctx.fillStyle = "#0f172a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let pistonH = getPistonHeight(currentVol);
+        let pistonY = cylBaseY - pistonH;
+
+        // Рисуем цилиндр (стенки)
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(cylBaseX, 20); // Высоко, чтобы поршень не вылетел
+        ctx.lineTo(cylBaseX, cylBaseY);
+        ctx.lineTo(cylBaseX + cylWidth, cylBaseY);
+        ctx.lineTo(cylBaseX + cylWidth, 20);
+        ctx.stroke();
+
+        // Цветовая индикация температуры газа (фон внутри)
+        // от синего (100K) до красного (800K)
+        let heatRatio = (currentTemp - 100) / 700;
+        let r = Math.floor(59 + heatRatio * (239 - 59));
+        let g = Math.floor(130 - heatRatio * 80); // Уменьшаем зеленый
+        let b = Math.floor(246 - heatRatio * (246 - 68)); // Уменьшаем синий
+        
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.15)`;
+        ctx.fillRect(cylBaseX, pistonY, cylWidth, pistonH);
+
+        // Рисуем поршень
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillRect(cylBaseX + 2, pistonY - 15, cylWidth - 4, 15);
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.strokeRect(cylBaseX + 2, pistonY - 15, cylWidth - 4, 15);
+        // Шток поршня
+        ctx.fillRect(cylBaseX + cylWidth/2 - 5, 20, 10, pistonY - 35);
+
+        // Рисуем частицы
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`; // Цвет молекул зависит от Т
+        for (let p of particles) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function loop() {
+        if (!isRunning) return;
+
+        // ПРОЦЕСС РЕЛАКСАЦИИ (Самопроизвольный переход к равновесию)
+        if (!isEquilibrium) {
+            // Температура и объем плавно подтягиваются к целевым (теплообмен и расширение)
+            currentTemp += (targetTemp - currentTemp) * 0.05;
+            currentVol += (targetVol - currentVol) * 0.1;
+            
+            // Термостатирование частиц (плавное изменение скорости)
+            let targetSpeed = getSpeedForTemp(currentTemp);
+            for (let p of particles) {
+                let currentSpeed = Math.hypot(p.vx, p.vy);
+                if (currentSpeed > 0) {
+                    p.vx = (p.vx / currentSpeed) * targetSpeed;
+                    p.vy = (p.vy / currentSpeed) * targetSpeed;
+                }
+            }
+
+            // Проверка достижения равновесия
+            if (Math.abs(currentTemp - targetTemp) < 1 && Math.abs(currentVol - targetVol) < 0.5) {
+                currentTemp = targetTemp;
+                currentVol = targetVol;
+                isEquilibrium = true;
+            }
+        }
+
+        // Обновление UI Состояния
+        if (isEquilibrium) {
+            stateBadge.className = "badge-eq";
+            stateBadge.innerText = "Равновесное";
+            // Расчет давления по уравнению состояния p = vRT / V (условно)
+            // Возьмем R = 8.31, nu = 1 моль для симуляции
+            let pressure = (1 * 8.31 * currentTemp) / (currentVol * 0.001); // Па (л -> м3)
+            outP.innerText = pressure.toFixed(0);
+        } else {
+            stateBadge.className = "badge-noneq";
+            stateBadge.innerText = "Релаксация (Неравновесное)";
+            outP.innerText = "Измеряется..."; // В неравновесном состоянии давление макроскопически не определено строго
+        }
+        outT.innerText = currentTemp.toFixed(0);
+
+        let pistonY = cylBaseY - getPistonHeight(currentVol);
+
+        // Движение частиц
+        for (let p of particles) {
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Упругие столкновения со стенками
+            if (p.x < cylBaseX + p.r) { p.x = cylBaseX + p.r; p.vx *= -1; }
+            if (p.x > cylBaseX + cylWidth - p.r) { p.x = cylBaseX + cylWidth - p.r; p.vx *= -1; }
+            if (p.y > cylBaseY - p.r) { p.y = cylBaseY - p.r; p.vy *= -1; }
+            
+            // Столкновение с поршнем
+            if (p.y < pistonY + p.r) { 
+                p.y = pistonY + p.r; 
+                p.vy *= -1; 
+                // Если поршень движется вниз (сжимает), он передает доп импульс молекулам (нагрев)
+                // В этой простой симуляции макро-Т управляется напрямую, поэтому просто упругий отскок
+            }
+        }
+
+        draw();
+        animId = requestAnimationFrame(loop);
+    }
+
+    btnToggle.addEventListener('click', () => {
+        if (isRunning) {
+            isRunning = false;
+            cancelAnimationFrame(animId);
+        } else {
+            isRunning = true;
+            loop();
+        }
+    });
+
+    // Инициализация
+    initParticles();
+    updateInputs();
+    loop();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Макроскопические параметры описывают систему в целом (как давление p, объем V и температура T), а не каждую отдельную молекулу.",
+            "2. Закрытый термос практически не обменивается ни веществом (закрыт), ни энергией (теплоизоляция), следовательно, он является изолированной системой.",
+            "3. Равновесное состояние — это состояние теплового, механического и химического равновесия, при котором макропараметры стабильны.",
+            "4. Релаксация — это процесс возврата системы к состоянию равновесия после выведения её из этого состояния.",
+            "5. Уравнение состояния идеального газа связывает все три макропараметра: p · V = ν · R · T."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор правильных ответов:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили введение в термодинамику.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>
