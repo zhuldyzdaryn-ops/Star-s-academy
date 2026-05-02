@@ -55,6 +55,39 @@
             font-family: "Cambria Math", "Times New Roman", serif;
             letter-spacing: 0.05em;
         }
+        
+        /* Уменьшенные индексы для лучшей читаемости */
+        .formula-text sub, .formula-text sup {
+            font-size: 0.6em;
+            margin-left: 0.05em;
+            line-height: 0;
+            position: relative;
+            vertical-align: baseline;
+        }
+        .formula-text sub {
+            bottom: -0.25em;
+        }
+        .formula-text sup {
+            top: -0.5em;
+        }
+        
+        /* Стили для математических дробей */
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 0.2em;
+            line-height: 1;
+            font-size: 0.85em;
+        }
+        .frac .num {
+            border-bottom: 2px solid currentColor;
+            padding: 0.1em 0.2em;
+        }
+        .frac .den {
+            padding: 0.1em 0.2em;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -182,17 +215,17 @@
                 icon: '🏃',
                 color: '#4f46e5',
                 formulas: [
-                    { name: 'Скорость равномерного движения', text: 'v = S / t', desc: 'v - скорость, S - путь, t - время' },
-                    { name: 'Уравнение координаты', text: 'x = x₀ + vₓt', desc: 'x₀ - начальная координата' },
-                    { name: 'Ускорение', text: 'a = (v - v₀) / t', desc: 'v₀ - начальная скорость, v - конечная' },
-                    { name: 'Скорость в любой момент', text: 'v = v₀ + at', desc: 'Зависимость скорости от времени' },
-                    { name: 'Уравнение перемещения', text: 'S = v₀t + at² / 2', desc: 'Зависимость пути от времени' },
-                    { name: 'Перемещение без времени', text: 'S = (v² - v₀²) / 2a', desc: 'Связь пути, скоростей и ускорения' },
-                    { name: 'Уравнение координаты', text: 'x = x₀ + v₀ₓt + aₓt² / 2', desc: 'Основной закон кинематики' },
-                    { name: 'Линейная скорость', text: 'v = 2πR / T = ωR', desc: 'При движении по окружности' },
-                    { name: 'Угловая скорость', text: 'ω = 2π / T = 2πν', desc: 'Скорость вращения' },
-                    { name: 'Центростремительное ускорение', text: 'a_ц = v² / R = ω²R', desc: 'Направлено к центру окружности' },
-                    { name: 'Период и частота', text: 'T = 1 / ν', desc: 'Взаимосвязь периода и частоты' }
+                    { name: 'Скорость равномерного движения', text: 'v = <span class="frac"><span class="num">S</span><span class="den">t</span></span>', desc: 'v - скорость, S - путь, t - время' },
+                    { name: 'Уравнение координаты', text: 'x = x<sub>0</sub> + v<sub>x</sub>t', desc: 'x₀ - начальная координата' },
+                    { name: 'Ускорение', text: 'a = <span class="frac"><span class="num">v - v<sub>0</sub></span><span class="den">t</span></span>', desc: 'v₀ - начальная скорость, v - конечная' },
+                    { name: 'Скорость в любой момент', text: 'v = v<sub>0</sub> + at', desc: 'Зависимость скорости от времени' },
+                    { name: 'Уравнение перемещения', text: 'S = v<sub>0</sub>t + <span class="frac"><span class="num">at<sup>2</sup></span><span class="den">2</span></span>', desc: 'Зависимость пути от времени' },
+                    { name: 'Перемещение без времени', text: 'S = <span class="frac"><span class="num">v<sup>2</sup> - v<sub>0</sub><sup>2</sup></span><span class="den">2a</span></span>', desc: 'Связь пути, скоростей и ускорения' },
+                    { name: 'Уравнение координаты', text: 'x = x<sub>0</sub> + v<sub>0x</sub>t + <span class="frac"><span class="num">a<sub>x</sub>t<sup>2</sup></span><span class="den">2</span></span>', desc: 'Основной закон кинематики' },
+                    { name: 'Линейная скорость', text: 'v = <span class="frac"><span class="num">2πR</span><span class="den">T</span></span> = ωR', desc: 'При движении по окружности' },
+                    { name: 'Угловая скорость', text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: 'Скорость вращения' },
+                    { name: 'Центростремительное ускорение', text: 'a<sub>ц</sub> = <span class="frac"><span class="num">v<sup>2</sup></span><span class="den">R</span></span> = ω<sup>2</sup>R', desc: 'Направлено к центру окружности' },
+                    { name: 'Период и частота', text: 'T = <span class="frac"><span class="num">1</span><span class="den">ν</span></span>', desc: 'Взаимосвязь периода и частоты' }
                 ]
             },
             {
@@ -202,18 +235,18 @@
                 color: '#059669',
                 formulas: [
                     { name: 'Второй закон Ньютона', text: 'F = ma', desc: 'Связь силы, массы и ускорения' },
-                    { name: 'Третий закон Ньютона', text: 'F₁ = -F₂', desc: 'Действие равно противодействию' },
-                    { name: 'Сила тяжести', text: 'F_т = mg', desc: 'g ≈ 9.8 м/с²' },
+                    { name: 'Третий закон Ньютона', text: 'F<sub>1</sub> = -F<sub>2</sub>', desc: 'Действие равно противодействию' },
+                    { name: 'Сила тяжести', text: 'F<sub>т</sub> = mg', desc: 'g ≈ 9.8 м/с²' },
                     { name: 'Вес тела (покой)', text: 'P = mg', desc: 'Сила действия на опору/подвес' },
                     { name: 'Вес тела (ускорение)', text: 'P = m(g ± a)', desc: '+ при движении вверх, - вниз' },
-                    { name: 'Закон всемирного тяготения', text: 'F = G · m₁m₂ / R²', desc: 'Гравитационное взаимодействие' },
-                    { name: 'Закон Гука', text: 'F_упр = kΔx', desc: 'Сила упругости' },
-                    { name: 'Сила трения скольжения', text: 'F_тр = μN', desc: 'N - реакция опоры, μ - коэффициент' },
-                    { name: 'Давление твердого тела', text: 'p = F / S', desc: 'F - сила давления, S - площадь' },
+                    { name: 'Закон всемирного тяготения', text: 'F = G · <span class="frac"><span class="num">m<sub>1</sub>m<sub>2</sub></span><span class="den">R<sup>2</sup></span></span>', desc: 'Гравитационное взаимодействие' },
+                    { name: 'Закон Гука', text: 'F<sub>упр</sub> = kΔx', desc: 'Сила упругости' },
+                    { name: 'Сила трения скольжения', text: 'F<sub>тр</sub> = μN', desc: 'N - реакция опоры, μ - коэффициент' },
+                    { name: 'Давление твердого тела', text: 'p = <span class="frac"><span class="num">F</span><span class="den">S</span></span>', desc: 'F - сила давления, S - площадь' },
                     { name: 'Гидростатическое давление', text: 'p = ρgh', desc: 'Давление столба жидкости' },
-                    { name: 'Сила Архимеда', text: 'F_A = ρ_жgV_погр', desc: 'Выталкивающая сила' },
+                    { name: 'Сила Архимеда', text: 'F<sub>A</sub> = ρ<sub>ж</sub>gV<sub>погр</sub>', desc: 'Выталкивающая сила' },
                     { name: 'Момент силы', text: 'M = F · l', desc: 'l - плечо силы' },
-                    { name: 'Равновесие рычага', text: 'F₁l₁ = F₂l₂', desc: 'Или M₁ = M₂' }
+                    { name: 'Равновесие рычага', text: 'F<sub>1</sub>l<sub>1</sub> = F<sub>2</sub>l<sub>2</sub>', desc: 'Или M₁ = M₂' }
                 ]
             },
             {
@@ -224,15 +257,15 @@
                 formulas: [
                     { name: 'Импульс тела', text: 'p = mv', desc: 'Векторная величина' },
                     { name: 'Импульс силы', text: 'FΔt = Δp', desc: 'Изменение импульса тела' },
-                    { name: 'Закон сохранения импульса', text: 'm₁v₁ + m₂v₂ = m₁v₁\' + m₂v₂\'', desc: 'Для замкнутой системы' },
+                    { name: 'Закон сохранения импульса', text: 'm<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = m<sub>1</sub>v<sub>1</sub>\' + m<sub>2</sub>v<sub>2</sub>\'', desc: 'Для замкнутой системы' },
                     { name: 'Механическая работа', text: 'A = FScosα', desc: 'Работа постоянной силы' },
-                    { name: 'Мощность', text: 'N = A / t = Fv', desc: 'Скорость выполнения работы' },
-                    { name: 'Кинетическая энергия', text: 'E_k = mv² / 2 = p² / 2m', desc: 'Энергия движения' },
-                    { name: 'Потенциальная энергия', text: 'E_p = mgh', desc: 'В поле силы тяжести' },
-                    { name: 'Энергия пружины', text: 'E_p = kΔx² / 2', desc: 'Потенциальная энергия деформации' },
-                    { name: 'Закон сохранения энергии', text: 'E_k1 + E_p1 = E_k2 + E_p2', desc: 'Механическая энергия' },
-                    { name: 'Теорема о кин. энергии', text: 'A = ΔE_k', desc: 'Работа равна изменению E_k' },
-                    { name: 'КПД механизма', text: 'η = (A_пол / A_затр) · 100%', desc: 'Эффективность' }
+                    { name: 'Мощность', text: 'N = <span class="frac"><span class="num">A</span><span class="den">t</span></span> = Fv', desc: 'Скорость выполнения работы' },
+                    { name: 'Кинетическая энергия', text: 'E<sub>k</sub> = <span class="frac"><span class="num">mv<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">p<sup>2</sup></span><span class="den">2m</span></span>', desc: 'Энергия движения' },
+                    { name: 'Потенциальная энергия', text: 'E<sub>p</sub> = mgh', desc: 'В поле силы тяжести' },
+                    { name: 'Энергия пружины', text: 'E<sub>p</sub> = <span class="frac"><span class="num">kΔx<sup>2</sup></span><span class="den">2</span></span>', desc: 'Потенциальная энергия деформации' },
+                    { name: 'Закон сохранения энергии', text: 'E<sub>k1</sub> + E<sub>p1</sub> = E<sub>k2</sub> + E<sub>p2</sub>', desc: 'Механическая энергия' },
+                    { name: 'Теорема о кин. энергии', text: 'A = ΔE<sub>k</sub>', desc: 'Работа равна изменению E_k' },
+                    { name: 'КПД механизма', text: 'η = <span class="frac"><span class="num">A<sub>пол</sub></span><span class="den">A<sub>затр</sub></span></span> · 100%', desc: 'Эффективность' }
                 ]
             },
             {
@@ -241,21 +274,21 @@
                 icon: '🌡️',
                 color: '#dc2626',
                 formulas: [
-                    { name: 'Количество вещества', text: 'ν = N / N_A = m / M', desc: 'В молях' },
-                    { name: 'Основное уравнение МКТ', text: 'p = nkT = 1/3 m₀n(v²)', desc: 'Давление идеального газа' },
-                    { name: 'Средняя кинетическая энергия', text: 'E_k = 3/2 kT', desc: 'Зависимость от температуры' },
-                    { name: 'Уравнение Менделеева-Клапейрона', text: 'pV = (m/M)RT = νRT', desc: 'Уравнение состояния' },
-                    { name: 'Уравнение Клапейрона', text: 'p₁V₁ / T₁ = p₂V₂ / T₂', desc: 'При m = const' },
-                    { name: 'Внутренняя энергия', text: 'U = 3/2 νRT = 3/2 pV', desc: 'Одноатомный идеальный газ' },
+                    { name: 'Количество вещества', text: 'ν = <span class="frac"><span class="num">N</span><span class="den">N<sub>A</sub></span></span> = <span class="frac"><span class="num">m</span><span class="den">M</span></span>', desc: 'В молях' },
+                    { name: 'Основное уравнение МКТ', text: 'p = nkT = <span class="frac"><span class="num">1</span><span class="den">3</span></span> m<sub>0</sub>n(v<sup>2</sup>)', desc: 'Давление идеального газа' },
+                    { name: 'Средняя кинетическая энергия', text: 'E<sub>k</sub> = <span class="frac"><span class="num">3</span><span class="den">2</span></span> kT', desc: 'Зависимость от температуры' },
+                    { name: 'Уравнение Менделеева-Клапейрона', text: 'pV = <span class="frac"><span class="num">m</span><span class="den">M</span></span>RT = νRT', desc: 'Уравнение состояния' },
+                    { name: 'Уравнение Клапейрона', text: '<span class="frac"><span class="num">p<sub>1</sub>V<sub>1</sub></span><span class="den">T<sub>1</sub></span></span> = <span class="frac"><span class="num">p<sub>2</sub>V<sub>2</sub></span><span class="den">T<sub>2</sub></span></span>', desc: 'При m = const' },
+                    { name: 'Внутренняя энергия', text: 'U = <span class="frac"><span class="num">3</span><span class="den">2</span></span> νRT = <span class="frac"><span class="num">3</span><span class="den">2</span></span> pV', desc: 'Одноатомный идеальный газ' },
                     { name: 'Работа газа', text: 'A = pΔV', desc: 'При изобарном процессе' },
                     { name: 'Первый закон термодинамики', text: 'Q = ΔU + A', desc: 'Закон сохранения энергии' },
                     { name: 'Количество теплоты', text: 'Q = cmΔT', desc: 'Нагрев/охлаждение' },
                     { name: 'Плавление/кристаллизация', text: 'Q = ±λm', desc: 'Фазовый переход' },
                     { name: 'Парообразование', text: 'Q = ±Lm', desc: 'Фазовый переход' },
                     { name: 'Сгорание топлива', text: 'Q = qm', desc: 'Выделение энергии' },
-                    { name: 'КПД теплового двигателя', text: 'η = (Q₁ - Q₂) / Q₁', desc: 'Тепловые машины' },
-                    { name: 'Максимальный КПД (Карно)', text: 'η_max = (T₁ - T₂) / T₁', desc: 'Идеальная машина' },
-                    { name: 'Относительная влажность', text: 'φ = (p / p_нас) · 100%', desc: 'Влажность воздуха' }
+                    { name: 'КПД теплового двигателя', text: 'η = <span class="frac"><span class="num">Q<sub>1</sub> - Q<sub>2</sub></span><span class="den">Q<sub>1</sub></span></span>', desc: 'Тепловые машины' },
+                    { name: 'Максимальный КПД (Карно)', text: 'η<sub>max</sub> = <span class="frac"><span class="num">T<sub>1</sub> - T<sub>2</sub></span><span class="den">T<sub>1</sub></span></span>', desc: 'Идеальная машина' },
+                    { name: 'Относительная влажность', text: 'φ = <span class="frac"><span class="num">p</span><span class="den">p<sub>нас</sub></span></span> · 100%', desc: 'Влажность воздуха' }
                 ]
             },
             {
@@ -264,21 +297,21 @@
                 icon: '⚡',
                 color: '#0284c7',
                 formulas: [
-                    { name: 'Закон Кулона', text: 'F = k · |q₁q₂| / r²', desc: 'Взаимодействие зарядов' },
-                    { name: 'Напряженность поля', text: 'E = F / q', desc: 'Силовая характеристика' },
-                    { name: 'Потенциал', text: 'φ = W_p / q', desc: 'Энергетическая характеристика' },
-                    { name: 'Напряжение', text: 'U = φ₁ - φ₂ = A / q', desc: 'Разность потенциалов' },
-                    { name: 'Связь напряженности и напряжения', text: 'E = U / d', desc: 'Однородное поле' },
-                    { name: 'Электроемкость', text: 'C = q / U', desc: 'Характеристика проводника' },
-                    { name: 'Емкость конденсатора', text: 'C = ε₀εS / d', desc: 'Плоский конденсатор' },
-                    { name: 'Энергия электрического поля', text: 'W = CU² / 2 = qU / 2', desc: 'Энергия конденсатора' },
-                    { name: 'Сила тока', text: 'I = q / t', desc: 'Постоянный ток' },
-                    { name: 'Закон Ома (участок)', text: 'I = U / R', desc: 'Участок цепи' },
-                    { name: 'Сопротивление', text: 'R = ρ · l / S', desc: 'Характеристика проводника' },
-                    { name: 'Закон Ома (полная)', text: 'I = E / (R + r)', desc: 'Полная цепь (E - ЭДС)' },
-                    { name: 'Работа тока', text: 'A = UIt = I²Rt = U²t / R', desc: 'Электрическая работа' },
-                    { name: 'Мощность тока', text: 'P = UI = I²R = U² / R', desc: 'Электрическая мощность' },
-                    { name: 'Закон Джоуля-Ленца', text: 'Q = I²Rt', desc: 'Тепловое действие тока' }
+                    { name: 'Закон Кулона', text: 'F = k · <span class="frac"><span class="num">|q<sub>1</sub>q<sub>2</sub>|</span><span class="den">r<sup>2</sup></span></span>', desc: 'Взаимодействие зарядов' },
+                    { name: 'Напряженность поля', text: 'E = <span class="frac"><span class="num">F</span><span class="den">q</span></span>', desc: 'Силовая характеристика' },
+                    { name: 'Потенциал', text: 'φ = <span class="frac"><span class="num">W<sub>p</sub></span><span class="den">q</span></span>', desc: 'Энергетическая характеристика' },
+                    { name: 'Напряжение', text: 'U = φ<sub>1</sub> - φ<sub>2</sub> = <span class="frac"><span class="num">A</span><span class="den">q</span></span>', desc: 'Разность потенциалов' },
+                    { name: 'Связь напряженности и напряжения', text: 'E = <span class="frac"><span class="num">U</span><span class="den">d</span></span>', desc: 'Однородное поле' },
+                    { name: 'Электроемкость', text: 'C = <span class="frac"><span class="num">q</span><span class="den">U</span></span>', desc: 'Характеристика проводника' },
+                    { name: 'Емкость конденсатора', text: 'C = <span class="frac"><span class="num">ε<sub>0</sub>εS</span><span class="den">d</span></span>', desc: 'Плоский конденсатор' },
+                    { name: 'Энергия электрического поля', text: 'W = <span class="frac"><span class="num">CU<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">qU</span><span class="den">2</span></span>', desc: 'Энергия конденсатора' },
+                    { name: 'Сила тока', text: 'I = <span class="frac"><span class="num">q</span><span class="den">t</span></span>', desc: 'Постоянный ток' },
+                    { name: 'Закон Ома (участок)', text: 'I = <span class="frac"><span class="num">U</span><span class="den">R</span></span>', desc: 'Участок цепи' },
+                    { name: 'Сопротивление', text: 'R = ρ · <span class="frac"><span class="num">l</span><span class="den">S</span></span>', desc: 'Характеристика проводника' },
+                    { name: 'Закон Ома (полная)', text: 'I = <span class="frac"><span class="num">E</span><span class="den">R + r</span></span>', desc: 'Полная цепь (E - ЭДС)' },
+                    { name: 'Работа тока', text: 'A = UIt = I<sup>2</sup>Rt = <span class="frac"><span class="num">U<sup>2</sup>t</span><span class="den">R</span></span>', desc: 'Электрическая работа' },
+                    { name: 'Мощность тока', text: 'P = UI = I<sup>2</sup>R = <span class="frac"><span class="num">U<sup>2</sup></span><span class="den">R</span></span>', desc: 'Электрическая мощность' },
+                    { name: 'Закон Джоуля-Ленца', text: 'Q = I<sup>2</sup>Rt', desc: 'Тепловое действие тока' }
                 ]
             },
             {
@@ -287,14 +320,14 @@
                 icon: '🧲',
                 color: '#9333ea',
                 formulas: [
-                    { name: 'Сила Ампера', text: 'F_A = IBl·sinα', desc: 'Действие поля на проводник' },
-                    { name: 'Сила Лоренца', text: 'F_Л = |q|vB·sinα', desc: 'Действие поля на заряд' },
+                    { name: 'Сила Ампера', text: 'F<sub>A</sub> = IBl·sinα', desc: 'Действие поля на проводник' },
+                    { name: 'Сила Лоренца', text: 'F<sub>Л</sub> = |q|vB·sinα', desc: 'Действие поля на заряд' },
                     { name: 'Магнитный поток', text: 'Φ = BS·cosα', desc: 'Поток через площадку' },
-                    { name: 'Закон электромагнитной индукции', text: 'E_i = -ΔΦ / Δt', desc: 'Закон Фарадея' },
+                    { name: 'Закон электромагнитной индукции', text: 'E<sub>i</sub> = -<span class="frac"><span class="num">ΔΦ</span><span class="den">Δt</span></span>', desc: 'Закон Фарадея' },
                     { name: 'ЭДС в движущемся проводнике', text: 'E = vBl·sinα', desc: 'Проводник в магнитном поле' },
-                    { name: 'Индуктивность', text: 'L = Φ / I', desc: 'Свойство контура' },
-                    { name: 'ЭДС самоиндукции', text: 'E_is = -L · ΔI / Δt', desc: 'Возникновение ЭДС' },
-                    { name: 'Энергия магнитного поля', text: 'W_m = LI² / 2', desc: 'Энергия катушки' }
+                    { name: 'Индуктивность', text: 'L = <span class="frac"><span class="num">Φ</span><span class="den">I</span></span>', desc: 'Свойство контура' },
+                    { name: 'ЭДС самоиндукции', text: 'E<sub>is</sub> = -L · <span class="frac"><span class="num">ΔI</span><span class="den">Δt</span></span>', desc: 'Возникновение ЭДС' },
+                    { name: 'Энергия магнитного поля', text: 'W<sub>m</sub> = <span class="frac"><span class="num">LI<sup>2</sup></span><span class="den">2</span></span>', desc: 'Энергия катушки' }
                 ]
             },
             {
@@ -303,12 +336,12 @@
                 icon: '🌊',
                 color: '#0891b2',
                 formulas: [
-                    { name: 'Циклическая частота', text: 'ω = 2π / T = 2πν', desc: 'Колебательное движение' },
-                    { name: 'Уравнение колебаний', text: 'x(t) = A·cos(ωt + φ₀)', desc: 'Гармонические колебания' },
-                    { name: 'Период пружинного маятника', text: 'T = 2π√(m / k)', desc: 'Груз на пружине' },
-                    { name: 'Период математического маятника', text: 'T = 2π√(l / g)', desc: 'Маятник' },
+                    { name: 'Циклическая частота', text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: 'Колебательное движение' },
+                    { name: 'Уравнение колебаний', text: 'x(t) = A·cos(ωt + φ<sub>0</sub>)', desc: 'Гармонические колебания' },
+                    { name: 'Период пружинного маятника', text: 'T = 2π√(<span class="frac"><span class="num">m</span><span class="den">k</span></span>)', desc: 'Груз на пружине' },
+                    { name: 'Период математического маятника', text: 'T = 2π√(<span class="frac"><span class="num">l</span><span class="den">g</span></span>)', desc: 'Маятник' },
                     { name: 'Формула Томсона', text: 'T = 2π√(LC)', desc: 'Электромагнитный контур' },
-                    { name: 'Длина волны', text: 'λ = vT = v / ν', desc: 'Характеристика волны' }
+                    { name: 'Длина волны', text: 'λ = vT = <span class="frac"><span class="num">v</span><span class="den">ν</span></span>', desc: 'Характеристика волны' }
                 ]
             },
             {
@@ -318,13 +351,13 @@
                 color: '#ca8a04',
                 formulas: [
                     { name: 'Закон отражения', text: '∠α = ∠γ', desc: 'Угол падения = углу отражения' },
-                    { name: 'Закон преломления (Снеллиус)', text: 'sinα / sinβ = n₂ / n₁ = v₁ / v₂', desc: 'Преломление света' },
-                    { name: 'Абсолютный показатель', text: 'n = c / v', desc: 'Показатель преломления' },
-                    { name: 'Оптическая сила', text: 'D = 1 / F', desc: 'В диоптриях' },
-                    { name: 'Формула тонкой линзы', text: '±1/F = 1/d ± 1/f', desc: 'Положение изображения' },
-                    { name: 'Увеличение линзы', text: 'Γ = H / h = f / d', desc: 'Линейное увеличение' },
+                    { name: 'Закон преломления (Снеллиус)', text: '<span class="frac"><span class="num">sinα</span><span class="den">sinβ</span></span> = <span class="frac"><span class="num">n<sub>2</sub></span><span class="den">n<sub>1</sub></span></span> = <span class="frac"><span class="num">v<sub>1</sub></span><span class="den">v<sub>2</sub></span></span>', desc: 'Преломление света' },
+                    { name: 'Абсолютный показатель', text: 'n = <span class="frac"><span class="num">c</span><span class="den">v</span></span>', desc: 'Показатель преломления' },
+                    { name: 'Оптическая сила', text: 'D = <span class="frac"><span class="num">1</span><span class="den">F</span></span>', desc: 'В диоптриях' },
+                    { name: 'Формула тонкой линзы', text: '±<span class="frac"><span class="num">1</span><span class="den">F</span></span> = <span class="frac"><span class="num">1</span><span class="den">d</span></span> ± <span class="frac"><span class="num">1</span><span class="den">f</span></span>', desc: 'Положение изображения' },
+                    { name: 'Увеличение линзы', text: 'Γ = <span class="frac"><span class="num">H</span><span class="den">h</span></span> = <span class="frac"><span class="num">f</span><span class="den">d</span></span>', desc: 'Линейное увеличение' },
                     { name: 'Интерференционный максимум', text: 'Δd = kλ', desc: 'Условие максимума' },
-                    { name: 'Интерференционный минимум', text: 'Δd = (2k + 1)λ / 2', desc: 'Условие минимума' },
+                    { name: 'Интерференционный минимум', text: 'Δd = (2k + 1)<span class="frac"><span class="num">λ</span><span class="den">2</span></span>', desc: 'Условие минимума' },
                     { name: 'Дифракционная решетка', text: 'd·sinφ = kλ', desc: 'Формула решетки' }
                 ]
             },
@@ -334,14 +367,14 @@
                 icon: '⚛️',
                 color: '#e11d48',
                 formulas: [
-                    { name: 'Энергия фотона', text: 'E = hν = hc / λ', desc: 'Квант света' },
-                    { name: 'Импульс фотона', text: 'p = E / c = h / λ', desc: 'Импульс кванта' },
-                    { name: 'Уравнение Эйнштейна (фотоэффект)', text: 'hν = A_вых + E_k_max', desc: 'Для внешнего фотоэффекта' },
-                    { name: 'Красная граница', text: 'ν_min = A_вых / h', desc: 'Фотоэффекта' },
-                    { name: 'Связь массы и энергии', text: 'E = mc²', desc: 'Формула Эйнштейна' },
-                    { name: 'Дефект массы', text: 'Δm = (Z·m_p + N·m_n) - M_я', desc: 'Ядерная физика' },
-                    { name: 'Энергия связи', text: 'E_св = Δm · c²', desc: 'Энергия ядра' },
-                    { name: 'Закон радиоактивного распада', text: 'N = N₀ · 2^(-t/T)', desc: 'Где T - период полураспада' }
+                    { name: 'Энергия фотона', text: 'E = hν = <span class="frac"><span class="num">hc</span><span class="den">λ</span></span>', desc: 'Квант света' },
+                    { name: 'Импульс фотона', text: 'p = <span class="frac"><span class="num">E</span><span class="den">c</span></span> = <span class="frac"><span class="num">h</span><span class="den">λ</span></span>', desc: 'Импульс кванта' },
+                    { name: 'Уравнение Эйнштейна (фотоэффект)', text: 'hν = A<sub>вых</sub> + E<sub>k_max</sub>', desc: 'Для внешнего фотоэффекта' },
+                    { name: 'Красная граница', text: 'ν<sub>min</sub> = <span class="frac"><span class="num">A<sub>вых</sub></span><span class="den">h</span></span>', desc: 'Фотоэффекта' },
+                    { name: 'Связь массы и энергии', text: 'E = mc<sup>2</sup>', desc: 'Формула Эйнштейна' },
+                    { name: 'Дефект массы', text: 'Δm = (Z·m<sub>p</sub> + N·m<sub>n</sub>) - M<sub>я</sub>', desc: 'Ядерная физика' },
+                    { name: 'Энергия связи', text: 'E<sub>св</sub> = Δm · c<sup>2</sup>', desc: 'Энергия ядра' },
+                    { name: 'Закон радиоактивного распада', text: 'N = N<sub>0</sub> · 2<sup>-<span class="frac"><span class="num">t</span><span class="den">T</span></span></sup>', desc: 'Где T - период полураспада' }
                 ]
             }
         ];
