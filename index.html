@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STAR'S Academy — Physics Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,6 +19,8 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: #f1f5f9;
+            /* Используем dvh для корректного отображения на мобильных браузерах с плавающей адресной строкой */
+            height: 100dvh; 
         }
 
         /* Nav Items */
@@ -32,6 +34,8 @@
             align-items: center;
             gap: 12px;
             color: #94a3b8;
+            /* Улучшение для touch-экранов */
+            -webkit-tap-highlight-color: transparent; 
         }
 
         .nav-item:hover {
@@ -83,18 +87,20 @@
             flex-direction: column;
             justify-content: space-between;
             min-height: 160px;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .topic-card:hover {
+        .topic-card:hover, .topic-card:active {
             border-color: var(--accent);
             transform: translateY(-5px);
             background: #262f3f;
             box-shadow: 0 10px 20px -10px rgba(56, 189, 248, 0.3);
         }
 
+        /* Умный размер для iframe через flexbox вместо calc */
         #pageFrame {
             width: 100%;
-            min-height: calc(100vh - 160px);
+            flex: 1; /* Занимает все свободное пространство родителя */
             border: none;
             border-radius: 16px;
             background: white;
@@ -105,7 +111,6 @@
         @media (max-width: 768px) {
             #pageFrame {
                 border-radius: 12px;
-                min-height: calc(100vh - 140px);
             }
         }
 
@@ -168,13 +173,14 @@
             background: #334155;
             color: white;
             transition: transform 0.2s, background 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .social-btn:hover {
+        .social-btn:hover, .social-btn:active {
             transform: translateY(-3px);
             background: var(--accent);
         }
-        .whatsapp:hover { background: #25D366; }
-        .telegram:hover { background: #0088cc; }
+        .whatsapp:hover, .whatsapp:active { background: #25D366; }
+        .telegram:hover, .telegram:active { background: #0088cc; }
 
         .back-btn {
             display: inline-flex;
@@ -184,27 +190,29 @@
             cursor: pointer;
             margin-bottom: 1.5rem;
             font-weight: 600;
+            padding: 8px 0; /* Увеличенная зона для клика */
             transition: opacity 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
-        .back-btn:hover { opacity: 0.8; }
+        .back-btn:hover, .back-btn:active { opacity: 0.8; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex overflow-hidden"> <!-- h-screen заменен на h-100dvh через CSS body -->
 
     <!-- SIDEBAR -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-[280px] bg-[var(--sidebar-bg)] border-r border-slate-700 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-[280px] bg-[var(--sidebar-bg)] border-r border-slate-700 flex flex-col z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
         <div class="p-6 md:p-8 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-white tracking-wider cursor-pointer" onclick="goHome()">STAR'S <span class="text-sky-400">ACADEMY</span></h1>
                 <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest" data-i18n="platform_desc">Онлайн платформа</p>
             </div>
-            <!-- Close button for mobile -->
-            <button class="md:hidden text-slate-400 hover:text-white" onclick="toggleSidebar()">
-                <i class="fas fa-times text-xl"></i>
+            <!-- Close button -->
+            <button class="text-slate-400 hover:text-white p-2" onclick="closeSidebar()">
+                <i class="fas fa-times text-2xl"></i>
             </button>
         </div>
 
-        <nav class="flex-grow overflow-y-auto">
+        <nav class="flex-grow overflow-y-auto pb-4">
             <div class="nav-item" data-grade="7" onclick="loadGradeHub('7', this)">
                 <i class="fas fa-microscope w-5 text-center"></i>
                 <span data-i18n="grade_7">7 класс</span>
@@ -232,23 +240,28 @@
                 <i class="fas fa-folder-open w-5 text-center"></i>
                 <span data-i18n="sor_soch">СОР/СОЧ</span>
             </div>
+
+            <div class="nav-item" id="formulasBtn" onclick="loadFormulas(this)">
+                <i class="fas fa-square-root-variable w-5 text-center"></i>
+                <span data-i18n="formulas">Формулы</span>
+            </div>
         </nav>
     </aside>
 
-    <!-- Overlay for Mobile -->
-    <div id="mobileOverlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden" onclick="toggleSidebar()"></div>
+    <!-- Overlay for Mobile & Desktop -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300" onclick="closeSidebar()"></div>
 
     <!-- MAIN CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col w-full h-screen overflow-hidden md:pl-[280px] transition-all duration-300">
+    <div class="flex-1 flex flex-col w-full h-[100dvh] overflow-hidden transition-all duration-300">
         
         <!-- HEADER -->
         <header class="h-[70px] shrink-0 bg-slate-900/90 backdrop-blur border-b border-slate-700 flex justify-between items-center px-4 md:px-8 z-30">
             <div class="flex items-center gap-3 md:gap-4">
                 <!-- Hamburger Menu Button -->
-                <button id="menuBtn" class="md:hidden text-slate-300 hover:text-white" onclick="toggleSidebar()">
+                <button id="menuBtn" class="text-slate-300 hover:text-white p-2 -ml-2" onclick="toggleSidebar()">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <h1 class="md:hidden text-lg font-bold text-white tracking-wider cursor-pointer" onclick="goHome()">STAR'S</h1>
+                <h1 class="text-lg font-bold text-white tracking-wider cursor-pointer" onclick="goHome()">STAR'S</h1>
                 
                 <div class="hidden sm:flex items-center gap-2 md:gap-4 ml-2">
                     <span class="text-sm font-semibold">RU</span>
@@ -262,7 +275,7 @@
 
             <div class="flex items-center gap-3 md:gap-4">
                 <!-- Mobile Only Lang Switcher -->
-                <div class="flex sm:hidden items-center gap-2 mr-2">
+                <div class="flex sm:hidden items-center gap-2 mr-1">
                     <span class="text-xs font-semibold">RU</span>
                     <label class="switch scale-90">
                         <input type="checkbox" id="langSwitchMobile">
@@ -279,10 +292,10 @@
             </div>
         </header>
 
-        <!-- MAIN SCROLLABLE AREA -->
-        <main id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-8 relative">
+        <!-- MAIN SCROLLABLE AREA (добавлен flex flex-col для умной высоты iframe) -->
+        <main id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col relative w-full">
             <!-- Welcome Screen -->
-            <div id="welcomeScreen" class="h-full flex flex-col items-center justify-center text-center py-10 min-h-[400px]">
+            <div id="welcomeScreen" class="flex-1 flex flex-col items-center justify-center text-center py-10 min-h-[400px]">
                 <div class="atom-container">
                     <div class="orbit" style="--d: 8s; transform: rotateX(70deg) rotateY(10deg);"><div class="electron"></div></div>
                     <div class="orbit" style="--d: 12s; transform: rotateX(10deg) rotateY(70deg);"><div class="electron"></div></div>
@@ -290,13 +303,13 @@
                 </div>
                 <h2 class="text-3xl md:text-5xl font-bold mb-4 z-10" data-i18n="welcome_title">Изучай физику легко и просто</h2>
                 <p class="text-lg md:text-xl text-slate-400 max-w-lg mx-auto z-10" data-i18n="welcome_subtitle">Интерактивные уроки и задачи для учеников 7-11 классов</p>
-                <button class="mt-8 px-6 py-3 md:px-8 md:py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-full transition-all shadow-lg shadow-sky-500/20 z-10" data-i18n="start_btn" onclick="loadGradeHub('7', document.querySelector('.nav-item'))">
+                <button class="mt-8 px-6 py-3 md:px-8 md:py-3 bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold rounded-full transition-all shadow-lg shadow-sky-500/20 z-10" data-i18n="start_btn" onclick="loadGradeHub('7', document.querySelector('.nav-item'))">
                     Начать обучение
                 </button>
             </div>
 
             <!-- Selection Hub Header -->
-            <div id="selectionHeader" class="hidden flex flex-col">
+            <div id="selectionHeader" class="hidden flex-col shrink-0">
                 <div id="backToHub" class="back-btn hidden" onclick="loadSORSOCHHub(document.getElementById('sorSochBtn'))">
                     <i class="fas fa-chevron-left"></i> <span data-i18n="back">Назад</span>
                 </div>
@@ -304,7 +317,8 @@
                 <p class="text-sm md:text-base text-slate-400 mb-6 md:mb-8" data-i18n="select_item">Выберите нужный раздел</p>
             </div>
             
-            <div id="topicGrid"></div>
+            <div id="topicGrid" class="shrink-0"></div>
+            <!-- Iframe теперь flex-1, занимает всю доступную высоту -->
             <iframe id="pageFrame"></iframe>
         </main>
 
@@ -336,7 +350,8 @@
                 quarter_1: "1 четверть",
                 quarter_2: "2 четверть",
                 quarter_3: "3 четверть",
-                quarter_4: "4 четверть"
+                quarter_4: "4 четверть",
+                formulas: "Формулы"
             },
             kz: {
                 platform_desc: "Онлайн платформасы",
@@ -357,7 +372,8 @@
                 quarter_1: "1-тоқсан",
                 quarter_2: "2-тоқсан",
                 quarter_3: "3-тоқсан",
-                quarter_4: "4-тоқсан"
+                quarter_4: "4-тоқсан",
+                formulas: "Формулалар"
             }
         };
 
@@ -458,7 +474,22 @@
                 { file: "page 1021.html", ru: "Изопроцессы. Графики изопроцессов. Закон Дальтона", kz: "Изопроцестер. Изопроцестердің графиктері. Дальтон заңы" },
                 { file: "page 1022.html", ru: "Внутренняя энергия и Работа. Количество теплоты", kz: "Ішкі энергия және Жұмыс. Жылу мөлшері" },
                 { file: "page 1023.html", ru: "Первый закон термодинамики", kz: "Термодинамиканың бірінші заңы" },
-                { file: "page 1025.html", ru: "Адиабатный процесс. Уравнение Пуассона", kz: "Адиабаттық процесс. Пуассон теңдеуі" }
+                { file: "page 1025.html", ru: "Адиабатный процесс. Уравнение Пуассона", kz: "Адиабаттық процесс. Пуассон теңдеуі" },
+                { file: "page 1027.html", ru: "Второй закон термодинамики. Энтропия", kz: "Термодинамиканың екінші заңы. Энтропия" },
+                { file: "page 1028.html", ru: "Круговые процессы. Цикл Карно", kz: "Дөңгелек процестер. Карно циклі" },
+                { file: "page 1029.html", ru: "Влажность воздуха и Фазовые диаграммы", kz: "Ауа ылғалдылығы және Фазалық диаграммалар" },
+                { file: "page 1030.html", ru: "Твердые тела и их механические свойства", kz: "Қатты денелер және олардың механикалық қасиеттері" },
+                { file: "page 1031.html", ru: "Поверхностный слой жидкости. Капилляры", kz: "Сұйықтықтың беттік қабаты. Капиллярлар" },
+                { file: "page 1032.html", ru: "Электрический заряд. Закон Кулона", kz: "Электр заряды. Кулон заңы" },
+                { file: "page 1033.html", ru: "Электрическое поле. Принцип суперпозиции", kz: "Электр өрісі. Суперпозиция принципі" },
+                { file: "page 1034.html", ru: "Поток вектора напряженности. Теорема Гаусса", kz: "Кернеулік векторының ағыны. Гаусс теоремасы" },
+                { file: "page 1035.html", ru: "Работа электрического поля. Потенциал", kz: "Электр өрісінің жұмысы. Потенциал" },
+                { file: "page 1036.html", ru: "Работа электрического поля. Потенциал (часть 2)", kz: "Электр өрісінің жұмысы. Потенциал (2-бөлім)" },
+                { file: "page 1037.html", ru: "Работа электрического поля. Потенциал (часть 3)", kz: "Электр өрісінің жұмысы. Потенциал (3-бөлім)" },
+                { file: "page 1039.html", ru: "Проводники и диэлектрики в электрическом поле", kz: "Электр өрісіндегі өткізгіштер мен диэлектриктер" },
+                { file: "page 1040.html", ru: "Проводники и диэлектрики в электрическом поле (часть 2)", kz: "Электр өрісіндегі өткізгіштер мен диэлектриктер (2-бөлім)" },
+                { file: "page 1041.html", ru: "Электроемкость. Конденсаторы", kz: "Электрсыйымдылық. Конденсаторлар" },
+                { file: "page 1042.html", ru: "Электрический ток. Закон Ома. Соединения", kz: "Электр тогы. Ом заңы. Жалғаулар" }
             ],
             '11': []
         };
@@ -499,8 +530,9 @@
         let currentLang = 'ru';
         let currentView = 'home'; 
         let currentGrade = null;
+        let sidebarHideTimeout;
 
-        // --- Sidebar Logic for Mobile ---
+        // --- Sidebar Logic ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobileOverlay');
@@ -511,21 +543,33 @@
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
             } else {
-                // Close Menu
+                closeSidebar();
+            }
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            if (!sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.add('-translate-x-full');
                 overlay.classList.add('opacity-0');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
             }
         }
 
-        function closeSidebarOnMobile() {
-            if (window.innerWidth < 768) {
-                const sidebar = document.getElementById('sidebar');
-                if (!sidebar.classList.contains('-translate-x-full')) {
-                    toggleSidebar();
-                }
+        // Автоматическое скрытие сайдбара при неиспользовании (уход мыши)
+        document.getElementById('sidebar').addEventListener('mouseleave', () => {
+            // Устанавливаем таймер только если это устройство с мышью
+            if (window.matchMedia("(pointer: fine)").matches) {
+                sidebarHideTimeout = setTimeout(() => {
+                    closeSidebar();
+                }, 1500); // Скрываем через 1.5 секунды
             }
-        }
+        });
+
+        document.getElementById('sidebar').addEventListener('mouseenter', () => {
+            clearTimeout(sidebarHideTimeout);
+        });
         // --------------------------------
 
         function updateLanguage(lang) {
@@ -562,7 +606,7 @@
         document.getElementById('langSwitchMobile').addEventListener('change', handleLangChange);
 
         function loadGradeHub(grade, element) {
-            closeSidebarOnMobile();
+            closeSidebar();
             currentView = 'grade';
             currentGrade = grade;
             setActive(element);
@@ -578,7 +622,7 @@
         }
 
         function loadSORSOCHHub(element) {
-            closeSidebarOnMobile();
+            closeSidebar();
             currentView = 'sor';
             setActive(element);
 
@@ -590,6 +634,21 @@
 
             document.getElementById('currentSelectionTitle').innerText = translations[currentLang].sor_soch;
             renderSORHub();
+        }
+
+        function loadFormulas(element) {
+            closeSidebar();
+            currentView = 'formulas';
+            setActive(element);
+
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('selectionHeader').classList.remove('hidden');
+            document.getElementById('selectionHeader').classList.add('hidden'); // hide specific parts
+            document.getElementById('topicGrid').style.display = 'none';
+            
+            const frame = document.getElementById('pageFrame');
+            frame.style.display = 'block';
+            frame.src = 'mat 7 class/page 77777.html';
         }
 
         function renderSORHub() {
@@ -695,7 +754,7 @@
         }
 
         function goHome() {
-            closeSidebarOnMobile();
+            closeSidebar();
             currentView = 'home';
             setActive(null);
             document.getElementById('welcomeScreen').style.display = 'flex';
