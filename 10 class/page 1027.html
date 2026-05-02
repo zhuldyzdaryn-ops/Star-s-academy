@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Второй закон термодинамики. Энтропия — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #8b5cf6; /* Фиолетовый (Энтропия) */
+            --primary-hover: #7c3aed;
+            --accent: #ef4444; /* Красный (Тепло) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #a78bfa;
+                --primary-hover: #8b5cf6;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+        button:disabled { background-color: var(--border); cursor: not-allowed; color: var(--text-muted); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%;}
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            background-color: #020617; /* Темный фон для контраста */
+            border-radius: var(--radius);
+            border: 3px solid var(--border);
+        }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        /* Прогресс-бар энтропии */
+        .entropy-bar-container { width: 100%; background-color: var(--border); border-radius: 10px; height: 24px; overflow: hidden; margin-top: 10px; position: relative;}
+        .entropy-bar-fill { height: 100%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444); width: 0%; transition: width 0.3s ease; }
+        .entropy-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; line-height: 24px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); font-size: 0.9rem;}
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Второй закон термодинамики. Энтропия</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Первый закон термодинамики — это закон сохранения энергии. Но он не запрещает теплу самопроизвольно перетекать от холодильника к горячей плите. Почему же в реальности этого никогда не происходит? Ответ дает Второй закон.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ОБРАТИМОСТЬ -->
+    <section class="card">
+        <h2>1. Обратимые и необратимые процессы</h2>
+        <p>Если снять на видео падение и разбивание стеклянной чашки, а затем прокрутить видео задом наперед, любой человек сразу поймет, что это "обратная перемотка". Осколки не собираются сами собой в целую чашку.</p>
+        <ul>
+            <li><b>Обратимый процесс</b> — это идеальный процесс, который можно провести в обратном направлении через ту же самую цепочку состояний, при этом в окружающей среде не останется никаких изменений. (Пример: идеальные колебания математического маятника в вакууме).</li>
+            <li><b>Необратимый процесс</b> — процесс, который нельзя провести в обратном направлении без того, чтобы в окружающей среде не осталось изменений.</li>
+        </ul>
+        <p><b>Все реальные макроскопические процессы в природе необратимы!</b> Причины необратимости: наличие трения, диффузия (перемешивание), теплопередача при конечной разности температур.</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ВТОРОЙ ЗАКОН -->
+    <section class="card">
+        <h2>2. Второй закон термодинамики</h2>
+        <p>Этот закон задает "стрелу времени" — направление, в котором самопроизвольно развиваются все процессы во Вселенной. Существует несколько равнозначных формулировок этого закона:</p>
+        
+        <div class="task-block" style="border-left-color: var(--accent);">
+            <h3>Формулировка Клаузиуса (направление теплопередачи)</h3>
+            <p><i>«Невозможен процесс, единственным результатом которого является передача теплоты от менее нагретого тела к более нагретому».</i></p>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Холодильник перекачивает тепло от холодного к горячему, но это не единственный результат: для этого мы тратим электрическую энергию (совершаем работу).</p>
+        </div>
+
+        <div class="task-block" style="border-left-color: var(--success);">
+            <h3>Формулировка Кельвина (тепловые двигатели)</h3>
+            <p><i>«Невозможен циклический процесс, единственным результатом которого было бы превращение всей теплоты, полученной от нагревателя, в механическую работу».</i></p>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Нельзя построить "вечный двигатель второго рода" со 100% КПД. Часть тепла всегда неизбежно рассеивается в окружающую среду (передается холодильнику).</p>
+        </div>
+        
+        <p>Следствием Второго закона является формула максимального теоретического КПД идеальной тепловой машины (цикл Карно):</p>
+        <div class="formula">
+            <b>&eta;<sub>max</sub> = (T<sub>1</sub> - T<sub>2</sub>) / T<sub>1</sub></b>
+        </div>
+        <p><i>Где T<sub>1</sub> — температура нагревателя, T<sub>2</sub> — температура холодильника (в Кельвинах).</i></p>
+    </section>
+
+    <!-- 4) ТЕОРИЯ: ЭНТРОПИЯ -->
+    <section class="card">
+        <h2>3. Энтропия: мера хаоса</h2>
+        <p>Немецкий физик Рудольф Клаузиус ввел величину, которую назвал <b>энтропией (S)</b>. Проще всего понимать энтропию как <b>меру беспорядка или хаоса</b> в системе.</p>
+        <ul>
+            <li>У кристалла льда (строгий порядок атомов) энтропия <b>низкая</b>.</li>
+            <li>У жидкой воды (молекулы подвижны) энтропия <b>выше</b>.</li>
+            <li>У водяного пара (молекулы летают хаотично) энтропия <b>очень высокая</b>.</li>
+        </ul>
+        <p>Самая философская формулировка Второго закона термодинамики — <b>Закон неубывания энтропии</b>:</p>
+        <div class="formula">
+            <b>&Delta;S &ge; 0</b> (в замкнутой изолированной системе)
+        </div>
+        <p>Это означает, что любая изолированная система самопроизвольно стремится к состоянию с максимальным беспорядком (хаосом). Порядок сам собой не возникает из хаоса, а вот хаос из порядка — сколько угодно.</p>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Смешивание газов и Энтропия</h2>
+        <p>В закрытом сосуде находятся два газа: "Красный" слева и "Синий" справа. Они разделены перегородкой. Это состояние максимального порядка (низкая энтропия).<br>Нажмите «Убрать перегородку» и посмотрите, что произойдет с энтропией!</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div style="margin-bottom: 20px;">
+                    <button id="btn-partition" style="width: 100%;">Убрать перегородку</button>
+                    <button id="btn-reset" class="secondary" style="width: 100%; margin-top: 10px;">Сброс (Восстановить порядок)</button>
+                </div>
+                
+                <div class="control-group">
+                    <label>Температура (скорость частиц):</label>
+                    <input type="range" id="sim-speed" min="1" max="5" value="2" step="0.5">
+                </div>
+
+                <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 20px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">Уровень хаоса (Энтропия):</div>
+                    <div class="entropy-bar-container">
+                        <div id="entropy-bar" class="entropy-bar-fill"></div>
+                        <div id="entropy-text" class="entropy-text">Порядок (Минимум)</div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px; line-height: 1.3;">
+                        Смогут ли частицы в результате хаотичного движения снова самопроизвольно разделиться на красные слева и синие справа? Теоретически да, но вероятность этого равна нулю.
+                    </p>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="500" height="300"></canvas>
+                <p class="sim-status" id="sim-info">Перегородка установлена. Диффузия невозможна.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи (Максимальный КПД)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Идеальная тепловая машина работает по циклу Карно. Температура нагревателя равна 227 &deg;C, а температура холодильника равна 27 &deg;C. Чему равен максимально возможный КПД такой машины?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                t<sub>1</sub> = 227 &deg;C<br>
+                t<sub>2</sub> = 27 &deg;C<br>
+                <b>Найти:</b> &eta;<sub>max</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                1. <b>ОЧЕНЬ ВАЖНО:</b> Во всех термодинамических формулах температуру нужно перевести в Кельвины (прибавить 273).<br>
+                T<sub>1</sub> = 227 + 273 = 500 К.<br>
+                T<sub>2</sub> = 27 + 273 = 300 К.</p>
+                
+                <p>2. Используем формулу для максимального КПД тепловой машины:<br>
+                &eta;<sub>max</sub> = (T<sub>1</sub> - T<sub>2</sub>) / T<sub>1</sub></p>
+                
+                <p>3. Подставляем значения:<br>
+                &eta;<sub>max</sub> = (500 - 300) / 500 = 200 / 500 = 0.4.</p>
+                
+                <p>4. Переводим в проценты: 0.4 &middot; 100% = 40%.</p>
+                
+                <p><b>Ответ:</b> Максимальный теоретический КПД составляет 40%. (Остальные 60% энергии <b>неизбежно</b> рассеиваются в окружающую среду согласно Второму закону термодинамики).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Анализ необратимости)</h3>
+            <p>Какой из перечисленных процессов является <b>обратимым</b> (хотя бы теоретически, в идеальных условиях)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Торможение автомобиля из-за трения шин об асфальт.<br>
+            2. Растворение кубика сахара в чае.<br>
+            3. Свободные колебания идеального пружинного маятника в вакууме.<br>
+            4. Передача тепла от горячей батареи к холодному воздуху в комнате.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Механические движения без трения — это единственные примеры обратимых процессов. Все процессы, связанные с трением, диффузией или теплопередачей (1, 2, 4) — необратимы.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет КПД)</h3>
+            <p>Температура нагревателя идеальной тепловой машины 600 К, температура холодильника 300 К. Двигатель получил от нагревателя количество теплоты Q<sub>1</sub> = 1000 Дж. Какую <b>максимальную полезную работу</b> (в Дж) может совершить этот двигатель?</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в Дж"> 
+            <button onclick="checkTask('taskB', 500, 0, '1) Найдите КПД: η = (600 - 300)/600 = 300/600 = 0.5 (или 50%). 2) Работа A = η * Q1 = 0.5 * 1000 = 500 Дж.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Рассчитывает максимальный КПД по температурам.</li>
+                    <li>Связывает КПД с полезной работой и затраченным теплом (A = &eta; &middot; Q<sub>1</sub>).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Парадокс энтропии)</h3>
+            <p>Вода в морозильнике замерзает, превращаясь в лед (порядок молекул возрастает, значит энтропия воды <b>уменьшается</b>). Не нарушает ли это Второй закон термодинамики (&Delta;S &ge; 0)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Да, это исключение из Второго закона.<br>
+            2. Нет, потому что морозильник выбрасывает еще больше тепла в комнату, увеличивая энтропию воздуха в комнате на бóльшую величину.<br>
+            3. Нет, потому что закон применим только к газам, а не к жидкостям.</p>
+            <input type="number" id="taskC-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskC', 2, 0, 'Закон гласит, что энтропия не убывает в ЗАМКНУТОЙ (изолированной) системе. Морозильник + Комната = замкнутая система. Энтропия льда упала, но энтропия воздуха на кухне выросла намного сильнее. Общая энтропия возросла!')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Понимает разницу между открытой и изолированной системой.</li>
+                    <li>Объясняет локальное уменьшение энтропии глобальным ее возрастанием.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <p>Что вы поняли из этой философской темы?</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), почему тепло никогда само не перейдет от холодного тела к горячему.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я знаю, что 100% КПД теплового двигателя невозможен не из-за плохих инженеров, а из-за законов природы.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я понимаю, что энтропия — это мера хаоса, и она постоянно растет во Вселенной.</label>
+        </div>
+        <button onclick="alert('Отличная работа! Энтропия — это стрела времени. Вы сделали шаг к глубокому пониманию устройства нашего мира.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. В чем заключается суть Второго закона термодинамики по Клаузиусу?</b></p>
+                <label><input type="radio" name="q1" value="0"> Энергия не создается и не уничтожается.</label>
+                <label><input type="radio" name="q1" value="1"> Теплота не может самопроизвольно переходить от менее нагретого тела к более нагретому.</label>
+                <label><input type="radio" name="q1" value="0"> Энтропия Вселенной всегда уменьшается.</label>
+                <label><input type="radio" name="q1" value="0"> КПД любой тепловой машины равен 100%.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Выберите процесс, который протекает самопроизвольно в природе:</b></p>
+                <label><input type="radio" name="q2" value="0"> Разделение воздуха на кислород и азот без оборудования.</label>
+                <label><input type="radio" name="q2" value="0"> Превращение всей механической работы трения обратно в кинетическую энергию.</label>
+                <label><input type="radio" name="q2" value="1"> Выравнивание температур горячего чая и комнатного воздуха.</label>
+                <label><input type="radio" name="q2" value="0"> Слияние осколков в целую вазу.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Что характеризует физическая величина «Энтропия»?</b></p>
+                <label><input type="radio" name="q3" value="0"> Полную механическую энергию тела.</label>
+                <label><input type="radio" name="q3" value="1"> Степень хаоса (беспорядка) в термодинамической системе.</label>
+                <label><input type="radio" name="q3" value="0"> Силу трения между молекулами.</label>
+                <label><input type="radio" name="q3" value="0"> Мощность теплового двигателя.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что происходит с энтропией (S) в замкнутой (изолированной) системе согласно Второму закону термодинамики?</b></p>
+                <label><input type="radio" name="q4" value="0"> Она всегда равна нулю.</label>
+                <label><input type="radio" name="q4" value="0"> Она постоянно уменьшается.</label>
+                <label><input type="radio" name="q4" value="0"> Она изменяется по синусоиде.</label>
+                <label><input type="radio" name="q4" value="1"> Она либо возрастает, либо остается неизменной (в идеальных обратимых процессах).</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Почему невозможно создать вечный двигатель второго рода (двигатель, превращающий 100% тепла в работу)?</b></p>
+                <label><input type="radio" name="q5" value="1"> Часть теплоты неизбежно должна быть передана холодильнику (рассеяна), чтобы замкнуть цикл.</label>
+                <label><input type="radio" name="q5" value="0"> Из-за того, что невозможно создать идеальные подшипники без трения.</label>
+                <label><input type="radio" name="q5" value="0"> Это нарушило бы закон сохранения энергии (Первый закон).</label>
+                <label><input type="radio" name="q5" value="0"> Никто еще не придумал подходящего топлива.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ГАЗ И ЭНТРОПИЯ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const btnPartition = document.getElementById('btn-partition');
+    const btnReset = document.getElementById('btn-reset');
+    const inSpeed = document.getElementById('sim-speed');
+    const entropyBar = document.getElementById('entropy-bar');
+    const entropyText = document.getElementById('entropy-text');
+    const simInfo = document.getElementById('sim-info');
+
+    // Simulation State
+    let isPartitionUp = true;
+    let particles = [];
+    const numParticlesHalf = 100; // 100 Red, 100 Blue
+    const particleR = 4;
+    
+    const cw = canvas.width;
+    const ch = canvas.height;
+
+    function initSimulation() {
+        particles = [];
+        isPartitionUp = true;
+        
+        let speed = parseFloat(inSpeed.value);
+
+        // Left side (Red)
+        for (let i = 0; i < numParticlesHalf; i++) {
+            particles.push({
+                x: particleR + Math.random() * (cw/2 - 2*particleR - 10),
+                y: particleR + Math.random() * (ch - 2*particleR),
+                vx: (Math.random() - 0.5) * 2 * speed,
+                vy: (Math.random() - 0.5) * 2 * speed,
+                color: "#ef4444", // Red
+                type: 0 // 0 = left origin
+            });
+        }
+        
+        // Right side (Blue)
+        for (let i = 0; i < numParticlesHalf; i++) {
+            particles.push({
+                x: cw/2 + 10 + particleR + Math.random() * (cw/2 - 2*particleR - 10),
+                y: particleR + Math.random() * (ch - 2*particleR),
+                vx: (Math.random() - 0.5) * 2 * speed,
+                vy: (Math.random() - 0.5) * 2 * speed,
+                color: "#3b82f6", // Blue
+                type: 1 // 1 = right origin
+            });
+        }
+        
+        btnPartition.innerText = "Убрать перегородку";
+        btnPartition.disabled = false;
+        simInfo.innerText = "Перегородка установлена. Диффузия невозможна.";
+        updateEntropy(0);
+    }
+
+    inSpeed.addEventListener('input', () => {
+        let speed = parseFloat(inSpeed.value);
+        for(let p of particles) {
+            let currentV = Math.hypot(p.vx, p.vy);
+            if(currentV > 0.1) {
+                p.vx = (p.vx / currentV) * speed;
+                p.vy = (p.vy / currentV) * speed;
+            } else {
+                p.vx = speed;
+                p.vy = speed;
+            }
+        }
+    });
+
+    btnPartition.addEventListener('click', () => {
+        isPartitionUp = false;
+        btnPartition.disabled = true;
+        simInfo.innerText = "Перегородка убрана! Идет процесс необратимого смешивания (диффузия).";
+    });
+
+    btnReset.addEventListener('click', () => {
+        initSimulation();
+    });
+
+    function updateEntropy(chaosMetric) {
+        // chaosMetric goes from 0 (perfectly separated) to 1 (perfectly mixed)
+        // Max chaotic state is roughly 50% red on right, 50% blue on left.
+        
+        let percent = chaosMetric * 100;
+        if(percent > 100) percent = 100;
+        
+        entropyBar.style.width = percent + "%";
+        
+        if (percent < 10) {
+            entropyText.innerText = "Порядок (S = min)";
+        } else if (percent < 80) {
+            entropyText.innerText = "Смешивание (S растет)";
+        } else {
+            entropyText.innerText = "Полный Хаос (S = max)";
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Draw partition if up
+        if (isPartitionUp) {
+            ctx.fillStyle = "var(--border)";
+            ctx.fillRect(cw/2 - 4, 0, 8, ch);
+        }
+
+        // Calculate entropy metric
+        let misplacedCount = 0;
+
+        for (let p of particles) {
+            // Move
+            p.x += p.vx;
+            p.y += p.vy;
+
+            // Wall collisions (Outer walls)
+            if (p.x < particleR) { p.x = particleR; p.vx *= -1; }
+            if (p.x > cw - particleR) { p.x = cw - particleR; p.vx *= -1; }
+            if (p.y < particleR) { p.y = particleR; p.vy *= -1; }
+            if (p.y > ch - particleR) { p.y = ch - particleR; p.vy *= -1; }
+
+            // Partition collision
+            if (isPartitionUp) {
+                if (p.type === 0 && p.x > cw/2 - particleR - 4) {
+                    p.x = cw/2 - particleR - 4;
+                    p.vx *= -1;
+                }
+                if (p.type === 1 && p.x < cw/2 + particleR + 4) {
+                    p.x = cw/2 + particleR + 4;
+                    p.vx *= -1;
+                }
+            } else {
+                // If partition is down, count misplaced particles for entropy
+                if (p.type === 0 && p.x > cw/2) misplacedCount++;
+                if (p.type === 1 && p.x < cw/2) misplacedCount++;
+            }
+
+            // Draw
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, particleR, 0, Math.PI*2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        }
+
+        if (!isPartitionUp) {
+            // Ideally, 50% of particles cross the middle. 
+            // Total misplaced ideally = numParticlesHalf (50 red cross, 50 blue cross)
+            // Metric = misplacedCount / numParticlesHalf
+            let chaos = misplacedCount / numParticlesHalf;
+            // Add some smoothing so it doesn't jump crazily over 100%
+            updateEntropy(chaos);
+        }
+
+        requestAnimationFrame(draw);
+    }
+
+    // Start
+    initSimulation();
+    requestAnimationFrame(draw);
+
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. По Клаузиусу: теплота самопроизвольно переходит только от горячего к холодному. Обратный процесс невозможен без затрат работы.",
+            "2. Выравнивание температур (теплопередача) — это естественный, самопроизвольный и необратимый процесс.",
+            "3. Энтропия в термодинамике является мерой степени хаоса или беспорядка системы.",
+            "4. В изолированной системе (без подвода энергии извне) энтропия самопроизвольных процессов всегда возрастает (хаос увеличивается).",
+            "5. Формулировка Кельвина гласит, что часть тепла всегда должна передаваться холодильнику, поэтому превратить 100% полученного тепла в работу невозможно."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы прекрасно поняли фундаментальные законы природы.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Работа электрического поля. Потенциал — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #d946ef; /* Пурпурный/Fuchsia */
+            --primary-hover: #c026d3;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626; /* Красный для + */
+            --blue: #2563eb;   /* Синий для - */
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #e879f9;
+                --primary-hover: #f0abfc;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; align-items: center; position: relative;}
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            cursor: grab;
+            touch-action: none; 
+        }
+        canvas:active { cursor: grabbing; }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #cbd5e1; border-color: #475569; } }
+        
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+        .dashboard-box { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 10px; text-align: center;}
+        
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;}
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; text-align: center;
+            border: 1px dashed var(--border); margin-bottom: 16px; overflow-x: auto;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Работа электрического поля. Потенциал и Напряжение</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Как батарейка заставляет течь ток? Почему птицы могут безопасно сидеть на проводах высокого напряжения? 
+            Всё дело в том, что для перемещения зарядов нужна энергия. Эту энергию описывают через понятие "потенциал".
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: РАБОТА ПОЛЯ -->
+    <section class="card">
+        <h2>1. Работа электрического поля</h2>
+        <p>Если внести заряд в электрическое поле, на него начнет действовать кулоновская сила. Если заряд перемещается под действием этой силы, поле совершает <b>работу (A)</b>.</p>
+        
+        <p>Важнейшее свойство электростатического поля: <b>оно является потенциальным (консервативным)</b>. Это значит, что:</p>
+        <ul>
+            <li>Работа поля по перемещению заряда из точки 1 в точку 2 <b>не зависит от формы траектории</b> (можно двигаться по прямой, зигзагом или спиралью — работа будет одинаковой).</li>
+            <li>Работа поля при перемещении заряда по <b>замкнутому контуру</b> (возврат в ту же точку) всегда <b>равна нулю</b>.</li>
+        </ul>
+        <p>В однородном поле (где напряженность E везде одинакова) работа вычисляется так:</p>
+        <div class="formula">
+            <b>A = q &middot; E &middot; d</b>
+        </div>
+        <p>Где <b>d</b> — это не просто путь, а <i>перемещение вдоль силовых линий</i> поля.</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ПОТЕНЦИАЛ И НАПРЯЖЕНИЕ -->
+    <section class="card">
+        <h2>2. Потенциал и Разность потенциалов (Напряжение)</h2>
+        <p>Так как поле потенциально, мы можем ввести понятие <b>потенциальной энергии (W<sub>p</sub>)</b> заряда в поле. Подобно тому, как камень на горе имеет потенциальную энергию в поле тяжести Земли, заряд имеет энергию в электрическом поле.</p>
+        
+        <h3>Потенциал (&phi;)</h3>
+        <p>Потенциал — это энергетическая характеристика поля. Он показывает, какой потенциальной энергией обладает единичный положительный заряд (q = +1 Кл) в данной точке пространства.</p>
+        <div class="formula">
+            <b>&phi; = W<sub>p</sub> / q</b>
+        </div>
+        <p>Единица измерения потенциала — <b>Вольт (В)</b>. <i>1 Вольт = 1 Джоуль / 1 Кулон.</i></p>
+
+        <h3>Разность потенциалов (Напряжение, U)</h3>
+        <p>Сама по себе потенциальная энергия (и потенциал) зависит от того, где мы выберем "ноль" (уровень земли). Гораздо важнее <b>разность потенциалов</b> между двумя точками. Именно она определяет работу поля!</p>
+        <div class="formula">
+            <b>A = q &middot; (&phi;<sub>1</sub> - &phi;<sub>2</sub>)</b> <br><br>
+            <b>U = &phi;<sub>1</sub> - &phi;<sub>2</sub></b> &nbsp;&nbsp;&rarr;&nbsp;&nbsp; <b>A = q &middot; U</b>
+        </div>
+        <p><b>Напряжение (U)</b> — это и есть разность потенциалов. Батарейка на 1.5 В означает, что между её "плюсом" и "минусом" разность потенциалов составляет 1.5 Вольта. Поле совершит работу 1.5 Джоуля, чтобы перенести 1 Кулон заряда от плюса к минусу.</p>
+
+        <h3>Эквипотенциальные поверхности</h3>
+        <p>Это воображаемые поверхности, во всех точках которых потенциал одинаков (&phi; = const). <br><b>Важно:</b> Работа по перемещению заряда вдоль эквипотенциальной поверхности равна <b>НУЛЮ</b> (так как &phi;<sub>1</sub> = &phi;<sub>2</sub>). Силовые линии поля всегда перпендикулярны эквипотенциальным поверхностям.</p>
+    </section>
+
+    <!-- 4) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>3. Интерактивная модель: Поле конденсатора</h2>
+        <p>Перед вами однородное поле между двумя заряженными пластинами (плоский конденсатор). <br>
+        Потенциал левой (+) пластины равен <b>100 В</b>, правой (-) равен <b>0 В</b>.<br>
+        <b>Задание:</b> Задайте величину пробного заряда q. Перетаскивайте его мышью/пальцем. Нажмите "Зафиксировать старт", чтобы начать отсчет работы от текущей точки.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label>Пробный заряд (q): <span id="val-q" style="color:var(--danger)">2</span> мкКл</label>
+                    <input type="range" id="sim-q" min="-5" max="5" value="2" step="1">
+                </div>
+
+                <div class="btn-row">
+                    <button onclick="setStartPoint()">Зафиксировать старт (&phi;<sub>1</sub>)</button>
+                </div>
+
+                <div class="dashboard-box">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Начальный потенциал (&phi;<sub>1</sub>):</div>
+                    <div id="val-phi1" style="font-family:monospace; font-size:1.2rem; font-weight:bold; color: #000;">50 В</div>
+                    
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 5px;">Текущий потенциал (&phi;<sub>2</sub>):</div>
+                    <div id="val-phi2" style="font-family:monospace; font-size:1.5rem; font-weight:bold; color: #000;">50 В</div>
+
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 5px;">Работа поля (A = q(&phi;<sub>1</sub> - &phi;<sub>2</sub>)):</div>
+                    <div id="val-work" style="font-family:monospace; font-size:1.5rem; font-weight:bold; color: var(--primary);">0 мкДж</div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="600" height="350"></canvas>
+                <p class="sim-status">Вертикальные пунктирные линии — это эквипотенциальные поверхности. При движении вдоль них работа равна нулю!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>4. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Какую работу совершает электрическое поле при перемещении заряда q = 5 мкКл из точки с потенциалом &phi;<sub>1</sub> = 200 В в точку с потенциалом &phi;<sub>2</sub> = 50 В? Увеличится или уменьшится потенциальная энергия заряда?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                q = 5 мкКл = 5 &middot; 10<sup>-6</sup> Кл<br>
+                &phi;<sub>1</sub> = 200 В<br>
+                &phi;<sub>2</sub> = 50 В<br>
+                <b>Найти:</b> A — ?, &Delta;W<sub>p</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                1. Работа электрического поля равна произведению заряда на разность потенциалов:<br>
+                A = q &middot; (&phi;<sub>1</sub> - &phi;<sub>2</sub>)</p>
+                
+                <p>2. Подставляем значения:<br>
+                A = 5 &middot; 10<sup>-6</sup> &middot; (200 - 50) = 5 &middot; 10<sup>-6</sup> &middot; 150 = 750 &middot; 10<sup>-6</sup> Дж = <b>0.75 мДж</b>.</p>
+                
+                <p>3. Изменение потенциальной энергии: Работа поля всегда равна изменению потенциальной энергии, взятому с противоположным знаком (поле совершает работу за счет УБЫЛИ потенциальной энергии).<br>
+                A = -&Delta;W<sub>p</sub> &rarr; &Delta;W<sub>p</sub> = -A = -0.75 мДж.</p>
+                
+                <p><b>Ответ:</b> Поле совершает положительную работу A = 0.75 мДж. Потенциальная энергия заряда <b>уменьшилась</b> (подобно камню, падающему вниз с горы).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>5. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Напряжение и работа)</h3>
+            <p>При перемещении заряда <b>q = 2 Кл</b> внутри телевизора электрическое поле совершило работу <b>A = 440 Дж</b>. Чему равно <b>напряжение (U)</b> между начальной и конечной точками траектории заряда? Ответ дайте в Вольтах.</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 220, 0, 'Используйте формулу A = q * U. Отсюда U = A / q.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Нахождение потенциала)</h3>
+            <p>Электрическое поле перемещает электрон (его заряд отрицателен и равен примерно <b>q = -1.6 &middot; 10<sup>-19</sup> Кл</b>) из точки с потенциалом &phi;<sub>1</sub> = 10 В в точку с потенциалом &phi;<sub>2</sub> = 30 В. Какую работу совершило поле? <br>
+            <i>Введите ответ в виде множителя перед 10<sup>-19</sup> Дж. (Например, если ответ 5 &middot; 10<sup>-19</sup>, введите 5. Не забудьте про знак!).</i></p>
+            <input type="number" id="taskB-input" step="0.1" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 3.2, 0.1, 'A = q*(φ1 - φ2). q = -1.6, φ1=10, φ2=30. A = -1.6 * (10 - 30) = -1.6 * (-20) = 32. А, стоп! 1.6*20 = 32. Значит ответ 32? Введите 32. Внимательно со знаками: минус на минус дает плюс!')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">*Электрон — частица отрицательная, он самопроизвольно "катится" в сторону бОльшего потенциала (к плюсу)!</p>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Связь с кинетической энергией)</h3>
+            <p>Протон (положительный заряд q &gt; 0) разгоняется в электрическом поле из состояния покоя. Он проходит разность потенциалов <b>U = 5000 В</b>. Известно, что вся работа поля переходит в кинетическую энергию протона (A = E<sub>k</sub>). Какую кинетическую энергию в <b>электрон-вольтах (эВ)</b> приобретет протон?<br>
+            <i>Справка: 1 эВ — это энергия, которую приобретает элементарный заряд (e), пройдя разность потенциалов 1 Вольт. 1 эВ = e &middot; 1 В.</i></p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 5000, 0, 'Здесь даже не нужно считать джоули! По определению, если заряд 1e проходит напряжение U вольт, он получает энергию U электрон-вольт.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 7) ВИДЕО -->
+    <section class="card">
+        <h2>6. Видео по теме</h2>
+        <p>Для лучшего понимания работы электрического поля и эквипотенциальных поверхностей рекомендуем посмотреть этот видеоразбор:</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=работа+электрического+поля+потенциал+физика+10+класс" target="_blank" class="video-link">
+                ▶ Смотреть видеоуроки на YouTube
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке с подборкой лучших уроков)</p>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понимаю, что напряжение — это и есть разность потенциалов.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я усвоил(а), что перемещение заряда по эквипотенциальной поверхности не требует работы.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я запомнил(а), что положительные заряды стремятся двигаться в сторону меньшего потенциала (к минусу), а отрицательные — в сторону большего (к плюсу).</label>
+        </div>
+        <button onclick="alert('Отличная работа! Понимание потенциала — ключ к изучению постоянного тока и электрических цепей.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Зависит ли работа электростатического поля по перемещению заряда от формы траектории?</b></p>
+                <label><input type="radio" name="q1" value="1"> Нет, зависит только от начального и конечного положения.</label>
+                <label><input type="radio" name="q1" value="0"> Да, чем длиннее путь, тем больше работа.</label>
+                <label><input type="radio" name="q1" value="0"> Зависит только в неоднородном поле.</label>
+                <label><input type="radio" name="q1" value="0"> Электрическое поле вообще не совершает работу.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В каких единицах измеряется потенциал электрического поля?</b></p>
+                <label><input type="radio" name="q2" value="0"> Джоуль (Дж)</label>
+                <label><input type="radio" name="q2" value="0"> Кулон (Кл)</label>
+                <label><input type="radio" name="q2" value="1"> Вольт (В)</label>
+                <label><input type="radio" name="q2" value="0"> Ампер (А)</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Чему равна работа поля по перемещению заряда по замкнутому контуру?</b></p>
+                <label><input type="radio" name="q3" value="0"> Зависит от длины контура.</label>
+                <label><input type="radio" name="q3" value="1"> Нулю.</label>
+                <label><input type="radio" name="q3" value="0"> Произведению заряда на напряженность поля.</label>
+                <label><input type="radio" name="q3" value="0"> Она максимальна.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что такое эквипотенциальная поверхность?</b></p>
+                <label><input type="radio" name="q4" value="0"> Поверхность, во всех точках которой напряженность поля равна нулю.</label>
+                <label><input type="radio" name="q4" value="0"> Поверхность, на которой нет электрических зарядов.</label>
+                <label><input type="radio" name="q4" value="1"> Поверхность, во всех точках которой потенциал поля имеет одинаковое значение.</label>
+                <label><input type="radio" name="q4" value="0"> Поверхность, параллельная силовым линиям.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как направлены силовые линии электрического поля по отношению к потенциалу?</b></p>
+                <label><input type="radio" name="q5" value="0"> От меньшего потенциала к большему.</label>
+                <label><input type="radio" name="q5" value="1"> От большего потенциала к меньшему.</label>
+                <label><input type="radio" name="q5" value="0"> Вдоль эквипотенциальных поверхностей.</label>
+                <label><input type="radio" name="q5" value="0"> Направление не зависит от потенциала.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: КОНДЕНСАТОР И РАБОТА
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const inQ = document.getElementById('sim-q');
+    const valQ = document.getElementById('val-q');
+    
+    const valPhi1 = document.getElementById('val-phi1');
+    const valPhi2 = document.getElementById('val-phi2');
+    const valWork = document.getElementById('val-work');
+
+    // Геометрия холста
+    const cw = canvas.width;
+    const ch = canvas.height;
+    
+    // Пластины конденсатора
+    const plateLeftX = 50;
+    const plateRightX = 550;
+    const plateVLeft = 100; // Вольт
+    const plateVRight = 0;  // Вольт
+    
+    // Состояние заряда
+    let chargeQ = 2; // мкКл
+    let chargePos = { x: cw / 2, y: ch / 2 };
+    let startPos = { x: cw / 2, y: ch / 2 }; // Для отсчета работы
+    
+    let isDragging = false;
+
+    // Вычисление потенциала в точке x
+    function getPotentialAtX(x) {
+        if (x <= plateLeftX) return plateVLeft;
+        if (x >= plateRightX) return plateVRight;
+        
+        let ratio = (x - plateLeftX) / (plateRightX - plateLeftX);
+        return plateVLeft - ratio * (plateVLeft - plateVRight);
+    }
+
+    function updateSimulation() {
+        chargeQ = parseInt(inQ.value);
+        valQ.innerText = chargeQ;
+        
+        // Цвет подписи заряда
+        if (chargeQ > 0) valQ.style.color = "var(--danger)";
+        else if (chargeQ < 0) valQ.style.color = "var(--blue)";
+        else valQ.style.color = "var(--text-main)";
+
+        calculateValues();
+        draw();
+    }
+
+    function calculateValues() {
+        let phi1 = getPotentialAtX(startPos.x);
+        let phi2 = getPotentialAtX(chargePos.x);
+        
+        // A = q(phi1 - phi2)
+        let work = chargeQ * (phi1 - phi2); // мкКл * В = мкДж
+        
+        valPhi1.innerText = phi1.toFixed(1) + " В";
+        valPhi2.innerText = phi2.toFixed(1) + " В";
+        valWork.innerText = work.toFixed(1) + " мкДж";
+        
+        if (work > 0) valWork.style.color = "var(--success)";
+        else if (work < 0) valWork.style.color = "var(--danger)";
+        else valWork.style.color = "var(--text-main)";
+    }
+
+    window.setStartPoint = function() {
+        startPos.x = chargePos.x;
+        startPos.y = chargePos.y;
+        calculateValues();
+        draw();
+    };
+
+    inQ.addEventListener('input', updateSimulation);
+
+    // Обработка мыши/касаний
+    function getPointerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    function onDown(e) {
+        e.preventDefault();
+        const pos = getPointerPos(e);
+        let dist = Math.hypot(pos.x - chargePos.x, pos.y - chargePos.y);
+        if (dist < 30) {
+            isDragging = true;
+        }
+    }
+
+    function onMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        const pos = getPointerPos(e);
+        
+        chargePos.x = pos.x;
+        chargePos.y = pos.y;
+        
+        // Ограничения
+        if (chargePos.x < plateLeftX + 15) chargePos.x = plateLeftX + 15;
+        if (chargePos.x > plateRightX - 15) chargePos.x = plateRightX - 15;
+        if (chargePos.y < 20) chargePos.y = 20;
+        if (chargePos.y > ch - 20) chargePos.y = ch - 20;
+
+        calculateValues();
+        draw();
+    }
+
+    function onUp(e) {
+        isDragging = false;
+    }
+
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+
+    canvas.addEventListener('touchstart', onDown, {passive: false});
+    canvas.addEventListener('touchmove', onMove, {passive: false});
+    window.addEventListener('touchend', onUp);
+
+    function drawCharge(x, y, q, isGhost = false) {
+        ctx.beginPath();
+        ctx.arc(x, y, 16, 0, Math.PI * 2);
+        
+        let colorMain = q > 0 ? "#ef4444" : (q < 0 ? "#3b82f6" : "#94a3b8");
+        
+        if (isGhost) {
+            ctx.fillStyle = "transparent";
+            ctx.strokeStyle = "rgba(100, 116, 139, 0.5)";
+            ctx.setLineDash([3, 3]);
+        } else {
+            ctx.fillStyle = colorMain;
+            ctx.strokeStyle = "#000";
+            ctx.setLineDash([]);
+        }
+        
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (!isGhost) {
+            ctx.fillStyle = "white";
+            if (q > 0) {
+                ctx.fillRect(x - 6, y - 1.5, 12, 3);
+                ctx.fillRect(x - 1.5, y - 6, 3, 12);
+            } else if (q < 0) {
+                ctx.fillRect(x - 6, y - 1.5, 12, 3);
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // 1. Рисуем пластины
+        // Левая (+)
+        ctx.fillStyle = "#fca5a5"; // Светло-красный
+        ctx.fillRect(plateLeftX - 10, 20, 10, ch - 40);
+        ctx.fillStyle = "black";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText("+", plateLeftX - 25, ch / 2);
+        ctx.fillText("100В", plateLeftX - 45, 15);
+
+        // Правая (-)
+        ctx.fillStyle = "#93c5fd"; // Светло-синий
+        ctx.fillRect(plateRightX, 20, 10, ch - 40);
+        ctx.fillStyle = "black";
+        ctx.fillText("-", plateRightX + 15, ch / 2);
+        ctx.fillText("0В", plateRightX + 5, 15);
+
+        // 2. Эквипотенциальные линии (пунктир)
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        for (let i = 1; i <= 9; i++) {
+            let x = plateLeftX + i * ((plateRightX - plateLeftX) / 10);
+            ctx.beginPath();
+            ctx.moveTo(x, 20);
+            ctx.lineTo(x, ch - 20);
+            ctx.stroke();
+            
+            // Подписи потенциалов (через один)
+            if (i % 2 === 0) {
+                ctx.fillStyle = "#64748b";
+                ctx.font = "12px Arial";
+                let phi = 100 - i * 10;
+                ctx.fillText(phi + "В", x - 10, ch - 5);
+            }
+        }
+        ctx.setLineDash([]);
+
+        // 3. Силовые линии поля E (черные стрелки слева направо)
+        ctx.strokeStyle = "black";
+        ctx.fillStyle = "black";
+        ctx.lineWidth = 2;
+        let arrowsY = [ch * 0.25, ch * 0.5, ch * 0.75];
+        
+        arrowsY.forEach(y => {
+            ctx.beginPath();
+            ctx.moveTo(plateLeftX + 20, y);
+            ctx.lineTo(plateRightX - 20, y);
+            ctx.stroke();
+            
+            // Наконечник в центре
+            let cx = cw / 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, y);
+            ctx.lineTo(cx - 10, y - 6);
+            ctx.lineTo(cx - 10, y + 6);
+            ctx.fill();
+        });
+
+        // Подпись вектора E
+        ctx.font = "bold 16px Arial";
+        ctx.fillText("E", cw / 2 - 5, ch * 0.25 - 10);
+
+        // 4. Траектория от старта к текущей позиции
+        if (startPos.x !== chargePos.x || startPos.y !== chargePos.y) {
+            ctx.beginPath();
+            ctx.moveTo(startPos.x, startPos.y);
+            ctx.lineTo(chargePos.x, chargePos.y);
+            ctx.strokeStyle = "#f59e0b"; // Оранжевый след
+            ctx.lineWidth = 3;
+            ctx.setLineDash([4, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Рисуем "призрачный" начальный заряд
+            drawCharge(startPos.x, startPos.y, chargeQ, true);
+        }
+
+        // 5. Текущий заряд
+        drawCharge(chargePos.x, chargePos.y, chargeQ);
+        
+        // Подпись q
+        ctx.fillStyle = "black";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText((chargeQ > 0 ? "+" : "") + chargeQ + " мкКл", chargePos.x - 20, chargePos.y + 30);
+    }
+
+    // Инициализация
+    calculateValues();
+    draw();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Электростатическое поле — потенциально. Работа в нём НЕ зависит от формы траектории, а только от начальной и конечной точек.",
+            "2. Потенциал и разность потенциалов (напряжение) измеряются в Вольтах (В).",
+            "3. При движении по замкнутому контуру заряд возвращается в ту же точку (с тем же потенциалом). Работа равна нулю.",
+            "4. Эквипотенциальная поверхность — это геометрическое место точек с одинаковым потенциалом. Движение вдоль нее не требует работы.",
+            "5. Силовые линии (вектор напряженности E) всегда направлены в сторону УБЫВАНИЯ потенциала (от плюса к минусу)."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречно! Энергетика электрического поля усвоена на 100%.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

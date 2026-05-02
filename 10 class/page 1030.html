@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твердые тела и их механические свойства — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #3b82f6; /* Синий (Сталь/Упругость) */
+            --primary-hover: #2563eb;
+            --accent: #8b5cf6; /* Фиолетовый (Кристаллы) */
+            --success: #10b981;
+            --danger: #ef4444; /* Разрыв */
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #60a5fa;
+                --primary-hover: #3b82f6;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--accent); }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button:disabled { background-color: var(--text-muted); cursor: not-allowed; opacity: 0.7; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Таблицы сравнения */
+        .comparison-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .comparison-table th, .comparison-table td { border: 1px solid var(--border); padding: 12px; text-align: left; vertical-align: top; }
+        .comparison-table th { background-color: var(--bg-color); color: var(--accent); width: 50%; }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%;}
+        canvas {
+            width: 100%;
+            max-width: 700px;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Твердые тела и их механические свойства</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Почему алмаз царапает стекло, хотя они оба прозрачные и твердые? Почему стальная пружина возвращается к прежней форме, а пластилиновая — нет? Изучим природу твердых тел!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: СТРОЕНИЕ -->
+    <section class="card">
+        <h2>1. Кристаллические и аморфные тела</h2>
+        <p>Не все, что твердое на ощупь, имеет одинаковое внутреннее строение. Физики делят все твердые тела на две большие группы в зависимости от того, как расположены их атомы и молекулы.</p>
+        
+        <table class="comparison-table">
+            <tr>
+                <th>💎 Кристаллические тела</th>
+                <th>🕯️ Аморфные тела</th>
+            </tr>
+            <tr>
+                <td>
+                    <b>Дальний порядок:</b> Атомы расположены в строгом, повторяющемся порядке (кристаллическая решетка), который сохраняется на огромных расстояниях.
+                </td>
+                <td>
+                    <b>Ближний порядок:</b> Строгого порядка нет. Атомы расположены хаотично, как в жидкости, но они "заморожены" на месте.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Температура плавления:</b> Имеют строгую, определенную температуру плавления. (Лед тает ровно при 0 &deg;C).
+                </td>
+                <td>
+                    <b>Плавление:</b> Не имеют определенной температуры плавления. При нагревании они постепенно размягчаются и становятся текучими.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Анизотропия:</b> Зависимость физических свойств (прочность, теплопроводность, преломление света) от направления внутри кристалла. Слюда легко слоится в одном направлении и не ломается в другом.
+                </td>
+                <td>
+                    <b>Изотропия:</b> Физические свойства одинаковы по всем направлениям (подобно жидкостям и газам).
+                </td>
+            </tr>
+            <tr>
+                <td><i>Примеры:</i> Алмаз, поваренная соль, лед, все металлы (сталь, медь, золото).</td>
+                <td><i>Примеры:</i> Стекло, смола, янтарь, пластмассы, пластилин.</td>
+            </tr>
+        </table>
+        <p><i>Интересный факт:</i> Некоторые аморфные тела с течением очень долгого времени (века) могут кристаллизоваться — например, старое стекло со временем мутнеет.</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ДЕФОРМАЦИЯ И ЗАКОН ГУКА -->
+    <section class="card">
+        <h2>2. Деформация и Механическое напряжение</h2>
+        <p><b>Деформация</b> — это изменение формы и размеров тела под действием внешних сил. Различают два основных вида деформации:</p>
+        <ul>
+            <li><b>Упругая:</b> после снятия нагрузки тело полностью восстанавливает свою форму (пружина, резиновый жгут).</li>
+            <li><b>Пластическая:</b> после снятия нагрузки форма тела не восстанавливается, оно остается деформированным (пластилин, глина, свинец).</li>
+        </ul>
+
+        <h3>Характеристики деформации</h3>
+        <p>Представьте, что мы тянем стальной стержень. Чтобы описывать этот процесс научно, нам нужны две величины:</p>
+        
+        <p><b>1. Механическое напряжение (&sigma; - сигма)</b> — характеризует "напряженность" внутри материала. Это сила <b>F</b>, приходящаяся на единицу площади поперечного сечения <b>S</b>:</p>
+        <div class="formula">
+            <b>&sigma; = F / S</b>
+        </div>
+        <p>Измеряется в Паскалях (Па), так же как и давление.</p>
+
+        <p><b>2. Относительное удлинение (&epsilon; - эпсилон)</b> — показывает, на какую долю от своей первоначальной длины <b>l<sub>0</sub></b> растянулся стержень. Абсолютное удлинение &Delta;l = l - l<sub>0</sub>.</p>
+        <div class="formula">
+            <b>&epsilon; = &Delta;l / l<sub>0</sub></b> &nbsp;&nbsp;(часто выражают в %)
+        </div>
+
+        <h3>Закон Гука</h3>
+        <p>Английский физик Роберт Гук установил, что при малых упругих деформациях напряжение прямо пропорционально относительному удлинению:</p>
+        <div class="formula">
+            <b>&sigma; = E &middot; |&epsilon;|</b>
+        </div>
+        <p>Здесь <b>E</b> — это <b>Модуль Юнга</b> (модуль упругости). Он характеризует "жесткость" самого материала, его сопротивляемость растяжению. Чем больше модуль Юнга, тем труднее растянуть материал (у стали E &approx; 200 ГПа, у резины E &approx; 0.005 ГПа).</p>
+    </section>
+
+    <!-- 4) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>3. Интерактивная модель: Испытание на разрыв</h2>
+        <p>В лабораториях образцы материалов разрывают на специальной машине, чтобы построить <b>Диаграмму растяжения</b>. <br>
+        Нажмите «Начать испытание». Левая часть покажет, как тянется стальной стержень, а правая — как строится график зависимости напряжения (&sigma;) от деформации (&epsilon;).</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <p><b>Образец:</b> Конструкционная сталь<br>
+                <b>Площадь сечения (S):</b> 1 см<sup>2</sup><br>
+                <b>Начальная длина (l<sub>0</sub>):</b> 1 м</p>
+                <hr style="margin: 15px 0; border: 1px solid var(--border);">
+                
+                <button id="btn-start" style="width: 100%; margin-bottom: 10px;">▶ Начать испытание</button>
+                <button id="btn-reset" class="secondary" style="width: 100%;" disabled>↻ Сброс образца</button>
+
+                <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 20px; text-align: left;">
+                    <div>Напряжение (&sigma;): <span id="out-stress" style="color:var(--primary); font-weight:bold; font-size:1.1rem;">0</span> МПа</div>
+                    <div style="margin-top: 5px;">Удлинение (&epsilon;): <span id="out-strain" style="color:var(--text-main); font-weight:bold; font-size:1.1rem;">0.0</span> %</div>
+                    
+                    <div id="sim-phase" style="margin-top: 15px; font-weight: bold; color: var(--success); text-align: center;">
+                        Состояние: Покой
+                    </div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="600" height="350"></canvas>
+                <p class="sim-status">Обратите внимание: как только мы переходим предел упругости, материал начинает "течь" — он удлиняется даже без роста напряжения!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>4. Пример решения задачи (Закон Гука)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> К стальной проволоке площадью поперечного сечения S = 2 мм<sup>2</sup> подвесили груз массой m = 40 кг. Найдите механическое напряжение в проволоке. Каково относительное удлинение проволоки, если модуль Юнга для стали E = 2 &middot; 10<sup>11</sup> Па? (Принять g = 10 м/с<sup>2</sup>).</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                S = 2 мм<sup>2</sup> = 2 &middot; 10<sup>-6</sup> м<sup>2</sup><br>
+                m = 40 кг<br>
+                E = 2 &middot; 10<sup>11</sup> Па<br>
+                <b>Найти:</b> &sigma; — ?, &epsilon; — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>1. Находим механическое напряжение (&sigma;):</b><br>
+                Сила, растягивающая проволоку — это вес груза: F = m &middot; g = 40 &middot; 10 = 400 Н.<br>
+                &sigma; = F / S = 400 / (2 &middot; 10<sup>-6</sup>) = 200 &middot; 10<sup>6</sup> Па = <b>200 МПа</b>.</p>
+
+                <p><b>2. Находим относительное удлинение (&epsilon;):</b><br>
+                Используем закон Гука: &sigma; = E &middot; &epsilon;<br>
+                &epsilon; = &sigma; / E = (200 &middot; 10<sup>6</sup>) / (2 &middot; 10<sup>11</sup>) = 100 &middot; 10<sup>-5</sup> = <b>0.001</b>.</p>
+                
+                <p><b>Ответ:</b> Напряжение равно 200 МПа. Относительное удлинение составило 0.001 (или 0.1%). Это значит, что каждый метр проволоки растянулся всего на 1 миллиметр.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>5. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Анализ свойств)</h3>
+            <p>Ученик расколол кусок кварца (кристалл) и кусок стекла (аморфное тело). Кварц раскололся на осколки с ровными, плоскими гранями, а стекло — на осколки неправильной формы с изогнутыми краями. Какое свойство кристаллов это демонстрирует?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Изотропия.<br>
+            2. Пластичность.<br>
+            3. Анизотропия (зависимость прочности от направления).<br>
+            4. Текучесть.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Правильно! Анизотропия означает, что в кристалле есть плоскости, вдоль которых связи между атомами слабее. По этим плоскостям кристалл и раскалывается ровно (плоскости спайности).')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет напряжения)</h3>
+            <p>Канатоходец массой 80 кг (вес 800 Н) стоит посередине натянутого троса, сечение которого равно 1 &middot; 10<sup>-4</sup> м<sup>2</sup>. При этом сила натяжения в тросе (F) достигает 4000 Н. Каково <b>механическое напряжение</b> в тросе? Ответ выразите в <b>МПа</b> (Мегапаскалях, 1 МПа = 10<sup>6</sup> Па).</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в МПа"> 
+            <button onclick="checkTask('taskB', 40, 0, 'Используйте формулу σ = F / S. Внимание: растягивающая сила здесь — это сила натяжения троса, а не вес человека! σ = 4000 / (10^-4) = 40 000 000 Па = 40 МПа.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Выбирает правильную силу для расчета (силу натяжения).</li>
+                    <li>Верно применяет формулу механического напряжения.</li>
+                    <li>Умеет переводить Па в МПа (делит на миллион).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Абсолютное удлинение)</h3>
+            <p>Алюминиевый стержень длиной l<sub>0</sub> = 5 м подвергли механическому напряжению &sigma; = 14 МПа. Каково будет его <b>абсолютное удлинение</b> &Delta;l (в <b>миллиметрах</b>)? <br>Модуль Юнга для алюминия E = 70 ГПа (70 &middot; 10<sup>9</sup> Па).</p>
+            <input type="number" id="taskC-input" placeholder="Ответ в мм"> 
+            <button onclick="checkTask('taskC', 1, 0, '1) Найдем относительное удлинение: ε = σ / E = (14 * 10^6) / (70 * 10^9) = 0.2 * 10^-3 = 0.0002. \n2) Найдем абсолютное удлинение: Δl = ε * l0 = 0.0002 * 5 = 0.001 м. Это ровно 1 мм.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+            <div class="descriptors">
+                <b>Дескрипторы:</b>
+                <ul>
+                    <li>Применяет закон Гука в виде ε = σ / E.</li>
+                    <li>Свободно работает с приставками Мега (10^6) и Гига (10^9).</li>
+                    <li>Связывает ε и Δl, переводя метры в миллиметры.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>6. Рефлексия</h2>
+        <p>Оцените, что вы запомнили из урока:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понимаю, что кристаллы имеют упорядоченную решетку, а аморфные тела — хаос атомов.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я запомнил(а), что напряжение (σ) — это сила, деленная на площадь (F/S).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я понял(а) по графику, что если растянуть материал слишком сильно, он потеряет упругость и "потечет" (деформируется необратимо).</label>
+        </div>
+        <button onclick="alert('Отлично! Знание свойств твердых тел необходимо каждому будущему инженеру и строителю.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 8) ТЕСТ -->
+    <section class="card">
+        <h2>7. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Какое из перечисленных свойств характерно для аморфных тел, но НЕ характерно для монокристаллов?</b></p>
+                <label><input type="radio" name="q1" value="0"> Наличие строго определенной температуры плавления.</label>
+                <label><input type="radio" name="q1" value="1"> Изотропия (одинаковость физических свойств во всех направлениях).</label>
+                <label><input type="radio" name="q1" value="0"> Наличие дальнего порядка в расположении атомов.</label>
+                <label><input type="radio" name="q1" value="0"> Невозможность пластической деформации.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Механическое напряжение измеряется в:</b></p>
+                <label><input type="radio" name="q2" value="0"> Ньютонах (Н).</label>
+                <label><input type="radio" name="q2" value="0"> Джоулях (Дж).</label>
+                <label><input type="radio" name="q2" value="1"> Паскалях (Па).</label>
+                <label><input type="radio" name="q2" value="0"> Метрах (м).</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как называется участок на диаграмме растяжения, где удлинение образца возрастает практически без увеличения механического напряжения?</b></p>
+                <label><input type="radio" name="q3" value="0"> Предел пропорциональности.</label>
+                <label><input type="radio" name="q3" value="0"> Зона упругой деформации.</label>
+                <label><input type="radio" name="q3" value="1"> Площадка текучести.</label>
+                <label><input type="radio" name="q3" value="0"> Разрыв.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что произойдет, если снять внешнюю силу с образца, который находился в зоне ПЛАСТИЧЕСКОЙ деформации?</b></p>
+                <label><input type="radio" name="q4" value="0"> Он полностью вернет свою исходную форму и размеры.</label>
+                <label><input type="radio" name="q4" value="1"> Он частично восстановит форму (упругая часть исчезнет), но останется навсегда удлиненным (остаточная деформация).</label>
+                <label><input type="radio" name="q4" value="0"> Он немедленно разрушится.</label>
+                <label><input type="radio" name="q4" value="0"> Он начнет самопроизвольно растягиваться дальше.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Модуль Юнга (E) характеризует:</b></p>
+                <label><input type="radio" name="q5" value="1"> Жесткость самого материала (способность сопротивляться упругому растяжению/сжатию).</label>
+                <label><input type="radio" name="q5" value="0"> Силу, при которой образец гарантированно рвется.</label>
+                <label><input type="radio" name="q5" value="0"> Величину абсолютного удлинения в метрах.</label>
+                <label><input type="radio" name="q5" value="0"> Геометрические размеры образца до испытания.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ДИАГРАММА РАСТЯЖЕНИЯ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const btnStart = document.getElementById('btn-start');
+    const btnReset = document.getElementById('btn-reset');
+    const outStress = document.getElementById('out-stress');
+    const outStrain = document.getElementById('out-strain');
+    const outPhase = document.getElementById('sim-phase');
+
+    // Canvas geometry
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const splitX = 180; // Left: rod, Right: graph
+    
+    // Graph geometry
+    const gMarginX = 50;
+    const gMarginY = 45;
+    const gX = splitX + gMarginX;
+    const gY = ch - gMarginY;
+    const gW = cw - splitX - gMarginX - 20;
+    const gH = ch - gMarginY * 2;
+
+    // Simulation variables
+    let isTesting = false;
+    let animId;
+    
+    // Data points
+    let currentStrain = 0; // x-axis (0 to ~0.25)
+    let currentStress = 0; // y-axis (MPa)
+    let history = []; // Array of {x, y}
+
+    // Material properties (mock steel)
+    const maxStrainScale = 0.25; 
+    const maxStressScale = 500; // MPa
+
+    // Rod visualization
+    const rodTopY = 30;
+    const rodW = 30;
+    const baseRodH = 150;
+
+    function resetSimulation() {
+        cancelAnimationFrame(animId);
+        isTesting = false;
+        currentStrain = 0;
+        currentStress = 0;
+        history = [];
+        
+        btnStart.disabled = false;
+        btnReset.disabled = true;
+        
+        outStress.innerText = "0";
+        outStrain.innerText = "0.0";
+        outPhase.innerText = "Состояние: Покой";
+        outPhase.style.color = "var(--text-main)";
+        
+        draw();
+    }
+
+    btnStart.addEventListener('click', () => {
+        isTesting = true;
+        btnStart.disabled = true;
+        btnReset.disabled = true;
+        history = [];
+        animLoop();
+    });
+
+    btnReset.addEventListener('click', resetSimulation);
+
+    // Physical model for stress-strain curve
+    function calculateStress(strain) {
+        let stress = 0;
+        let phase = "";
+        let color = "";
+
+        if (strain < 0.05) {
+            // 1. Elastic region (Hooke's Law: linear)
+            // Ends at strain 0.05, stress 250 MPa
+            stress = strain * (250 / 0.05);
+            phase = "Упругая деформация (Закон Гука)";
+            color = "var(--success)";
+        } else if (strain >= 0.05 && strain < 0.08) {
+            // 2. Yield plateau (Текучесть)
+            // Slightly fluctuates around 250
+            stress = 250 + Math.sin(strain * 100) * 5;
+            phase = "Площадка текучести (Необратимая деформация)";
+            color = "var(--primary)";
+        } else if (strain >= 0.08 && strain < 0.20) {
+            // 3. Strain hardening (Упрочнение)
+            // Parabola up to UTS (Ultimate Tensile Strength = 400 MPa at 0.20)
+            let t = (strain - 0.08) / (0.20 - 0.08); // 0 to 1
+            stress = 250 + 150 * Math.sin(t * Math.PI / 2);
+            phase = "Упрочнение";
+            color = "var(--accent)";
+        } else if (strain >= 0.20 && strain <= 0.25) {
+            // 4. Necking (Образование шейки)
+            // Drops down to break stress (350 MPa)
+            let t = (strain - 0.20) / (0.25 - 0.20);
+            stress = 400 - 50 * (t * t);
+            phase = "Образование шейки (Предразрушение)";
+            color = "var(--danger)";
+        } else {
+            // Break
+            stress = 0;
+            phase = "РАЗРЫВ!";
+            color = "var(--danger)";
+        }
+
+        return { stress, phase, color };
+    }
+
+    // Convert physics values to canvas pixels
+    function getPx(strain) { return gX + (strain / maxStrainScale) * gW; }
+    function getPy(stress) { return gY - (stress / maxStressScale) * gH; }
+
+    function drawAxes() {
+        ctx.beginPath();
+        ctx.moveTo(gX, gY - gH - 10);
+        ctx.lineTo(gX, gY);
+        ctx.lineTo(gX + gW + 10, gY);
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "var(--text-main)";
+        ctx.font = "bold 12px Arial";
+        ctx.fillText("Напряжение σ (МПа)", gX - 40, gY - gH - 20);
+        
+        ctx.textAlign = "right";
+        ctx.fillText("Деформация ε (отн. ед.)", gX + gW + 10, gY + 35);
+        ctx.textAlign = "left";
+        
+        // Ticks
+        ctx.fillStyle = "var(--text-muted)";
+        ctx.font = "10px Arial";
+        for (let s = 100; s <= 500; s += 100) {
+            let py = getPy(s);
+            ctx.beginPath(); ctx.moveTo(gX-5, py); ctx.lineTo(gX, py); ctx.stroke();
+            ctx.fillText(s, gX - 25, py + 4);
+        }
+        for (let e = 0.05; e <= 0.25; e += 0.05) {
+            let px = getPx(e);
+            ctx.beginPath(); ctx.moveTo(px, gY); ctx.lineTo(px, gY+5); ctx.stroke();
+            ctx.fillText(e.toFixed(2), px - 10, gY + 15);
+        }
+    }
+
+    function drawRod(strain) {
+        const rodCenterX = splitX / 2;
+        
+        // Upper fixed clamp
+        ctx.fillStyle = "#475569"; // slate-600
+        ctx.fillRect(rodCenterX - 30, 0, 60, rodTopY);
+        // "Hatch" marks to show fixed
+        ctx.beginPath();
+        for(let i=-20; i<60; i+=10) {
+            ctx.moveTo(rodCenterX - 30 + i, 0);
+            ctx.lineTo(rodCenterX - 30 + i + 15, rodTopY);
+        }
+        ctx.strokeStyle = "#94a3b8"; ctx.lineWidth = 1; ctx.stroke();
+
+        // The Rod itself
+        let currentH = baseRodH * (1 + strain); // physically stretches
+        let currentW = rodW;
+        let isBroken = strain >= 0.25;
+
+        // Poisson's effect / Necking visual
+        if (strain >= 0.20 && strain < 0.25) {
+            // Rod gets thinner in the middle
+            let neckFactor = 1 - ((strain - 0.20) / 0.05) * 0.5; // up to 50% thinner
+            
+            // Draw custom polygon for necked rod
+            ctx.fillStyle = "#94a3b8"; // steel color
+            ctx.beginPath();
+            ctx.moveTo(rodCenterX - rodW/2, rodTopY);
+            ctx.lineTo(rodCenterX + rodW/2, rodTopY);
+            // curve to neck
+            ctx.quadraticCurveTo(rodCenterX + rodW/2, rodTopY + currentH/2, 
+                                 rodCenterX + (rodW/2)*neckFactor, rodTopY + currentH/2);
+            ctx.quadraticCurveTo(rodCenterX + rodW/2, rodTopY + currentH/2, 
+                                 rodCenterX + rodW/2, rodTopY + currentH);
+            ctx.lineTo(rodCenterX - rodW/2, rodTopY + currentH);
+            ctx.quadraticCurveTo(rodCenterX - rodW/2, rodTopY + currentH/2, 
+                                 rodCenterX - (rodW/2)*neckFactor, rodTopY + currentH/2);
+            ctx.quadraticCurveTo(rodCenterX - rodW/2, rodTopY + currentH/2, 
+                                 rodCenterX - rodW/2, rodTopY);
+            ctx.fill();
+            ctx.strokeStyle = "#475569"; ctx.stroke();
+        } 
+        else if (isBroken) {
+            // Broken rod
+            let gap = 20;
+            ctx.fillStyle = "#94a3b8";
+            // Top half
+            ctx.beginPath();
+            ctx.moveTo(rodCenterX - rodW/2, rodTopY);
+            ctx.lineTo(rodCenterX + rodW/2, rodTopY);
+            ctx.lineTo(rodCenterX + rodW/4, rodTopY + currentH/2 - gap/2);
+            ctx.lineTo(rodCenterX - rodW/4, rodTopY + currentH/2 - gap/2);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            // Bottom half
+            ctx.beginPath();
+            ctx.moveTo(rodCenterX - rodW/4, rodTopY + currentH/2 + gap/2);
+            ctx.lineTo(rodCenterX + rodW/4, rodTopY + currentH/2 + gap/2);
+            ctx.lineTo(rodCenterX + rodW/2, rodTopY + currentH);
+            ctx.lineTo(rodCenterX - rodW/2, rodTopY + currentH);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+        }
+        else {
+            // Normal stretched rod (gets slightly thinner uniformly = Poisson effect)
+            currentW = rodW * (1 - strain * 0.5); 
+            ctx.fillStyle = "#94a3b8";
+            ctx.fillRect(rodCenterX - currentW/2, rodTopY, currentW, currentH);
+            ctx.strokeStyle = "#475569";
+            ctx.strokeRect(rodCenterX - currentW/2, rodTopY, currentW, currentH);
+        }
+
+        // Lower moving clamp
+        ctx.fillStyle = "#475569";
+        let clampY = rodTopY + currentH + (isBroken ? 20 : 0); // drops if broken
+        ctx.fillRect(rodCenterX - 30, clampY, 60, 20);
+        
+        // Arrow indicating pull force
+        if (!isBroken && strain > 0) {
+            ctx.fillStyle = "var(--danger)";
+            ctx.beginPath();
+            ctx.moveTo(rodCenterX - 5, clampY + 25);
+            ctx.lineTo(rodCenterX + 5, clampY + 25);
+            ctx.lineTo(rodCenterX + 5, clampY + 45);
+            ctx.lineTo(rodCenterX + 10, clampY + 45);
+            ctx.lineTo(rodCenterX, clampY + 60);
+            ctx.lineTo(rodCenterX - 10, clampY + 45);
+            ctx.lineTo(rodCenterX - 5, clampY + 45);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.font = "bold 14px Arial";
+            ctx.fillText("F", rodCenterX + 15, clampY + 45);
+        }
+
+        // Split line
+        ctx.beginPath();
+        ctx.moveTo(splitX, 10); ctx.lineTo(splitX, ch - 10);
+        ctx.strokeStyle = "var(--border)"; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+        
+        drawAxes();
+        drawRod(currentStrain);
+
+        // Draw the graph history
+        if (history.length > 0) {
+            ctx.beginPath();
+            ctx.moveTo(getPx(history[0].x), getPy(history[0].y));
+            for (let i = 1; i < history.length; i++) {
+                ctx.lineTo(getPx(history[i].x), getPy(history[i].y));
+            }
+            // Color based on latest phase
+            let lastState = calculateStress(currentStrain);
+            ctx.strokeStyle = "var(--primary)"; // default blueish
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Highlight current point
+            if (currentStrain < 0.25) {
+                ctx.beginPath();
+                ctx.arc(getPx(currentStrain), getPy(lastState.stress), 5, 0, Math.PI*2);
+                ctx.fillStyle = lastState.color;
+                ctx.fill();
+            } else {
+                // Cross mark at break point
+                ctx.strokeStyle = "var(--danger)";
+                ctx.lineWidth = 2;
+                let bx = getPx(history[history.length-1].x);
+                let by = getPy(history[history.length-1].y);
+                ctx.beginPath();
+                ctx.moveTo(bx - 5, by - 5); ctx.lineTo(bx + 5, by + 5);
+                ctx.moveTo(bx + 5, by - 5); ctx.lineTo(bx - 5, by + 5);
+                ctx.stroke();
+            }
+        }
+    }
+
+    function animLoop() {
+        if (!isTesting) return;
+
+        currentStrain += 0.0005; // speed of pulling
+
+        if (currentStrain >= 0.25) {
+            currentStrain = 0.25;
+            isTesting = false;
+            btnReset.disabled = false;
+        }
+
+        let state = calculateStress(currentStrain);
+        currentStress = state.stress;
+
+        if (currentStrain <= 0.25) {
+            history.push({x: currentStrain, y: currentStress});
+        }
+
+        // Update UI
+        if (currentStrain < 0.25) {
+            outStress.innerText = currentStress.toFixed(0);
+            outStrain.innerText = (currentStrain * 100).toFixed(1);
+            outPhase.innerText = "Состояние: " + state.phase;
+            outPhase.style.color = state.color;
+        } else {
+            outStress.innerText = "0";
+            outPhase.innerText = "Состояние: РАЗРЫВ!";
+            outPhase.style.color = "var(--danger)";
+        }
+
+        draw();
+
+        if (isTesting) {
+            animId = requestAnimationFrame(animLoop);
+        }
+    }
+
+    // Init
+    resetSimulation();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Изотропия (одинаковые свойства во всех направлениях) присуща аморфным телам (из-за беспорядка). Монокристаллы обладают анизотропией.",
+            "2. Механическое напряжение (σ = F/S) измеряется в Ньютонах на квадратный метр, то есть в Паскалях (Па).",
+            "3. Участок, где материал удлиняется практически без роста напряжения, называется «площадкой текучести».",
+            "4. Пластическая деформация необратима. Если снять силу, тело частично упруго сожмется, но навсегда останется деформированным (остаточная деформация).",
+            "5. Модуль Юнга (E) — это характеристика самого материала, определяющая его жесткость и сопротивляемость упругому растяжению или сжатию."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Отличный результат! Вы превосходно усвоили механические свойства твердых тел.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

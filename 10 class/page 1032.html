@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электрический заряд. Закон Кулона — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #ef4444; /* Красный (+) */
+            --primary-hover: #dc2626;
+            --accent: #3b82f6; /* Синий (-) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #f87171;
+                --primary-hover: #ef4444;
+                --accent: #60a5fa;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--text-main); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--text-main); }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--text-main);
+            color: var(--card-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-weight: 500;
+        }
+        button:hover { opacity: 0.8; }
+        button:focus { outline: 2px solid var(--text-muted); outline-offset: 2px; }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 300px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%; overflow-x: auto;}
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        .dashboard-box {
+            background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 20px; text-align: center;
+        }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--text-muted);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--border); margin-bottom: 16px; overflow-x: auto;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        
+        /* Таблицы */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+        th { background-color: var(--bg-color); }
+        
+        .pos-charge { color: var(--primary); font-weight: bold; }
+        .neg-charge { color: var(--accent); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Электрический заряд. Закон Кулона</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Откуда берется молния? Почему свитер "трещит" при снятии? В основе всех электрических явлений лежит крошечная, но невероятно важная физическая величина — электрический заряд.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ЗАРЯД И ЕГО СОХРАНЕНИЕ -->
+    <section class="card">
+        <h2>1. Электрический заряд. Закон сохранения заряда</h2>
+        <p><b>Электрический заряд (q)</b> — это физическая величина, определяющая способность тел вступать в электромагнитное взаимодействие. Измеряется заряд в <b>Кулонах (Кл)</b>.</p>
+        
+        <p>В природе существует два вида зарядов:</p>
+        <ul>
+            <li><span class="pos-charge">Положительные (+)</span> — носителями являются протоны в ядрах атомов.</li>
+            <li><span class="neg-charge">Отрицательные (-)</span> — носителями являются электроны, вращающиеся вокруг ядер.</li>
+        </ul>
+        <p><i>Одноименные заряды отталкиваются, разноименные — притягиваются.</i></p>
+
+        <h3>Элементарный заряд</h3>
+        <p>Заряд не может делиться до бесконечности. Минимальная порция заряда называется <b>элементарным зарядом (e)</b>. Электрон имеет заряд <b>-e</b>, а протон <b>+e</b>.</p>
+        <div class="formula">
+            <b>e = 1.6 &middot; 10<sup>-19</sup> Кл</b>
+        </div>
+        <p>Заряд любого макроскопического тела всегда кратен элементарному заряду: <b>q = &plusmn;N &middot; e</b>, где N — целое число электронов (в избытке или в недостатке).</p>
+
+        <h3>Закон сохранения электрического заряда</h3>
+        <p>В изолированной системе (куда не поступают заряды извне и откуда они не уходят) алгебраическая сумма электрических зарядов всех тел остается неизменной при любых взаимодействиях.</p>
+        <div class="formula">
+            <b>q<sub>1</sub> + q<sub>2</sub> + q<sub>3</sub> + ... + q<sub>n</sub> = const</b>
+        </div>
+        <p>Если две одинаковые металлические капли с зарядами <b>+5 Кл</b> и <b>-1 Кл</b> слить воедино, общий заряд станет <b>+4 Кл</b>.</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ПЛОТНОСТЬ ЗАРЯДА -->
+    <section class="card">
+        <h2>2. Плотность заряда</h2>
+        <p>Заряд может быть распределен по телу неравномерно. Для описания распределения заряда используют три вида плотности:</p>
+        
+        <table>
+            <tr>
+                <th>Вид распределения</th>
+                <th>Формула плотности</th>
+                <th>Единицы измерения</th>
+                <th>Пример</th>
+            </tr>
+            <tr>
+                <td>По длине (Нить, провод)</td>
+                <td>Линейная: <b>&tau; = q / l</b></td>
+                <td>Кл/м</td>
+                <td>Заряженный длинный провод.</td>
+            </tr>
+            <tr>
+                <td>По поверхности (Сфера, пластина)</td>
+                <td>Поверхностная: <b>&sigma; = q / S</b></td>
+                <td>Кл/м<sup>2</sup></td>
+                <td>Заряд на поверхности металлического шара.</td>
+            </tr>
+            <tr>
+                <td>По объему (Шар, облако)</td>
+                <td>Объемная: <b>&rho; = q / V</b></td>
+                <td>Кл/м<sup>3</sup></td>
+                <td>Заряженное грозовое облако.</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- 4) ТЕОРИЯ: ЗАКОН КУЛОНА -->
+    <section class="card">
+        <h2>3. Закон Кулона</h2>
+        <p>Французский физик Шарль Кулон в 1785 году измерил силу взаимодействия между зарядами с помощью крутильных весов и сформулировал закон:</p>
+        <p><i>Сила взаимодействия двух неподвижных точечных зарядов в вакууме прямо пропорциональна произведению модулей зарядов и обратно пропорциональна квадрату расстояния между ними.</i></p>
+        
+        <div class="formula">
+            <b>F = k &middot; (|q<sub>1</sub>| &middot; |q<sub>2</sub>|) / r<sup>2</sup></b>
+        </div>
+        
+        <ul>
+            <li><b>F</b> — сила взаимодействия (Ньютоны).</li>
+            <li><b>q<sub>1</sub>, q<sub>2</sub></b> — величины зарядов (Кулоны). Берем по модулю! Знак определяет только направление силы (притяжение или отталкивание).</li>
+            <li><b>r</b> — расстояние между зарядами (Метры).</li>
+            <li><b>k</b> — коэффициент пропорциональности. Для вакуума <b>k &approx; 9 &middot; 10<sup>9</sup> (Н&middot;м<sup>2</sup>)/Кл<sup>2</sup></b>.</li>
+        </ul>
+        
+        <p><b>Влияние среды:</b> Если заряды поместить не в вакуум, а в жидкость или газ, сила их взаимодействия <b>уменьшится</b> в <b>&epsilon;</b> раз. Величина <b>&epsilon;</b> (эпсилон) называется <i>диэлектрической проницаемостью среды</i>. (Например, для воды &epsilon; = 81, значит вода ослабляет силу Кулона в 81 раз!).</p>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Закон Кулона</h2>
+        <p>Изменяйте величины и знаки зарядов (q<sub>1</sub> и q<sub>2</sub>), а также расстояние между ними (r). Наблюдайте, как изменяется <b>направление векторов</b> силы и её <b>значение</b> по закону Кулона.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label id="label-q1" style="color:var(--primary);">Заряд q<sub>1</sub>: <span id="val-q1">2</span> мкКл</label>
+                    <input type="range" id="sim-q1" min="-5" max="5" value="2" step="1">
+                </div>
+                
+                <div class="control-group">
+                    <label id="label-q2" style="color:var(--accent);">Заряд q<sub>2</sub>: <span id="val-q2">-3</span> мкКл</label>
+                    <input type="range" id="sim-q2" min="-5" max="5" value="-3" step="1">
+                </div>
+                
+                <div class="control-group" style="margin-top: 20px;">
+                    <label>Расстояние (r): <span id="val-r">3.0</span> м</label>
+                    <input type="range" id="sim-r" min="1" max="5" value="3" step="0.1">
+                </div>
+
+                <div class="dashboard-box">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Сила взаимодействия (F):</div>
+                    <div id="val-f" style="font-family:monospace; font-size:1.8rem; font-weight:bold;">0.00</div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">миллиНьютонов (мН)</div>
+                    <div id="sim-action" style="margin-top: 10px; font-weight: bold; padding: 5px; border-radius: 4px;">Притяжение</div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="600" height="250"></canvas>
+                <p class="sim-status">Силы, действующие на заряды, подчиняются третьему закону Ньютона: они всегда равны по модулю и направлены противоположно!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Два точечных заряда q<sub>1</sub> = +4 мкКл и q<sub>2</sub> = +6 мкКл находятся в вакууме на расстоянии r = 30 см друг от друга. Определите силу их взаимодействия. Притягиваются они или отталкиваются?</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                q<sub>1</sub> = 4 мкКл = 4 &middot; 10<sup>-6</sup> Кл<br>
+                q<sub>2</sub> = 6 мкКл = 6 &middot; 10<sup>-6</sup> Кл<br>
+                r = 30 см = 0.3 м<br>
+                k = 9 &middot; 10<sup>9</sup> (Н&middot;м<sup>2</sup>)/Кл<sup>2</sup><br>
+                <b>Найти:</b> F — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                Оба заряда положительные (+ и +), следовательно, они <b>отталкиваются</b>.</p>
+                
+                <p>Используем закон Кулона:<br>
+                F = k &middot; (|q<sub>1</sub>| &middot; |q<sub>2</sub>|) / r<sup>2</sup></p>
+                
+                <p>Подставляем значения:<br>
+                F = 9 &middot; 10<sup>9</sup> &middot; (4 &middot; 10<sup>-6</sup> &middot; 6 &middot; 10<sup>-6</sup>) / (0.3)<sup>2</sup></p>
+                
+                <p>Вычисляем числитель: 9 &middot; 4 &middot; 6 = 216. Степени десятки: 10<sup>9</sup> &middot; 10<sup>-12</sup> = 10<sup>-3</sup>.<br>
+                Числитель = 216 &middot; 10<sup>-3</sup>.<br>
+                Знаменатель: (0.3)<sup>2</sup> = 0.09 = 9 &middot; 10<sup>-2</sup>.</p>
+                
+                <p>Делим: F = (216 / 9) &middot; (10<sup>-3</sup> / 10<sup>-2</sup>) = 24 &middot; 10<sup>-1</sup> = <b>2.4 Н</b>.</p>
+                
+                <p><b>Ответ:</b> Заряды отталкиваются с силой 2.4 Ньютона.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Закон сохранения заряда)</h3>
+            <p>Имеются два одинаковых металлических шарика. Заряд первого равен <b>-8e</b>, заряд второго равен <b>+4e</b>. Шарики привели в соприкосновение и снова раздвинули. Каким стал заряд каждого шарика (в элементарных зарядах <b>e</b>)?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i>Укажите число со знаком (например, 5 или -5):</i></p>
+            <input type="number" id="taskA-input" placeholder="Ответ"> 
+            <button onclick="checkTask('taskA', -2, 0, 'По закону сохранения: общий заряд до соприкосновения q = -8e + 4e = -4e. При соприкосновении одинаковых шариков заряд делится поровну: -4e / 2 = -2e.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Поверхностная плотность)</h3>
+            <p>Металлическому листу площадью <b>S = 4 м<sup>2</sup></b> сообщили электрический заряд <b>q = 20 мкКл</b>. Вычислите поверхностную плотность заряда <b>&sigma;</b> (сигма) на этом листе в <b>мкКл/м<sup>2</sup></b>.</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в мкКл/м²"> 
+            <button onclick="checkTask('taskB', 5, 0, 'Поверхностная плотность — это заряд, деленный на площадь. σ = q / S = 20 / 4 = 5 мкКл/м².')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Закон Кулона в долях)</h3>
+            <p>Два точечных заряда притягиваются друг к другу с силой <b>F = 100 мН</b>. Как изменится эта сила, если расстояние между зарядами <b>увеличить в 2 раза</b>, а величину одного из зарядов <b>уменьшить в 2 раза</b>? <br>Найдите новое значение силы в <b>мН</b>.</p>
+            <input type="number" id="taskC-input" placeholder="Новая сила (мН)"> 
+            <button onclick="checkTask('taskC', 12.5, 0.1, 'Закон Кулона: F ~ q1*q2 / r^2. Если q1 уменьшить в 2 раза, сила упадет в 2 раза (станет 50 мН). Если r увеличить в 2 раза, то r^2 увеличится в 4 раза, значит сила упадет ЕЩЕ в 4 раза (50 / 4 = 12.5 мН).')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что общий заряд замкнутой системы никогда не меняется (Закон сохранения).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я запомнил(а), что одноименные заряды отталкиваются, а разноименные притягиваются.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я знаю, что по закону Кулона сила обратно пропорциональна КВАДРАТУ расстояния (увеличил расстояние в 3 раза — сила упала в 9 раз).</label>
+        </div>
+        <button onclick="alert('Отличная работа! Электрические силы удерживают атомы вместе, поэтому понимание закона Кулона — это ключ к пониманию строения вещества.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Чему равен по модулю минимальный (элементарный) электрический заряд в природе?</b></p>
+                <label><input type="radio" name="q1" value="0"> 1 Кл.</label>
+                <label><input type="radio" name="q1" value="1"> 1.6 &middot; 10<sup>-19</sup> Кл.</label>
+                <label><input type="radio" name="q1" value="0"> 9 &middot; 10<sup>9</sup> Кл.</label>
+                <label><input type="radio" name="q1" value="0"> Заряд может быть сколь угодно малым.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В каких единицах измеряется объемная плотность электрического заряда (&rho;)?</b></p>
+                <label><input type="radio" name="q2" value="0"> Кл/м</label>
+                <label><input type="radio" name="q2" value="0"> Кл/м<sup>2</sup></label>
+                <label><input type="radio" name="q2" value="1"> Кл/м<sup>3</sup></label>
+                <label><input type="radio" name="q2" value="0"> Паскаль</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как направлены Кулоновские силы при взаимодействии отрицательного и положительного зарядов?</b></p>
+                <label><input type="radio" name="q3" value="1"> Они направлены навстречу друг другу (заряды притягиваются).</label>
+                <label><input type="radio" name="q3" value="0"> Они направлены в противоположные стороны от зарядов (заряды отталкиваются).</label>
+                <label><input type="radio" name="q3" value="0"> Они перпендикулярны линии, соединяющей заряды.</label>
+                <label><input type="radio" name="q3" value="0"> Положительный заряд притягивает, а отрицательный отталкивает.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что произойдет с силой кулоновского взаимодействия двух зарядов, если расстояние между ними увеличить в 3 раза?</b></p>
+                <label><input type="radio" name="q4" value="0"> Сила увеличится в 3 раза.</label>
+                <label><input type="radio" name="q4" value="0"> Сила уменьшится в 3 раза.</label>
+                <label><input type="radio" name="q4" value="0"> Сила увеличится в 9 раз.</label>
+                <label><input type="radio" name="q4" value="1"> Сила уменьшится в 9 раз.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как влияет диэлектрическая среда (например, вода или масло) на силу взаимодействия между зарядами по сравнению с вакуумом?</b></p>
+                <label><input type="radio" name="q5" value="0"> Усиливает взаимодействие в &epsilon; раз.</label>
+                <label><input type="radio" name="q5" value="1"> Ослабляет взаимодействие в &epsilon; раз.</label>
+                <label><input type="radio" name="q5" value="0"> Никак не влияет, сила зависит только от расстояния.</label>
+                <label><input type="radio" name="q5" value="0"> Полностью блокирует кулоновскую силу.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: ЗАКОН КУЛОНА
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const inQ1 = document.getElementById('sim-q1');
+    const inQ2 = document.getElementById('sim-q2');
+    const inR = document.getElementById('sim-r');
+    
+    const valQ1 = document.getElementById('val-q1');
+    const valQ2 = document.getElementById('val-q2');
+    const valR = document.getElementById('val-r');
+    
+    const labelQ1 = document.getElementById('label-q1');
+    const labelQ2 = document.getElementById('label-q2');
+    
+    const valF = document.getElementById('val-f');
+    const simAction = document.getElementById('sim-action');
+
+    // Геометрия холста
+    const cw = canvas.width;
+    const ch = canvas.height;
+    
+    const k = 9; // Для мкКл и м: F(мН) = 9 * q1(мкКл) * q2(мкКл) / r^2
+
+    function updateSimulation() {
+        let q1 = parseInt(inQ1.value);
+        let q2 = parseInt(inQ2.value);
+        let r = parseFloat(inR.value);
+
+        valQ1.innerText = q1;
+        valQ2.innerText = q2;
+        valR.innerText = r.toFixed(1);
+
+        // Динамический цвет подписей
+        labelQ1.style.color = q1 > 0 ? "var(--primary)" : (q1 < 0 ? "var(--accent)" : "var(--text-main)");
+        labelQ2.style.color = q2 > 0 ? "var(--primary)" : (q2 < 0 ? "var(--accent)" : "var(--text-main)");
+
+        // Расчет силы (в миллиНьютонах для наглядности: мкКл * мкКл * 10^9 = 10^-3 Н = мН)
+        let F = k * Math.abs(q1 * q2) / (r * r);
+        
+        valF.innerText = F.toFixed(2);
+
+        // Состояние притяжения/отталкивания
+        let isAttraction = false;
+        let isNeutral = (q1 === 0 || q2 === 0);
+
+        if (isNeutral) {
+            simAction.innerText = "Взаимодействия нет";
+            simAction.style.backgroundColor = "var(--border)";
+            simAction.style.color = "var(--text-main)";
+        } else if (Math.sign(q1) === Math.sign(q2)) {
+            simAction.innerText = "Отталкивание";
+            simAction.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+            simAction.style.color = "var(--danger)";
+            isAttraction = false;
+        } else {
+            simAction.innerText = "Притяжение";
+            simAction.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+            simAction.style.color = "var(--success)";
+            isAttraction = true;
+        }
+
+        draw(q1, q2, r, F, isAttraction, isNeutral);
+    }
+
+    function drawCharge(x, y, q) {
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        
+        // Добавляем радиальный градиент для объема
+        let grad = ctx.createRadialGradient(x - 5, y - 5, 2, x, y, 20);
+        
+        if (q > 0) {
+            grad.addColorStop(0, "#f87171"); // Светло-красный
+            grad.addColorStop(1, "#dc2626"); // Темно-красный
+            ctx.fillStyle = grad;
+            ctx.fill();
+            // Plus sign
+            ctx.fillStyle = "white";
+            ctx.fillRect(x - 8, y - 2, 16, 4);
+            ctx.fillRect(x - 2, y - 8, 4, 16);
+        } else if (q < 0) {
+            grad.addColorStop(0, "#60a5fa"); // Светло-синий
+            grad.addColorStop(1, "#2563eb"); // Темно-синий
+            ctx.fillStyle = grad;
+            ctx.fill();
+            // Minus sign
+            ctx.fillStyle = "white";
+            ctx.fillRect(x - 8, y - 2, 16, 4);
+        } else {
+            grad.addColorStop(0, "#e2e8f0");
+            grad.addColorStop(1, "#64748b");
+            ctx.fillStyle = grad;
+            ctx.fill();
+        }
+        
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = "black";
+        ctx.font = "bold 14px Arial";
+        let sign = q > 0 ? "+" : "";
+        ctx.fillText(sign + q + " мкКл", x - 25, y + 40);
+    }
+
+    function drawArrow(x, y, length, directionLeft, color) {
+        if (length === 0) return;
+        
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3;
+
+        let endX = directionLeft ? x - length : x + length;
+        
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(endX, y);
+        ctx.stroke();
+
+        // Arrow head
+        ctx.beginPath();
+        if (directionLeft) {
+            ctx.moveTo(endX, y);
+            ctx.lineTo(endX + 10, y - 6);
+            ctx.lineTo(endX + 10, y + 6);
+        } else {
+            ctx.moveTo(endX, y);
+            ctx.lineTo(endX - 10, y - 6);
+            ctx.lineTo(endX - 10, y + 6);
+        }
+        ctx.fill();
+    }
+
+    function draw(q1, q2, r, F, isAttraction, isNeutral) {
+        ctx.clearRect(0, 0, cw, ch);
+
+        let centerY = ch / 2 - 20;
+        
+        // Преобразуем r (от 1 до 5 м) в координаты на холсте
+        // Сделаем так, чтобы заряды были центрированы
+        let scale = 60; // пикселей на 1 метр
+        let distancePx = r * scale;
+        
+        let x1 = cw / 2 - distancePx / 2;
+        let x2 = cw / 2 + distancePx / 2;
+
+        // Рисуем шкалу расстояния
+        ctx.strokeStyle = "var(--border)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(x1, centerY);
+        ctx.lineTo(x2, centerY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        ctx.fillStyle = "black";
+        ctx.font = "14px Arial";
+        ctx.fillText("r = " + r.toFixed(1) + " м", cw/2 - 30, centerY + 20);
+
+        // Расчет длины стрелок вектора силы
+        // Чтобы стрелки не вылезали за экран, ограничим длину
+        let arrowLen = 0;
+        if (!isNeutral) {
+            // Масштабируем: 10 мН = 20 пикселей. Ограничиваем макс 100px, мин 15px.
+            arrowLen = Math.max(15, Math.min(100, F * 2)); 
+        }
+
+        // Рисуем векторы сил (ДО зарядов, чтобы они были под кружками или от их краев)
+        if (!isNeutral) {
+            let offset = 25; // отступ от центра заряда
+            let arrowColor = "black";
+            
+            ctx.fillStyle = arrowColor;
+            
+            if (isAttraction) {
+                // Притяжение: стрелки внутрь
+                drawArrow(x1 + offset, centerY, arrowLen, false, arrowColor); // q1 тянется вправо
+                drawArrow(x2 - offset, centerY, arrowLen, true, arrowColor);  // q2 тянется влево
+                
+                ctx.fillText("F", x1 + offset + arrowLen/2 - 5, centerY - 15);
+                ctx.fillText("F", x2 - offset - arrowLen/2 - 5, centerY - 15);
+            } else {
+                // Отталкивание: стрелки наружу
+                drawArrow(x1 - offset, centerY, arrowLen, true, arrowColor);  // q1 толкается влево
+                drawArrow(x2 + offset, centerY, arrowLen, false, arrowColor); // q2 толкается вправо
+                
+                ctx.fillText("F", x1 - offset - arrowLen/2 - 5, centerY - 15);
+                ctx.fillText("F", x2 + offset + arrowLen/2 - 5, centerY - 15);
+            }
+        }
+
+        // Рисуем сами заряды
+        drawCharge(x1, centerY, q1);
+        drawCharge(x2, centerY, q2);
+    }
+
+    [inQ1, inQ2, inR].forEach(el => el.addEventListener('input', updateSimulation));
+
+    // Инициализация
+    updateSimulation();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Элементарный заряд — это минимальная неделимая порция заряда в природе, равная заряду электрона (или протона), e = 1.6 · 10^-19 Кл.",
+            "2. Объемная плотность заряда (ρ) показывает, какой заряд сосредоточен в 1 кубическом метре, поэтому измеряется в Кл/м³.",
+            "3. Разноименные заряды (+ и -) всегда притягиваются друг к другу. Силы направлены вдоль прямой, соединяющей их центры, навстречу друг другу.",
+            "4. Сила Кулона обратно пропорциональна КВАДРАТУ расстояния (r²). Если расстояние увеличить в 3 раза, сила уменьшится в 3² = 9 раз.",
+            "5. Любая материальная диэлектрическая среда ослабляет электрическое поле зарядов. Сила взаимодействия уменьшается в ε (диэлектрическая проницаемость) раз по сравнению с вакуумом."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили основы электростатики и закон Кулона.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

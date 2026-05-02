@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поверхностный слой жидкости. Капилляры — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0ea5e9; /* Голубой (Вода) */
+            --primary-hover: #0284c7;
+            --accent: #8b5cf6; /* Фиолетовый */
+            --success: #10b981;
+            --danger: #ef4444; 
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #38bdf8;
+                --primary-hover: #0ea5e9;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; color: var(--accent); }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%;}
+        canvas {
+            width: 100%;
+            max-width: 500px;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        .dashboard-box {
+            background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 20px;
+        }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px; overflow-x: auto;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        
+        /* Таблицы */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+        th { background-color: var(--bg-color); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Поверхностный слой жидкости. Капиллярные явления</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Почему водомерки могут бегать по воде, не проваливаясь? Как вода поднимается от корней к кронам гигантских деревьев без всяких насосов? Разгадка кроется в удивительных свойствах поверхности жидкости!
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ПОВЕРХНОСТНОЕ НАТЯЖЕНИЕ -->
+    <section class="card">
+        <h2>1. Поверхностное натяжение</h2>
+        <p>Молекулы жидкости притягиваются друг к другу. Молекула <i>внутри</i> жидкости окружена "соседями" со всех сторон, поэтому силы притяжения компенсируются. Но молекулы на <b>поверхности</b> притягиваются только молекулами снизу и сбоку (сверху — разреженный газ). Возникает равнодействующая сила, направленная внутрь жидкости.</p>
+        <p>В результате поверхность жидкости ведет себя как натянутая упругая пленка, которая стремится сжаться (уменьшить свою площадь). Именно поэтому капли воды в невесомости (или падающие капли дождя) принимают форму <b>сферы</b> — геометрической фигуры с минимальной площадью поверхности при заданном объеме.</p>
+        
+        <h3>Сила поверхностного натяжения</h3>
+        <p>Сила поверхностного натяжения (<b>F<sub>н</sub></b>) действует по касательной к поверхности жидкости, перпендикулярно границе соприкосновения. Она пропорциональна длине контура (<b>l</b>), ограничивающего поверхность:</p>
+        <div class="formula">
+            <b>F<sub>н</sub> = &sigma; &middot; l</b>
+        </div>
+        <p>Здесь <b>&sigma;</b> (сигма) — <b>коэффициент поверхностного натяжения</b>. Он зависит от рода жидкости и температуры (при нагревании &sigma; уменьшается). Измеряется в <b>Н/м</b>.</p>
+        <p><i>Пример: У воды &sigma; &approx; 0.073 Н/м, а у мыльного раствора &sigma; &approx; 0.040 Н/м (мыло ослабляет натяжение!). У ртути &sigma; &approx; 0.47 Н/м.</i></p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: СМАЧИВАНИЕ И МЕНИСК -->
+    <section class="card">
+        <h2>2. Смачивание и Мениск</h2>
+        <p>Когда жидкость соприкасается с твердым телом, ее поведение зависит от того, какие силы сильнее: притяжение молекул жидкости <i>друг к другу</i> (когезия) или их притяжение <i>к молекулам твердого тела</i> (адгезия).</p>
+        
+        <table>
+            <tr>
+                <th>Свойство</th>
+                <th>💧 Смачивающая жидкость</th>
+                <th>🔵 Несмачивающая жидкость</th>
+            </tr>
+            <tr>
+                <td><b>Причина</b></td>
+                <td>Молекулы жидкости притягиваются к твердому телу <b>сильнее</b>, чем друг к другу.</td>
+                <td>Молекулы жидкости притягиваются друг к другу <b>сильнее</b>, чем к твердому телу.</td>
+            </tr>
+            <tr>
+                <td><b>Форма капли</b></td>
+                <td>Растекается лужицей по поверхности.</td>
+                <td>Собирается в приплюснутый шарик.</td>
+            </tr>
+            <tr>
+                <td><b>Мениск (край в трубке)</b></td>
+                <td><b>Вогнутый</b> (жидкость "ползет" вверх по стенкам).</td>
+                <td><b>Выпуклый</b> (края закругляются вниз).</td>
+            </tr>
+            <tr>
+                <td><b>Пример</b></td>
+                <td>Вода на чистом стекле.</td>
+                <td>Вода на воске (или парафине), ртуть на стекле.</td>
+            </tr>
+        </table>
+        <p>Угол между касательной к поверхности жидкости и твердым телом называется <b>краевым углом (&theta;)</b>. Для полного смачивания &theta; = 0&deg;, для полного несмачивания &theta; = 180&deg;.</p>
+    </section>
+
+    <!-- 4) ТЕОРИЯ: КАПИЛЛЯРНОСТЬ -->
+    <section class="card">
+        <h2>3. Капиллярные явления</h2>
+        <p><b>Капилляры</b> — это очень тонкие трубки. Если опустить капилляр в смачивающую жидкость (воду), она поднимется по трубке вверх. Сила поверхностного натяжения, стремясь распрямить вогнутый мениск, тянет столб жидкости за собой против силы тяжести!</p>
+        <p>Высота подъема жидкости (<b>h</b>) определяется <b>формулой Жюрена</b>:</p>
+        <div class="formula">
+            <b>h = (2 &middot; &sigma; &middot; cos&theta;) / (&rho; &middot; g &middot; r)</b>
+        </div>
+        <p>При полном смачивании (cos&theta; = 1) формула упрощается:</p>
+        <div class="formula">
+            <b>h = (2 &middot; &sigma;) / (&rho; &middot; g &middot; r)</b>
+        </div>
+        <ul>
+            <li><b>&sigma;</b> — поверхностное натяжение (Н/м)</li>
+            <li><b>&rho;</b> — плотность жидкости (кг/м<sup>3</sup>)</li>
+            <li><b>g</b> — ускорение свободного падения (9.8 м/с<sup>2</sup>)</li>
+            <li><b>r</b> — радиус капилляра (м). <i>Чем тоньше капилляр, тем ВЫШЕ поднимается жидкость!</i></li>
+        </ul>
+        <p><i>Важно: Если жидкость несмачивающая (ртуть), то она опускается в капилляре ниже уровня жидкости в сосуде (h становится отрицательной).</i></p>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Виртуальная лаборатория: Капилляр в жидкости</h2>
+        <p>Выберите тип жидкости и изменяйте радиус стеклянного капилляра. Наблюдайте за высотой столба жидкости (h) и формой мениска. </p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label>Жидкость (и сосуд — стекло):</label>
+                    <select id="sim-liquid" style="width: 100%; margin-top: 5px;">
+                        <option value="water">Вода (Смачивает)</option>
+                        <option value="alcohol">Спирт (Смачивает, σ меньше)</option>
+                        <option value="mercury">Ртуть (Не смачивает)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group" style="margin-top: 20px;">
+                    <label for="sim-radius">Радиус капилляра (r): <span id="val-radius">1.0</span> мм</label>
+                    <input type="range" id="sim-radius" min="0.2" max="3.0" value="1.0" step="0.1">
+                </div>
+
+                <div class="dashboard-box">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Параметры жидкости:</div>
+                    <div>Плотность (&rho;): <span id="val-rho" style="font-weight:bold;">1000</span> кг/м<sup>3</sup></div>
+                    <div>Поверхн. натяжение (&sigma;): <span id="val-sigma" style="font-weight:bold;">0.073</span> Н/м</div>
+                    
+                    <hr style="margin: 10px 0; border: 1px solid var(--border);">
+                    
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">Результат:</div>
+                    <div>Высота (h): <span id="val-h" style="color:var(--primary); font-weight:bold; font-size:1.2rem;">14.9</span> мм</div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="400" height="450"></canvas>
+                <p class="sim-status">Пунктирная линия — уровень жидкости в широком сосуде.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Спирт налит в чашку Петри. В него вертикально опустили стеклянный капилляр внутренним диаметром d = 0.5 мм. На какую высоту поднимется спирт в капилляре? <br>(Для спирта &sigma; = 0.022 Н/м, плотность &rho; = 800 кг/м<sup>3</sup>. Спирт полностью смачивает стекло. Принять g = 10 м/с<sup>2</sup>).</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                d = 0.5 мм &rarr; радиус r = d/2 = 0.25 мм = 0.25 &middot; 10<sup>-3</sup> м.<br>
+                &sigma; = 0.022 Н/м<br>
+                &rho; = 800 кг/м<sup>3</sup><br>
+                g = 10 м/с<sup>2</sup><br>
+                <b>Найти:</b> h — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Решение:</b><br>
+                Используем формулу Жюрена для полного смачивания:<br>
+                h = (2 &middot; &sigma;) / (&rho; &middot; g &middot; r)</p>
+                
+                <p>Подставляем значения:<br>
+                h = (2 &middot; 0.022) / (800 &middot; 10 &middot; 0.25 &middot; 10<sup>-3</sup>)</p>
+                
+                <p>Вычисляем знаменатель:<br>
+                800 &middot; 10 = 8000.<br>
+                8000 &middot; 0.25 = 2000.<br>
+                2000 &middot; 10<sup>-3</sup> = 2.</p>
+                
+                <p>Теперь делим:<br>
+                h = 0.044 / 2 = <b>0.022 м</b>.</p>
+                
+                <p>Переведем в миллиметры: 0.022 м = 22 мм.</p>
+                
+                <p><b>Ответ:</b> Спирт поднимется по капилляру на высоту 22 мм.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Теория)</h3>
+            <p>В космосе (в условиях невесомости) из шприца выдавили порцию воды. Какую форму примет эта вода, если на нее не действуют никакие внешние силы, кроме сил поверхностного натяжения?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Кубическую.<br>
+            2. Растечется тонкой пленкой.<br>
+            3. Шарообразную (сферическую).<br>
+            4. Цилиндрическую.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Поверхностное натяжение стремится минимизировать площадь поверхности жидкости. Фигура с минимальной площадью поверхности при заданном объеме — это сфера (шар).')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Расчет высоты капилляра)</h3>
+            <p>Вода смачивает стекло. Ее поверхностное натяжение &sigma; = 0.072 Н/м, а плотность &rho; = 1000 кг/м<sup>3</sup>. Стеклянный капилляр имеет радиус r = 0.4 мм (0.4 &middot; 10<sup>-3</sup> м). Рассчитайте высоту подъема воды в капилляре (в <b>миллиметрах</b>). Примите g = 10 м/с<sup>2</sup>.</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в мм"> 
+            <button onclick="checkTask('taskB', 36, 0, 'h = 2*σ / (ρ*g*r) = (2 * 0.072) / (1000 * 10 * 0.0004) = 0.144 / 4 = 0.036 м = 36 мм.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Сила натяжения)</h3>
+            <p>Чтобы оторвать тонкое проволочное кольцо радиусом R = 5 см (0.05 м) от поверхности мыльного раствора, потребовалось приложить силу поверхностного натяжения F<sub>н</sub> = 0.025 Н (вес самого кольца мы уже вычли). Вычислите <b>коэффициент поверхностного натяжения</b> (&sigma;) этого мыльного раствора. <br>
+            <i>Подсказка: Кольцо соприкасается с пленкой по ДВУМ контурам (внешнему и внутреннему краю кольца), поэтому общая длина контура l = 2 &middot; (2&pi;R). Примите &pi; &approx; 3.14. Ответ округлите до сотых.</i></p>
+            <input type="number" id="taskC-input" step="0.01" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 0.04, 0.005, 'Длина контура l = 4 * π * R = 4 * 3.14 * 0.05 = 0.628 м. σ = F / l = 0.025 / 0.628 ≈ 0.0398... Округляем до 0.04 Н/м.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что поверхностное натяжение возникает из-за нескомпенсированных сил притяжения молекул на границе жидкости.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я знаю разницу между смачиванием (вогнутый мениск) и несмачиванием (выпуклый мениск).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я понимаю логику формулы Жюрена: чем тоньше капилляр, тем выше поднимется вода.</label>
+        </div>
+        <button onclick="alert('Молодцы! Эти знания объясняют многие природные процессы: от формы капель росы до питания растений.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Из-за какого свойства вода образует капли почти сферической формы?</b></p>
+                <label><input type="radio" name="q1" value="0"> Из-за силы тяжести.</label>
+                <label><input type="radio" name="q1" value="0"> Из-за архимедовой силы.</label>
+                <label><input type="radio" name="q1" value="1"> Из-за поверхностного натяжения.</label>
+                <label><input type="radio" name="q1" value="0"> Из-за атмосферного давления.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В каком случае жидкость будет СМАЧИВАТЬ твердую поверхность?</b></p>
+                <label><input type="radio" name="q2" value="0"> Если молекулы жидкости притягиваются друг к другу сильнее, чем к молекулам твердого тела.</label>
+                <label><input type="radio" name="q2" value="1"> Если молекулы жидкости притягиваются к твердому телу сильнее, чем друг к другу.</label>
+                <label><input type="radio" name="q2" value="0"> Только если жидкость нагреть до кипения.</label>
+                <label><input type="radio" name="q2" value="0"> Смачивание зависит только от атмосферного давления.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. В стеклянный сосуд с водой опустили две стеклянные капиллярные трубки. У первой радиус 1 мм, у второй — 0.5 мм. В какой трубке вода поднимется выше?</b></p>
+                <label><input type="radio" name="q3" value="0"> В первой (широкой).</label>
+                <label><input type="radio" name="q3" value="1"> Во второй (узкой).</label>
+                <label><input type="radio" name="q3" value="0"> Высота будет одинаковой.</label>
+                <label><input type="radio" name="q3" value="0"> Вода вообще не поднимется.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Как выглядит мениск (край поверхности жидкости) в капилляре, если жидкость НЕ смачивает стенки (например, ртуть в стекле)?</b></p>
+                <label><input type="radio" name="q4" value="0"> Вогнутый (опущен в центре).</label>
+                <label><input type="radio" name="q4" value="1"> Выпуклый (приподнят в центре).</label>
+                <label><input type="radio" name="q4" value="0"> Строго плоский.</label>
+                <label><input type="radio" name="q4" value="0"> Зигзагообразный.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как изменится коэффициент поверхностного натяжения жидкости при ее сильном нагревании?</b></p>
+                <label><input type="radio" name="q5" value="0"> Увеличится.</label>
+                <label><input type="radio" name="q5" value="1"> Уменьшится (молекулы движутся быстрее, силы связи слабеют).</label>
+                <label><input type="radio" name="q5" value="0"> Останется неизменным.</label>
+                <label><input type="radio" name="q5" value="0"> Обратится в бесконечность.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: КАПИЛЛЯР
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const selLiquid = document.getElementById('sim-liquid');
+    const inRadius = document.getElementById('sim-radius');
+    
+    const valRadius = document.getElementById('val-radius');
+    const valRho = document.getElementById('val-rho');
+    const valSigma = document.getElementById('val-sigma');
+    const valH = document.getElementById('val-h');
+
+    // База данных жидкостей
+    const liquids = {
+        'water': {
+            name: "Вода",
+            sigma: 0.073, // Н/м
+            rho: 1000,    // кг/м3
+            theta: 25,    // острый угол для наглядности (0-30)
+            color: "rgba(14, 165, 233, 0.7)", // Голубой
+            darkColor: "#0284c7"
+        },
+        'alcohol': {
+            name: "Спирт",
+            sigma: 0.022, 
+            rho: 800,
+            theta: 15,    // смачивает лучше, угол острее
+            color: "rgba(167, 139, 250, 0.6)", // Фиолетовый оттенок
+            darkColor: "#7c3aed"
+        },
+        'mercury': {
+            name: "Ртуть",
+            sigma: 0.47,
+            rho: 13600,
+            theta: 130,   // угол > 90 = не смачивает
+            color: "rgba(148, 163, 184, 0.9)", // Серый
+            darkColor: "#475569"
+        }
+    };
+
+    // Геометрия холста
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const poolLevelY = 320; // Уровень жидкости в широком сосуде
+    const g = 9.81;
+
+    // Состояние
+    let currentR_mm = 1.0;
+    let currentL = liquids['water'];
+    let currentH_mm = 0;
+
+    function updateCalculations() {
+        currentR_mm = parseFloat(inRadius.value);
+        currentL = liquids[selLiquid.value];
+
+        valRadius.innerText = currentR_mm.toFixed(1);
+        valRho.innerText = currentL.rho;
+        valSigma.innerText = currentL.sigma.toFixed(3);
+
+        // Формула: h = 2 * sigma * cos(theta) / (rho * g * r)
+        // ВАЖНО: r в метрах! r_m = r_mm * 10^-3
+        let r_m = currentR_mm * 1e-3;
+        let thetaRad = currentL.theta * Math.PI / 180;
+        
+        let h_m = (2 * currentL.sigma * Math.cos(thetaRad)) / (currentL.rho * g * r_m);
+        currentH_mm = h_m * 1000; // переводим обратно в мм для вывода
+
+        valH.innerText = currentH_mm.toFixed(1);
+        
+        // Меняем цвет текста результата
+        if (currentH_mm < 0) {
+            valH.style.color = "var(--danger)";
+        } else {
+            valH.style.color = "var(--primary)";
+        }
+
+        draw();
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        let pxPerMm = 3;
+        
+        // 1. Отрисовка широкого сосуда
+        ctx.fillStyle = currentL.color;
+        ctx.fillRect(0, poolLevelY, cw, ch - poolLevelY);
+        
+        let tubeW = currentR_mm * 20; 
+        let tubeX = cw / 2 - tubeW / 2;
+        let tubeX_inner = tubeX + 2;
+        let tubeX_right = tubeX + tubeW - 2;
+
+        // Поверхность сосуда (прерывается на трубке)
+        ctx.strokeStyle = currentL.darkColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, poolLevelY);
+        ctx.lineTo(tubeX, poolLevelY);
+        ctx.moveTo(tubeX + tubeW, poolLevelY);
+        ctx.lineTo(cw, poolLevelY);
+        ctx.stroke();
+
+        // 2. Очистка внутренности трубки (чтобы скрыть "бассейн" внутри трубки)
+        ctx.clearRect(tubeX, 40, tubeW, ch);
+
+        // 3. Вычисление строгой геометрии мениска
+        let h_px = currentH_mm * pxPerMm;
+        let liquidTopY = poolLevelY - h_px; // Вершина мениска (самая нижняя или верхняя точка в центре)
+        
+        let rc = tubeW / 2 - 2; // внутренний радиус трубки на холсте
+        let xc = cw / 2;
+        let theta_rad = currentL.theta * Math.PI / 180;
+        
+        let rm, yc, startAngle, endAngle, isCounterClockwise, yEdgeLeft;
+        
+        if (currentL.theta < 90) {
+            // Смачивающая жидкость (Вогнутый мениск)
+            rm = rc / Math.cos(theta_rad);
+            yc = liquidTopY - rm; // Центр окружности мениска находится выше
+            startAngle = Math.PI - theta_rad;
+            endAngle = theta_rad;
+            isCounterClockwise = true;
+            yEdgeLeft = yc + rm * Math.sin(startAngle); // Высота контакта со стенкой
+        } else {
+            // Несмачивающая жидкость (Выпуклый мениск)
+            rm = Math.abs(rc / Math.cos(theta_rad));
+            yc = liquidTopY + rm; // Центр окружности мениска находится ниже
+            startAngle = Math.PI * 2 - theta_rad; 
+            endAngle = Math.PI + theta_rad;       
+            isCounterClockwise = false;
+            yEdgeLeft = yc + rm * Math.sin(startAngle); 
+        }
+
+        // 4. Заливка жидкости внутри капилляра
+        ctx.fillStyle = currentL.color;
+        ctx.beginPath();
+        ctx.moveTo(tubeX_inner, ch);
+        ctx.lineTo(tubeX_inner, yEdgeLeft);
+        ctx.arc(xc, yc, rm, startAngle, endAngle, isCounterClockwise); // Идеально ровный и симметричный мениск
+        ctx.lineTo(tubeX_right, ch);
+        ctx.closePath();
+        ctx.fill();
+
+        // 5. Отрисовка линии поверхности мениска
+        ctx.strokeStyle = currentL.darkColor;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(xc, yc, rm, startAngle, endAngle, isCounterClockwise);
+        ctx.stroke();
+
+        // 6. Отрисовка стеклянной трубки
+        ctx.strokeStyle = "#94a3b8"; 
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(tubeX, 40); ctx.lineTo(tubeX, ch);
+        ctx.moveTo(tubeX + tubeW, 40); ctx.lineTo(tubeX + tubeW, ch);
+        ctx.stroke();
+
+        // 7. Отрисовка контактного угла θ
+        let tangLen = 35;
+        let tangDx = Math.sin(theta_rad) * tangLen; 
+        let tangDy = Math.cos(theta_rad) * tangLen; 
+        
+        ctx.strokeStyle = "var(--danger)"; 
+        ctx.lineWidth = 2;
+        // Касательная линия к поверхности жидкости
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(tubeX_inner, yEdgeLeft);
+        ctx.lineTo(tubeX_inner + tangDx, yEdgeLeft + tangDy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Дуга угла между стенкой капилляра (направленной вниз) и касательной
+        ctx.beginPath();
+        ctx.arc(tubeX_inner, yEdgeLeft, 22, Math.PI/2 - theta_rad, Math.PI/2, false);
+        ctx.stroke();
+        
+        // Текст "θ"
+        let textAngle = Math.PI/2 - theta_rad / 2;
+        let txtX = tubeX_inner + 30 * Math.cos(textAngle) - 5;
+        let txtY = yEdgeLeft + 30 * Math.sin(textAngle) + 5;
+        ctx.fillStyle = "var(--danger)";
+        ctx.font = "bold 16px Arial";
+        ctx.fillText("θ", txtX, txtY);
+
+        // 8. Пунктир уровня сосуда поверх всего (вдали от стенок)
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.lineWidth = 1;
+        ctx.moveTo(tubeX + tubeW, poolLevelY);
+        ctx.lineTo(cw, poolLevelY);
+        ctx.moveTo(0, poolLevelY);
+        ctx.lineTo(tubeX, poolLevelY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // 9. Подпись h (высота от уровня вдали до центра мениска)
+        ctx.strokeStyle = "var(--text-main)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        
+        // Линия от центра (вершины) мениска
+        ctx.beginPath();
+        ctx.moveTo(xc, liquidTopY);
+        ctx.lineTo(tubeX + tubeW + 60, liquidTopY);
+        ctx.stroke();
+        
+        // Линия от уровня бассейна
+        ctx.beginPath();
+        ctx.moveTo(tubeX + tubeW, poolLevelY);
+        ctx.lineTo(tubeX + tubeW + 60, poolLevelY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Строгая вертикальная стрелка для h
+        if (Math.abs(h_px) > 10) {
+            let arrowX = tubeX + tubeW + 40;
+            ctx.strokeStyle = "var(--text-main)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(arrowX, poolLevelY);
+            ctx.lineTo(arrowX, liquidTopY);
+            ctx.stroke();
+            
+            // Наконечники
+            let dir = h_px > 0 ? 1 : -1;
+            ctx.beginPath(); ctx.moveTo(arrowX - 5, poolLevelY - dir*5); ctx.lineTo(arrowX, poolLevelY); ctx.lineTo(arrowX + 5, poolLevelY - dir*5); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(arrowX - 5, liquidTopY + dir*5); ctx.lineTo(arrowX, liquidTopY); ctx.lineTo(arrowX + 5, liquidTopY + dir*5); ctx.stroke();
+            
+            ctx.fillStyle = "var(--text-main)";
+            ctx.font = "italic bold 16px Arial";
+            ctx.fillText("h", arrowX + 10, (poolLevelY + liquidTopY)/2 + 5);
+        }
+    }
+
+    [selLiquid, inRadius].forEach(el => el.addEventListener('input', updateCalculations));
+
+    // Инициализация
+    updateCalculations();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Поверхностное натяжение заставляет жидкость принимать форму с минимальной площадью поверхности — сферу (шар).",
+            "2. Смачивание происходит, когда силы адгезии (притяжения к твердому телу) больше сил когезии (притяжения молекул жидкости друг к другу).",
+            "3. По формуле Жюрена (h ~ 1/r) высота подъема обратно пропорциональна радиусу капилляра. Чем ýже трубка, тем выше поднимется вода.",
+            "4. Несмачивающая жидкость стремится 'убежать' от стенок трубки, поэтому ее края закругляются вниз, образуя выпуклый мениск.",
+            "5. При нагревании кинетическая энергия молекул растет, они отдаляются друг от друга, силы притяжения ослабевают, и коэффициент поверхностного натяжения уменьшается."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили тему поверхностных и капиллярных явлений.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

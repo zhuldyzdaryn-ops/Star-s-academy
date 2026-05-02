@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электрическое поле. Принцип суперпозиции — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0d9488; /* Бирюзовый/Teal */
+            --primary-hover: #0f766e;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626; /* Красный для + */
+            --blue: #2563eb;   /* Синий для - */
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #14b8a6;
+                --primary-hover: #5eead4;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; align-items: center; position: relative;}
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+            cursor: crosshair;
+            touch-action: none; /* Запрещаем скролл при касании canvas */
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+        .dashboard-box { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 10px; }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; text-align: center;
+            border: 1px dashed var(--border); margin-bottom: 16px; overflow-x: auto;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        
+        /* Таблицы */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+        th { background-color: var(--bg-color); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Электрическое поле. Принцип суперпозиции</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Заряды не касаются друг друга, но притягиваются или отталкиваются. Как они «узнают» о присутствии соседа? Ответ: через невидимого посредника — электрическое поле.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ -->
+    <section class="card">
+        <h2>1. Что такое электрическое поле и Напряженность</h2>
+        <p><b>Электрическое поле</b> — это особый вид материи, который существует вокруг электрических зарядов и действует на другие заряды с некоторой силой.</p>
+        
+        <h3>Напряженность электрического поля (E)</h3>
+        <p>Чтобы понять, насколько сильное поле создал заряд, физики придумали силовую характеристику — <b>напряженность</b>. Она показывает, какая сила действует на единичный положительный <i>пробный заряд</i> (q = +1 Кл), помещенный в данную точку пространства.</p>
+        <div class="formula">
+            <b>E = F / q</b>
+        </div>
+        <ul>
+            <li><b>E</b> — вектор напряженности (измеряется в <b>Н/Кл</b> или <b>В/м</b>).</li>
+            <li><b>F</b> — сила, действующая на заряд q.</li>
+            <li>Направление вектора E совпадает с направлением силы, действующей на <b>положительный</b> заряд. То есть, поле "выходит" из плюса и "входит" в минус.</li>
+        </ul>
+
+        <h3>Поле точечного заряда</h3>
+        <p>Модуль напряженности поля, создаваемого точечным зарядом <b>Q</b> на расстоянии <b>r</b> от него, вычисляется по формуле:</p>
+        <div class="formula">
+            <b>E = k &middot; |Q| / r<sup>2</sup></b>
+        </div>
+        <p><i>(Где k &approx; 9 &middot; 10<sup>9</sup> Н&middot;м<sup>2</sup>/Кл<sup>2</sup>). Как видим, поле слабеет пропорционально квадрату расстояния!</i></p>
+    </section>
+
+    <!-- 3) ОДНОРОДНОЕ И НЕОДНОРОДНОЕ -->
+    <section class="card">
+        <h2>2. Однородное и неоднородное поле</h2>
+        <table>
+            <tr>
+                <th>Однородное поле</th>
+                <th>Неоднородное поле</th>
+            </tr>
+            <tr>
+                <td>Вектор напряженности E <b>одинаков</b> по модулю и направлению во всех точках пространства.</td>
+                <td>Вектор напряженности E <b>меняется</b> (по модулю или направлению) от точки к точке.</td>
+            </tr>
+            <tr>
+                <td>Силовые линии параллельны и находятся на одинаковом расстоянии друг от друга.</td>
+                <td>Силовые линии искривлены, расходятся или сгущаются.</td>
+            </tr>
+            <tr>
+                <td><i>Пример:</i> Поле внутри плоского конденсатора (между двумя заряженными пластинами).</td>
+                <td><i>Пример:</i> Поле одиночного точечного заряда или заряженного шара.</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- 4) ПРИНЦИП СУПЕРПОЗИЦИИ -->
+    <section class="card">
+        <h2>3. Принцип суперпозиции электростатических полей</h2>
+        <p>Что делать, если поле создается не одним, а несколькими зарядами? Природа поступает очень логично:</p>
+        <p><b>Принцип суперпозиции:</b> Напряженность поля системы зарядов в данной точке равна <b>векторной сумме</b> напряженностей полей, создаваемых каждым зарядом в отдельности.</p>
+        <div class="formula">
+            <b>E<sub>рез</sub> = E<sub>1</sub> + E<sub>2</sub> + ... + E<sub>n</sub></b>
+        </div>
+        <p>Важно помнить, что складывать нужно именно <b>векторы</b> (по правилу параллелограмма или треугольника), а не просто числа!</p>
+    </section>
+
+    <!-- 5) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>4. Интерактивная модель: Принцип суперпозиции</h2>
+        <p>В пространстве закреплены два заряда (Q<sub>1</sub> и Q<sub>2</sub>). Изменяйте их величину и знак. <br><b>Управление:</b> Перетаскивайте мышь (или палец) по серому холсту, чтобы переместить <b>черную пробную точку (P)</b>. Вы увидите векторы полей E<sub>1</sub> и E<sub>2</sub>, а также их векторную сумму E<sub>рез</sub>.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label style="color:var(--text-main);">Заряд Q<sub>1</sub> (слева): <span id="val-q1">2</span> мкКл</label>
+                    <input type="range" id="sim-q1" min="-5" max="5" value="2" step="1">
+                </div>
+                
+                <div class="control-group">
+                    <label style="color:var(--text-main);">Заряд Q<sub>2</sub> (справа): <span id="val-q2">-3</span> мкКл</label>
+                    <input type="range" id="sim-q2" min="-5" max="5" value="-3" step="1">
+                </div>
+
+                <div class="dashboard-box">
+                    <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 5px;">Векторы в точке P:</div>
+                    <div style="color: #ef4444; font-weight: bold;">E<sub>1</sub> (от Q<sub>1</sub>)</div>
+                    <div style="color: #3b82f6; font-weight: bold;">E<sub>2</sub> (от Q<sub>2</sub>)</div>
+                    <div style="color: #0f172a; font-weight: bold; margin-top: 5px; font-size: 1.1rem;">E<sub>рез</sub> = E<sub>1</sub> + E<sub>2</sub></div>
+                </div>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="600" height="400"></canvas>
+                <p class="sim-status">Нажмите и тяните мышь/палец по холсту для перемещения точки измерения.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6) ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>5. Пример решения задачи (одномерный случай)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> Два заряда q<sub>1</sub> = +4 нКл и q<sub>2</sub> = -6 нКл расположены на расстоянии 10 см друг от друга. Найдите напряженность электрического поля в точке, расположенной точно посередине между ними.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                q<sub>1</sub> = 4 &middot; 10<sup>-9</sup> Кл<br>
+                q<sub>2</sub> = -6 &middot; 10<sup>-9</sup> Кл<br>
+                L = 0.1 м &rarr; расстояние от зарядов до центра r = L/2 = 0.05 м.<br>
+                <b>Найти:</b> E<sub>рез</sub> — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Анализ (принцип суперпозиции):</b><br>
+                Точка находится между зарядами. Поле от положительного заряда E<sub>1</sub> направлено <i>от него</i> (вправо). Поле от отрицательного заряда E<sub>2</sub> направлено <i>к нему</i> (тоже вправо!).<br>
+                Так как векторы направлены в одну сторону, их модули складываются: E<sub>рез</sub> = E<sub>1</sub> + E<sub>2</sub>.</p>
+                
+                <p><b>Вычисления:</b><br>
+                1. E<sub>1</sub> = k &middot; |q<sub>1</sub>| / r<sup>2</sup> = 9 &middot; 10<sup>9</sup> &middot; 4 &middot; 10<sup>-9</sup> / (0.05)<sup>2</sup> = 36 / 0.0025 = 14400 В/м.<br>
+                2. E<sub>2</sub> = k &middot; |q<sub>2</sub>| / r<sup>2</sup> = 9 &middot; 10<sup>9</sup> &middot; 6 &middot; 10<sup>-9</sup> / (0.05)<sup>2</sup> = 54 / 0.0025 = 21600 В/м.<br>
+                3. E<sub>рез</sub> = 14400 + 21600 = 36000 В/м = 36 кВ/м.</p>
+                
+                <p><b>Ответ:</b> Напряженность поля в центре равна 36 кВ/м, вектор направлен в сторону отрицательного заряда.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>6. Практика (Задачи A, B, C)</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Уровень A (Базовый)</h3>
+            <p>В некоторой точке электрического поля на точечный заряд q = 2 мкКл (2 &middot; 10<sup>-6</sup> Кл) действует сила F = 10 мН (10 &middot; 10<sup>-3</sup> Н). Чему равен модуль <b>напряженности</b> поля в этой точке? Ответ дайте в В/м (или Н/Кл).</p>
+            <input type="number" id="taskA-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskA', 5000, 0, 'Используйте базовое определение: E = F / q.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Уровень B (Средний: Однородное поле)</h3>
+            <p>Пылинка массой m = 2 мг (2 &middot; 10<sup>-6</sup> кг) и зарядом q = -10 нКл (-10 &middot; 10<sup>-9</sup> Кл) "парит" (находится в равновесии) в плоском конденсаторе. Куда направлены силовые линии однородного электрического поля? Каков модуль напряженности этого поля E (в В/м)? Примите g = 10 м/с<sup>2</sup>.</p>
+            <p><i>Сначала найдем модуль. Введите значение E:</i></p>
+            <input type="number" id="taskB-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskB', 2000, 0, 'Условие равновесия: Сила тяжести (mg) направлена вниз, значит электрическая сила (F = Eq) должна быть направлена вверх. mg = Eq. Отсюда E = mg / q.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">*Так как заряд пылинки отрицательный, электрическая сила направлена ПРОТИВ поля. Сила тянет вверх, значит вектор напряженности направлен <b>ВНИЗ</b>.</p>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Векторы)</h3>
+            <p>Два <b>одинаковых</b> положительных заряда q находятся на расстоянии L друг от друга. Чему равна напряженность поля E в точке, расположенной точно посередине между ними?</p>
+            <input type="number" id="taskC-input" placeholder="Ваш ответ"> 
+            <button onclick="checkTask('taskC', 0, 0, 'В центре векторы E1 и E2 равны по модулю, но направлены в ПРОТИВОПОЛОЖНЫЕ стороны. Их векторная сумма равна нулю!')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 8) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>7. Рефлексия</h2>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что напряженность — это сила, деленная на заряд (сколько Ньютонов приходится на 1 Кулон).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я понимаю разницу между однородным полем (векторы одинаковы) и полем точечного заряда (векторы расходятся).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я усвоил(а), что при суперпозиции поля складываются по правилу сложения векторов (геометрически).</label>
+        </div>
+        <button onclick="alert('Отличная работа! Понимание электрического поля — основа для изучения всех электрических цепей и явлений.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- 9) ТЕСТ -->
+    <section class="card">
+        <h2>8. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Что показывает напряженность электрического поля?</b></p>
+                <label><input type="radio" name="q1" value="0"> Работу, которую совершает поле.</label>
+                <label><input type="radio" name="q1" value="1"> Силу, действующую на единичный положительный заряд.</label>
+                <label><input type="radio" name="q1" value="0"> Количество зарядов в пространстве.</label>
+                <label><input type="radio" name="q1" value="0"> Скорость распространения поля.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. В каком поле вектор напряженности во всех точках одинаков по модулю и направлению?</b></p>
+                <label><input type="radio" name="q2" value="0"> В поле точечного заряда.</label>
+                <label><input type="radio" name="q2" value="0"> В поле двух разноименных зарядов.</label>
+                <label><input type="radio" name="q2" value="1"> В однородном поле.</label>
+                <label><input type="radio" name="q2" value="0"> В любом электростатическом поле.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как направлен вектор напряженности электрического поля, созданного отрицательным точечным зарядом?</b></p>
+                <label><input type="radio" name="q3" value="0"> От заряда во все стороны.</label>
+                <label><input type="radio" name="q3" value="1"> К заряду.</label>
+                <label><input type="radio" name="q3" value="0"> По касательной к окружности вокруг заряда.</label>
+                <label><input type="radio" name="q3" value="0"> У отрицательного заряда нет вектора напряженности.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что гласит принцип суперпозиции электрических полей?</b></p>
+                <label><input type="radio" name="q4" value="0"> Заряды могут накладываться друг на друга.</label>
+                <label><input type="radio" name="q4" value="1"> Результирующая напряженность равна векторной сумме напряженностей полей каждого заряда.</label>
+                <label><input type="radio" name="q4" value="0"> Результирующая напряженность равна алгебраической сумме (просто чисел) напряженностей.</label>
+                <label><input type="radio" name="q4" value="0"> Поля от разных зарядов взаимно уничтожают друг друга всегда.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Как изменится модуль напряженности поля точечного заряда, если расстояние от него увеличить в 3 раза?</b></p>
+                <label><input type="radio" name="q5" value="0"> Увеличится в 3 раза.</label>
+                <label><input type="radio" name="q5" value="0"> Уменьшится в 3 раза.</label>
+                <label><input type="radio" name="q5" value="0"> Увеличится в 9 раз.</label>
+                <label><input type="radio" name="q5" value="1"> Уменьшится в 9 раз.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: СУПЕРПОЗИЦИЯ
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // UI Elements
+    const inQ1 = document.getElementById('sim-q1');
+    const inQ2 = document.getElementById('sim-q2');
+    const valQ1 = document.getElementById('val-q1');
+    const valQ2 = document.getElementById('val-q2');
+
+    // Геометрия холста
+    const cw = canvas.width;
+    const ch = canvas.height;
+    
+    // Позиции зарядов (фиксированные для простоты, но можно сделать и перемещаемыми)
+    const Q1 = { x: cw / 2 - 150, y: ch / 2 };
+    const Q2 = { x: cw / 2 + 150, y: ch / 2 };
+    
+    // Позиция пробной точки (изменяемая мышью)
+    let P = { x: cw / 2, y: ch / 2 - 100 };
+
+    // Заряды
+    let q1 = 2;
+    let q2 = -3;
+
+    // Флаг перетаскивания
+    let isDragging = false;
+
+    function updateParams() {
+        q1 = parseInt(inQ1.value);
+        q2 = parseInt(inQ2.value);
+        valQ1.innerText = q1;
+        valQ2.innerText = q2;
+        draw();
+    }
+
+    [inQ1, inQ2].forEach(el => el.addEventListener('input', updateParams));
+
+    // Обработка мыши и касаний
+    function getPointerPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        // Учитываем touch или mouse
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+    }
+
+    function startDrag(e) {
+        e.preventDefault();
+        isDragging = true;
+        P = getPointerPos(e);
+        draw();
+    }
+
+    function doDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        P = getPointerPos(e);
+        draw();
+    }
+
+    function endDrag(e) {
+        isDragging = false;
+    }
+
+    canvas.addEventListener('mousedown', startDrag);
+    canvas.addEventListener('mousemove', doDrag);
+    window.addEventListener('mouseup', endDrag);
+
+    canvas.addEventListener('touchstart', startDrag, {passive: false});
+    canvas.addEventListener('touchmove', doDrag, {passive: false});
+    window.addEventListener('touchend', endDrag);
+
+    // Функция отрисовки заряда
+    function drawCharge(chargeObj, qValue) {
+        ctx.beginPath();
+        ctx.arc(chargeObj.x, chargeObj.y, 20, 0, Math.PI * 2);
+        
+        if (qValue > 0) {
+            let grad = ctx.createRadialGradient(chargeObj.x - 5, chargeObj.y - 5, 2, chargeObj.x, chargeObj.y, 20);
+            grad.addColorStop(0, "#f87171"); // Светло-красный
+            grad.addColorStop(1, "#dc2626"); // Темно-красный
+            ctx.fillStyle = grad;
+        } else if (qValue < 0) {
+            let grad = ctx.createRadialGradient(chargeObj.x - 5, chargeObj.y - 5, 2, chargeObj.x, chargeObj.y, 20);
+            grad.addColorStop(0, "#60a5fa"); // Светло-синий
+            grad.addColorStop(1, "#2563eb"); // Темно-синий
+            ctx.fillStyle = grad;
+        } else {
+            ctx.fillStyle = "#94a3b8";
+        }
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Знаки
+        ctx.fillStyle = "white";
+        if (qValue > 0) {
+            ctx.fillRect(chargeObj.x - 8, chargeObj.y - 2, 16, 4);
+            ctx.fillRect(chargeObj.x - 2, chargeObj.y - 8, 4, 16);
+        } else if (qValue < 0) {
+            ctx.fillRect(chargeObj.x - 8, chargeObj.y - 2, 16, 4);
+        }
+        
+        ctx.fillStyle = "black";
+        ctx.font = "bold 14px Arial";
+        let sign = qValue > 0 ? "+" : "";
+        ctx.fillText(sign + qValue, chargeObj.x - 10, chargeObj.y + 35);
+    }
+
+    // Функция отрисовки вектора
+    function drawArrow(x, y, vx, vy, color, label) {
+        let length = Math.sqrt(vx*vx + vy*vy);
+        if (length < 1) return; // Не рисуем нулевые векторы
+
+        let endX = x + vx;
+        let endY = y + vy;
+
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+
+        // Наконечник стрелы (угол поворота)
+        let angle = Math.atan2(vy, vx);
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(endX - 12 * Math.cos(angle - Math.PI / 6), endY - 12 * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(endX - 12 * Math.cos(angle + Math.PI / 6), endY - 12 * Math.sin(angle + Math.PI / 6));
+        ctx.closePath();
+        ctx.fill();
+
+        // Подпись
+        ctx.font = "bold 14px Arial";
+        // Смещаем подпись немного от конца вектора
+        ctx.fillText(label, endX + 10 * Math.cos(angle), endY + 10 * Math.sin(angle) + 5);
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Отрисовка сетки фона для наглядности пространства
+        ctx.strokeStyle = "#e2e8f0";
+        ctx.lineWidth = 1;
+        for(let i = 0; i < cw; i += 40) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, ch); ctx.stroke();
+        }
+        for(let j = 0; j < ch; j += 40) {
+            ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(cw, j); ctx.stroke();
+        }
+
+        // Рисуем заряды
+        drawCharge(Q1, q1);
+        drawCharge(Q2, q2);
+
+        // Рисуем точку измерения (P)
+        ctx.beginPath();
+        ctx.arc(P.x, P.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = "#0f172a";
+        ctx.fill();
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // === РАСЧЕТ ВЕКТОРОВ ===
+        // Условный коэффициент масштабирования k для визуала
+        const visual_k = 200000; 
+        
+        // Вектор от Q1
+        let dx1 = P.x - Q1.x;
+        let dy1 = P.y - Q1.y;
+        let r1_sq = dx1*dx1 + dy1*dy1;
+        let r1 = Math.sqrt(r1_sq);
+        
+        let E1_mag = 0, E1_x = 0, E1_y = 0;
+        if (r1 > 20 && q1 !== 0) { // Не считаем внутри самого заряда
+            E1_mag = (visual_k * Math.abs(q1)) / r1_sq;
+            // Направление: если q1 > 0, то ОТ заряда (совпадает с вектором r). Если < 0, то К заряду.
+            let dir1 = q1 > 0 ? 1 : -1;
+            E1_x = E1_mag * (dx1 / r1) * dir1;
+            E1_y = E1_mag * (dy1 / r1) * dir1;
+        }
+
+        // Вектор от Q2
+        let dx2 = P.x - Q2.x;
+        let dy2 = P.y - Q2.y;
+        let r2_sq = dx2*dx2 + dy2*dy2;
+        let r2 = Math.sqrt(r2_sq);
+        
+        let E2_mag = 0, E2_x = 0, E2_y = 0;
+        if (r2 > 20 && q2 !== 0) {
+            E2_mag = (visual_k * Math.abs(q2)) / r2_sq;
+            let dir2 = q2 > 0 ? 1 : -1;
+            E2_x = E2_mag * (dx2 / r2) * dir2;
+            E2_y = E2_mag * (dy2 / r2) * dir2;
+        }
+
+        // Результирующий вектор (Суперпозиция)
+        let E_res_x = E1_x + E2_x;
+        let E_res_y = E1_y + E2_y;
+
+        // Рисуем пунктиры для правила параллелограмма
+        if (Math.abs(E1_mag) > 1 && Math.abs(E2_mag) > 1) {
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = "#94a3b8";
+            ctx.lineWidth = 1;
+            ctx.moveTo(P.x + E1_x, P.y + E1_y);
+            ctx.lineTo(P.x + E_res_x, P.y + E_res_y);
+            ctx.moveTo(P.x + E2_x, P.y + E2_y);
+            ctx.lineTo(P.x + E_res_x, P.y + E_res_y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Рисуем сами векторы (от точки P)
+        drawArrow(P.x, P.y, E1_x, E1_y, "#ef4444", "E1");
+        drawArrow(P.x, P.y, E2_x, E2_y, "#3b82f6", "E2");
+        drawArrow(P.x, P.y, E_res_x, E_res_y, "#0f172a", "E_рез");
+    }
+
+    // Инициализация
+    updateParams();
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Напряженность — силовая характеристика. Она показывает силу, с которой поле действует на пробный единичный заряд (E = F/q).",
+            "2. В однородном поле векторы напряженности абсолютно одинаковы во всех точках (пример — поле внутри плоского конденсатора).",
+            "3. По соглашению, поле направлено туда, куда бы двигался положительный заряд. К отрицательному заряду 'плюс' притягивается, значит линии поля идут К отрицательному заряду.",
+            "4. Принцип суперпозиции гласит, что результирующее поле есть ВЕКТОРНАЯ сумма полей от каждого заряда.",
+            "5. По формуле E = k|q|/r^2 напряженность обратно пропорциональна КВАДРАТУ расстояния. Расстояние увеличилось в 3 раза -> поле ослабло в 3^2 = 9 раз."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили тему электрических полей.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

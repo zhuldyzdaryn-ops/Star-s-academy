@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проводники и диэлектрики в электрическом поле — 10 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #059669; /* Изумрудный */
+            --primary-hover: #047857;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --blue: #2563eb;
+            --purple: #7c3aed;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #34d399;
+                --primary-hover: #6ee7b7;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); margin-top: 16px; }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+        button.secondary { background-color: var(--text-muted); }
+        button.secondary:hover { background-color: var(--text-main); }
+
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 150px;
+        }
+
+        /* Симуляция */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.95rem; cursor: pointer; }
+        .radio-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: normal;}
+        .radio-item input { width: 18px; height: 18px; cursor: pointer;}
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 300px; display: flex; flex-direction: column; position: relative;}
+        canvas {
+            width: 100%;
+            background-color: #f1f5f9;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #cbd5e1; border-color: #475569; } }
+        
+        .dashboard-box { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px dashed var(--border); margin-top: 10px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;}
+        .stat-val { font-weight: bold; font-family: monospace; font-size: 1.1rem;}
+
+        /* Специфичные цвета для векторов */
+        .color-e0 { color: #dc2626; } /* Красный: внешнее поле */
+        .color-eind { color: #2563eb; } /* Синий: внутреннее поле */
+        .color-eres { color: #059669; } /* Зеленый: результирующее поле */
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+
+        /* Видео */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Тест */
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.2rem; text-align: center;
+            border: 1px dashed var(--border); margin-bottom: 16px; overflow-x: auto;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 1) ШАПКА -->
+    <header class="card">
+        <h1>Проводники и диэлектрики в электрическом поле</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Что произойдет, если поместить вещество во внешнее электрическое поле? Ответ зависит от того, есть ли в веществе свободные заряды.
+        </p>
+    </header>
+
+    <!-- 2) ТЕОРИЯ: ПРОВОДНИКИ -->
+    <section class="card">
+        <h2>1. Проводники (Металлы)</h2>
+        <p><b>Проводники</b> — это вещества, в которых есть <i>свободные</i> электрические заряды (в металлах это свободные электроны), способные перемещаться по всему объему.</p>
+        
+        <h3>Явление электростатической индукции:</h3>
+        <p>Если кусок металла поместить во внешнее поле <b>E<sub>0</sub></b>, свободные электроны начнут двигаться под действием кулоновской силы против линий поля. На одной стороне скопятся электроны (возникнет отрицательный заряд), а на другой останутся нескомпенсированные ионы (положительный заряд).</p>
+        <p>Эти разделившиеся заряды (индуцированные) создают свое собственное <b>внутреннее поле E<sub>внутр</sub></b>, направленное противоположно внешнему.</p>
+
+        <div class="formula">
+            <b>E<sub>внутр</sub> = -E<sub>0</sub></b> &nbsp;&nbsp;&rArr;&nbsp;&nbsp; <b>E<sub>рез</sub> = 0</b>
+        </div>
+
+        <h3>Главные свойства проводника в электростатическом поле:</h3>
+        <ol>
+            <li><b>Напряженность поля внутри проводника равна нулю (E = 0).</b> Заряды перераспределяются мгновенно до тех пор, пока внутреннее поле полностью не скомпенсирует внешнее.</li>
+            <li>Весь нескомпенсированный заряд располагается <b>только на поверхности</b> проводника. Внутри заряда нет.</li>
+            <li>Поверхность проводника является <b>эквипотенциальной</b> (&phi; = const), а силовые линии внешнего поля подходят к поверхности строго перпендикулярно (под углом 90&deg;).</li>
+        </ol>
+        
+        <p><i>💡 Практическое применение:</i> <b>Электростатическая защита (клетка Фарадея).</b> Если вам нужно защитить чувствительный прибор (или человека) от внешних полей или разрядов молнии, поместите его в металлическую оболочку или сетку. Поле внутрь не проникнет!</p>
+    </section>
+
+    <!-- 3) ТЕОРИЯ: ДИЭЛЕКТРИКИ -->
+    <section class="card">
+        <h2>2. Диэлектрики (Изоляторы)</h2>
+        <p><b>Диэлектрики</b> (стекло, пластик, дистиллированная вода, газы) — это вещества, в которых <i>нет</i> свободных зарядов. Все электроны "привязаны" к своим атомам.</p>
+        
+        <h3>Явление поляризации:</h3>
+        <p>Когда диэлектрик попадает во внешнее поле <b>E<sub>0</sub></b>, его молекулы не могут улететь, но они "вытягиваются" (деформируются) или поворачиваются. Молекула становится <b>диполем</b> (с одной стороны чуть-чуть плюс, с другой чуть-чуть минус).</p>
+        <p>Эти микро-диполи выстраиваются вдоль линий поля и создают свое <b>внутреннее поле E<sub>внутр</sub></b>, направленное против внешнего. Но так как заряды не могут переместиться на края материала свободно, это внутреннее поле слабее внешнего!</p>
+        
+        <div class="formula">
+            <b>E<sub>рез</sub> = E<sub>0</sub> / &epsilon;</b>
+        </div>
+        
+        <p>Где <b>&epsilon; (эпсилон)</b> — это <b>диэлектрическая проницаемость</b> среды. Это физическая величина, показывающая, во сколько раз электрическое поле внутри диэлектрика слабее, чем в вакууме.</p>
+        <ul>
+            <li>Для вакуума &epsilon; = 1</li>
+            <li>Для воздуха &epsilon; &approx; 1.0006 (считаем за 1)</li>
+            <li>Для стекла &epsilon; &approx; 7</li>
+            <li>Для воды &epsilon; &approx; 81 (поле в воде ослабляется в 81 раз!)</li>
+        </ul>
+    </section>
+
+    <!-- 4) СИМУЛЯЦИЯ -->
+    <section class="card">
+        <h2>3. Интерактивная модель: Векторы полей</h2>
+        <p>Выберите объект, который мы поместим в однородное внешнее электрическое поле (<b>E<sub>0</sub> = 100 В/м</b>, направлено слева направо). Наблюдайте, как возникают индуцированные заряды и поля.</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label>Объект в поле:</label>
+                    <label class="radio-item">
+                        <input type="radio" name="sim-mode" value="vacuum" checked onchange="updateSim()"> 
+                        <span>Вакуум (нет объекта)</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sim-mode" value="conductor" onchange="updateSim()"> 
+                        <span>Сплошной металлический цилиндр</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sim-mode" value="hollow" onchange="updateSim()"> 
+                        <span>Полая металлическая труба (защита)</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sim-mode" value="dielectric_2" onchange="updateSim()"> 
+                        <span>Диэлектрик (стекло, &epsilon; = 2)</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sim-mode" value="dielectric_5" onchange="updateSim()"> 
+                        <span>Диэлектрик (жидкость, &epsilon; = 5)</span>
+                    </label>
+                </div>
+
+                <div class="dashboard-box">
+                    <div style="font-weight:bold; margin-bottom: 12px; text-align: center;">Поле ВНУТРИ объекта</div>
+                    
+                    <div class="stat-row color-e0">
+                        <span>Внешнее поле (E<sub>0</sub>):</span>
+                        <span class="stat-val" id="val-e0">100 В/м</span>
+                    </div>
+                    
+                    <div class="stat-row color-eind">
+                        <span>Поле зарядов (E<sub>внутр</sub>):</span>
+                        <span class="stat-val" id="val-eind">0 В/м</span>
+                    </div>
+                    <hr style="margin: 8px 0; border-top: 1px solid var(--border);">
+                    <div class="stat-row color-eres">
+                        <span>Итог (E<sub>рез</sub> = E<sub>0</sub> - E<sub>внутр</sub>):</span>
+                        <span class="stat-val" id="val-eres" style="font-size: 1.3rem;">100 В/м</span>
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; text-align: justify;">
+                    Красная стрелка — внешнее поле. Синяя — поле индуцированных зарядов (или диполей). Зеленая — то, что осталось (реальное поле внутри).
+                </p>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="simCanvas" width="500" height="400"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5) ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>4. Практика решения задач</h2>
+
+        <!-- Уровень A -->
+        <div class="task-block">
+            <h3>Задача 1 (Проводники)</h3>
+            <p>Сплошной металлический шар внесли в однородное электрическое поле с напряженностью <b>E<sub>0</sub> = 800 В/м</b>. Чему равна напряженность результирующего электрического поля <b>в центре</b> этого шара?</p>
+            <input type="number" id="taskA-input" placeholder="В/м"> 
+            <button onclick="checkTask('taskA', 0, 0, 'Вспомните главное правило для проводников в электростатике. Каково поле внутри металла?')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень B -->
+        <div class="task-block">
+            <h3>Задача 2 (Диэлектрики)</h3>
+            <p>Напряженность электрического поля в вакууме составляет <b>300 В/м</b>. В это поле поместили кубик из чистого льда. Известно, что диэлектрическая проницаемость льда <b>&epsilon; = 3</b>. Какова напряженность электрического поля внутри ледяного кубика?</p>
+            <input type="number" id="taskB-input" placeholder="В/м"> 
+            <button onclick="checkTask('taskB', 100, 0, 'Используйте формулу: E = E0 / &epsilon;')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+        </div>
+
+        <!-- Уровень C -->
+        <div class="task-block">
+            <h3>Задача 3 (Поиск проницаемости)</h3>
+            <p>Два точечных заряда взаимодействуют в вакууме с определенной силой (поле E<sub>0</sub> = 120 В/м). Когда эти же заряды погрузили в неизвестную жидкость на то же расстояние, поле внутри жидкости оказалось равным <b>E = 60 В/м</b>. Вычислите диэлектрическую проницаемость <b>&epsilon;</b> этой жидкости.</p>
+            <input type="number" id="taskC-input" placeholder="&epsilon;"> 
+            <button onclick="checkTask('taskC', 2, 0, 'Выразите &epsilon; из формулы E = E0 / &epsilon;. Получится &epsilon; = E0 / E.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- 6) ВИДЕО -->
+    <section class="card">
+        <h2>5. Видео и опыты</h2>
+        <p>Лучший способ поверить в электростатическую защиту (клетку Фарадея) — увидеть, как человек в металлическом костюме ловит молнии от трансформатора Теслы!</p>
+        <p>
+            <a href="https://www.youtube.com/results?search_query=клетка+фарадея+опыт" target="_blank" class="video-link">
+                ▶ Смотреть опыты с клеткой Фарадея
+            </a>
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">(Откроется в новой вкладке)</p>
+    </section>
+
+    <!-- 7) РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>6. Рефлексия</h2>
+        <p>Проверьте, усвоили ли вы главные отличия:</p>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">В проводниках есть свободные заряды, а в диэлектриках их нет.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Проводник полностью гасит электрическое поле внутри себя (E=0).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Диэлектрик лишь ослабляет поле в &epsilon; раз (E = E<sub>0</sub> / &epsilon;).</label>
+        </div>
+        <button onclick="alert('Супер! Это фундамент для понимания конденсаторов в следующей теме.')" style="margin-top: 10px;">Зафиксировать знания</button>
+    </section>
+
+    <!-- 8) ТЕСТ -->
+    <section class="card">
+        <h2>7. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Чему равна напряженность электрического поля внутри сплошного металлического проводника, помещенного во внешнее поле?</b></p>
+                <label><input type="radio" name="q1" value="0"> Она равна напряженности внешнего поля.</label>
+                <label><input type="radio" name="q1" value="1"> Строго нулю.</label>
+                <label><input type="radio" name="q1" value="0"> Она бесконечна.</label>
+                <label><input type="radio" name="q1" value="0"> Уменьшается в &epsilon; раз.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Где располагаются избыточные (нескомпенсированные) заряды в проводнике?</b></p>
+                <label><input type="radio" name="q2" value="0"> Равномерно по всему объему.</label>
+                <label><input type="radio" name="q2" value="0"> Концентрируются в центре проводника.</label>
+                <label><input type="radio" name="q2" value="1"> Исключительно на его поверхности.</label>
+                <label><input type="radio" name="q2" value="0"> Только на одном полюсе.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как называется процесс смещения (поворота) связанных зарядов в диэлектрике под действием внешнего поля?</b></p>
+                <label><input type="radio" name="q3" value="0"> Электростатическая защита</label>
+                <label><input type="radio" name="q3" value="0"> Индукция</label>
+                <label><input type="radio" name="q3" value="1"> Поляризация</label>
+                <label><input type="radio" name="q3" value="0"> Электролиз</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Диэлектрическая проницаемость керосина равна 2. Что произойдет с полем, если керосин поместить во внешнее электрическое поле 100 В/м?</b></p>
+                <label><input type="radio" name="q4" value="0"> Поле внутри станет 200 В/м.</label>
+                <label><input type="radio" name="q4" value="1"> Поле внутри станет 50 В/м.</label>
+                <label><input type="radio" name="q4" value="0"> Поле внутри станет 0 В/м.</label>
+                <label><input type="radio" name="q4" value="0"> Керосин загорится от искры.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Можно ли использовать пластиковую (диэлектрическую) коробку для создания клетки Фарадея?</b></p>
+                <label><input type="radio" name="q5" value="0"> Да, диэлектрики лучше защищают.</label>
+                <label><input type="radio" name="q5" value="1"> Нет, для этого нужен металл (проводник).</label>
+                <label><input type="radio" name="q5" value="0"> Да, если пластик достаточно толстый.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       СИМУЛЯЦИЯ НА CANVAS: Векторы полей
+       ========================================= */
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const uiEind = document.getElementById('val-eind');
+    const uiEres = document.getElementById('val-eres');
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 100;
+
+    // Векторные утилиты
+    function drawArrow(ctx, x1, y1, x2, y2, color, text, textOffset = -10) {
+        if (x1 === x2 && y1 === y2) return; // Нулевой вектор
+        
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        // Наконечник
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - 12 * Math.cos(angle - Math.PI / 6), y2 - 12 * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(x2 - 12 * Math.cos(angle + Math.PI / 6), y2 - 12 * Math.sin(angle + Math.PI / 6));
+        ctx.fill();
+
+        if (text) {
+            ctx.font = "bold 16px Arial";
+            ctx.fillText(text, (x1 + x2) / 2, y1 + textOffset);
+        }
+    }
+
+    function drawDipole(ctx, x, y) {
+        ctx.save();
+        ctx.translate(x, y);
+        // Овал (вытянутая молекула)
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 15, 6, 0, 0, 2 * Math.PI);
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "rgba(241, 245, 249, 0.8)";
+        ctx.fill();
+        
+        // Заряды
+        ctx.fillStyle = "#dc2626"; // плюс справа
+        ctx.font = "bold 12px Arial";
+        ctx.fillText("+", 3, 4);
+        ctx.fillStyle = "#2563eb"; // минус слева
+        ctx.fillText("-", -10, 3);
+        ctx.restore();
+    }
+
+    function drawMinusPole(ctx, arcRadius) {
+        ctx.fillStyle = "#2563eb";
+        ctx.font = "bold 20px Arial";
+        for(let angle = -Math.PI/2.5; angle <= Math.PI/2.5; angle += 0.3) {
+            let px = centerX - arcRadius * Math.cos(angle) + 10;
+            let py = centerY + arcRadius * Math.sin(angle);
+            ctx.fillText("-", px, py + 7);
+        }
+    }
+
+    function drawPlusPole(ctx, arcRadius) {
+        ctx.fillStyle = "#dc2626";
+        ctx.font = "bold 20px Arial";
+        for(let angle = -Math.PI/2.5; angle <= Math.PI/2.5; angle += 0.3) {
+            let px = centerX + arcRadius * Math.cos(angle) - 20;
+            let py = centerY + arcRadius * Math.sin(angle);
+            ctx.fillText("+", px, py + 7);
+        }
+    }
+
+    function draw() {
+        // Очистка
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Получаем режим
+        const mode = document.querySelector('input[name="sim-mode"]:checked').value;
+        const E0_val = 100;
+        let Eind_val = 0;
+        let Eres_val = 100;
+
+        // Рисуем внешнее поле (фоновые линии)
+        ctx.strokeStyle = "rgba(220, 38, 38, 0.2)"; // полупрозрачный красный
+        ctx.lineWidth = 2;
+        for (let y = 40; y < canvas.height; y += 40) {
+            if (y > centerY - radius && y < centerY + radius && mode !== 'vacuum') {
+                // Если объект преграждает путь
+                if (mode === 'conductor' || mode === 'hollow') {
+                    // Линии обрываются на проводнике
+                    drawArrow(ctx, 0, y, centerX - radius - 5, y, "rgba(220, 38, 38, 0.4)", "");
+                    drawArrow(ctx, centerX + radius + 5, y, canvas.width, y, "rgba(220, 38, 38, 0.4)", "");
+                } else {
+                    // Диэлектрик - линии проходят насквозь
+                    drawArrow(ctx, 0, y, canvas.width, y, "rgba(220, 38, 38, 0.4)", "");
+                }
+            } else {
+                drawArrow(ctx, 0, y, canvas.width, y, "rgba(220, 38, 38, 0.4)", "");
+            }
+        }
+
+        // Центральная область и Векторы
+        ctx.save();
+        
+        if (mode === 'vacuum') {
+            uiEind.innerText = "0 В/м";
+            uiEres.innerText = "100 В/м";
+            // Рисуем один большой вектор E0 по центру
+            drawArrow(ctx, centerX - 80, centerY, centerX + 80, centerY, "#dc2626", "E0");
+        } 
+        else if (mode === 'conductor') {
+            Eind_val = 100;
+            Eres_val = 0;
+            uiEind.innerText = "100 В/м (навстречу)";
+            uiEres.innerText = "0 В/м (поле скомпенсировано)";
+            
+            // Тело
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = "#cbd5e1"; // серый металл
+            ctx.fill();
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Заряды на краях
+            drawMinusPole(ctx, radius);
+            drawPlusPole(ctx, radius);
+
+            // Векторы внутри (E0 вправо, Eind влево)
+            drawArrow(ctx, centerX - 50, centerY - 20, centerX + 50, centerY - 20, "#dc2626", "E0", -10);
+            drawArrow(ctx, centerX + 50, centerY + 20, centerX - 50, centerY + 20, "#2563eb", "E внутр", 25);
+            
+            ctx.fillStyle = "#059669";
+            ctx.font = "bold 18px Arial";
+            ctx.fillText("E рез = 0", centerX - 35, centerY + 5);
+        }
+        else if (mode === 'hollow') {
+            Eind_val = 100;
+            Eres_val = 0;
+            uiEind.innerText = "100 В/м (навстречу)";
+            uiEres.innerText = "0 В/м (Клетка Фарадея работает!)";
+
+            // Внешнее кольцо
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fill();
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Полость (вакуум внутри)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 20, 0, 2 * Math.PI);
+            ctx.fillStyle = "#f1f5f9"; // цвет фона
+            // dark theme check hack for canvas
+            if(document.documentElement.style.getPropertyValue('--bg-color') === '#0f172a') ctx.fillStyle = '#cbd5e1'; 
+            ctx.fill();
+            ctx.stroke();
+
+            drawMinusPole(ctx, radius);
+            drawPlusPole(ctx, radius);
+
+            // Поле внутри кольца (металла)
+            drawArrow(ctx, centerX, centerY - radius + 10, centerX - 20, centerY - radius + 10, "#2563eb", ""); // мини Eind в металле
+            
+            // В центре полости пусто! E=0.
+            ctx.fillStyle = "#059669";
+            ctx.font = "bold 18px Arial";
+            ctx.fillText("Защита: E = 0", centerX - 55, centerY + 5);
+        }
+        else if (mode.startsWith('dielectric')) {
+            let eps = mode === 'dielectric_2' ? 2 : 5;
+            Eres_val = E0_val / eps;
+            Eind_val = E0_val - Eres_val;
+            
+            uiEind.innerText = Eind_val + " В/м (навстречу)";
+            uiEres.innerText = Eres_val + " В/м (ослаблено в " + eps + " раз)";
+
+            // Тело (прозрачное стекло/вода)
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = eps === 2 ? "rgba(186, 230, 253, 0.4)" : "rgba(125, 211, 252, 0.6)"; 
+            ctx.fill();
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Диполи (поляризация)
+            drawDipole(ctx, centerX - 50, centerY - 40);
+            drawDipole(ctx, centerX, centerY - 40);
+            drawDipole(ctx, centerX + 50, centerY - 40);
+            
+            drawDipole(ctx, centerX - 50, centerY + 40);
+            drawDipole(ctx, centerX, centerY + 40);
+            drawDipole(ctx, centerX + 50, centerY + 40);
+
+            // Связанные заряды на краях (меньше, чем в металле)
+            ctx.fillStyle = "#2563eb"; ctx.font = "bold 16px Arial";
+            ctx.fillText("-", centerX - radius + 10, centerY + 5);
+            ctx.fillStyle = "#dc2626"; 
+            ctx.fillText("+", centerX + radius - 20, centerY + 5);
+
+            // Векторы (с пропорциями длин)
+            let len0 = 70;
+            let lenInd = 70 * (Eind_val / E0_val);
+            let lenRes = 70 * (Eres_val / E0_val);
+
+            drawArrow(ctx, centerX - len0/2, centerY - 15, centerX + len0/2, centerY - 15, "#dc2626", "E0", -10);
+            drawArrow(ctx, centerX + lenInd/2, centerY + 5, centerX - lenInd/2, centerY + 5, "#2563eb", "", 0); // Eind
+            drawArrow(ctx, centerX - lenRes/2, centerY + 25, centerX + lenRes/2, centerY + 25, "#059669", "E рез", 20); // Eres
+        }
+        
+        ctx.restore();
+    }
+
+    function updateSim() {
+        draw();
+    }
+
+    // Инициализация
+    window.onload = () => {
+        // Подстраиваем цвет полости под тему, если тема переключается ОС (простая эвристика)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+           const canv = document.getElementById('simCanvas');
+           canv.style.backgroundColor = '#cbd5e1';
+        }
+        draw();
+    };
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Внутри проводника в статическом состоянии поле всегда равно нулю. Это главное свойство.",
+            "2. Одноименные заряды отталкиваются и стремятся разбежаться как можно дальше друг от друга — то есть на поверхность.",
+            "3. Этот процесс называется поляризацией (от слова полюс — создание диполей).",
+            "4. Диэлектрик ослабляет поле в ε раз. E = 100 / 2 = 50 В/м.",
+            "5. Пластик — диэлектрик. Он не гасит поле до нуля, а лишь ослабляет его. Для полной защиты (клетки Фарадея) нужен проводник (металл)."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Безупречный результат! Вы отлично усвоили разницу между проводниками и диэлектриками.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

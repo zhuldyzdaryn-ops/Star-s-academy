@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электроемкость. Конденсаторы — 10 класс</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #2563eb; /* Синий */
+            --primary-hover: #1d4ed8;
+            --accent: #f59e0b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #3b82f6;
+                --primary-hover: #60a5fa;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); margin-top: 16px; }
+        p { margin-bottom: 12px; text-align: justify; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+
+        button {
+            background-color: var(--primary); color: #fff; border: none; padding: 10px 20px;
+            border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+
+        input[type="number"], input[type="range"] {
+            border: 1px solid var(--border); border-radius: 6px; background-color: var(--bg-color);
+            color: var(--text-main); font-size: 1rem;
+        }
+        input[type="number"] { padding: 8px 12px; margin-right: 10px; max-width: 120px; }
+        
+        .formula-box {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.25rem; text-align: center;
+            border: 1px dashed var(--border); margin: 16px 0; overflow-x: auto;
+        }
+
+        /* Гриды для симуляций */
+        .sim-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; }
+        @media (max-width: 768px) { .sim-grid { grid-template-columns: 1fr; } }
+        
+        .controls { background: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border); }
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;}
+        input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; background: #cbd5e1; border-radius: 3px; outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+
+        .dashboard { background: var(--card-bg); padding: 12px; border-radius: 8px; border: 2px solid var(--primary); text-align: center; margin-top: 10px; }
+        .val-big { font-size: 2rem; font-weight: bold; font-family: monospace; color: var(--primary); }
+
+        canvas { width: 100%; max-height: 300px; background-color: #f1f5f9; border-radius: var(--radius); border: 1px solid var(--border); }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; border-color: #334155; } }
+
+        /* Задачи и тесты */
+        .task-block { background-color: var(--bg-color); padding: 16px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid var(--primary); }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        
+        .test-question { margin-bottom: 20px; }
+        .test-question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; border-radius: 4px; transition: background 0.2s; }
+        .test-question label:hover { background-color: var(--bg-color); }
+        .test-result { font-size: 1.2rem; font-weight: bold; margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+        
+        /* Видео кнопка */
+        .video-link {
+            display: inline-block; background-color: #ef4444; color: white; text-decoration: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+        }
+        .video-link:hover { background-color: #dc2626; }
+
+        /* Стили для дробей в тексте */
+        .frac { display: inline-block; vertical-align: middle; margin: 0 0.2em; text-align: center; font-size: 0.9em; }
+        .frac > span { display: block; padding-top: 0.15em; }
+        .frac span.bottom { border-top: 1px solid; }
+        .frac span.top { padding-bottom: 0.1em; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Заголовок -->
+    <header class="card">
+        <h1>Электроемкость. Конденсаторы</h1>
+        <p style="text-align: center; color: var(--text-muted); font-size: 1.1rem;">
+            Как хранить электрический заряд? Изучаем устройства, способные накапливать энергию электрического поля.
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ: Электроемкость -->
+    <section class="card">
+        <h2>1. Что такое электроемкость?</h2>
+        <p>Представьте себе ведро. Чем оно шире, тем больше воды в него поместится при той же высоте уровня воды. В электричестве «ведро» — это проводник, «вода» — это электрический заряд (<b>q</b>), а «уровень воды» — это потенциал (напряжение, <b>U</b>).</p>
+        <p><b>Электрическая емкость (С)</b> — это физическая величина, характеризующая способность проводника накапливать электрический заряд.</p>
+        
+        <div class="formula-box">
+            C = <span class="frac"><span class="top">q</span><span class="bottom">U</span></span>
+        </div>
+        
+        <ul>
+            <li><b>q</b> — заряд (в Кулонах, Кл)</li>
+            <li><b>U</b> — напряжение (в Вольтах, В)</li>
+            <li><b>C</b> — электроемкость. Единица измерения — <b>Фарад (Ф)</b>.</li>
+        </ul>
+        <p><i>Интересный факт:</i> 1 Фарад — это гигантская емкость. Земной шар имеет емкость всего около 0,0007 Ф. Поэтому на практике используют микрофарады (мкФ = $10^{-6}$ Ф), нанофарады (нФ = $10^{-9}$ Ф) и пикофарады (пФ = $10^{-12}$ Ф).</p>
+    </section>
+
+    <!-- ТЕОРИЯ: Конденсатор -->
+    <section class="card">
+        <h2>2. Плоский конденсатор</h2>
+        <p>Одиночный проводник обладает маленькой емкостью. Чтобы накопить большой заряд при малом напряжении, физики придумали <b>конденсатор</b>. Простейший конденсатор состоит из двух металлических пластин (обкладок), разделенных слоем диэлектрика.</p>
+        <p>Емкость плоского конденсатора зависит только от его геометрических размеров и материала диэлектрика:</p>
+        
+        <div class="formula-box">
+            C = <span class="frac"><span class="top">&epsilon;<sub>0</sub> · &epsilon; · S</span><span class="bottom">d</span></span>
+        </div>
+
+        <ul>
+            <li><b>&epsilon;<sub>0</sub></b> &approx; 8.85·10<sup>-12</sup> Ф/м — электрическая постоянная.</li>
+            <li><b>&epsilon;</b> — диэлектрическая проницаемость изолятора (воздух &approx; 1, стекло &approx; 7, слюда &approx; 6).</li>
+            <li><b>S</b> — площадь одной пластины (м²). Чем больше площадь, тем больше зарядов поместится.</li>
+            <li><b>d</b> — расстояние между пластинами (м). Чем пластины ближе, тем сильнее разноименные заряды притягиваются друг к другу, и тем легче их удерживать!</li>
+        </ul>
+
+        <!-- ИНТЕРАКТИВ 1: ПЛОСКИЙ КОНДЕНСАТОР -->
+        <h3 style="margin-top:24px; border-top: 1px solid var(--border); padding-top: 16px;">Интерактивная модель: Устройство конденсатора</h3>
+        <div class="sim-grid">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Площадь обкладок (S) <span id="lbl-S">50 см²</span></label>
+                    <input type="range" id="slider-S" min="10" max="150" value="50">
+                </div>
+                <div class="control-group">
+                    <label>Расстояние (d) <span id="lbl-d">2.0 мм</span></label>
+                    <input type="range" id="slider-d" min="0.5" max="10" step="0.1" value="2.0">
+                </div>
+                <div class="control-group">
+                    <label>Диэлектрик (&epsilon;) <span id="lbl-eps">Воздух (1.0)</span></label>
+                    <input type="range" id="slider-eps" min="1" max="10" step="0.1" value="1">
+                </div>
+                <div class="dashboard">
+                    <div>Емкость конденсатора:</div>
+                    <div class="val-big" id="val-cap">22.1 пФ</div>
+                </div>
+            </div>
+            <div>
+                <canvas id="capCanvas" width="500" height="300"></canvas>
+                <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
+                    *Изменяйте параметры и следите за изменением толщины диэлектрика (зеленый) и площади пластин (серые).
+                </p>
+            </div>
+        </div>
+        
+        <h3>Энергия заряженного конденсатора</h3>
+        <p>Конденсатор не просто хранит заряд, он хранит энергию электрического поля. Эта энергия вычисляется по формуле:</p>
+        <div class="formula-box">
+            W = <span class="frac"><span class="top">C · U<sup>2</sup></span><span class="bottom">2</span></span> = <span class="frac"><span class="top">q · U</span><span class="bottom">2</span></span> = <span class="frac"><span class="top">q<sup>2</sup></span><span class="bottom">2C</span></span>
+        </div>
+    </section>
+
+    <!-- ТЕОРИЯ: Соединения -->
+    <section class="card">
+        <h2>3. Соединение конденсаторов</h2>
+        <p>В электрических схемах конденсаторы можно соединять друг с другом для получения нужной общей емкости.</p>
+        
+        <div class="sim-grid">
+            <div>
+                <h3 style="color: var(--success); margin-top: 0;">Параллельное соединение</h3>
+                <p>Конденсаторы подключаются к одним и тем же узлам (напряжение на них одинаковое). По сути, это эквивалентно увеличению общей площади обкладок. <b>Емкость складывается!</b></p>
+                <div class="formula-box" style="font-size: 1.1rem; padding: 10px;">C<sub>общ</sub> = C<sub>1</sub> + C<sub>2</sub></div>
+            </div>
+            <div>
+                <h3 style="color: var(--danger); margin-top: 0;">Последовательное соединение</h3>
+                <p>Конденсаторы подключаются друг за другом (заряд на них одинаковый). Это эквивалентно увеличению расстояния между крайними обкладками. <b>Общая емкость УМЕНЬШАЕТСЯ.</b></p>
+                <div class="formula-box" style="font-size: 1.1rem; padding: 10px;"><span class="frac"><span class="top">1</span><span class="bottom">C<sub>общ</sub></span></span> = <span class="frac"><span class="top">1</span><span class="bottom">C<sub>1</sub></span></span> + <span class="frac"><span class="top">1</span><span class="bottom">C<sub>2</sub></span></span></div>
+            </div>
+        </div>
+
+        <!-- ИНТЕРАКТИВ 2: СХЕМЫ -->
+        <h3 style="margin-top:24px; border-top: 1px solid var(--border); padding-top: 16px;">Интерактивная модель: Конструктор цепей</h3>
+        <div class="sim-grid">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Тип соединения:</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="radio" name="conn-type" value="parallel" checked onchange="updateCircuit()"> Параллельное (увеличивает С)</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="radio" name="conn-type" value="series" onchange="updateCircuit()"> Последовательное (уменьшает С)</label>
+                </div>
+                <div class="control-group">
+                    <label>C<sub>1</sub> <span id="lbl-c1">10 мкФ</span></label>
+                    <input type="range" id="slider-c1" min="1" max="100" value="10">
+                </div>
+                <div class="control-group">
+                    <label>C<sub>2</sub> <span id="lbl-c2">10 мкФ</span></label>
+                    <input type="range" id="slider-c2" min="1" max="100" value="10">
+                </div>
+                <div class="dashboard">
+                    <div>Эквивалентная емкость:</div>
+                    <div class="val-big" id="val-ctotal">20.0 мкФ</div>
+                </div>
+            </div>
+            <div>
+                <canvas id="circuitCanvas" width="500" height="250"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПРАКТИКА -->
+    <section class="card">
+        <h2>4. Практика: Решение задач</h2>
+
+        <div class="task-block">
+            <h3>Задача А (Базовая)</h3>
+            <p>Конденсатор зарядили до напряжения <b>20 В</b>. При этом на его обкладках накопился заряд <b>0.004 Кл</b>. Вычислите электроемкость этого конденсатора (в Фарадах).</p>
+            <input type="number" id="taskA-input" placeholder="С = ? Ф">
+            <button onclick="checkTask('taskA', 0.0002, 0.00001, 'Используйте формулу C = q / U')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <div class="task-block">
+            <h3>Задача B (Свойства плоского конденсатора)</h3>
+            <p>Плоский воздушный конденсатор имеет емкость <b>10 пФ</b>. Что произойдет с его емкостью, если пространство между пластинами полностью заполнить стеклом с диэлектрической проницаемостью <b>&epsilon; = 7</b>? Укажите новую емкость в пФ.</p>
+            <input type="number" id="taskB-input" placeholder="пФ">
+            <button onclick="checkTask('taskB', 70, 0.1, 'Емкость прямо пропорциональна диэлектрической проницаемости. Если ε увеличилась в 7 раз, то и емкость...')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+        </div>
+
+        <div class="task-block">
+            <h3>Задача C (Соединение)</h3>
+            <p>Два одинаковых конденсатора по <b>6 мкФ</b> соединили <b>последовательно</b>. Какова общая емкость полученной батареи? (в мкФ)</p>
+            <input type="number" id="taskC-input" placeholder="мкФ">
+            <button onclick="checkTask('taskC', 3, 0.1, 'Для последовательного соединения 1/C = 1/C1 + 1/C2. Или для двух одинаковых C_общ = C / 2.')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- ВИДЕО -->
+    <section class="card">
+        <h2>5. Наглядные опыты (Видео)</h2>
+        <p>Конденсаторы могут накапливать колоссальную энергию и отдавать её за доли секунды. Как выглядит мощный разряд конденсатора? Что произойдет, если подать на него напряжение выше допустимого предела (пробой диэлектрика)?</p>
+        <p>Посмотрите эти зрелищные (и опасные) физические эксперименты, которые лучше не повторять в домашних условиях!</p>
+        
+        <div style="text-align: center; margin-top: 24px; margin-bottom: 12px;">
+            <a href="https://www.youtube.com/results?search_query=опыты+с+конденсаторами+физика+взрыв" target="_blank" class="video-link">
+                ▶ Смотреть видео: Опыты с конденсаторами
+            </a>
+        </div>
+        <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+            (Откроется в новой вкладке YouTube)
+        </p>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section class="card">
+        <h2>6. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. В каких единицах измеряется электроемкость в системе СИ?</b></p>
+                <label><input type="radio" name="q1" value="0"> Вольты</label>
+                <label><input type="radio" name="q1" value="0"> Кулоны</label>
+                <label><input type="radio" name="q1" value="1"> Фарады</label>
+                <label><input type="radio" name="q1" value="0"> Джоули</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. Как изменится емкость плоского конденсатора, если раздвинуть его пластины в 2 раза дальше друг от друга (d увеличить в 2 раза)?</b></p>
+                <label><input type="radio" name="q2" value="0"> Увеличится в 2 раза.</label>
+                <label><input type="radio" name="q2" value="1"> Уменьшится в 2 раза.</label>
+                <label><input type="radio" name="q2" value="0"> Не изменится.</label>
+                <label><input type="radio" name="q2" value="0"> Увеличится в 4 раза.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Как нужно соединить два конденсатора, чтобы получить МАКСИМАЛЬНУЮ общую емкость?</b></p>
+                <label><input type="radio" name="q3" value="1"> Параллельно.</label>
+                <label><input type="radio" name="q3" value="0"> Последовательно.</label>
+                <label><input type="radio" name="q3" value="0"> Не имеет значения.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Зачем в конденсаторах между металлическими пластинами помещают диэлектрик (например, слюду или керамику)?</b></p>
+                <label><input type="radio" name="q4" value="0"> Чтобы пластины не заржавели.</label>
+                <label><input type="radio" name="q4" value="0"> Для уменьшения электроемкости.</label>
+                <label><input type="radio" name="q4" value="1"> Чтобы пластины не замкнулись и для увеличения электроемкости (в ε раз).</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Завершить урок</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    // --- СИМУЛЯЦИЯ 1: Плоский конденсатор ---
+    const capCanvas = document.getElementById('capCanvas');
+    const capCtx = capCanvas.getContext('2d');
+    
+    const sliderS = document.getElementById('slider-S');
+    const sliderD = document.getElementById('slider-d');
+    const sliderEps = document.getElementById('slider-eps');
+    
+    function drawCapacitor() {
+        // Чтение значений
+        const S = parseFloat(sliderS.value); // см2
+        const d = parseFloat(sliderD.value); // мм
+        const eps = parseFloat(sliderEps.value);
+        
+        // Обновление лейблов
+        document.getElementById('lbl-S').innerText = `${S} см²`;
+        document.getElementById('lbl-d').innerText = `${d.toFixed(1)} мм`;
+        
+        let matName = "Воздух/Вакуум";
+        let dielectColor = "rgba(186, 230, 253, 0.1)"; // Прозрачный для воздуха
+        if (eps > 1.1 && eps <= 3) { matName = "Бумага/Масло"; dielectColor = "rgba(253, 224, 71, 0.4)"; }
+        else if (eps > 3 && eps <= 6) { matName = "Слюда/Стекло"; dielectColor = "rgba(147, 197, 253, 0.5)"; }
+        else if (eps > 6) { matName = "Керамика"; dielectColor = "rgba(134, 239, 172, 0.6)"; }
+        document.getElementById('lbl-eps').innerText = `${matName} (${eps.toFixed(1)})`;
+
+        // Расчет реальной емкости
+        // C = eps0 * eps * S / d
+        // eps0 = 8.85e-12 Ф/м
+        // S_m2 = S * 1e-4
+        // d_m = d * 1e-3
+        // C_pF = C * 1e12
+        const eps0 = 8.85; // пФ/м (8.85e-12 * 1e12)
+        const C_pF = (eps0 * eps * (S * 0.0001)) / (d * 0.001);
+        document.getElementById('val-cap').innerText = `${C_pF.toFixed(1)} пФ`;
+
+        // Отрисовка
+        capCtx.clearRect(0, 0, capCanvas.width, capCanvas.height);
+        
+        const cx = capCanvas.width / 2;
+        const cy = capCanvas.height / 2;
+        
+        // Визуальные размеры (масштабирование)
+        const vHeight = 50 + (S / 150) * 150; // Высота пластин зависит от S
+        const vDist = 10 + (d / 10) * 80;     // Расстояние зависит от d
+        const plateWidth = 15;
+        
+        const leftX = cx - vDist/2 - plateWidth;
+        const rightX = cx + vDist/2;
+        const plateY = cy - vHeight/2;
+
+        // Рисуем провода
+        capCtx.strokeStyle = "#475569";
+        capCtx.lineWidth = 3;
+        capCtx.beginPath();
+        capCtx.moveTo(0, cy); capCtx.lineTo(leftX, cy);
+        capCtx.moveTo(capCanvas.width, cy); capCtx.lineTo(rightX + plateWidth, cy);
+        capCtx.stroke();
+
+        // Рисуем диэлектрик
+        if (eps > 1.0) {
+            capCtx.fillStyle = dielectColor;
+            capCtx.fillRect(leftX + plateWidth, plateY - 10, vDist, vHeight + 20);
+        }
+
+        // Рисуем пластины
+        const isDark = document.documentElement.style.getPropertyValue('--bg-color') === '#0f172a';
+        capCtx.fillStyle = isDark ? "#94a3b8" : "#64748b"; // Цвет металла
+        
+        // Левая (условно положительная)
+        capCtx.fillRect(leftX, plateY, plateWidth, vHeight);
+        // Правая (условно отрицательная)
+        capCtx.fillRect(rightX, plateY, plateWidth, vHeight);
+        
+        // Заряды для красоты
+        capCtx.fillStyle = "#ef4444"; // Плюсы
+        capCtx.font = "14px Arial";
+        capCtx.textAlign = "center";
+        for(let y = plateY + 15; y < plateY + vHeight; y += 20) {
+            capCtx.fillText("+", leftX - 10, y);
+        }
+        
+        capCtx.fillStyle = "#3b82f6"; // Минусы
+        for(let y = plateY + 15; y < plateY + vHeight; y += 20) {
+            capCtx.fillText("-", rightX + plateWidth + 10, y);
+        }
+    }
+
+    sliderS.addEventListener('input', drawCapacitor);
+    sliderD.addEventListener('input', drawCapacitor);
+    sliderEps.addEventListener('input', drawCapacitor);
+
+
+    // --- СИМУЛЯЦИЯ 2: Схемы ---
+    const circCanvas = document.getElementById('circuitCanvas');
+    const circCtx = circCanvas.getContext('2d');
+    
+    const sliderC1 = document.getElementById('slider-c1');
+    const sliderC2 = document.getElementById('slider-c2');
+
+    // Функция рисования значка конденсатора
+    function drawCapSymbol(ctx, x, y, labelText) {
+        ctx.strokeStyle = "#475569";
+        ctx.lineWidth = 3;
+        
+        // Две параллельные линии (обкладки)
+        ctx.beginPath();
+        ctx.moveTo(x - 5, y - 15);
+        ctx.lineTo(x - 5, y + 15);
+        ctx.moveTo(x + 5, y - 15);
+        ctx.lineTo(x + 5, y + 15);
+        ctx.stroke();
+
+        ctx.fillStyle = "#2563eb"; // Цвет текста
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(labelText, x, y - 25);
+    }
+
+    function updateCircuit() {
+        const S1 = parseFloat(sliderC1.value);
+        const S2 = parseFloat(sliderC2.value);
+        const isParallel = document.querySelector('input[name="conn-type"]:checked').value === 'parallel';
+
+        document.getElementById('lbl-c1').innerText = `${S1} мкФ`;
+        document.getElementById('lbl-c2').innerText = `${S2} мкФ`;
+
+        let C_tot = 0;
+        if (isParallel) {
+            C_tot = S1 + S2;
+        } else {
+            C_tot = (S1 * S2) / (S1 + S2); // (1/C1 + 1/C2)^-1
+        }
+        document.getElementById('val-ctotal').innerText = `${C_tot.toFixed(1)} мкФ`;
+
+        // Отрисовка схемы
+        circCtx.clearRect(0, 0, circCanvas.width, circCanvas.height);
+        circCtx.strokeStyle = "#475569";
+        circCtx.lineWidth = 2;
+        
+        const cx = circCanvas.width / 2;
+        const cy = circCanvas.height / 2;
+
+        circCtx.beginPath();
+        if (isParallel) {
+            // Линии входа-выхода
+            circCtx.moveTo(30, cy); circCtx.lineTo(120, cy);
+            circCtx.moveTo(circCanvas.width - 30, cy); circCtx.lineTo(circCanvas.width - 120, cy);
+            
+            // Разветвление
+            circCtx.moveTo(120, cy - 40); circCtx.lineTo(120, cy + 40);
+            circCtx.moveTo(circCanvas.width - 120, cy - 40); circCtx.lineTo(circCanvas.width - 120, cy + 40);
+            
+            // Верхняя ветвь
+            circCtx.moveTo(120, cy - 40); circCtx.lineTo(cx - 5, cy - 40);
+            circCtx.moveTo(cx + 5, cy - 40); circCtx.lineTo(circCanvas.width - 120, cy - 40);
+            
+            // Нижняя ветвь
+            circCtx.moveTo(120, cy + 40); circCtx.lineTo(cx - 5, cy + 40);
+            circCtx.moveTo(cx + 5, cy + 40); circCtx.lineTo(circCanvas.width - 120, cy + 40);
+            circCtx.stroke();
+
+            // Конденсаторы
+            drawCapSymbol(circCtx, cx, cy - 40, `C1 = ${S1}`);
+            drawCapSymbol(circCtx, cx, cy + 40, `C2 = ${S2}`);
+
+        } else {
+            // Последовательная линия
+            circCtx.moveTo(30, cy); circCtx.lineTo(cx - 50 - 5, cy);
+            circCtx.moveTo(cx - 50 + 5, cy); circCtx.lineTo(cx + 50 - 5, cy);
+            circCtx.moveTo(cx + 50 + 5, cy); circCtx.lineTo(circCanvas.width - 30, cy);
+            circCtx.stroke();
+
+            // Конденсаторы
+            drawCapSymbol(circCtx, cx - 50, cy, `C1 = ${S1}`);
+            drawCapSymbol(circCtx, cx + 50, cy, `C2 = ${S2}`);
+        }
+        
+        // Клеммы
+        circCtx.fillStyle = "#0f172a";
+        circCtx.beginPath(); circCtx.arc(30, cy, 4, 0, Math.PI*2); circCtx.fill();
+        circCtx.beginPath(); circCtx.arc(circCanvas.width - 30, cy, 4, 0, Math.PI*2); circCtx.fill();
+        
+        circCtx.fillStyle = "#64748b";
+        circCtx.textAlign = "left";
+        circCtx.fillText("A", 15, cy - 10);
+        circCtx.textAlign = "right";
+        circCtx.fillText("B", circCanvas.width - 15, cy - 10);
+    }
+
+    sliderC1.addEventListener('input', updateCircuit);
+    sliderC2.addEventListener('input', updateCircuit);
+
+    // Инициализация при загрузке
+    window.onload = () => {
+        // Подстройка холстов под темную тему (если включена)
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+           capCanvas.style.backgroundColor = '#0f172a';
+           circCanvas.style.backgroundColor = '#0f172a';
+        }
+        drawCapacitor();
+        updateCircuit();
+    };
+
+    // --- ПРАКТИКА И ТЕСТЫ ---
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Правильно! Молодцы.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Ошибка. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 4;
+
+        const explanations = [
+            "1. Емкость измеряется в Фарадах (в честь Майкла Фарадея). Кулоны — заряд, Вольты — напряжение.",
+            "2. Емкость обратно пропорциональна расстоянию (d). Чем дальше пластины, тем слабее они удерживают заряды, емкость уменьшается в 2 раза.",
+            "3. При параллельном соединении площади обкладок фактически складываются, общая емкость становится равна сумме: C = C1 + C2.",
+            "4. Диэлектрик выполняет две функции: не дает пластинам замкнуться накоротко (он изолятор) и увеличивает емкость конденсатора в ε раз."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, выберите ответы на все вопросы.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score >= 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Идеально! Вы полностью освоили тему электроемкости и конденсаторов.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>

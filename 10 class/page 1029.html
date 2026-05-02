@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Влажность воздуха и Фазовые диаграммы — 10 класс</title>
+    <style>
+        :root {
+            /* Светлая тема */
+            --bg-color: #f0fdf4; /* Светло-зеленоватый фон для темы влажности */
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --primary: #0ea5e9; /* Голубой (Вода/Пар) */
+            --primary-hover: #0284c7;
+            --accent: #8b5cf6; /* Фиолетовый (Критическая точка) */
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #cbd5e1;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Тёмная тема */
+                --bg-color: #0f172a;
+                --card-bg: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #cbd5e1;
+                --primary: #38bdf8;
+                --primary-hover: #0ea5e9;
+                --border: #334155;
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1050px; margin: 0 auto; }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 12px; color: var(--primary); text-align: center; }
+        h2 { font-size: 1.5rem; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text-main); }
+        p { margin-bottom: 12px; }
+        ul, ol { margin-bottom: 16px; padding-left: 24px; }
+        li { margin-bottom: 6px; }
+        strong { color: var(--primary); }
+
+        button {
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 500;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        input[type="number"], select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-right: 10px;
+            max-width: 180px;
+        }
+
+        /* Виджет влажности */
+        .humidity-widget {
+            background: var(--bg-color); border: 1px solid var(--border);
+            padding: 16px; border-radius: var(--radius); margin-bottom: 20px;
+        }
+        .hum-bar-bg { background: var(--border); height: 24px; border-radius: 12px; position: relative; overflow: hidden; margin-top: 10px; }
+        .hum-bar-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #0284c7); width: 0%; transition: width 0.3s; }
+        .hum-bar-text { position: absolute; width: 100%; text-align: center; line-height: 24px; color: white; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+
+        /* Симуляция (Фазовая диаграмма) */
+        .simulation-container { display: flex; gap: 24px; flex-wrap: wrap; }
+        .sim-controls { flex: 1; min-width: 280px; background-color: var(--bg-color); padding: 16px; border-radius: var(--radius); border: 1px solid var(--border);}
+        .control-group { margin-bottom: 16px; }
+        .control-group label { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: bold; font-size: 0.9rem; color: var(--text-main); }
+        input[type="range"] { width: 100%; cursor: pointer; }
+        
+        .sim-canvas-wrapper { flex: 2; min-width: 350px; display: flex; flex-direction: column; align-items: center; width: 100%;}
+        canvas {
+            width: 100%;
+            max-width: 600px;
+            background-color: #f1f5f9; /* Светлый фон для графика */
+            border-radius: var(--radius);
+            border: 2px solid var(--border);
+        }
+        @media (prefers-color-scheme: dark) { canvas { background-color: #0f172a; } }
+        .sim-status { margin-top: 12px; font-style: italic; color: var(--text-muted); text-align: center; }
+
+        /* Состояние вещества box */
+        .state-box {
+            margin-top: 15px; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.2rem;
+            color: white; transition: background 0.3s;
+        }
+
+        /* Задачи */
+        .task-block {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary);
+        }
+        .feedback { margin-top: 10px; font-weight: bold; min-height: 24px; }
+        .descriptors { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px; }
+
+        /* Утилиты */
+        .hidden { display: none !important; }
+        .formula {
+            background-color: var(--bg-color); padding: 16px; border-radius: 8px;
+            font-family: "Courier New", Courier, monospace; font-size: 1.3rem; text-align: center;
+            border: 1px dashed var(--primary); margin-bottom: 16px;
+        }
+        .correct-text { color: var(--success); }
+        .incorrect-text { color: var(--danger); }
+        .reflection-item { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .reflection-item input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header class="card">
+        <h1>Пар, влажность и фазовые диаграммы</h1>
+        <p style="font-size: 1.1rem; font-style: italic; text-align: center; color: var(--text-muted);">
+            Почему летом бывает душно? При каком давлении вода закипит при комнатной температуре? И существует ли состояние, когда нельзя отличить жидкость от газа? Ответы кроются в свойствах пара и фазовых переходах.
+        </p>
+    </header>
+
+    <!-- ТЕОРИЯ: ПАР И ВЛАЖНОСТЬ -->
+    <section class="card">
+        <h2>1. Насыщенный пар и Влажность воздуха</h2>
+        <p>Если закрыть банку с водой крышкой, вода начнет испаряться. Со временем скорость испарения сравняется со скоростью конденсации (возвращения молекул обратно в жидкость). Наступит <b>динамическое равновесие</b>.</p>
+        <ul>
+            <li><b>Насыщенный пар</b> — это пар, находящийся в динамическом равновесии со своей жидкостью. Давление и плотность такого пара максимальны при данной температуре и <i>не зависят от объема</i>!</li>
+            <li><b>Ненасыщенный пар</b> — пар, не достигший равновесия (он ведет себя почти как идеальный газ).</li>
+        </ul>
+        
+        <h3>Относительная влажность (&phi;)</h3>
+        <p>Воздух вокруг нас всегда содержит водяной пар. <b>Относительная влажность</b> показывает, насколько этот пар близок к насыщению (к состоянию, когда начнет выпадать роса).</p>
+        <div class="formula">
+            <b>&phi; = (p / p<sub>0</sub>) &middot; 100%</b>
+        </div>
+        <p>Где <b>p</b> — текущее давление водяного пара в воздухе, а <b>p<sub>0</sub></b> — давление насыщенного пара при той же температуре (табличная величина).</p>
+        
+        <div class="humidity-widget">
+            <p><b>Интерактивная панель влажности:</b><br>
+            Представьте комнату при температуре 20 &deg;C. Давление насыщенного пара (p<sub>0</sub>) для нее &approx; 2.33 кПа. Изменяйте текущее давление пара (p), чтобы увидеть влажность:</p>
+            <input type="range" id="hum-slider" min="0" max="2.33" value="1.1" step="0.01" style="width:100%;">
+            <p style="margin-top:5px; font-size:0.9rem;">Текущее давление пара: <span id="hum-val" style="font-weight:bold;">1.10</span> кПа</p>
+            <div class="hum-bar-bg">
+                <div id="hum-bar" class="hum-bar-fill"></div>
+                <div id="hum-text" class="hum-bar-text">47% — Нормально</div>
+            </div>
+            <p id="hum-dew" style="color: var(--danger); font-size: 0.9rem; margin-top: 5px; display: none;"><b>Достигнута точка росы! Влажность 100%. На окнах появляется конденсат.</b></p>
+        </div>
+    </section>
+
+    <!-- ТЕОРИЯ: ФАЗОВЫЕ ДИАГРАММЫ -->
+    <section class="card">
+        <h2>2. Фазовые переходы и Диаграммы состояния</h2>
+        <p>Вещество может находиться в твердом, жидком или газообразном состоянии. Переход между ними зависит от двух параметров: <b>Давления (p)</b> и <b>Температуры (T)</b>. Эту зависимость удобно изображать на <b>фазовой диаграмме (p-T)</b>.</p>
+        
+        <p>На диаграмме есть три главные линии, которые делят плоскость на области твердого тела, жидкости и газа:</p>
+        <ul>
+            <li><b>Кривая плавления</b> — разделяет твердое тело и жидкость.</li>
+            <li><b>Кривая парообразования</b> — разделяет жидкость и газ (пар). Она показывает зависимость давления насыщенного пара от температуры.</li>
+            <li><b>Кривая сублимации</b> — разделяет твердое тело и газ (некоторые вещества, как сухой лед, испаряются минуя жидкую фазу).</li>
+        </ul>
+
+        <h3>Особые точки на диаграмме:</h3>
+        <ul>
+            <li><strong style="color:var(--accent);">Тройная точка:</strong> Точка, где пересекаются все три кривые. При этих уникальных (p, T) вещество существует одновременно в виде льда, жидкой воды и водяного пара в равновесии! (Для воды это 0.01 &deg;C и 611 Па).</li>
+            <li><strong style="color:var(--danger);">Критическая точка:</strong> Конец кривой парообразования. При температуре выше критической различие между жидкостью и газом исчезает. Вещество переходит в состояние <b>сверхкритического флюида</b> (плотный как жидкость, подвижный как газ). Его невозможно сжижить никаким давлением.</li>
+        </ul>
+    </section>
+
+    <!-- СИМУЛЯЦИЯ ФАЗОВОЙ ДИАГРАММЫ -->
+    <section class="card">
+        <h2>3. Интерактивный исследователь: Фазовая диаграмма</h2>
+        <p>Перемещайте ползунки Температуры и Давления, чтобы исследовать агрегатные состояния гипотетического вещества. Найдите Тройную и Критическую точки!</p>
+        
+        <div class="simulation-container">
+            <div class="sim-controls">
+                <div class="control-group">
+                    <label>Температура (T): <span id="val-t" style="color:var(--danger);">300</span> К</label>
+                    <input type="range" id="sim-t" min="50" max="600" value="300" step="1">
+                </div>
+                
+                <div class="control-group">
+                    <label>Давление (p): <span id="val-p" style="color:var(--primary);">40</span> атм</label>
+                    <input type="range" id="sim-p" min="1" max="150" value="40" step="1">
+                </div>
+
+                <div id="state-display" class="state-box" style="background-color: #3b82f6;">
+                    Жидкость
+                </div>
+                
+                <ul style="margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); list-style-type: none; padding: 0;">
+                    <li>&#9679; <b>Тройная точка:</b> T = 200 K, p = 20 атм</li>
+                    <li>&#9679; <b>Критическая точка:</b> T = 450 K, p = 100 атм</li>
+                </ul>
+            </div>
+
+            <div class="sim-canvas-wrapper">
+                <canvas id="phaseCanvas" width="600" height="400"></canvas>
+                <p class="sim-status">Черная точка показывает текущее состояние вещества. Линии — это границы фазовых переходов.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ПРИМЕР РЕШЕНИЯ ЗАДАЧИ -->
+    <section class="card">
+        <h2>4. Пример решения задачи (Относительная влажность)</h2>
+        <div class="task-block">
+            <p><b>Условие:</b> При температуре 20 &deg;C парциальное давление водяного пара в комнате равно 1.4 кПа. Давление насыщенного пара при этой же температуре по таблице равно 2.33 кПа. Найдите относительную влажность воздуха.</p>
+            <button onclick="document.getElementById('solution-1').classList.toggle('hidden')">Показать/скрыть решение</button>
+            
+            <div id="solution-1" class="hidden" style="margin-top: 15px;">
+                <p><b>Дано:</b><br>
+                p = 1.4 кПа<br>
+                p<sub>0</sub> = 2.33 кПа<br>
+                <b>Найти:</b> &phi; — ?</p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border);">
+                
+                <p><b>Формула:</b><br>
+                Относительная влажность определяется как отношение парциального давления пара к давлению насыщенного пара при той же температуре:<br>
+                &phi; = (p / p<sub>0</sub>) &middot; 100%</p>
+                
+                <p><b>Решение:</b><br>
+                &phi; = (1.4 / 2.33) &middot; 100% &approx; 0.60 &middot; 100% = 60%.</p>
+                
+                <p><b>Ответ:</b> Относительная влажность воздуха составляет примерно 60%. Это комфортное значение для человека.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ЗАДАЧИ ДЛЯ ЗАКРЕПЛЕНИЯ -->
+    <section class="card">
+        <h2>5. Практика (Задачи A, B, C)</h2>
+
+        <div class="task-block">
+            <h3>Уровень A (Насыщенный пар)</h3>
+            <p>В цилиндре под герметичным поршнем находится вода и ее насыщенный пар. Поршень медленно опускают вниз (сжимают систему), поддерживая температуру постоянной. Что будет происходить с <b>давлением</b> пара в цилиндре?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Давление будет увеличиваться.<br>
+            2. Давление будет уменьшаться.<br>
+            3. Давление не изменится, пар будет конденсироваться в воду.</p>
+            <input type="number" id="taskA-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskA', 3, 0, 'Давление насыщенного пара зависит только от температуры. При изотермическом сжатии давление пара не меняется, просто часть пара превращается в воду (конденсируется), чтобы сохранить равновесие.')">Проверить</button>
+            <div id="taskA-res" class="feedback"></div>
+        </div>
+
+        <div class="task-block">
+            <h3>Уровень B (Расчет влажности)</h3>
+            <p>Относительная влажность воздуха в комнате равна 40%. Давление насыщенного водяного пара при данной температуре составляет 3000 Па. Определите <b>парциальное давление</b> (в Паскалях) водяного пара в комнате.</p>
+            <input type="number" id="taskB-input" placeholder="Ответ в Па"> 
+            <button onclick="checkTask('taskB', 1200, 0, 'Из формулы φ = (p / p0) * 100% выражаем p: p = (φ / 100) * p0 = 0.4 * 3000 = 1200 Па.')">Проверить</button>
+            <div id="taskB-res" class="feedback"></div>
+        </div>
+
+        <div class="task-block">
+            <h3>Уровень C (Сложный: Фазовые диаграммы)</h3>
+            <p>Углекислый газ (сухой лед) при нормальном атмосферном давлении (1 атм) возгоняется — переходит из твердого состояния сразу в газообразное. Что это говорит о положении <b>тройной точки</b> углекислого газа по шкале давления?</p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;">
+            1. Давление тройной точки меньше 1 атм.<br>
+            2. Давление тройной точки больше 1 атм.<br>
+            3. Давление тройной точки равно 1 атм.</p>
+            <input type="number" id="taskC-input" placeholder="Номер"> 
+            <button onclick="checkTask('taskC', 2, 0, 'Кривая сублимации (твердое -> газ) существует только ПРИ ДАВЛЕНИЯХ НИЖЕ тройной точки. Если при 1 атм происходит сублимация, значит 1 атм находится ниже тройной точки. То есть давление тройной точки больше 1 атм (для CO2 это 5.1 атм).')">Проверить</button>
+            <div id="taskC-res" class="feedback"></div>
+        </div>
+    </section>
+
+    <!-- РЕФЛЕКСИЯ -->
+    <section class="card">
+        <h2>6. Рефлексия</h2>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref1">
+            <label for="ref1">Я понял(а), что давление насыщенного пара зависит только от температуры.</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref2">
+            <label for="ref2">Я знаю, что тройная точка — это сосуществование трех фаз (твердой, жидкой, газообразной).</label>
+        </div>
+        <div class="reflection-item">
+            <input type="checkbox" id="ref3">
+            <label for="ref3">Я усвоил(а), что выше критической температуры газ нельзя сжижить давлением.</label>
+        </div>
+        <button onclick="alert('Отлично! Знание свойств пара и фазовых диаграмм поможет вам понимать погодные явления и работу многих промышленных установок.')" style="margin-top: 10px;">Завершить урок</button>
+    </section>
+
+    <!-- ТЕСТ -->
+    <section class="card">
+        <h2>7. Итоговый тест</h2>
+        <form id="quiz-form">
+            <div class="test-question">
+                <p><b>1. Насыщенный пар — это:</b></p>
+                <label><input type="radio" name="q1" value="0"> Любой пар при высокой температуре.</label>
+                <label><input type="radio" name="q1" value="1"> Пар, находящийся в динамическом равновесии со своей жидкостью.</label>
+                <label><input type="radio" name="q1" value="0"> Пар, давление которого подчиняется закону Бойля-Мариотта.</label>
+                <label><input type="radio" name="q1" value="0"> Пар, который превратился в сверхкритический флюид.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>2. При повышении температуры в закрытом сосуде с водой и ее паром, давление насыщенного пара:</b></p>
+                <label><input type="radio" name="q2" value="0"> Уменьшается.</label>
+                <label><input type="radio" name="q2" value="0"> Не изменяется.</label>
+                <label><input type="radio" name="q2" value="1"> Увеличивается (так как больше молекул переходит в газ).</label>
+                <label><input type="radio" name="q2" value="0"> Зависит от объема сосуда.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>3. Что показывает относительная влажность воздуха?</b></p>
+                <label><input type="radio" name="q3" value="0"> Массу водяного пара в 1 м³ воздуха.</label>
+                <label><input type="radio" name="q3" value="1"> Отношение парциального давления пара к давлению насыщенного пара при той же температуре.</label>
+                <label><input type="radio" name="q3" value="0"> Плотность сухого воздуха.</label>
+                <label><input type="radio" name="q3" value="0"> Температуру, при которой выпадает роса.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>4. Что представляет собой тройная точка на фазовой диаграмме (p-T)?</b></p>
+                <label><input type="radio" name="q4" value="1"> Точку пересечения кривых плавления, парообразования и сублимации.</label>
+                <label><input type="radio" name="q4" value="0"> Максимальную температуру, при которой существует жидкость.</label>
+                <label><input type="radio" name="q4" value="0"> Точку, где давление пара равно атмосферному.</label>
+                <label><input type="radio" name="q4" value="0"> Точку кипения воды при нормальных условиях.</label>
+            </div>
+
+            <div class="test-question">
+                <p><b>5. Критическое состояние вещества — это состояние, при котором:</b></p>
+                <label><input type="radio" name="q5" value="0"> Вещество находится одновременно в 3 агрегатных состояниях.</label>
+                <label><input type="radio" name="q5" value="0"> Вещество превращается в плазму.</label>
+                <label><input type="radio" name="q5" value="1"> Исчезает различие между жидким и газообразным состояниями (их плотности уравниваются).</label>
+                <label><input type="radio" name="q5" value="0"> Твердое тело переходит в газ, минуя жидкую фазу.</label>
+            </div>
+
+            <button type="button" onclick="checkQuiz()">Проверить тест</button>
+        </form>
+        <div id="quiz-result" class="test-result"></div>
+    </section>
+
+</div>
+
+<script>
+    /* =========================================
+       ВИДЖЕТ ВЛАЖНОСТИ
+       ========================================= */
+    const humSlider = document.getElementById('hum-slider');
+    const humVal = document.getElementById('hum-val');
+    const humBar = document.getElementById('hum-bar');
+    const humText = document.getElementById('hum-text');
+    const humDew = document.getElementById('hum-dew');
+
+    humSlider.addEventListener('input', () => {
+        let p = parseFloat(humSlider.value);
+        let p0 = 2.33;
+        humVal.innerText = p.toFixed(2);
+        
+        let relHum = (p / p0) * 100;
+        humBar.style.width = relHum + "%";
+        
+        if (relHum < 30) {
+            humText.innerText = Math.round(relHum) + "% — Сухо";
+            humBar.style.background = "linear-gradient(90deg, #fca5a5, #ef4444)";
+            humDew.style.display = "none";
+        } else if (relHum < 65) {
+            humText.innerText = Math.round(relHum) + "% — Комфортно";
+            humBar.style.background = "linear-gradient(90deg, #6ee7b7, #10b981)";
+            humDew.style.display = "none";
+        } else if (relHum < 99) {
+            humText.innerText = Math.round(relHum) + "% — Влажно";
+            humBar.style.background = "linear-gradient(90deg, #93c5fd, #3b82f6)";
+            humDew.style.display = "none";
+        } else {
+            humText.innerText = "100% — Насыщение";
+            humBar.style.background = "linear-gradient(90deg, #cbd5e1, #94a3b8)";
+            humDew.style.display = "block";
+        }
+    });
+
+    /* =========================================
+       СИМУЛЯЦИЯ: ФАЗОВАЯ ДИАГРАММА
+       ========================================= */
+    const canvas = document.getElementById('phaseCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const inT = document.getElementById('sim-t');
+    const inP = document.getElementById('sim-p');
+    const valT = document.getElementById('val-t');
+    const valP = document.getElementById('val-p');
+    const stateBox = document.getElementById('state-display');
+
+    // Параметры диаграммы
+    const T_min = 0, T_max = 600;
+    const P_min = 0, P_max = 150;
+    
+    // Ключевые точки
+    const TP = { t: 200, p: 20 };  // Тройная точка
+    const CP = { t: 450, p: 100 }; // Критическая точка
+
+    // Размеры холста
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const margin = 50;
+    const gW = cw - margin * 1.5;
+    const gH = ch - margin * 1.5;
+
+    // Маппинг координат
+    function getX(t) { return margin + (t / T_max) * gW; }
+    function getY(p) { return ch - margin - (p / P_max) * gH; }
+
+    // Уравнения кривых
+    function curveSublimation(t) {
+        // p ~ t^2 от (0,0) до TP
+        if (t > TP.t) return Infinity;
+        return TP.p * Math.pow(t / TP.t, 2);
+    }
+
+    function curveVaporization(t) {
+        // p от TP до CP. Немного выпуклая вверх.
+        if (t < TP.t || t > CP.t) return Infinity;
+        let t_norm = (t - TP.t) / (CP.t - TP.t); // 0 to 1
+        return TP.p + (CP.p - TP.p) * Math.pow(t_norm, 1.5);
+    }
+
+    function curveMelting(p) {
+        // t(p) от TP вверх. Легкий наклон вправо (для большинства веществ).
+        if (p < TP.p) return -Infinity;
+        return TP.t + (p - TP.p) * 0.4;
+    }
+
+    // Определение состояния
+    function determineState(t, p) {
+        if (t >= CP.t && p >= CP.p) return "supercritical";
+        
+        if (t < TP.t) {
+            if (p >= curveSublimation(t)) return "solid";
+            else return "gas";
+        } else if (t >= TP.t && t <= CP.t) {
+            let t_melt = curveMelting(p);
+            let p_vap = curveVaporization(t);
+            
+            if (p >= p_vap) {
+                if (t <= t_melt) return "solid";
+                else return "liquid";
+            } else {
+                return "gas";
+            }
+        } else { // t > CP.t
+            if (p >= CP.p) return "supercritical";
+            else return "gas";
+        }
+    }
+
+    function drawDiagram() {
+        ctx.clearRect(0, 0, cw, ch);
+        
+        let t = parseFloat(inT.value);
+        let p = parseFloat(inP.value);
+        
+        // --- 1. Фоновая заливка областей (упрощенно) ---
+        // Solid (Твердое тело)
+        ctx.fillStyle = "rgba(148, 163, 184, 0.2)"; // Сероватый
+        ctx.beginPath();
+        ctx.moveTo(getX(0), getY(P_max));
+        ctx.lineTo(getX(curveMelting(P_max)), getY(P_max));
+        ctx.lineTo(getX(TP.t), getY(TP.p));
+        ctx.lineTo(getX(0), getY(0));
+        ctx.fill();
+
+        // Liquid (Жидкость)
+        ctx.fillStyle = "rgba(56, 189, 248, 0.2)"; // Голубой
+        ctx.beginPath();
+        ctx.moveTo(getX(curveMelting(P_max)), getY(P_max));
+        ctx.lineTo(getX(TP.t), getY(TP.p));
+        // Идем по кривой парообразования до CP
+        for (let _t = TP.t; _t <= CP.t; _t += 2) {
+            ctx.lineTo(getX(_t), getY(curveVaporization(_t)));
+        }
+        ctx.lineTo(getX(CP.t), getY(P_max)); // Вверх от критической
+        ctx.fill();
+
+        // Supercritical (Сверхкритический)
+        ctx.fillStyle = "rgba(167, 139, 250, 0.2)"; // Фиолетовый
+        ctx.fillRect(getX(CP.t), getY(P_max), getX(T_max) - getX(CP.t), getY(CP.p) - getY(P_max));
+
+        // Газ (оставшееся белое/прозрачное)
+
+        // --- 2. Отрисовка кривых ---
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "var(--text-main)";
+
+        // Сублимация
+        ctx.beginPath();
+        ctx.moveTo(getX(0), getY(0));
+        for (let _t = 0; _t <= TP.t; _t += 5) {
+            ctx.lineTo(getX(_t), getY(curveSublimation(_t)));
+        }
+        ctx.stroke();
+
+        // Парообразование
+        ctx.beginPath();
+        ctx.moveTo(getX(TP.t), getY(TP.p));
+        for (let _t = TP.t; _t <= CP.t; _t += 5) {
+            ctx.lineTo(getX(_t), getY(curveVaporization(_t)));
+        }
+        ctx.stroke();
+
+        // Плавление
+        ctx.beginPath();
+        ctx.moveTo(getX(TP.t), getY(TP.p));
+        ctx.lineTo(getX(curveMelting(P_max)), getY(P_max));
+        ctx.stroke();
+
+        // Разделители критической области (пунктир)
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "var(--accent)";
+        ctx.moveTo(getX(CP.t), getY(CP.p));
+        ctx.lineTo(getX(CP.t), getY(P_max));
+        ctx.moveTo(getX(CP.t), getY(CP.p));
+        ctx.lineTo(getX(T_max), getY(CP.p));
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // --- 3. Оси ---
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(margin, margin - 20);
+        ctx.lineTo(margin, ch - margin);
+        ctx.lineTo(cw - margin + 20, ch - margin);
+        ctx.stroke();
+        
+        ctx.fillStyle = "var(--text-main)";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText("p (атм)", margin - 35, margin - 25);
+        ctx.fillText("T (К)", cw - margin + 10, ch - margin + 20);
+
+        // --- 4. Особые точки ---
+        // Тройная точка
+        ctx.fillStyle = "#f59e0b"; // Оранжевый
+        ctx.beginPath(); ctx.arc(getX(TP.t), getY(TP.p), 6, 0, Math.PI*2); ctx.fill();
+        ctx.font = "12px Arial"; ctx.fillText("Тройная точка", getX(TP.t) + 10, getY(TP.p) + 5);
+
+        // Критическая точка
+        ctx.fillStyle = "var(--accent)"; // Фиолетовый
+        ctx.beginPath(); ctx.arc(getX(CP.t), getY(CP.p), 6, 0, Math.PI*2); ctx.fill();
+        ctx.fillText("Критическая точка", getX(CP.t) - 40, getY(CP.p) - 15);
+
+        // --- 5. Текущее состояние (интерактивная точка) ---
+        let currentX = getX(t);
+        let currentY = getY(p);
+        
+        ctx.fillStyle = "var(--danger)";
+        ctx.beginPath(); ctx.arc(currentX, currentY, 8, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = "white"; ctx.lineWidth = 2; ctx.stroke();
+
+        // Проекции текущей точки
+        ctx.beginPath();
+        ctx.setLineDash([3, 3]);
+        ctx.moveTo(currentX, currentY);
+        ctx.lineTo(currentX, ch - margin);
+        ctx.moveTo(currentX, currentY);
+        ctx.lineTo(margin, currentY);
+        ctx.strokeStyle = "var(--text-muted)";
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Обновление интерфейса
+        valT.innerText = t;
+        valP.innerText = p;
+
+        let state = determineState(t, p);
+        if (state === "solid") {
+            stateBox.innerText = "❄️ Твердое тело (Кристалл)";
+            stateBox.style.backgroundColor = "#64748b"; // slate
+        } else if (state === "liquid") {
+            stateBox.innerText = "💧 Жидкость";
+            stateBox.style.backgroundColor = "#0ea5e9"; // sky
+        } else if (state === "gas") {
+            stateBox.innerText = "💨 Газ / Ненасыщенный пар";
+            stateBox.style.backgroundColor = "#10b981"; // emerald
+        } else if (state === "supercritical") {
+            stateBox.innerText = "🌌 Сверхкритический флюид";
+            stateBox.style.backgroundColor = "var(--accent)"; // purple
+        }
+        
+        // Проверка на точное попадание в Тройную точку (маловероятно ползунком, дадим дельту)
+        if (Math.abs(t - TP.t) <= 2 && Math.abs(p - TP.p) <= 2) {
+            stateBox.innerText = "✨ Тройная точка (Сосуществование 3-х фаз)";
+            stateBox.style.backgroundColor = "#f59e0b"; 
+        }
+    }
+
+    [inT, inP].forEach(el => el.addEventListener('input', drawDiagram));
+
+    // Инициализация
+    drawDiagram();
+
+
+    /* =========================================
+       ЗАДАЧИ И ТЕСТЫ
+       ========================================= */
+    function checkTask(id, correctAns, tol, hint) {
+        let rawVal = document.getElementById(id + '-input').value.replace(',', '.');
+        const inputVal = parseFloat(rawVal);
+        const resDiv = document.getElementById(id + '-res');
+        
+        if (isNaN(inputVal)) {
+            resDiv.innerText = "Пожалуйста, введите число.";
+            resDiv.className = "feedback";
+            return;
+        }
+
+        if (Math.abs(inputVal - correctAns) <= tol) {
+            resDiv.innerText = "Отлично! Верно.";
+            resDiv.className = "feedback correct-text";
+        } else {
+            resDiv.innerText = `Неверно. Подсказка: ${hint}`;
+            resDiv.className = "feedback incorrect-text";
+        }
+    }
+
+    function checkQuiz() {
+        const form = document.getElementById('quiz-form');
+        const resDiv = document.getElementById('quiz-result');
+        let score = 0;
+        const total = 5;
+
+        const explanations = [
+            "1. Насыщенный пар — это пар, находящийся в динамическом равновесии (скорость испарения равна скорости конденсации) со своей жидкостью.",
+            "2. При повышении температуры жидкость испаряется интенсивнее. Динамическое равновесие устанавливается при бóльшей концентрации пара, следовательно, его давление увеличивается.",
+            "3. Относительная влажность (φ) вычисляется как отношение парциального давления (или плотности) пара к давлению (плотности) насыщенного пара при данной температуре.",
+            "4. Тройная точка — это уникальная комбинация давления и температуры, при которой вещество существует сразу в трех агрегатных состояниях в равновесии.",
+            "5. Критическое состояние достигается при высоких T и p. Различие плотностей жидкости и ее насыщенного пара исчезает, граница (мениск) пропадает, образуется сверхкритический флюид."
+        ];
+
+        let hasUnanswered = false;
+
+        for (let i = 1; i <= total; i++) {
+            const selected = form.querySelector(`input[name="q${i}"]:checked`);
+            if (!selected) {
+                hasUnanswered = true;
+            } else if (selected.value === "1") {
+                score++;
+            }
+        }
+
+        if (hasUnanswered) {
+            alert("Пожалуйста, ответьте на все вопросы теста.");
+            return;
+        }
+
+        resDiv.style.display = "block";
+        resDiv.className = `test-result ${score === total ? 'correct-text' : (score > 2 ? '' : 'incorrect-text')}`;
+        
+        let resultHTML = `Вы набрали: ${score} из ${total} баллов.<br><br>`;
+        if (score < total) {
+            resultHTML += `<span style="font-size:1rem; font-weight:normal; color:var(--text-main);"><b>Разбор ошибок:</b><br>${explanations.join('<br><br>')}</span>`;
+        } else {
+            resultHTML += "Отличный результат! Фазовые переходы и свойства пара усвоены великолепно.";
+        }
+        resDiv.innerHTML = resultHTML;
+    }
+</script>
+
+</body>
+</html>
