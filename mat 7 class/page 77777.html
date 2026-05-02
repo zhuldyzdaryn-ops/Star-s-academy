@@ -88,6 +88,17 @@
         .frac .den {
             padding: 0.1em 0.2em;
         }
+
+        /* Кнопки переключения языка */
+        .lang-btn {
+            background: transparent;
+            color: #64748b;
+        }
+        .lang-btn.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -96,10 +107,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2">
                 <span class="text-3xl">⚛️</span>
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Физика <span class="text-indigo-600">7-11</span></h1>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight" data-i18n="appTitle">Физика <span class="text-indigo-600">7-11</span></h1>
             </div>
             <div class="w-full md:w-96">
                 <input type="text" id="globalSearch" placeholder="Поиск формул, величин, законов..." class="w-full px-4 py-2 rounded-full border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all text-sm">
+            </div>
+            <div class="flex items-center gap-1 bg-slate-100 rounded-lg p-1 border border-slate-200">
+                <button onclick="setLanguage('ru')" id="lang-ru" class="lang-btn active px-3 py-1 rounded text-sm font-bold transition-all">RU</button>
+                <button onclick="setLanguage('kk')" id="lang-kk" class="lang-btn px-3 py-1 rounded text-sm font-bold transition-all">KZ</button>
             </div>
         </div>
     </header>
@@ -108,8 +123,8 @@
 
         <section id="overview-section" class="space-y-6">
             <div class="max-w-3xl">
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Курс в цифрах</h2>
-                <p class="text-lg text-slate-600 leading-relaxed">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight" data-i18n="overviewTitle">Курс в цифрах</h2>
+                <p class="text-lg text-slate-600 leading-relaxed" data-i18n="overviewText">
                     Данный раздел предоставляет визуальную статистику по всему школьному курсу физики. Диаграмма ниже отображает распределение ключевых формул по девяти основным разделам науки. Это помогает оценить объем материала в каждой теме и грамотно спланировать процесс изучения или повторения перед экзаменами.
                 </p>
             </div>
@@ -121,7 +136,7 @@
                     </div>
                 </div>
                 <div class="w-full lg:w-1/2">
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Навигация по разделам</h3>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4" data-i18n="navTitle">Навигация по разделам</h3>
                     <div id="overviewLegend" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     </div>
                 </div>
@@ -130,8 +145,8 @@
 
         <section id="simulator-section" class="space-y-6">
             <div class="max-w-3xl">
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Интерактивная лаборатория: Кинематика</h2>
-                <p class="text-lg text-slate-600 leading-relaxed">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight" data-i18n="simTitle">Интерактивная лаборатория: Кинематика</h2>
+                <p class="text-lg text-slate-600 leading-relaxed" data-i18n="simText">
                     Этот инструмент визуализирует уравнения равноускоренного прямолинейного движения: <span class="font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700">S = v₀t + at²/2</span> и <span class="font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700">v = v₀ + at</span>. Изменяя параметры начальной скорости и ускорения с помощью ползунков, вы в реальном времени наблюдаете графики зависимости пути и скорости от времени. Это позволяет глубоко понять физический смысл абстрактных формул.
                 </p>
             </div>
@@ -141,24 +156,24 @@
                     
                     <div>
                         <div class="flex justify-between items-center mb-2">
-                            <label class="font-semibold text-slate-700">Начальная скорость (v₀)</label>
+                            <label class="font-semibold text-slate-700" data-i18n="v0Label">Начальная скорость (v₀)</label>
                             <span id="v0Display" class="bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full text-sm">0 м/с</span>
                         </div>
                         <input type="range" id="v0Slider" min="-20" max="20" value="0" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
-                        <p class="text-xs text-slate-500 mt-1">Определяет точку старта графика скорости.</p>
+                        <p class="text-xs text-slate-500 mt-1" data-i18n="v0Desc">Определяет точку старта графика скорости.</p>
                     </div>
 
                     <div>
                         <div class="flex justify-between items-center mb-2">
-                            <label class="font-semibold text-slate-700">Ускорение (a)</label>
+                            <label class="font-semibold text-slate-700" data-i18n="aLabel">Ускорение (a)</label>
                             <span id="aDisplay" class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-sm">2 м/с²</span>
                         </div>
                         <input type="range" id="aSlider" min="-10" max="10" value="2" step="0.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500">
-                        <p class="text-xs text-slate-500 mt-1">Определяет наклон графика скорости и кривизну параболы пути.</p>
+                        <p class="text-xs text-slate-500 mt-1" data-i18n="aDesc">Определяет наклон графика скорости и кривизну параболы пути.</p>
                     </div>
 
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                        <h4 class="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">Текущее состояние</h4>
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide" data-i18n="currentState">Текущее состояние</h4>
                         <p id="simStatus" class="text-sm text-slate-600">Тело начинает движение из состояния покоя и равноускоренно набирает скорость.</p>
                     </div>
                 </div>
@@ -173,15 +188,15 @@
 
         <section id="database-section" class="space-y-6">
             <div class="max-w-3xl">
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">База знаний</h2>
-                <p class="text-lg text-slate-600 leading-relaxed">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight" data-i18n="dbTitle">База знаний</h2>
+                <p class="text-lg text-slate-600 leading-relaxed" data-i18n="dbText">
                     Полный систематизированный перечень формул, извлеченный из справочного отчета. Используйте панель категорий слева для фильтрации по темам или глобальный поиск в шапке сайта для мгновенного нахождения нужной величины или закона.
                 </p>
             </div>
 
             <div class="flex flex-col lg:flex-row gap-6 items-start">
                 <aside class="w-full lg:w-1/4 lg:sticky lg:top-24 bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
-                    <h3 class="font-bold text-slate-800 uppercase tracking-wider text-sm mb-4 px-2">Категории</h3>
+                    <h3 class="font-bold text-slate-800 uppercase tracking-wider text-sm mb-4 px-2" data-i18n="categories">Категории</h3>
                     <div id="categoryContainer" class="flex flex-col gap-1">
                     </div>
                 </aside>
@@ -189,8 +204,8 @@
                 <div class="w-full lg:w-3/4">
                     <div id="emptyState" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
                         <span class="text-5xl mb-4 block">🔍</span>
-                        <h3 class="text-xl font-bold text-slate-800 mb-2">Формулы не найдены</h3>
-                        <p class="text-slate-500">По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.</p>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2" data-i18n="emptyTitle">Формулы не найдены</h3>
+                        <p class="text-slate-500" data-i18n="emptyText">По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.</p>
                     </div>
                     
                     <div id="formulaGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -202,198 +217,303 @@
     </main>
 
     <footer class="bg-slate-900 py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm" data-i18n="footerText">
             Интерактивный справочник по курсу физики. Разработано на основе предоставленных отчетных данных.
         </div>
     </footer>
 
     <script>
+        const i18n = {
+            ru: {
+                appTitle: "Физика <span class='text-indigo-600'>7-11</span>",
+                searchPlaceholder: "Поиск формул, величин, законов...",
+                overviewTitle: "Курс в цифрах",
+                overviewText: "Данный раздел предоставляет визуальную статистику по всему школьному курсу физики. Диаграмма ниже отображает распределение ключевых формул по девяти основным разделам науки. Это помогает оценить объем материала в каждой теме и грамотно спланировать процесс изучения или повторения перед экзаменами.",
+                navTitle: "Навигация по разделам",
+                simTitle: "Интерактивная лаборатория: Кинематика",
+                simText: "Этот инструмент визуализирует уравнения равноускоренного прямолинейного движения: <span class=\"font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700\">S = v₀t + at²/2</span> и <span class=\"font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700\">v = v₀ + at</span>. Изменяя параметры начальной скорости и ускорения с помощью ползунков, вы в реальном времени наблюдаете графики зависимости пути и скорости от времени. Это позволяет глубоко понять физический смысл абстрактных формул.",
+                v0Label: "Начальная скорость (v₀)",
+                v0Desc: "Определяет точку старта графика скорости.",
+                aLabel: "Ускорение (a)",
+                aDesc: "Определяет наклон графика скорости и кривизну параболы пути.",
+                currentState: "Текущее состояние",
+                dbTitle: "База знаний",
+                dbText: "Полный систематизированный перечень формул, извлеченный из справочного отчета. Используйте панель категорий слева для фильтрации по темам или глобальный поиск в шапке сайта для мгновенного нахождения нужной величины или закона.",
+                categories: "Категории",
+                allSections: "Все разделы",
+                emptyTitle: "Формулы не найдены",
+                emptyText: "По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.",
+                footerText: "Интерактивный справочник по курсу физики. Разработано на основе предоставленных отчетных данных.",
+                formulasCount: "формул",
+                simStatus1: "Тело разгоняется в положительном направлении.",
+                simStatus2: "Тело разгоняется в отрицательном направлении.",
+                simStatus3: "Тело тормозит, остановится, затем начнет разгон в обратную сторону.",
+                simStatus4: "Равномерное движение. Ускорение отсутствует.",
+                simStatus5: "Тело находится в состоянии покоя.",
+                chartTime: "Время (с)",
+                chartDistance: "Путь (м)",
+                chartVelocity: "Скорость (м/с)",
+                chartDistanceLabel: "Путь S(t), м",
+                chartVelocityLabel: "Скорость v(t), м/с",
+                tooltipTime: "Время"
+            },
+            kk: {
+                appTitle: "Физика <span class='text-indigo-600'>7-11</span>",
+                searchPlaceholder: "Формулаларды, шамаларды, заңдарды іздеу...",
+                overviewTitle: "Курс сандарда",
+                overviewText: "Бұл бөлім барлық мектеп физика курсы бойынша визуалды статистиканы ұсынады. Төмендегі диаграмма ғылымның тоғыз негізгі бөлімі бойынша негізгі формулалардың таралуын көрсетеді. Бұл әр тақырыптағы материал көлемін бағалауға және емтихан алдында оқу немесе қайталау процесін дұрыс жоспарлауға көмектеседі.",
+                navTitle: "Бөлімдер бойынша навигация",
+                simTitle: "Интерактивті зертхана: Кинематика",
+                simText: "Бұл құрал түзу сызықты теңайнымалы қозғалыстың теңдеулерін бейнелейді: <span class=\"font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700\">S = v₀t + at²/2</span> және <span class=\"font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700\">v = v₀ + at</span>. Сырғытпалар арқылы бастапқы жылдамдық пен үдеу параметрлерін өзгерте отырып, сіз нақты уақыт режимінде жол мен жылдамдықтың уақытқа тәуелділік графиктерін көресіз. Бұл абстрактілі формулалардың физикалық мағынасын терең түсінуге мүмкіндік береді.",
+                v0Label: "Бастапқы жылдамдық (v₀)",
+                v0Desc: "Жылдамдық графигінің басталу нүктесін анықтайды.",
+                aLabel: "Үдеу (a)",
+                aDesc: "Жылдамдық графигінің көлбеуін және жол параболасының қисықтығын анықтайды.",
+                currentState: "Ағымдағы күй",
+                dbTitle: "Білім қоры",
+                dbText: "Анықтамалық есептен алынған формулалардың толық жүйеленген тізімі. Тақырыптар бойынша сүзу үшін сол жақтағы санаттар тақтасын немесе қажетті шаманы немесе заңды лезде табу үшін сайттың тақырыбындағы ғаламдық іздеуді пайдаланыңыз.",
+                categories: "Санаттар",
+                allSections: "Барлық бөлімдер",
+                emptyTitle: "Формулалар табылмады",
+                emptyText: "Сіздің сұрауыңыз бойынша ештеңе табылмады. Іздеу параметрлерін өзгертіп көріңіз.",
+                footerText: "Физика курсы бойынша интерактивті анықтамалық. Ұсынылған есептік деректер негізінде әзірленген.",
+                formulasCount: "формула",
+                simStatus1: "Дене оң бағытта үдейді.",
+                simStatus2: "Дене теріс бағытта үдейді.",
+                simStatus3: "Дене тежейді, тоқтайды, содан кейін кері бағытта үдей бастайды.",
+                simStatus4: "Қалыпты қозғалыс. Үдеу жоқ.",
+                simStatus5: "Дене тыныштық күйде.",
+                chartTime: "Уақыт (с)",
+                chartDistance: "Жол (м)",
+                chartVelocity: "Жылдамдық (м/с)",
+                chartDistanceLabel: "Жол S(t), м",
+                chartVelocityLabel: "Жылдамдық v(t), м/с",
+                tooltipTime: "Уақыт"
+            }
+        };
+
         const physicsData = [
             {
                 id: 'kinematics',
-                title: 'I. Кинематика',
+                title: { ru: 'I. Кинематика', kk: 'I. Кинематика' },
                 icon: '🏃',
                 color: '#4f46e5',
                 formulas: [
-                    { name: 'Скорость равномерного движения', text: 'v = <span class="frac"><span class="num">S</span><span class="den">t</span></span>', desc: 'v - скорость, S - путь, t - время' },
-                    { name: 'Уравнение координаты', text: 'x = x<sub>0</sub> + v<sub>x</sub>t', desc: 'x₀ - начальная координата' },
-                    { name: 'Ускорение', text: 'a = <span class="frac"><span class="num">v - v<sub>0</sub></span><span class="den">t</span></span>', desc: 'v₀ - начальная скорость, v - конечная' },
-                    { name: 'Скорость в любой момент', text: 'v = v<sub>0</sub> + at', desc: 'Зависимость скорости от времени' },
-                    { name: 'Уравнение перемещения', text: 'S = v<sub>0</sub>t + <span class="frac"><span class="num">at<sup>2</sup></span><span class="den">2</span></span>', desc: 'Зависимость пути от времени' },
-                    { name: 'Перемещение без времени', text: 'S = <span class="frac"><span class="num">v<sup>2</sup> - v<sub>0</sub><sup>2</sup></span><span class="den">2a</span></span>', desc: 'Связь пути, скоростей и ускорения' },
-                    { name: 'Уравнение координаты', text: 'x = x<sub>0</sub> + v<sub>0x</sub>t + <span class="frac"><span class="num">a<sub>x</sub>t<sup>2</sup></span><span class="den">2</span></span>', desc: 'Основной закон кинематики' },
-                    { name: 'Линейная скорость', text: 'v = <span class="frac"><span class="num">2πR</span><span class="den">T</span></span> = ωR', desc: 'При движении по окружности' },
-                    { name: 'Угловая скорость', text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: 'Скорость вращения' },
-                    { name: 'Центростремительное ускорение', text: 'a<sub>ц</sub> = <span class="frac"><span class="num">v<sup>2</sup></span><span class="den">R</span></span> = ω<sup>2</sup>R', desc: 'Направлено к центру окружности' },
-                    { name: 'Период и частота', text: 'T = <span class="frac"><span class="num">1</span><span class="den">ν</span></span>', desc: 'Взаимосвязь периода и частоты' }
+                    { name: { ru: 'Скорость равномерного движения', kk: 'Қалыпты қозғалыс жылдамдығы' }, text: 'v = <span class="frac"><span class="num">S</span><span class="den">t</span></span>', desc: { ru: 'v - скорость, S - путь, t - время', kk: 'v - жылдамдық, S - жол, t - уақыт' } },
+                    { name: { ru: 'Уравнение координаты', kk: 'Координата теңдеуі' }, text: 'x = x<sub>0</sub> + v<sub>x</sub>t', desc: { ru: 'x₀ - начальная координата', kk: 'x₀ - бастапқы координата' } },
+                    { name: { ru: 'Ускорение', kk: 'Үдеу' }, text: 'a = <span class="frac"><span class="num">v - v<sub>0</sub></span><span class="den">t</span></span>', desc: { ru: 'v₀ - начальная скорость, v - конечная', kk: 'v₀ - бастапқы жылдамдық, v - соңғы' } },
+                    { name: { ru: 'Скорость в любой момент', kk: 'Кез келген уақыттағы жылдамдық' }, text: 'v = v<sub>0</sub> + at', desc: { ru: 'Зависимость скорости от времени', kk: 'Жылдамдықтың уақытқа тәуелділігі' } },
+                    { name: { ru: 'Уравнение перемещения', kk: 'Орын ауыстыру теңдеуі' }, text: 'S = v<sub>0</sub>t + <span class="frac"><span class="num">at<sup>2</sup></span><span class="den">2</span></span>', desc: { ru: 'Зависимость пути от времени', kk: 'Жолдың уақытқа тәуелділігі' } },
+                    { name: { ru: 'Перемещение без времени', kk: 'Уақытсыз орын ауыстыру' }, text: 'S = <span class="frac"><span class="num">v<sup>2</sup> - v<sub>0</sub><sup>2</sup></span><span class="den">2a</span></span>', desc: { ru: 'Связь пути, скоростей и ускорения', kk: 'Жол, жылдамдық және үдеу байланысы' } },
+                    { name: { ru: 'Уравнение координаты', kk: 'Координата теңдеуі' }, text: 'x = x<sub>0</sub> + v<sub>0x</sub>t + <span class="frac"><span class="num">a<sub>x</sub>t<sup>2</sup></span><span class="den">2</span></span>', desc: { ru: 'Основной закон кинематики', kk: 'Кинематиканың негізгі заңы' } },
+                    { name: { ru: 'Линейная скорость', kk: 'Сызықтық жылдамдық' }, text: 'v = <span class="frac"><span class="num">2πR</span><span class="den">T</span></span> = ωR', desc: { ru: 'При движении по окружности', kk: 'Шеңбер бойымен қозғалғанда' } },
+                    { name: { ru: 'Угловая скорость', kk: 'Бұрыштық жылдамдық' }, text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: { ru: 'Скорость вращения', kk: 'Айналу жылдамдығы' } },
+                    { name: { ru: 'Центростремительное ускорение', kk: 'Центрге тартқыш үдеу' }, text: 'a<sub>ц</sub> = <span class="frac"><span class="num">v<sup>2</sup></span><span class="den">R</span></span> = ω<sup>2</sup>R', desc: { ru: 'Направлено к центру окружности', kk: 'Шеңбер орталығына бағытталған' } },
+                    { name: { ru: 'Период и частота', kk: 'Период және жиілік' }, text: 'T = <span class="frac"><span class="num">1</span><span class="den">ν</span></span>', desc: { ru: 'Взаимосвязь периода и частоты', kk: 'Период пен жиіліктің байланысы' } }
                 ]
             },
             {
                 id: 'dynamics',
-                title: 'II. Динамика и Статика',
+                title: { ru: 'II. Динамика и Статика', kk: 'II. Динамика және Статика' },
                 icon: '⚖️',
                 color: '#059669',
                 formulas: [
-                    { name: 'Второй закон Ньютона', text: 'F = ma', desc: 'Связь силы, массы и ускорения' },
-                    { name: 'Третий закон Ньютона', text: 'F<sub>1</sub> = -F<sub>2</sub>', desc: 'Действие равно противодействию' },
-                    { name: 'Сила тяжести', text: 'F<sub>т</sub> = mg', desc: 'g ≈ 9.8 м/с²' },
-                    { name: 'Вес тела (покой)', text: 'P = mg', desc: 'Сила действия на опору/подвес' },
-                    { name: 'Вес тела (ускорение)', text: 'P = m(g ± a)', desc: '+ при движении вверх, - вниз' },
-                    { name: 'Закон всемирного тяготения', text: 'F = G · <span class="frac"><span class="num">m<sub>1</sub>m<sub>2</sub></span><span class="den">R<sup>2</sup></span></span>', desc: 'Гравитационное взаимодействие' },
-                    { name: 'Закон Гука', text: 'F<sub>упр</sub> = kΔx', desc: 'Сила упругости' },
-                    { name: 'Сила трения скольжения', text: 'F<sub>тр</sub> = μN', desc: 'N - реакция опоры, μ - коэффициент' },
-                    { name: 'Давление твердого тела', text: 'p = <span class="frac"><span class="num">F</span><span class="den">S</span></span>', desc: 'F - сила давления, S - площадь' },
-                    { name: 'Гидростатическое давление', text: 'p = ρgh', desc: 'Давление столба жидкости' },
-                    { name: 'Сила Архимеда', text: 'F<sub>A</sub> = ρ<sub>ж</sub>gV<sub>погр</sub>', desc: 'Выталкивающая сила' },
-                    { name: 'Момент силы', text: 'M = F · l', desc: 'l - плечо силы' },
-                    { name: 'Равновесие рычага', text: 'F<sub>1</sub>l<sub>1</sub> = F<sub>2</sub>l<sub>2</sub>', desc: 'Или M₁ = M₂' }
+                    { name: { ru: 'Второй закон Ньютона', kk: 'Ньютонның екінші заңы' }, text: 'F = ma', desc: { ru: 'Связь силы, массы и ускорения', kk: 'Күш, масса және үдеу байланысы' } },
+                    { name: { ru: 'Третий закон Ньютона', kk: 'Ньютонның үшінші заңы' }, text: 'F<sub>1</sub> = -F<sub>2</sub>', desc: { ru: 'Действие равно противодействию', kk: 'Әрекетке қарсы әрекет тең' } },
+                    { name: { ru: 'Сила тяжести', kk: 'Ауырлық күші' }, text: 'F<sub>т</sub> = mg', desc: { ru: 'g ≈ 9.8 м/с²', kk: 'g ≈ 9.8 м/с²' } },
+                    { name: { ru: 'Вес тела (покой)', kk: 'Дене салмағы (тыныштық)' }, text: 'P = mg', desc: { ru: 'Сила действия на опору/подвес', kk: 'Тіреуге/ілгішке әсер ететін күш' } },
+                    { name: { ru: 'Вес тела (ускорение)', kk: 'Дене салмағы (үдеу)' }, text: 'P = m(g ± a)', desc: { ru: '+ при движении вверх, - вниз', kk: '+ жоғары қозғалғанда, - төмен' } },
+                    { name: { ru: 'Закон всемирного тяготения', kk: 'Бүкіләлемдік тартылыс заңы' }, text: 'F = G · <span class="frac"><span class="num">m<sub>1</sub>m<sub>2</sub></span><span class="den">R<sup>2</sup></span></span>', desc: { ru: 'Гравитационное взаимодействие', kk: 'Гравитациялық өзара әрекеттесу' } },
+                    { name: { ru: 'Закон Гука', kk: 'Гук заңы' }, text: 'F<sub>упр</sub> = kΔx', desc: { ru: 'Сила упругости', kk: 'Серпімділік күші' } },
+                    { name: { ru: 'Сила трения скольжения', kk: 'Сырғанау үйкеліс күші' }, text: 'F<sub>тр</sub> = μN', desc: { ru: 'N - реакция опоры, μ - коэффициент', kk: 'N - тіреу реакциясы, μ - коэффициент' } },
+                    { name: { ru: 'Давление твердого тела', kk: 'Қатты дененің қысымы' }, text: 'p = <span class="frac"><span class="num">F</span><span class="den">S</span></span>', desc: { ru: 'F - сила давления, S - площадь', kk: 'F - қысым күші, S - аудан' } },
+                    { name: { ru: 'Гидростатическое давление', kk: 'Гидростатикалық қысым' }, text: 'p = ρgh', desc: { ru: 'Давление столба жидкости', kk: 'Сұйықтық бағанының қысымы' } },
+                    { name: { ru: 'Сила Архимеда', kk: 'Архимед күші' }, text: 'F<sub>A</sub> = ρ<sub>ж</sub>gV<sub>погр</sub>', desc: { ru: 'Выталкивающая сила', kk: 'Ығыстырушы күш' } },
+                    { name: { ru: 'Момент силы', kk: 'Күш моменті' }, text: 'M = F · l', desc: { ru: 'l - плечо силы', kk: 'l - күш иіні' } },
+                    { name: { ru: 'Равновесие рычага', kk: 'Иінтіректің тепе-теңдігі' }, text: 'F<sub>1</sub>l<sub>1</sub> = F<sub>2</sub>l<sub>2</sub>', desc: { ru: 'Или M₁ = M₂', kk: 'Немесе M₁ = M₂' } }
                 ]
             },
             {
                 id: 'conservation',
-                title: 'III. Законы сохранения',
+                title: { ru: 'III. Законы сохранения', kk: 'III. Сақталу заңдары' },
                 icon: '🔄',
                 color: '#d97706',
                 formulas: [
-                    { name: 'Импульс тела', text: 'p = mv', desc: 'Векторная величина' },
-                    { name: 'Импульс силы', text: 'FΔt = Δp', desc: 'Изменение импульса тела' },
-                    { name: 'Закон сохранения импульса', text: 'm<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = m<sub>1</sub>v<sub>1</sub>\' + m<sub>2</sub>v<sub>2</sub>\'', desc: 'Для замкнутой системы' },
-                    { name: 'Механическая работа', text: 'A = FScosα', desc: 'Работа постоянной силы' },
-                    { name: 'Мощность', text: 'N = <span class="frac"><span class="num">A</span><span class="den">t</span></span> = Fv', desc: 'Скорость выполнения работы' },
-                    { name: 'Кинетическая энергия', text: 'E<sub>k</sub> = <span class="frac"><span class="num">mv<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">p<sup>2</sup></span><span class="den">2m</span></span>', desc: 'Энергия движения' },
-                    { name: 'Потенциальная энергия', text: 'E<sub>p</sub> = mgh', desc: 'В поле силы тяжести' },
-                    { name: 'Энергия пружины', text: 'E<sub>p</sub> = <span class="frac"><span class="num">kΔx<sup>2</sup></span><span class="den">2</span></span>', desc: 'Потенциальная энергия деформации' },
-                    { name: 'Закон сохранения энергии', text: 'E<sub>k1</sub> + E<sub>p1</sub> = E<sub>k2</sub> + E<sub>p2</sub>', desc: 'Механическая энергия' },
-                    { name: 'Теорема о кин. энергии', text: 'A = ΔE<sub>k</sub>', desc: 'Работа равна изменению E_k' },
-                    { name: 'КПД механизма', text: 'η = <span class="frac"><span class="num">A<sub>пол</sub></span><span class="den">A<sub>затр</sub></span></span> · 100%', desc: 'Эффективность' }
+                    { name: { ru: 'Импульс тела', kk: 'Дене импульсі' }, text: 'p = mv', desc: { ru: 'Векторная величина', kk: 'Векторлық шама' } },
+                    { name: { ru: 'Импульс силы', kk: 'Күш импульсі' }, text: 'FΔt = Δp', desc: { ru: 'Изменение импульса тела', kk: 'Дене импульсінің өзгеруі' } },
+                    { name: { ru: 'Закон сохранения импульса', kk: 'Импульстің сақталу заңы' }, text: 'm<sub>1</sub>v<sub>1</sub> + m<sub>2</sub>v<sub>2</sub> = m<sub>1</sub>v<sub>1</sub>\' + m<sub>2</sub>v<sub>2</sub>\'', desc: { ru: 'Для замкнутой системы', kk: 'Тұйық жүйе үшін' } },
+                    { name: { ru: 'Механическая работа', kk: 'Механикалық жұмыс' }, text: 'A = FScosα', desc: { ru: 'Работа постоянной силы', kk: 'Тұрақты күштің жұмысы' } },
+                    { name: { ru: 'Мощность', kk: 'Қуат' }, text: 'N = <span class="frac"><span class="num">A</span><span class="den">t</span></span> = Fv', desc: { ru: 'Скорость выполнения работы', kk: 'Жұмысты орындау жылдамдығы' } },
+                    { name: { ru: 'Кинетическая энергия', kk: 'Кинетикалық энергия' }, text: 'E<sub>k</sub> = <span class="frac"><span class="num">mv<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">p<sup>2</sup></span><span class="den">2m</span></span>', desc: { ru: 'Энергия движения', kk: 'Қозғалыс энергиясы' } },
+                    { name: { ru: 'Потенциальная энергия', kk: 'Потенциалдық энергия' }, text: 'E<sub>p</sub> = mgh', desc: { ru: 'В поле силы тяжести', kk: 'Ауырлық күші өрісінде' } },
+                    { name: { ru: 'Энергия пружины', kk: 'Серіппе энергиясы' }, text: 'E<sub>p</sub> = <span class="frac"><span class="num">kΔx<sup>2</sup></span><span class="den">2</span></span>', desc: { ru: 'Потенциальная энергия деформации', kk: 'Деформацияның потенциалдық энергиясы' } },
+                    { name: { ru: 'Закон сохранения энергии', kk: 'Энергияның сақталу заңы' }, text: 'E<sub>k1</sub> + E<sub>p1</sub> = E<sub>k2</sub> + E<sub>p2</sub>', desc: { ru: 'Механическая энергия', kk: 'Механикалық энергия' } },
+                    { name: { ru: 'Теорема о кин. энергии', kk: 'Кин. энергия туралы теорема' }, text: 'A = ΔE<sub>k</sub>', desc: { ru: 'Работа равна изменению E_k', kk: 'Жұмыс E_k өзгеруіне тең' } },
+                    { name: { ru: 'КПД механизма', kk: 'Механизмнің ПӘК' }, text: 'η = <span class="frac"><span class="num">A<sub>пол</sub></span><span class="den">A<sub>затр</sub></span></span> · 100%', desc: { ru: 'Эффективность', kk: 'Тиімділік' } }
                 ]
             },
             {
                 id: 'thermo',
-                title: 'IV. МКТ и Термодинамика',
+                title: { ru: 'IV. МКТ и Термодинамика', kk: 'IV. МКТ және Термодинамика' },
                 icon: '🌡️',
                 color: '#dc2626',
                 formulas: [
-                    { name: 'Количество вещества', text: 'ν = <span class="frac"><span class="num">N</span><span class="den">N<sub>A</sub></span></span> = <span class="frac"><span class="num">m</span><span class="den">M</span></span>', desc: 'В молях' },
-                    { name: 'Основное уравнение МКТ', text: 'p = nkT = <span class="frac"><span class="num">1</span><span class="den">3</span></span> m<sub>0</sub>n(v<sup>2</sup>)', desc: 'Давление идеального газа' },
-                    { name: 'Средняя кинетическая энергия', text: 'E<sub>k</sub> = <span class="frac"><span class="num">3</span><span class="den">2</span></span> kT', desc: 'Зависимость от температуры' },
-                    { name: 'Уравнение Менделеева-Клапейрона', text: 'pV = <span class="frac"><span class="num">m</span><span class="den">M</span></span>RT = νRT', desc: 'Уравнение состояния' },
-                    { name: 'Уравнение Клапейрона', text: '<span class="frac"><span class="num">p<sub>1</sub>V<sub>1</sub></span><span class="den">T<sub>1</sub></span></span> = <span class="frac"><span class="num">p<sub>2</sub>V<sub>2</sub></span><span class="den">T<sub>2</sub></span></span>', desc: 'При m = const' },
-                    { name: 'Внутренняя энергия', text: 'U = <span class="frac"><span class="num">3</span><span class="den">2</span></span> νRT = <span class="frac"><span class="num">3</span><span class="den">2</span></span> pV', desc: 'Одноатомный идеальный газ' },
-                    { name: 'Работа газа', text: 'A = pΔV', desc: 'При изобарном процессе' },
-                    { name: 'Первый закон термодинамики', text: 'Q = ΔU + A', desc: 'Закон сохранения энергии' },
-                    { name: 'Количество теплоты', text: 'Q = cmΔT', desc: 'Нагрев/охлаждение' },
-                    { name: 'Плавление/кристаллизация', text: 'Q = ±λm', desc: 'Фазовый переход' },
-                    { name: 'Парообразование', text: 'Q = ±Lm', desc: 'Фазовый переход' },
-                    { name: 'Сгорание топлива', text: 'Q = qm', desc: 'Выделение энергии' },
-                    { name: 'КПД теплового двигателя', text: 'η = <span class="frac"><span class="num">Q<sub>1</sub> - Q<sub>2</sub></span><span class="den">Q<sub>1</sub></span></span>', desc: 'Тепловые машины' },
-                    { name: 'Максимальный КПД (Карно)', text: 'η<sub>max</sub> = <span class="frac"><span class="num">T<sub>1</sub> - T<sub>2</sub></span><span class="den">T<sub>1</sub></span></span>', desc: 'Идеальная машина' },
-                    { name: 'Относительная влажность', text: 'φ = <span class="frac"><span class="num">p</span><span class="den">p<sub>нас</sub></span></span> · 100%', desc: 'Влажность воздуха' }
+                    { name: { ru: 'Количество вещества', kk: 'Зат мөлшері' }, text: 'ν = <span class="frac"><span class="num">N</span><span class="den">N<sub>A</sub></span></span> = <span class="frac"><span class="num">m</span><span class="den">M</span></span>', desc: { ru: 'В молях', kk: 'Мольмен' } },
+                    { name: { ru: 'Основное уравнение МКТ', kk: 'МКТ негізгі теңдеуі' }, text: 'p = nkT = <span class="frac"><span class="num">1</span><span class="den">3</span></span> m<sub>0</sub>n(v<sup>2</sup>)', desc: { ru: 'Давление идеального газа', kk: 'Идеал газдың қысымы' } },
+                    { name: { ru: 'Средняя кинетическая энергия', kk: 'Орташа кинетикалық энергия' }, text: 'E<sub>k</sub> = <span class="frac"><span class="num">3</span><span class="den">2</span></span> kT', desc: { ru: 'Зависимость от температуры', kk: 'Температураға тәуелділік' } },
+                    { name: { ru: 'Уравнение Менделеева-Клапейрона', kk: 'Менделеев-Клапейрон теңдеуі' }, text: 'pV = <span class="frac"><span class="num">m</span><span class="den">M</span></span>RT = νRT', desc: { ru: 'Уравнение состояния', kk: 'Күй теңдеуі' } },
+                    { name: { ru: 'Уравнение Клапейрона', kk: 'Клапейрон теңдеуі' }, text: '<span class="frac"><span class="num">p<sub>1</sub>V<sub>1</sub></span><span class="den">T<sub>1</sub></span></span> = <span class="frac"><span class="num">p<sub>2</sub>V<sub>2</sub></span><span class="den">T<sub>2</sub></span></span>', desc: { ru: 'При m = const', kk: 'm = const болғанда' } },
+                    { name: { ru: 'Внутренняя энергия', kk: 'Ішкі энергия' }, text: 'U = <span class="frac"><span class="num">3</span><span class="den">2</span></span> νRT = <span class="frac"><span class="num">3</span><span class="den">2</span></span> pV', desc: { ru: 'Одноатомный идеальный газ', kk: 'Біратомды идеал газ' } },
+                    { name: { ru: 'Работа газа', kk: 'Газ жұмысы' }, text: 'A = pΔV', desc: { ru: 'При изобарном процессе', kk: 'Изобаралық процесте' } },
+                    { name: { ru: 'Первый закон термодинамики', kk: 'Термодинамиканың бірінші заңы' }, text: 'Q = ΔU + A', desc: { ru: 'Закон сохранения энергии', kk: 'Энергияның сақталу заңы' } },
+                    { name: { ru: 'Количество теплоты', kk: 'Жылу мөлшері' }, text: 'Q = cmΔT', desc: { ru: 'Нагрев/охлаждение', kk: 'Қыздыру/салқындату' } },
+                    { name: { ru: 'Плавление/кристаллизация', kk: 'Балқу/кристалдану' }, text: 'Q = ±λm', desc: { ru: 'Фазовый переход', kk: 'Фазалық өту' } },
+                    { name: { ru: 'Парообразование', kk: 'Булану' }, text: 'Q = ±Lm', desc: { ru: 'Фазовый переход', kk: 'Фазалық өту' } },
+                    { name: { ru: 'Сгорание топлива', kk: 'Отынның жануы' }, text: 'Q = qm', desc: { ru: 'Выделение энергии', kk: 'Энергияның бөлінуі' } },
+                    { name: { ru: 'КПД теплового двигателя', kk: 'Жылу қозғалтқышының ПӘК' }, text: 'η = <span class="frac"><span class="num">Q<sub>1</sub> - Q<sub>2</sub></span><span class="den">Q<sub>1</sub></span></span>', desc: { ru: 'Тепловые машины', kk: 'Жылу машиналары' } },
+                    { name: { ru: 'Максимальный КПД (Карно)', kk: 'Максимал ПӘК (Карно)' }, text: 'η<sub>max</sub> = <span class="frac"><span class="num">T<sub>1</sub> - T<sub>2</sub></span><span class="den">T<sub>1</sub></span></span>', desc: { ru: 'Идеальная машина', kk: 'Идеал машина' } },
+                    { name: { ru: 'Относительная влажность', kk: 'Салыстырмалы ылғалдылық' }, text: 'φ = <span class="frac"><span class="num">p</span><span class="den">p<sub>нас</sub></span></span> · 100%', desc: { ru: 'Влажность воздуха', kk: 'Ауа ылғалдылығы' } }
                 ]
             },
             {
                 id: 'electrostatics',
-                title: 'V. Электростатика и Ток',
+                title: { ru: 'V. Электростатика и Ток', kk: 'V. Электростатика және Ток' },
                 icon: '⚡',
                 color: '#0284c7',
                 formulas: [
-                    { name: 'Закон Кулона', text: 'F = k · <span class="frac"><span class="num">|q<sub>1</sub>q<sub>2</sub>|</span><span class="den">r<sup>2</sup></span></span>', desc: 'Взаимодействие зарядов' },
-                    { name: 'Напряженность поля', text: 'E = <span class="frac"><span class="num">F</span><span class="den">q</span></span>', desc: 'Силовая характеристика' },
-                    { name: 'Потенциал', text: 'φ = <span class="frac"><span class="num">W<sub>p</sub></span><span class="den">q</span></span>', desc: 'Энергетическая характеристика' },
-                    { name: 'Напряжение', text: 'U = φ<sub>1</sub> - φ<sub>2</sub> = <span class="frac"><span class="num">A</span><span class="den">q</span></span>', desc: 'Разность потенциалов' },
-                    { name: 'Связь напряженности и напряжения', text: 'E = <span class="frac"><span class="num">U</span><span class="den">d</span></span>', desc: 'Однородное поле' },
-                    { name: 'Электроемкость', text: 'C = <span class="frac"><span class="num">q</span><span class="den">U</span></span>', desc: 'Характеристика проводника' },
-                    { name: 'Емкость конденсатора', text: 'C = <span class="frac"><span class="num">ε<sub>0</sub>εS</span><span class="den">d</span></span>', desc: 'Плоский конденсатор' },
-                    { name: 'Энергия электрического поля', text: 'W = <span class="frac"><span class="num">CU<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">qU</span><span class="den">2</span></span>', desc: 'Энергия конденсатора' },
-                    { name: 'Сила тока', text: 'I = <span class="frac"><span class="num">q</span><span class="den">t</span></span>', desc: 'Постоянный ток' },
-                    { name: 'Закон Ома (участок)', text: 'I = <span class="frac"><span class="num">U</span><span class="den">R</span></span>', desc: 'Участок цепи' },
-                    { name: 'Сопротивление', text: 'R = ρ · <span class="frac"><span class="num">l</span><span class="den">S</span></span>', desc: 'Характеристика проводника' },
-                    { name: 'Закон Ома (полная)', text: 'I = <span class="frac"><span class="num">E</span><span class="den">R + r</span></span>', desc: 'Полная цепь (E - ЭДС)' },
-                    { name: 'Работа тока', text: 'A = UIt = I<sup>2</sup>Rt = <span class="frac"><span class="num">U<sup>2</sup>t</span><span class="den">R</span></span>', desc: 'Электрическая работа' },
-                    { name: 'Мощность тока', text: 'P = UI = I<sup>2</sup>R = <span class="frac"><span class="num">U<sup>2</sup></span><span class="den">R</span></span>', desc: 'Электрическая мощность' },
-                    { name: 'Закон Джоуля-Ленца', text: 'Q = I<sup>2</sup>Rt', desc: 'Тепловое действие тока' }
+                    { name: { ru: 'Закон Кулона', kk: 'Кулон заңы' }, text: 'F = k · <span class="frac"><span class="num">|q<sub>1</sub>q<sub>2</sub>|</span><span class="den">r<sup>2</sup></span></span>', desc: { ru: 'Взаимодействие зарядов', kk: 'Зарядтардың өзара әрекеттесуі' } },
+                    { name: { ru: 'Напряженность поля', kk: 'Өріс кернеулігі' }, text: 'E = <span class="frac"><span class="num">F</span><span class="den">q</span></span>', desc: { ru: 'Силовая характеристика', kk: 'Күштік сипаттама' } },
+                    { name: { ru: 'Потенциал', kk: 'Потенциал' }, text: 'φ = <span class="frac"><span class="num">W<sub>p</sub></span><span class="den">q</span></span>', desc: { ru: 'Энергетическая характеристика', kk: 'Энергетикалық сипаттама' } },
+                    { name: { ru: 'Напряжение', kk: 'Кернеу' }, text: 'U = φ<sub>1</sub> - φ<sub>2</sub> = <span class="frac"><span class="num">A</span><span class="den">q</span></span>', desc: { ru: 'Разность потенциалов', kk: 'Потенциалдар айырымы' } },
+                    { name: { ru: 'Связь напряженности и напряжения', kk: 'Кернеулік пен кернеудің байланысы' }, text: 'E = <span class="frac"><span class="num">U</span><span class="den">d</span></span>', desc: { ru: 'Однородное поле', kk: 'Біртекті өріс' } },
+                    { name: { ru: 'Электроемкость', kk: 'Электр сыйымдылығы' }, text: 'C = <span class="frac"><span class="num">q</span><span class="den">U</span></span>', desc: { ru: 'Характеристика проводника', kk: 'Өткізгіштің сипаттамасы' } },
+                    { name: { ru: 'Емкость конденсатора', kk: 'Конденсатор сыйымдылығы' }, text: 'C = <span class="frac"><span class="num">ε<sub>0</sub>εS</span><span class="den">d</span></span>', desc: { ru: 'Плоский конденсатор', kk: 'Жазық конденсатор' } },
+                    { name: { ru: 'Энергия электрического поля', kk: 'Электр өрісінің энергиясы' }, text: 'W = <span class="frac"><span class="num">CU<sup>2</sup></span><span class="den">2</span></span> = <span class="frac"><span class="num">qU</span><span class="den">2</span></span>', desc: { ru: 'Энергия конденсатора', kk: 'Конденсатор энергиясы' } },
+                    { name: { ru: 'Сила тока', kk: 'Ток күші' }, text: 'I = <span class="frac"><span class="num">q</span><span class="den">t</span></span>', desc: { ru: 'Постоянный ток', kk: 'Тұрақты ток' } },
+                    { name: { ru: 'Закон Ома (участок)', kk: 'Ом заңы (тізбек бөлігі)' }, text: 'I = <span class="frac"><span class="num">U</span><span class="den">R</span></span>', desc: { ru: 'Участок цепи', kk: 'Тізбек бөлігі' } },
+                    { name: { ru: 'Сопротивление', kk: 'Кедергі' }, text: 'R = ρ · <span class="frac"><span class="num">l</span><span class="den">S</span></span>', desc: { ru: 'Характеристика проводника', kk: 'Өткізгіштің сипаттамасы' } },
+                    { name: { ru: 'Закон Ома (полная)', kk: 'Ом заңы (толық тізбек)' }, text: 'I = <span class="frac"><span class="num">E</span><span class="den">R + r</span></span>', desc: { ru: 'Полная цепь (E - ЭДС)', kk: 'Толық тізбек (E - ЭҚК)' } },
+                    { name: { ru: 'Работа тока', kk: 'Ток жұмысы' }, text: 'A = UIt = I<sup>2</sup>Rt = <span class="frac"><span class="num">U<sup>2</sup>t</span><span class="den">R</span></span>', desc: { ru: 'Электрическая работа', kk: 'Электрлік жұмыс' } },
+                    { name: { ru: 'Мощность тока', kk: 'Ток қуаты' }, text: 'P = UI = I<sup>2</sup>R = <span class="frac"><span class="num">U<sup>2</sup></span><span class="den">R</span></span>', desc: { ru: 'Электрическая мощность', kk: 'Электр қуаты' } },
+                    { name: { ru: 'Закон Джоуля-Ленца', kk: 'Джоуль-Ленц заңы' }, text: 'Q = I<sup>2</sup>Rt', desc: { ru: 'Тепловое действие тока', kk: 'Токтың жылулық әрекеті' } }
                 ]
             },
             {
                 id: 'magnetism',
-                title: 'VI. Электромагнетизм',
+                title: { ru: 'VI. Электромагнетизм', kk: 'VI. Электромагнетизм' },
                 icon: '🧲',
                 color: '#9333ea',
                 formulas: [
-                    { name: 'Сила Ампера', text: 'F<sub>A</sub> = IBl·sinα', desc: 'Действие поля на проводник' },
-                    { name: 'Сила Лоренца', text: 'F<sub>Л</sub> = |q|vB·sinα', desc: 'Действие поля на заряд' },
-                    { name: 'Магнитный поток', text: 'Φ = BS·cosα', desc: 'Поток через площадку' },
-                    { name: 'Закон электромагнитной индукции', text: 'E<sub>i</sub> = -<span class="frac"><span class="num">ΔΦ</span><span class="den">Δt</span></span>', desc: 'Закон Фарадея' },
-                    { name: 'ЭДС в движущемся проводнике', text: 'E = vBl·sinα', desc: 'Проводник в магнитном поле' },
-                    { name: 'Индуктивность', text: 'L = <span class="frac"><span class="num">Φ</span><span class="den">I</span></span>', desc: 'Свойство контура' },
-                    { name: 'ЭДС самоиндукции', text: 'E<sub>is</sub> = -L · <span class="frac"><span class="num">ΔI</span><span class="den">Δt</span></span>', desc: 'Возникновение ЭДС' },
-                    { name: 'Энергия магнитного поля', text: 'W<sub>m</sub> = <span class="frac"><span class="num">LI<sup>2</sup></span><span class="den">2</span></span>', desc: 'Энергия катушки' }
+                    { name: { ru: 'Сила Ампера', kk: 'Ампер күші' }, text: 'F<sub>A</sub> = IBl·sinα', desc: { ru: 'Действие поля на проводник', kk: 'Өрістің өткізгішке әсері' } },
+                    { name: { ru: 'Сила Лоренца', kk: 'Лоренц күші' }, text: 'F<sub>Л</sub> = |q|vB·sinα', desc: { ru: 'Действие поля на заряд', kk: 'Өрістің зарядқа әсері' } },
+                    { name: { ru: 'Магнитный поток', kk: 'Магнит ағыны' }, text: 'Φ = BS·cosα', desc: { ru: 'Поток через площадку', kk: 'Аудан арқылы өтетін ағын' } },
+                    { name: { ru: 'Закон электромагнитной индукции', kk: 'Электромагниттік индукция заңы' }, text: 'E<sub>i</sub> = -<span class="frac"><span class="num">ΔΦ</span><span class="den">Δt</span></span>', desc: { ru: 'Закон Фарадея', kk: 'Фарадей заңы' } },
+                    { name: { ru: 'ЭДС в движущемся проводнике', kk: 'Қозғалыстағы өткізгіштегі ЭҚК' }, text: 'E = vBl·sinα', desc: { ru: 'Проводник в магнитном поле', kk: 'Магнит өрісіндегі өткізгіш' } },
+                    { name: { ru: 'Индуктивность', kk: 'Индуктивтілік' }, text: 'L = <span class="frac"><span class="num">Φ</span><span class="den">I</span></span>', desc: { ru: 'Свойство контура', kk: 'Контур қасиеті' } },
+                    { name: { ru: 'ЭДС самоиндукции', kk: 'Өздік индукция ЭҚК' }, text: 'E<sub>is</sub> = -L · <span class="frac"><span class="num">ΔI</span><span class="den">Δt</span></span>', desc: { ru: 'Возникновение ЭДС', kk: 'ЭҚК пайда болуы' } },
+                    { name: { ru: 'Энергия магнитного поля', kk: 'Магнит өрісінің энергиясы' }, text: 'W<sub>m</sub> = <span class="frac"><span class="num">LI<sup>2</sup></span><span class="den">2</span></span>', desc: { ru: 'Энергия катушки', kk: 'Катушка энергиясы' } }
                 ]
             },
             {
                 id: 'waves',
-                title: 'VII. Колебания и Волны',
+                title: { ru: 'VII. Колебания и Волны', kk: 'VII. Тербелістер мен Толқындар' },
                 icon: '🌊',
                 color: '#0891b2',
                 formulas: [
-                    { name: 'Циклическая частота', text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: 'Колебательное движение' },
-                    { name: 'Уравнение колебаний', text: 'x(t) = A·cos(ωt + φ<sub>0</sub>)', desc: 'Гармонические колебания' },
-                    { name: 'Период пружинного маятника', text: 'T = 2π√(<span class="frac"><span class="num">m</span><span class="den">k</span></span>)', desc: 'Груз на пружине' },
-                    { name: 'Период математического маятника', text: 'T = 2π√(<span class="frac"><span class="num">l</span><span class="den">g</span></span>)', desc: 'Маятник' },
-                    { name: 'Формула Томсона', text: 'T = 2π√(LC)', desc: 'Электромагнитный контур' },
-                    { name: 'Длина волны', text: 'λ = vT = <span class="frac"><span class="num">v</span><span class="den">ν</span></span>', desc: 'Характеристика волны' }
+                    { name: { ru: 'Циклическая частота', kk: 'Циклдік жиілік' }, text: 'ω = <span class="frac"><span class="num">2π</span><span class="den">T</span></span> = 2πν', desc: { ru: 'Колебательное движение', kk: 'Тербелмелі қозғалыс' } },
+                    { name: { ru: 'Уравнение колебаний', kk: 'Тербелістер теңдеуі' }, text: 'x(t) = A·cos(ωt + φ<sub>0</sub>)', desc: { ru: 'Гармонические колебания', kk: 'Гармоникалық тербелістер' } },
+                    { name: { ru: 'Период пружинного маятника', kk: 'Серіппелі маятник периоды' }, text: 'T = 2π√(<span class="frac"><span class="num">m</span><span class="den">k</span></span>)', desc: { ru: 'Груз на пружине', kk: 'Серіппедегі жүк' } },
+                    { name: { ru: 'Период математического маятника', kk: 'Математикалық маятник периоды' }, text: 'T = 2π√(<span class="frac"><span class="num">l</span><span class="den">g</span></span>)', desc: { ru: 'Маятник', kk: 'Маятник' } },
+                    { name: { ru: 'Формула Томсона', kk: 'Томсон формуласы' }, text: 'T = 2π√(LC)', desc: { ru: 'Электромагнитный контур', kk: 'Электромагниттік контур' } },
+                    { name: { ru: 'Длина волны', kk: 'Толқын ұзындығы' }, text: 'λ = vT = <span class="frac"><span class="num">v</span><span class="den">ν</span></span>', desc: { ru: 'Характеристика волны', kk: 'Толқын сипаттамасы' } }
                 ]
             },
             {
                 id: 'optics',
-                title: 'VIII. Оптика',
+                title: { ru: 'VIII. Оптика', kk: 'VIII. Оптика' },
                 icon: '👁️',
                 color: '#ca8a04',
                 formulas: [
-                    { name: 'Закон отражения', text: '∠α = ∠γ', desc: 'Угол падения = углу отражения' },
-                    { name: 'Закон преломления (Снеллиус)', text: '<span class="frac"><span class="num">sinα</span><span class="den">sinβ</span></span> = <span class="frac"><span class="num">n<sub>2</sub></span><span class="den">n<sub>1</sub></span></span> = <span class="frac"><span class="num">v<sub>1</sub></span><span class="den">v<sub>2</sub></span></span>', desc: 'Преломление света' },
-                    { name: 'Абсолютный показатель', text: 'n = <span class="frac"><span class="num">c</span><span class="den">v</span></span>', desc: 'Показатель преломления' },
-                    { name: 'Оптическая сила', text: 'D = <span class="frac"><span class="num">1</span><span class="den">F</span></span>', desc: 'В диоптриях' },
-                    { name: 'Формула тонкой линзы', text: '±<span class="frac"><span class="num">1</span><span class="den">F</span></span> = <span class="frac"><span class="num">1</span><span class="den">d</span></span> ± <span class="frac"><span class="num">1</span><span class="den">f</span></span>', desc: 'Положение изображения' },
-                    { name: 'Увеличение линзы', text: 'Γ = <span class="frac"><span class="num">H</span><span class="den">h</span></span> = <span class="frac"><span class="num">f</span><span class="den">d</span></span>', desc: 'Линейное увеличение' },
-                    { name: 'Интерференционный максимум', text: 'Δd = kλ', desc: 'Условие максимума' },
-                    { name: 'Интерференционный минимум', text: 'Δd = (2k + 1)<span class="frac"><span class="num">λ</span><span class="den">2</span></span>', desc: 'Условие минимума' },
-                    { name: 'Дифракционная решетка', text: 'd·sinφ = kλ', desc: 'Формула решетки' }
+                    { name: { ru: 'Закон отражения', kk: 'Шағылу заңы' }, text: '∠α = ∠γ', desc: { ru: 'Угол падения = углу отражения', kk: 'Түсу бұрышы = шағылу бұрышына' } },
+                    { name: { ru: 'Закон преломления (Снеллиус)', kk: 'Сыну заңы (Снеллиус)' }, text: '<span class="frac"><span class="num">sinα</span><span class="den">sinβ</span></span> = <span class="frac"><span class="num">n<sub>2</sub></span><span class="den">n<sub>1</sub></span></span> = <span class="frac"><span class="num">v<sub>1</sub></span><span class="den">v<sub>2</sub></span></span>', desc: { ru: 'Преломление света', kk: 'Жарықтың сынуы' } },
+                    { name: { ru: 'Абсолютный показатель', kk: 'Абсолют көрсеткіш' }, text: 'n = <span class="frac"><span class="num">c</span><span class="den">v</span></span>', desc: { ru: 'Показатель преломления', kk: 'Сыну көрсеткіші' } },
+                    { name: { ru: 'Оптическая сила', kk: 'Оптикалық күш' }, text: 'D = <span class="frac"><span class="num">1</span><span class="den">F</span></span>', desc: { ru: 'В диоптриях', kk: 'Диоптриямен' } },
+                    { name: { ru: 'Формула тонкой линзы', kk: 'Жұқа линза формуласы' }, text: '±<span class="frac"><span class="num">1</span><span class="den">F</span></span> = <span class="frac"><span class="num">1</span><span class="den">d</span></span> ± <span class="frac"><span class="num">1</span><span class="den">f</span></span>', desc: { ru: 'Положение изображения', kk: 'Кескіннің орналасуы' } },
+                    { name: { ru: 'Увеличение линзы', kk: 'Линзаның ұлғаюы' }, text: 'Γ = <span class="frac"><span class="num">H</span><span class="den">h</span></span> = <span class="frac"><span class="num">f</span><span class="den">d</span></span>', desc: { ru: 'Линейное увеличение', kk: 'Сызықтық ұлғаю' } },
+                    { name: { ru: 'Интерференционный максимум', kk: 'Интерференциялық максимум' }, text: 'Δd = kλ', desc: { ru: 'Условие максимума', kk: 'Максимум шарты' } },
+                    { name: { ru: 'Интерференционный минимум', kk: 'Интерференциялық минимум' }, text: 'Δd = (2k + 1)<span class="frac"><span class="num">λ</span><span class="den">2</span></span>', desc: { ru: 'Условие минимума', kk: 'Минимум шарты' } },
+                    { name: { ru: 'Дифракционная решетка', kk: 'Дифракциялық тор' }, text: 'd·sinφ = kλ', desc: { ru: 'Формула решетки', kk: 'Тор формуласы' } }
                 ]
             },
             {
                 id: 'quantum',
-                title: 'IX. Квантовая и Ядерная',
+                title: { ru: 'IX. Квантовая и Ядерная', kk: 'IX. Кванттық және Ядролық' },
                 icon: '⚛️',
                 color: '#e11d48',
                 formulas: [
-                    { name: 'Энергия фотона', text: 'E = hν = <span class="frac"><span class="num">hc</span><span class="den">λ</span></span>', desc: 'Квант света' },
-                    { name: 'Импульс фотона', text: 'p = <span class="frac"><span class="num">E</span><span class="den">c</span></span> = <span class="frac"><span class="num">h</span><span class="den">λ</span></span>', desc: 'Импульс кванта' },
-                    { name: 'Уравнение Эйнштейна (фотоэффект)', text: 'hν = A<sub>вых</sub> + E<sub>k_max</sub>', desc: 'Для внешнего фотоэффекта' },
-                    { name: 'Красная граница', text: 'ν<sub>min</sub> = <span class="frac"><span class="num">A<sub>вых</sub></span><span class="den">h</span></span>', desc: 'Фотоэффекта' },
-                    { name: 'Связь массы и энергии', text: 'E = mc<sup>2</sup>', desc: 'Формула Эйнштейна' },
-                    { name: 'Дефект массы', text: 'Δm = (Z·m<sub>p</sub> + N·m<sub>n</sub>) - M<sub>я</sub>', desc: 'Ядерная физика' },
-                    { name: 'Энергия связи', text: 'E<sub>св</sub> = Δm · c<sup>2</sup>', desc: 'Энергия ядра' },
-                    { name: 'Закон радиоактивного распада', text: 'N = N<sub>0</sub> · 2<sup>-<span class="frac"><span class="num">t</span><span class="den">T</span></span></sup>', desc: 'Где T - период полураспада' }
+                    { name: { ru: 'Энергия фотона', kk: 'Фотон энергиясы' }, text: 'E = hν = <span class="frac"><span class="num">hc</span><span class="den">λ</span></span>', desc: { ru: 'Квант света', kk: 'Жарық кванты' } },
+                    { name: { ru: 'Импульс фотона', kk: 'Фотон импульсі' }, text: 'p = <span class="frac"><span class="num">E</span><span class="den">c</span></span> = <span class="frac"><span class="num">h</span><span class="den">λ</span></span>', desc: { ru: 'Импульс кванта', kk: 'Квант импульсі' } },
+                    { name: { ru: 'Уравнение Эйнштейна (фотоэффект)', kk: 'Эйнштейн теңдеуі (фотоэффект)' }, text: 'hν = A<sub>вых</sub> + E<sub>k_max</sub>', desc: { ru: 'Для внешнего фотоэффекта', kk: 'Сыртқы фотоэффект үшін' } },
+                    { name: { ru: 'Красная граница', kk: 'Қызыл шекара' }, text: 'ν<sub>min</sub> = <span class="frac"><span class="num">A<sub>вых</sub></span><span class="den">h</span></span>', desc: { ru: 'Фотоэффекта', kk: 'Фотоэффектінің' } },
+                    { name: { ru: 'Связь массы и энергии', kk: 'Масса мен энергия байланысы' }, text: 'E = mc<sup>2</sup>', desc: { ru: 'Формула Эйнштейна', kk: 'Эйнштейн формуласы' } },
+                    { name: { ru: 'Дефект массы', kk: 'Масса ақауы' }, text: 'Δm = (Z·m<sub>p</sub> + N·m<sub>n</sub>) - M<sub>я</sub>', desc: { ru: 'Ядерная физика', kk: 'Ядролық физика' } },
+                    { name: { ru: 'Энергия связи', kk: 'Байланыс энергиясы' }, text: 'E<sub>св</sub> = Δm · c<sup>2</sup>', desc: { ru: 'Энергия ядра', kk: 'Ядро энергиясы' } },
+                    { name: { ru: 'Закон радиоактивного распада', kk: 'Радиоактивті ыдырау заңы' }, text: 'N = N<sub>0</sub> · 2<sup>-<span class="frac"><span class="num">t</span><span class="den">T</span></span></sup>', desc: { ru: 'Где T - период полураспада', kk: 'Мұндағы T - жартылай ыдырау периоды' } }
                 ]
             }
         ];
 
         let state = {
             activeCategory: 'all',
-            searchQuery: ''
+            searchQuery: '',
+            lang: 'ru'
         };
+
+        let overviewChartInstance = null;
+        let simChart = null;
 
         const globalSearch = document.getElementById('globalSearch');
         const categoryContainer = document.getElementById('categoryContainer');
         const formulaGrid = document.getElementById('formulaGrid');
         const emptyState = document.getElementById('emptyState');
 
-        function initializeApp() {
-            renderOverviewChart();
-            initializeSimulator();
+        function setLanguage(lang) {
+            state.lang = lang;
+            
+            // Обновляем стили кнопок
+            document.getElementById('lang-ru').className = lang === 'ru' ? 'lang-btn active px-3 py-1 rounded text-sm font-bold transition-all' : 'lang-btn px-3 py-1 rounded text-sm font-bold transition-all';
+            document.getElementById('lang-kk').className = lang === 'kk' ? 'lang-btn active px-3 py-1 rounded text-sm font-bold transition-all' : 'lang-btn px-3 py-1 rounded text-sm font-bold transition-all';
+
+            // Применяем статические переводы
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
+            globalSearch.placeholder = i18n[lang].searchPlaceholder;
+
+            // Перерисовываем динамический контент
             renderCategoryNav();
             renderFormulas();
+            renderOverviewChart();
+            if(simChart) {
+                // Обновление локализации в графике-симуляторе
+                simChart.data.datasets[0].label = i18n[lang].chartDistanceLabel;
+                simChart.data.datasets[1].label = i18n[lang].chartVelocityLabel;
+                simChart.options.scales.x.title.text = i18n[lang].chartTime;
+                simChart.options.scales.y.title.text = i18n[lang].chartDistance;
+                simChart.options.scales.y1.title.text = i18n[lang].chartVelocity;
+                simChart.update();
+            }
+            
+            // Триггер для обновления статуса симулятора
+            document.getElementById('v0Slider').dispatchEvent(new Event('input'));
+        }
+
+        function initializeApp() {
+            setLanguage(state.lang); // Инициализация с текущим языком
+            initializeSimulator();
             
             globalSearch.addEventListener('input', (e) => {
                 state.searchQuery = e.target.value.toLowerCase();
@@ -403,11 +523,15 @@
 
         function renderOverviewChart() {
             const ctx = document.getElementById('overviewChart').getContext('2d');
-            const labels = physicsData.map(c => c.title.split('.')[1].trim());
+            const labels = physicsData.map(c => c.title[state.lang].split('.')[1].trim());
             const dataCounts = physicsData.map(c => c.formulas.length);
             const colors = physicsData.map(c => c.color);
 
-            new Chart(ctx, {
+            if (overviewChartInstance) {
+                overviewChartInstance.destroy();
+            }
+
+            overviewChartInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
@@ -427,7 +551,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${context.label}: ${context.raw} формул`;
+                                    return ` ${context.label}: ${context.raw} ${i18n[state.lang].formulasCount}`;
                                 }
                             }
                         }
@@ -444,12 +568,13 @@
             });
 
             const legendContainer = document.getElementById('overviewLegend');
+            legendContainer.innerHTML = '';
             physicsData.forEach((cat, idx) => {
                 const item = document.createElement('div');
                 item.className = 'flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors';
                 item.innerHTML = `
                     <div class="w-4 h-4 rounded-full flex-shrink-0" style="background-color: ${cat.color}"></div>
-                    <span class="text-sm font-medium text-slate-700 truncate" title="${cat.title}">${cat.title.split('.')[1].trim()}</span>
+                    <span class="text-sm font-medium text-slate-700 truncate" title="${cat.title[state.lang]}">${cat.title[state.lang].split('.')[1].trim()}</span>
                     <span class="text-xs text-slate-400 ml-auto bg-slate-100 px-2 py-0.5 rounded-full">${cat.formulas.length}</span>
                 `;
                 item.addEventListener('click', () => {
@@ -460,7 +585,6 @@
             });
         }
 
-        let simChart;
         function initializeSimulator() {
             const ctx = document.getElementById('kinematicsChart').getContext('2d');
             const v0Slider = document.getElementById('v0Slider');
@@ -477,12 +601,12 @@
                 aDisplay.textContent = `${a} м/с²`;
 
                 let statusText = '';
-                if (a > 0 && v0 >= 0) statusText = 'Тело разгоняется в положительном направлении.';
-                else if (a < 0 && v0 <= 0) statusText = 'Тело разгоняется в отрицательном направлении.';
-                else if (a > 0 && v0 < 0) statusText = 'Тело тормозит, остановится, затем начнет разгон в обратную сторону.';
-                else if (a < 0 && v0 > 0) statusText = 'Тело тормозит, остановится, затем начнет разгон в обратную сторону.';
-                else if (a === 0 && v0 !== 0) statusText = 'Равномерное движение. Ускорение отсутствует.';
-                else statusText = 'Тело находится в состоянии покоя.';
+                if (a > 0 && v0 >= 0) statusText = i18n[state.lang].simStatus1;
+                else if (a < 0 && v0 <= 0) statusText = i18n[state.lang].simStatus2;
+                else if (a > 0 && v0 < 0) statusText = i18n[state.lang].simStatus3;
+                else if (a < 0 && v0 > 0) statusText = i18n[state.lang].simStatus3;
+                else if (a === 0 && v0 !== 0) statusText = i18n[state.lang].simStatus4;
+                else statusText = i18n[state.lang].simStatus5;
                 simStatus.textContent = statusText;
 
                 const timeLabels = [];
@@ -506,7 +630,7 @@
                             labels: timeLabels,
                             datasets: [
                                 {
-                                    label: 'Путь S(t), м',
+                                    label: i18n[state.lang].chartDistanceLabel,
                                     data: distanceData,
                                     borderColor: '#4f46e5',
                                     backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -516,7 +640,7 @@
                                     yAxisID: 'y'
                                 },
                                 {
-                                    label: 'Скорость v(t), м/с',
+                                    label: i18n[state.lang].chartVelocityLabel,
                                     data: velocityData,
                                     borderColor: '#10b981',
                                     borderWidth: 3,
@@ -533,27 +657,27 @@
                             plugins: {
                                 tooltip: {
                                     callbacks: {
-                                        title: (context) => `Время: ${context[0].label} с`
+                                        title: (context) => `${i18n[state.lang].tooltipTime}: ${context[0].label} ${i18n[state.lang].sec}`
                                     }
                                 }
                             },
                             scales: {
                                 x: {
-                                    title: { display: true, text: 'Время (с)' },
+                                    title: { display: true, text: i18n[state.lang].chartTime },
                                     grid: { display: false }
                                 },
                                 y: {
                                     type: 'linear',
                                     display: true,
                                     position: 'left',
-                                    title: { display: true, text: 'Путь (м)' },
+                                    title: { display: true, text: i18n[state.lang].chartDistance },
                                     grid: { color: '#f1f5f9' }
                                 },
                                 y1: {
                                     type: 'linear',
                                     display: true,
                                     position: 'right',
-                                    title: { display: true, text: 'Скорость (м/с)' },
+                                    title: { display: true, text: i18n[state.lang].chartVelocity },
                                     grid: { drawOnChartArea: false }
                                 }
                             }
@@ -568,18 +692,20 @@
         }
 
         function renderCategoryNav() {
+            categoryContainer.innerHTML = '';
+            
             const allBtn = document.createElement('button');
-            allBtn.className = 'nav-btn active w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 border border-transparent transition-all flex items-center justify-between mb-2';
-            allBtn.innerHTML = `<span>Все разделы</span> <span>📚</span>`;
+            allBtn.className = `nav-btn w-full text-left px-4 py-3 rounded-xl text-sm font-semibold hover:bg-slate-100 border border-transparent transition-all flex items-center justify-between mb-2 ${state.activeCategory === 'all' ? 'active' : 'text-slate-700'}`;
+            allBtn.innerHTML = `<span>${i18n[state.lang].allSections}</span> <span>📚</span>`;
             allBtn.dataset.id = 'all';
             allBtn.addEventListener('click', () => setActiveCategory('all'));
             categoryContainer.appendChild(allBtn);
 
             physicsData.forEach(cat => {
                 const btn = document.createElement('button');
-                btn.className = 'nav-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 border border-transparent transition-all flex items-center justify-between';
+                btn.className = `nav-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-slate-50 border border-transparent transition-all flex items-center justify-between ${state.activeCategory === cat.id ? 'active' : 'text-slate-600'}`;
                 btn.dataset.id = cat.id;
-                btn.innerHTML = `<span>${cat.title.split('.')[1].trim()}</span> <span>${cat.icon}</span>`;
+                btn.innerHTML = `<span>${cat.title[state.lang].split('.')[1].trim()}</span> <span>${cat.icon}</span>`;
                 btn.addEventListener('click', () => setActiveCategory(cat.id));
                 categoryContainer.appendChild(btn);
             });
@@ -607,8 +733,8 @@
                 if (state.activeCategory !== 'all' && state.activeCategory !== cat.id) return;
 
                 const filteredFormulas = cat.formulas.filter(f => 
-                    f.name.toLowerCase().includes(state.searchQuery) ||
-                    f.desc.toLowerCase().includes(state.searchQuery) ||
+                    f.name[state.lang].toLowerCase().includes(state.searchQuery) ||
+                    f.desc[state.lang].toLowerCase().includes(state.searchQuery) ||
                     f.text.toLowerCase().includes(state.searchQuery)
                 );
 
@@ -622,13 +748,13 @@
                     const header = document.createElement('div');
                     header.className = 'flex justify-between items-center mb-4';
                     header.innerHTML = `
-                        <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-opacity-10" style="color: ${cat.color}; background-color: ${cat.color}20">${cat.title.split('.')[1].trim()}</span>
-                        <span class="text-lg" title="${cat.title}">${cat.icon}</span>
+                        <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-opacity-10" style="color: ${cat.color}; background-color: ${cat.color}20">${cat.title[state.lang].split('.')[1].trim()}</span>
+                        <span class="text-lg" title="${cat.title[state.lang]}">${cat.icon}</span>
                     `;
 
                     const title = document.createElement('h4');
                     title.className = 'text-lg font-bold text-slate-800 mb-4 leading-tight';
-                    title.textContent = f.name;
+                    title.textContent = f.name[state.lang];
 
                     const formulaBox = document.createElement('div');
                     formulaBox.className = 'bg-slate-50 border border-slate-100 rounded-xl p-4 flex items-center justify-center min-h-[80px] mb-4 flex-grow';
@@ -636,7 +762,7 @@
 
                     const desc = document.createElement('p');
                     desc.className = 'text-sm text-slate-500 mt-auto';
-                    desc.textContent = f.desc;
+                    desc.textContent = f.desc[state.lang];
 
                     card.appendChild(header);
                     card.appendChild(title);
