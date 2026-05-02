@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный Справочник: Физика 7-11</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Slate for neutral backgrounds, Indigo for primary interactions, Emerald for secondary data points. Background is Slate-50 to ensure readability. -->
+    <!-- Application Structure Plan: The SPA is designed as a unified "Physics Dashboard". It abandons the linear markdown list for a three-tier exploratory structure. Tier 1: 'Курс в цифрах' (Curriculum Overview) uses a Doughnut chart to show the volume of formulas per topic, acting as a visual index. Tier 2: 'Интерактивная лаборатория' (Interactive Lab) provides a dynamic line chart simulator for Kinematics, allowing users to manipulate variables and see immediate graphical results, fulfilling the 'Wow' factor and deep learning goal. Tier 3: 'База знаний' (Knowledge Base) is a searchable, filterable grid of formula cards for rapid retrieval. This structure optimizes for both broad overview and specific targeted learning. -->
+    <!-- Visualization & Content Choices: 1) Curriculum Overview -> Goal: Organize & Inform -> Viz: Chart.js Doughnut -> Interaction: Hover for tooltips -> Justification: Provides immediate understanding of course weight. 2) Kinematics Lab -> Goal: Change & Relationships -> Viz: Chart.js Line Plot -> Interaction: Range sliders for velocity and acceleration -> Justification: Transforms static formulas into observable phenomena. 3) Knowledge Base -> Goal: Compare & Find -> Viz: CSS Grid of styled cards -> Interaction: Live text search and category buttons -> Justification: Best UX for quickly finding specific formulas. Library: Chart.js for all charts. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .formula-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .formula-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn.active {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+
+        .formula-text {
+            font-family: "Cambria Math", "Times New Roman", serif;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl">⚛️</span>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Физика <span class="text-indigo-600">7-11</span></h1>
+            </div>
+            <div class="w-full md:w-96">
+                <input type="text" id="globalSearch" placeholder="Поиск формул, величин, законов..." class="w-full px-4 py-2 rounded-full border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-50 transition-all text-sm">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16 w-full">
+
+        <section id="overview-section" class="space-y-6">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Курс в цифрах</h2>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Данный раздел предоставляет визуальную статистику по всему школьному курсу физики. Диаграмма ниже отображает распределение ключевых формул по девяти основным разделам науки. Это помогает оценить объем материала в каждой теме и грамотно спланировать процесс изучения или повторения перед экзаменами.
+                </p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col lg:flex-row items-center gap-8">
+                <div class="w-full lg:w-1/2">
+                    <div class="chart-container">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+                <div class="w-full lg:w-1/2">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Навигация по разделам</h3>
+                    <div id="overviewLegend" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="simulator-section" class="space-y-6">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Интерактивная лаборатория: Кинематика</h2>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Этот инструмент визуализирует уравнения равноускоренного прямолинейного движения: <span class="font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700">S = v₀t + at²/2</span> и <span class="font-mono bg-slate-100 px-1 rounded text-sm text-indigo-700">v = v₀ + at</span>. Изменяя параметры начальной скорости и ускорения с помощью ползунков, вы в реальном времени наблюдаете графики зависимости пути и скорости от времени. Это позволяет глубоко понять физический смысл абстрактных формул.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col xl:flex-row">
+                <div class="w-full xl:w-1/3 bg-slate-50 p-6 border-b xl:border-b-0 xl:border-r border-slate-200 flex flex-col justify-center space-y-8">
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-semibold text-slate-700">Начальная скорость (v₀)</label>
+                            <span id="v0Display" class="bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full text-sm">0 м/с</span>
+                        </div>
+                        <input type="range" id="v0Slider" min="-20" max="20" value="0" step="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                        <p class="text-xs text-slate-500 mt-1">Определяет точку старта графика скорости.</p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-semibold text-slate-700">Ускорение (a)</label>
+                            <span id="aDisplay" class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-sm">2 м/с²</span>
+                        </div>
+                        <input type="range" id="aSlider" min="-10" max="10" value="2" step="0.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <p class="text-xs text-slate-500 mt-1">Определяет наклон графика скорости и кривизну параболы пути.</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">Текущее состояние</h4>
+                        <p id="simStatus" class="text-sm text-slate-600">Тело начинает движение из состояния покоя и равноускоренно набирает скорость.</p>
+                    </div>
+                </div>
+                
+                <div class="w-full xl:w-2/3 p-6 flex items-center">
+                    <div class="chart-container w-full">
+                        <canvas id="kinematicsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="database-section" class="space-y-6">
+            <div class="max-w-3xl">
+                <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">База знаний</h2>
+                <p class="text-lg text-slate-600 leading-relaxed">
+                    Полный систематизированный перечень формул, извлеченный из справочного отчета. Используйте панель категорий слева для фильтрации по темам или глобальный поиск в шапке сайта для мгновенного нахождения нужной величины или закона.
+                </p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-6 items-start">
+                <aside class="w-full lg:w-1/4 lg:sticky lg:top-24 bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+                    <h3 class="font-bold text-slate-800 uppercase tracking-wider text-sm mb-4 px-2">Категории</h3>
+                    <div id="categoryContainer" class="flex flex-col gap-1">
+                    </div>
+                </aside>
+
+                <div class="w-full lg:w-3/4">
+                    <div id="emptyState" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+                        <span class="text-5xl mb-4 block">🔍</span>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Формулы не найдены</h3>
+                        <p class="text-slate-500">По вашему запросу ничего не найдено. Попробуйте изменить параметры поиска.</p>
+                    </div>
+                    
+                    <div id="formulaGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-400 text-sm">
+            Интерактивный справочник по курсу физики. Разработано на основе предоставленных отчетных данных.
+        </div>
+    </footer>
+
+    <script>
+        const physicsData = [
+            {
+                id: 'kinematics',
+                title: 'I. Кинематика',
+                icon: '🏃',
+                color: '#4f46e5',
+                formulas: [
+                    { name: 'Скорость равномерного движения', text: 'v = S / t', desc: 'v - скорость, S - путь, t - время' },
+                    { name: 'Уравнение координаты', text: 'x = x₀ + vₓt', desc: 'x₀ - начальная координата' },
+                    { name: 'Ускорение', text: 'a = (v - v₀) / t', desc: 'v₀ - начальная скорость, v - конечная' },
+                    { name: 'Скорость в любой момент', text: 'v = v₀ + at', desc: 'Зависимость скорости от времени' },
+                    { name: 'Уравнение перемещения', text: 'S = v₀t + at² / 2', desc: 'Зависимость пути от времени' },
+                    { name: 'Перемещение без времени', text: 'S = (v² - v₀²) / 2a', desc: 'Связь пути, скоростей и ускорения' },
+                    { name: 'Уравнение координаты', text: 'x = x₀ + v₀ₓt + aₓt² / 2', desc: 'Основной закон кинематики' },
+                    { name: 'Линейная скорость', text: 'v = 2πR / T = ωR', desc: 'При движении по окружности' },
+                    { name: 'Угловая скорость', text: 'ω = 2π / T = 2πν', desc: 'Скорость вращения' },
+                    { name: 'Центростремительное ускорение', text: 'a_ц = v² / R = ω²R', desc: 'Направлено к центру окружности' },
+                    { name: 'Период и частота', text: 'T = 1 / ν', desc: 'Взаимосвязь периода и частоты' }
+                ]
+            },
+            {
+                id: 'dynamics',
+                title: 'II. Динамика и Статика',
+                icon: '⚖️',
+                color: '#059669',
+                formulas: [
+                    { name: 'Второй закон Ньютона', text: 'F = ma', desc: 'Связь силы, массы и ускорения' },
+                    { name: 'Третий закон Ньютона', text: 'F₁ = -F₂', desc: 'Действие равно противодействию' },
+                    { name: 'Сила тяжести', text: 'F_т = mg', desc: 'g ≈ 9.8 м/с²' },
+                    { name: 'Вес тела (покой)', text: 'P = mg', desc: 'Сила действия на опору/подвес' },
+                    { name: 'Вес тела (ускорение)', text: 'P = m(g ± a)', desc: '+ при движении вверх, - вниз' },
+                    { name: 'Закон всемирного тяготения', text: 'F = G · m₁m₂ / R²', desc: 'Гравитационное взаимодействие' },
+                    { name: 'Закон Гука', text: 'F_упр = kΔx', desc: 'Сила упругости' },
+                    { name: 'Сила трения скольжения', text: 'F_тр = μN', desc: 'N - реакция опоры, μ - коэффициент' },
+                    { name: 'Давление твердого тела', text: 'p = F / S', desc: 'F - сила давления, S - площадь' },
+                    { name: 'Гидростатическое давление', text: 'p = ρgh', desc: 'Давление столба жидкости' },
+                    { name: 'Сила Архимеда', text: 'F_A = ρ_жgV_погр', desc: 'Выталкивающая сила' },
+                    { name: 'Момент силы', text: 'M = F · l', desc: 'l - плечо силы' },
+                    { name: 'Равновесие рычага', text: 'F₁l₁ = F₂l₂', desc: 'Или M₁ = M₂' }
+                ]
+            },
+            {
+                id: 'conservation',
+                title: 'III. Законы сохранения',
+                icon: '🔄',
+                color: '#d97706',
+                formulas: [
+                    { name: 'Импульс тела', text: 'p = mv', desc: 'Векторная величина' },
+                    { name: 'Импульс силы', text: 'FΔt = Δp', desc: 'Изменение импульса тела' },
+                    { name: 'Закон сохранения импульса', text: 'm₁v₁ + m₂v₂ = m₁v₁\' + m₂v₂\'', desc: 'Для замкнутой системы' },
+                    { name: 'Механическая работа', text: 'A = FScosα', desc: 'Работа постоянной силы' },
+                    { name: 'Мощность', text: 'N = A / t = Fv', desc: 'Скорость выполнения работы' },
+                    { name: 'Кинетическая энергия', text: 'E_k = mv² / 2 = p² / 2m', desc: 'Энергия движения' },
+                    { name: 'Потенциальная энергия', text: 'E_p = mgh', desc: 'В поле силы тяжести' },
+                    { name: 'Энергия пружины', text: 'E_p = kΔx² / 2', desc: 'Потенциальная энергия деформации' },
+                    { name: 'Закон сохранения энергии', text: 'E_k1 + E_p1 = E_k2 + E_p2', desc: 'Механическая энергия' },
+                    { name: 'Теорема о кин. энергии', text: 'A = ΔE_k', desc: 'Работа равна изменению E_k' },
+                    { name: 'КПД механизма', text: 'η = (A_пол / A_затр) · 100%', desc: 'Эффективность' }
+                ]
+            },
+            {
+                id: 'thermo',
+                title: 'IV. МКТ и Термодинамика',
+                icon: '🌡️',
+                color: '#dc2626',
+                formulas: [
+                    { name: 'Количество вещества', text: 'ν = N / N_A = m / M', desc: 'В молях' },
+                    { name: 'Основное уравнение МКТ', text: 'p = nkT = 1/3 m₀n(v²)', desc: 'Давление идеального газа' },
+                    { name: 'Средняя кинетическая энергия', text: 'E_k = 3/2 kT', desc: 'Зависимость от температуры' },
+                    { name: 'Уравнение Менделеева-Клапейрона', text: 'pV = (m/M)RT = νRT', desc: 'Уравнение состояния' },
+                    { name: 'Уравнение Клапейрона', text: 'p₁V₁ / T₁ = p₂V₂ / T₂', desc: 'При m = const' },
+                    { name: 'Внутренняя энергия', text: 'U = 3/2 νRT = 3/2 pV', desc: 'Одноатомный идеальный газ' },
+                    { name: 'Работа газа', text: 'A = pΔV', desc: 'При изобарном процессе' },
+                    { name: 'Первый закон термодинамики', text: 'Q = ΔU + A', desc: 'Закон сохранения энергии' },
+                    { name: 'Количество теплоты', text: 'Q = cmΔT', desc: 'Нагрев/охлаждение' },
+                    { name: 'Плавление/кристаллизация', text: 'Q = ±λm', desc: 'Фазовый переход' },
+                    { name: 'Парообразование', text: 'Q = ±Lm', desc: 'Фазовый переход' },
+                    { name: 'Сгорание топлива', text: 'Q = qm', desc: 'Выделение энергии' },
+                    { name: 'КПД теплового двигателя', text: 'η = (Q₁ - Q₂) / Q₁', desc: 'Тепловые машины' },
+                    { name: 'Максимальный КПД (Карно)', text: 'η_max = (T₁ - T₂) / T₁', desc: 'Идеальная машина' },
+                    { name: 'Относительная влажность', text: 'φ = (p / p_нас) · 100%', desc: 'Влажность воздуха' }
+                ]
+            },
+            {
+                id: 'electrostatics',
+                title: 'V. Электростатика и Ток',
+                icon: '⚡',
+                color: '#0284c7',
+                formulas: [
+                    { name: 'Закон Кулона', text: 'F = k · |q₁q₂| / r²', desc: 'Взаимодействие зарядов' },
+                    { name: 'Напряженность поля', text: 'E = F / q', desc: 'Силовая характеристика' },
+                    { name: 'Потенциал', text: 'φ = W_p / q', desc: 'Энергетическая характеристика' },
+                    { name: 'Напряжение', text: 'U = φ₁ - φ₂ = A / q', desc: 'Разность потенциалов' },
+                    { name: 'Связь напряженности и напряжения', text: 'E = U / d', desc: 'Однородное поле' },
+                    { name: 'Электроемкость', text: 'C = q / U', desc: 'Характеристика проводника' },
+                    { name: 'Емкость конденсатора', text: 'C = ε₀εS / d', desc: 'Плоский конденсатор' },
+                    { name: 'Энергия электрического поля', text: 'W = CU² / 2 = qU / 2', desc: 'Энергия конденсатора' },
+                    { name: 'Сила тока', text: 'I = q / t', desc: 'Постоянный ток' },
+                    { name: 'Закон Ома (участок)', text: 'I = U / R', desc: 'Участок цепи' },
+                    { name: 'Сопротивление', text: 'R = ρ · l / S', desc: 'Характеристика проводника' },
+                    { name: 'Закон Ома (полная)', text: 'I = E / (R + r)', desc: 'Полная цепь (E - ЭДС)' },
+                    { name: 'Работа тока', text: 'A = UIt = I²Rt = U²t / R', desc: 'Электрическая работа' },
+                    { name: 'Мощность тока', text: 'P = UI = I²R = U² / R', desc: 'Электрическая мощность' },
+                    { name: 'Закон Джоуля-Ленца', text: 'Q = I²Rt', desc: 'Тепловое действие тока' }
+                ]
+            },
+            {
+                id: 'magnetism',
+                title: 'VI. Электромагнетизм',
+                icon: '🧲',
+                color: '#9333ea',
+                formulas: [
+                    { name: 'Сила Ампера', text: 'F_A = IBl·sinα', desc: 'Действие поля на проводник' },
+                    { name: 'Сила Лоренца', text: 'F_Л = |q|vB·sinα', desc: 'Действие поля на заряд' },
+                    { name: 'Магнитный поток', text: 'Φ = BS·cosα', desc: 'Поток через площадку' },
+                    { name: 'Закон электромагнитной индукции', text: 'E_i = -ΔΦ / Δt', desc: 'Закон Фарадея' },
+                    { name: 'ЭДС в движущемся проводнике', text: 'E = vBl·sinα', desc: 'Проводник в магнитном поле' },
+                    { name: 'Индуктивность', text: 'L = Φ / I', desc: 'Свойство контура' },
+                    { name: 'ЭДС самоиндукции', text: 'E_is = -L · ΔI / Δt', desc: 'Возникновение ЭДС' },
+                    { name: 'Энергия магнитного поля', text: 'W_m = LI² / 2', desc: 'Энергия катушки' }
+                ]
+            },
+            {
+                id: 'waves',
+                title: 'VII. Колебания и Волны',
+                icon: '🌊',
+                color: '#0891b2',
+                formulas: [
+                    { name: 'Циклическая частота', text: 'ω = 2π / T = 2πν', desc: 'Колебательное движение' },
+                    { name: 'Уравнение колебаний', text: 'x(t) = A·cos(ωt + φ₀)', desc: 'Гармонические колебания' },
+                    { name: 'Период пружинного маятника', text: 'T = 2π√(m / k)', desc: 'Груз на пружине' },
+                    { name: 'Период математического маятника', text: 'T = 2π√(l / g)', desc: 'Маятник' },
+                    { name: 'Формула Томсона', text: 'T = 2π√(LC)', desc: 'Электромагнитный контур' },
+                    { name: 'Длина волны', text: 'λ = vT = v / ν', desc: 'Характеристика волны' }
+                ]
+            },
+            {
+                id: 'optics',
+                title: 'VIII. Оптика',
+                icon: '👁️',
+                color: '#ca8a04',
+                formulas: [
+                    { name: 'Закон отражения', text: '∠α = ∠γ', desc: 'Угол падения = углу отражения' },
+                    { name: 'Закон преломления (Снеллиус)', text: 'sinα / sinβ = n₂ / n₁ = v₁ / v₂', desc: 'Преломление света' },
+                    { name: 'Абсолютный показатель', text: 'n = c / v', desc: 'Показатель преломления' },
+                    { name: 'Оптическая сила', text: 'D = 1 / F', desc: 'В диоптриях' },
+                    { name: 'Формула тонкой линзы', text: '±1/F = 1/d ± 1/f', desc: 'Положение изображения' },
+                    { name: 'Увеличение линзы', text: 'Γ = H / h = f / d', desc: 'Линейное увеличение' },
+                    { name: 'Интерференционный максимум', text: 'Δd = kλ', desc: 'Условие максимума' },
+                    { name: 'Интерференционный минимум', text: 'Δd = (2k + 1)λ / 2', desc: 'Условие минимума' },
+                    { name: 'Дифракционная решетка', text: 'd·sinφ = kλ', desc: 'Формула решетки' }
+                ]
+            },
+            {
+                id: 'quantum',
+                title: 'IX. Квантовая и Ядерная',
+                icon: '⚛️',
+                color: '#e11d48',
+                formulas: [
+                    { name: 'Энергия фотона', text: 'E = hν = hc / λ', desc: 'Квант света' },
+                    { name: 'Импульс фотона', text: 'p = E / c = h / λ', desc: 'Импульс кванта' },
+                    { name: 'Уравнение Эйнштейна (фотоэффект)', text: 'hν = A_вых + E_k_max', desc: 'Для внешнего фотоэффекта' },
+                    { name: 'Красная граница', text: 'ν_min = A_вых / h', desc: 'Фотоэффекта' },
+                    { name: 'Связь массы и энергии', text: 'E = mc²', desc: 'Формула Эйнштейна' },
+                    { name: 'Дефект массы', text: 'Δm = (Z·m_p + N·m_n) - M_я', desc: 'Ядерная физика' },
+                    { name: 'Энергия связи', text: 'E_св = Δm · c²', desc: 'Энергия ядра' },
+                    { name: 'Закон радиоактивного распада', text: 'N = N₀ · 2^(-t/T)', desc: 'Где T - период полураспада' }
+                ]
+            }
+        ];
+
+        let state = {
+            activeCategory: 'all',
+            searchQuery: ''
+        };
+
+        const globalSearch = document.getElementById('globalSearch');
+        const categoryContainer = document.getElementById('categoryContainer');
+        const formulaGrid = document.getElementById('formulaGrid');
+        const emptyState = document.getElementById('emptyState');
+
+        function initializeApp() {
+            renderOverviewChart();
+            initializeSimulator();
+            renderCategoryNav();
+            renderFormulas();
+            
+            globalSearch.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value.toLowerCase();
+                renderFormulas();
+            });
+        }
+
+        function renderOverviewChart() {
+            const ctx = document.getElementById('overviewChart').getContext('2d');
+            const labels = physicsData.map(c => c.title.split('.')[1].trim());
+            const dataCounts = physicsData.map(c => c.formulas.length);
+            const colors = physicsData.map(c => c.color);
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataCounts,
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: '#ffffff',
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.label}: ${context.raw} формул`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%',
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            setActiveCategory(physicsData[index].id);
+                            document.getElementById('database-section').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            });
+
+            const legendContainer = document.getElementById('overviewLegend');
+            physicsData.forEach((cat, idx) => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors';
+                item.innerHTML = `
+                    <div class="w-4 h-4 rounded-full flex-shrink-0" style="background-color: ${cat.color}"></div>
+                    <span class="text-sm font-medium text-slate-700 truncate" title="${cat.title}">${cat.title.split('.')[1].trim()}</span>
+                    <span class="text-xs text-slate-400 ml-auto bg-slate-100 px-2 py-0.5 rounded-full">${cat.formulas.length}</span>
+                `;
+                item.addEventListener('click', () => {
+                    setActiveCategory(cat.id);
+                    document.getElementById('database-section').scrollIntoView({ behavior: 'smooth' });
+                });
+                legendContainer.appendChild(item);
+            });
+        }
+
+        let simChart;
+        function initializeSimulator() {
+            const ctx = document.getElementById('kinematicsChart').getContext('2d');
+            const v0Slider = document.getElementById('v0Slider');
+            const aSlider = document.getElementById('aSlider');
+            const v0Display = document.getElementById('v0Display');
+            const aDisplay = document.getElementById('aDisplay');
+            const simStatus = document.getElementById('simStatus');
+
+            function updateSimulator() {
+                const v0 = parseFloat(v0Slider.value);
+                const a = parseFloat(aSlider.value);
+
+                v0Display.textContent = `${v0} м/с`;
+                aDisplay.textContent = `${a} м/с²`;
+
+                let statusText = '';
+                if (a > 0 && v0 >= 0) statusText = 'Тело разгоняется в положительном направлении.';
+                else if (a < 0 && v0 <= 0) statusText = 'Тело разгоняется в отрицательном направлении.';
+                else if (a > 0 && v0 < 0) statusText = 'Тело тормозит, остановится, затем начнет разгон в обратную сторону.';
+                else if (a < 0 && v0 > 0) statusText = 'Тело тормозит, остановится, затем начнет разгон в обратную сторону.';
+                else if (a === 0 && v0 !== 0) statusText = 'Равномерное движение. Ускорение отсутствует.';
+                else statusText = 'Тело находится в состоянии покоя.';
+                simStatus.textContent = statusText;
+
+                const timeLabels = [];
+                const distanceData = [];
+                const velocityData = [];
+
+                for (let t = 0; t <= 10; t += 0.5) {
+                    timeLabels.push(t);
+                    velocityData.push(v0 + a * t);
+                    distanceData.push((v0 * t) + (0.5 * a * t * t));
+                }
+
+                if (simChart) {
+                    simChart.data.datasets[0].data = distanceData;
+                    simChart.data.datasets[1].data = velocityData;
+                    simChart.update();
+                } else {
+                    simChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: timeLabels,
+                            datasets: [
+                                {
+                                    label: 'Путь S(t), м',
+                                    data: distanceData,
+                                    borderColor: '#4f46e5',
+                                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4,
+                                    yAxisID: 'y'
+                                },
+                                {
+                                    label: 'Скорость v(t), м/с',
+                                    data: velocityData,
+                                    borderColor: '#10b981',
+                                    borderWidth: 3,
+                                    borderDash: [5, 5],
+                                    tension: 0.1,
+                                    yAxisID: 'y1'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        title: (context) => `Время: ${context[0].label} с`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: { display: true, text: 'Время (с)' },
+                                    grid: { display: false }
+                                },
+                                y: {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'left',
+                                    title: { display: true, text: 'Путь (м)' },
+                                    grid: { color: '#f1f5f9' }
+                                },
+                                y1: {
+                                    type: 'linear',
+                                    display: true,
+                                    position: 'right',
+                                    title: { display: true, text: 'Скорость (м/с)' },
+                                    grid: { drawOnChartArea: false }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            v0Slider.addEventListener('input', updateSimulator);
+            aSlider.addEventListener('input', updateSimulator);
+            updateSimulator();
+        }
+
+        function renderCategoryNav() {
+            const allBtn = document.createElement('button');
+            allBtn.className = 'nav-btn active w-full text-left px-4 py-3 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-100 border border-transparent transition-all flex items-center justify-between mb-2';
+            allBtn.innerHTML = `<span>Все разделы</span> <span>📚</span>`;
+            allBtn.dataset.id = 'all';
+            allBtn.addEventListener('click', () => setActiveCategory('all'));
+            categoryContainer.appendChild(allBtn);
+
+            physicsData.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 border border-transparent transition-all flex items-center justify-between';
+                btn.dataset.id = cat.id;
+                btn.innerHTML = `<span>${cat.title.split('.')[1].trim()}</span> <span>${cat.icon}</span>`;
+                btn.addEventListener('click', () => setActiveCategory(cat.id));
+                categoryContainer.appendChild(btn);
+            });
+        }
+
+        function setActiveCategory(id) {
+            state.activeCategory = id;
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.dataset.id === id) {
+                    btn.classList.add('active');
+                    btn.classList.remove('text-slate-600', 'hover:bg-slate-50');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+            renderFormulas();
+        }
+
+        function renderFormulas() {
+            formulaGrid.innerHTML = '';
+            let resultsFound = false;
+
+            physicsData.forEach(cat => {
+                if (state.activeCategory !== 'all' && state.activeCategory !== cat.id) return;
+
+                const filteredFormulas = cat.formulas.filter(f => 
+                    f.name.toLowerCase().includes(state.searchQuery) ||
+                    f.desc.toLowerCase().includes(state.searchQuery) ||
+                    f.text.toLowerCase().includes(state.searchQuery)
+                );
+
+                if (filteredFormulas.length === 0) return;
+                resultsFound = true;
+
+                filteredFormulas.forEach(f => {
+                    const card = document.createElement('div');
+                    card.className = 'formula-card bg-white rounded-2xl border border-slate-200 p-6 flex flex-col h-full';
+                    
+                    const header = document.createElement('div');
+                    header.className = 'flex justify-between items-center mb-4';
+                    header.innerHTML = `
+                        <span class="text-xs font-bold uppercase tracking-widest px-2 py-1 rounded-md bg-opacity-10" style="color: ${cat.color}; background-color: ${cat.color}20">${cat.title.split('.')[1].trim()}</span>
+                        <span class="text-lg" title="${cat.title}">${cat.icon}</span>
+                    `;
+
+                    const title = document.createElement('h4');
+                    title.className = 'text-lg font-bold text-slate-800 mb-4 leading-tight';
+                    title.textContent = f.name;
+
+                    const formulaBox = document.createElement('div');
+                    formulaBox.className = 'bg-slate-50 border border-slate-100 rounded-xl p-4 flex items-center justify-center min-h-[80px] mb-4 flex-grow';
+                    formulaBox.innerHTML = `<span class="formula-text text-xl font-bold text-slate-900">${f.text}</span>`;
+
+                    const desc = document.createElement('p');
+                    desc.className = 'text-sm text-slate-500 mt-auto';
+                    desc.textContent = f.desc;
+
+                    card.appendChild(header);
+                    card.appendChild(title);
+                    card.appendChild(formulaBox);
+                    card.appendChild(desc);
+                    
+                    formulaGrid.appendChild(card);
+                });
+            });
+
+            if (resultsFound) {
+                emptyState.classList.add('hidden');
+                formulaGrid.classList.remove('hidden');
+            } else {
+                emptyState.classList.remove('hidden');
+                formulaGrid.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
